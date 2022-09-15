@@ -23,6 +23,7 @@ alias dot='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 # find files changed in the .config directory in the last day 
 alias nf='fdfind . /home/zach/.config -H --changed-within 1d -E Code -E google-chrome -x /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-files --others {} | sort | uniq'
+# git add files that changed in last day in .config
 alias nfa='fdfind . /home/zach/.config -H --changed-within 1d -E chromium -x /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-files --others {} | uniq | rargs /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME add {0}'
 
 # make exa less typing
