@@ -18,6 +18,7 @@ starship init fish | source
 zoxide init fish | source
 
 # ALIASES
+alias dot='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias exa='exa --group-directories-first'
 alias l='exa'
 alias la='exa -la'
