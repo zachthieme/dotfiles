@@ -18,7 +18,14 @@ starship init fish | source
 zoxide init fish | source
 
 # ALIASES
+# used to manage dotfiles
 alias dot='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+
+# find files changed in the .config directory in the last day 
+alias nf='fd . /home/zach/.config -H --changed-within 1d -E Code -E google-chrome -x /home/zach/.nix-profile/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-files --others {} | sort | uniq'
+alias nfa='fd . /home/zach/.config -H --changed-within 1d -E chromium -x /home/zach/.nix-profile/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-files --others {} | uniq | rargs /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME add {0}'
+
+# make exa less typing
 alias exa='exa --group-directories-first'
 alias l='exa'
 alias la='exa -la'
