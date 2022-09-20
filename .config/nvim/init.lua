@@ -136,3 +136,10 @@ return require('packer').startup(function()
     end}
   --use('nvim-treesitter/nvim-treesitter', {'do' = ':TSUpdate'})
   end)
+
+local Terminal = require("toggleterm.terminal").Terminal
+local gitui = Terminal:new({ cmd = "gitui", hidden = true })
+
+function _GITUI_TOGGLE()
+	gitui:toggle()
+end
