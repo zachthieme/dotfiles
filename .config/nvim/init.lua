@@ -72,8 +72,13 @@ map('n', ',p', '"0p')
 map('i','jj','<Esc>')
 
 -- write only if something has changed
---
 map('n', '<Leader>w', ':up<cr>')
+
+-- write if changed and exit
+map('n', '<Leader>q', ':x<cr>')
+
+-- quit without saving changes
+map('n', '<Leader>e', ':q!<cr>')
 
 -- NerdTree Bindings
 map('n','<Leader>n',':NERDTreeToggle<CR>')
