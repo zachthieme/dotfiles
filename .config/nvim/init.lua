@@ -93,6 +93,7 @@ map('n', ':', ';')
 -- configure plugins
 return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
+  use 'arcticicestudio/nord-vim'
   use 'vim-airline/vim-airline'
   use 'tpope/vim-surround'
   use 'jiangmiao/auto-pairs'
@@ -137,6 +138,7 @@ return require('packer').startup(function()
   --use('nvim-treesitter/nvim-treesitter', {'do' = ':TSUpdate'})
   end)
 
+-- vim.cmd([[arcticicestudio/nord-vim]])
 --local Terminal = require("toggleterm.terminal").Terminal
 --local gitui = Terminal:new({ cmd = "gitui", hidden = true })
 --
