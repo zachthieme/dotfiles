@@ -88,33 +88,29 @@ map('n', '<Leader>o','<cmd>Telescope find_files<cr>')
 map('n', '<leader>f','<cmd>Telescope live_grep<cr>')
 map('n', '<leader>b','<cmd>Telescope buffers<cr>')
 map('n', '<leader>h','<cmd>Telescope help_tags<cr>')
-
--- set semicolon to enter commands 
-map('n', ';', ':')
-
--- set colon to advance to next item in f/t
-map('n', ':', ';')
+map('n', '<Leader>;','<cmd>Telescope file_browser<cr>')
 
 -- configure plugins
 return require('packer').startup(function()
-  use 'wbthomason/packer.nvim'
   use 'arcticicestudio/nord-vim'
-  use 'vim-airline/vim-airline'
-  use 'tpope/vim-surround'
-  use 'jiangmiao/auto-pairs'
-  use 'jeffkreeftmeijer/vim-numbertoggle'
-  use 'liuchengxu/vim-which-key'
-  use 'psliwka/vim-smoothie'
-  use 'preservim/nerdtree'
   use 'easymotion/vim-easymotion'
-  use 'prabirshrestha/vim-lsp'
-  use 'neovim/nvim-lspconfig'
-  use 'nvim-telescope/telescope.nvim'
-  use 'nvim-lua/plenary.nvim'
-  use 'rakr/vim-one' 
-  use 'preservim/nerdcommenter'
-  use 'vimwiki/vimwiki'
+  use 'jeffkreeftmeijer/vim-numbertoggle'
+  use 'jiangmiao/auto-pairs'
   use 'justinmk/vim-sneak'
+  use 'liuchengxu/vim-which-key'
+  use 'neovim/nvim-lspconfig'
+  use 'nvim-lua/plenary.nvim'
+  use 'nvim-telescope/telescope-file-browser.nvim'
+  use 'nvim-telescope/telescope.nvim'
+  use 'prabirshrestha/vim-lsp'
+  use 'preservim/nerdcommenter'
+  use 'preservim/nerdtree'
+  use 'psliwka/vim-smoothie'
+  use 'rakr/vim-one' 
+  use 'tpope/vim-surround'
+  use 'vim-airline/vim-airline'
+  use 'vimwiki/vimwiki'
+  use 'wbthomason/packer.nvim'
   use {"akinsho/toggleterm.nvim", tag = '*', config = function()
     require("toggleterm").setup(
     {
