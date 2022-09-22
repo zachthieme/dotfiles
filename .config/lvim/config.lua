@@ -59,8 +59,16 @@ lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 
+-- Set the default bindings for toggle term
 lvim.builtin.terminal.open_mapping = [[<C-\>]]
 lvim.builtin.terminal.terminal_mappings = true
+
+lvim.builtin.cmp.sources = {
+  { name = "nvim_lsp" },
+  { name = "nvim_lua" },
+  { name = "buffer", keyword_length = 5 },
+  { name = "path", max_item_count = 5 }
+}
 
 -- if you don't want all the parsers change this to a table of the ones you want
 lvim.builtin.treesitter.ensure_installed = {
