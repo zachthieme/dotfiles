@@ -1,5 +1,5 @@
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
-export PATH="/snap/bin:$HOME/.local/bin:$PATH"
+export PATH="/home/zach/.cargo/bin:/snap/bin:$HOME/.local/bin:$PATH"
 eval "$(starship init zsh)" 
 eval "$(zoxide init zsh)"
 alias exa='exa --group-directories-first'
@@ -8,7 +8,6 @@ alias l='exa'
 alias la='exa -la'
 alias a='exa -a'
 alias j='z'
-# alias dot='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 dot (){/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME "$@";}
 dot-ls (){/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-tree --full-tree -r HEAD;}
 # find files changed in the .config directory in the last day 
