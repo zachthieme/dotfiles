@@ -1,14 +1,11 @@
-# -- Set sticky windows -- 
-
 # toggle sticky (show on all spaces)
 alt - s : yabai -m window --toggle sticky
+
 
 # toggle sticky, topmost and resize to picture-in-picture size
 alt - p : yabai -m window --toggle sticky;\
           yabai -m window --toggle topmost;\
           yabai -m window --grid 5:5:4:0:1:1
-
-# -- Changing Window Focus --
 
 # change window focus within space
 alt - j : yabai -m window --focus south
@@ -17,10 +14,8 @@ alt - h : yabai -m window --focus west
 alt - l : yabai -m window --focus east
 
 #change focus between external displays (left and right)
-# alt - s: yabai -m display --focus west
+alt - s: yabai -m display --focus west
 alt - g: yabai -m display --focus east
-
-# -- Modifying the Layout --
 
 # rotate layout clockwise
 shift + alt - r : yabai -m space --rotate 270
@@ -34,16 +29,11 @@ shift + alt - x : yabai -m space --mirror x-axis
 # toggle window float
 shift + alt - t : yabai -m window --toggle float --grid 4:4:1:1:2:2
 
-
-# -- Modifying Window Size --
-
 # maximize a window
 shift + alt - m : yabai -m window --toggle zoom-fullscreen
 
 # balance out tree of windows (resize to occupy same area)
 shift + alt - e : yabai -m space --balance
-
-# -- Moving Windows Around --
 
 # swap windows
 shift + alt - j : yabai -m window --swap south
@@ -61,28 +51,41 @@ ctrl + alt - l : yabai -m window --warp east
 shift + alt - s : yabai -m window --display west; yabai -m display --focus west;
 shift + alt - g : yabai -m window --display east; yabai -m display --focus east;
 
-# move window to prev and next space
+#move window to prev and next space
 shift + alt - p : yabai -m window --space prev;
 shift + alt - n : yabai -m window --space next;
 
-# move window to space #
-shift + alt - 1 : yabai -m window --space 1;
-shift + alt - 2 : yabai -m window --space 2;
-shift + alt - 3 : yabai -m window --space 3;
-shift + alt - 4 : yabai -m window --space 4;
-shift + alt - 5 : yabai -m window --space 5;
-shift + alt - 6 : yabai -m window --space 6;
-shift + alt - 7 : yabai -m window --space 7;
+# move window to space
+ctrl + alt - 1 : yabai -m window --space 1 ; yabai -m space --focus 1
+ctrl + alt - 2 : yabai -m window --space 2 ; yabai -m space --focus 2
+ctrl + alt - 3 : yabai -m window --space 3 ; yabai -m space --focus 3
+ctrl + alt - 4 : yabai -m window --space 4 ; yabai -m space --focus 4
+ctrl + alt - 5 : yabai -m window --space 5 ; yabai -m space --focus 5
+ctrl + alt - 6 : yabai -m window --space 6 ; yabai -m space --focus 6
 
-# create desktop, move window and follow focus - uses jq for parsing json (brew install jq)
-shift + cmd - n : yabai -m space --create && \
-                  index="$(yabai -m query --spaces --display | jq 'map(select(."is-native-fullscreen" == false))[-1].index')" && \
-                  yabai -m window --space "${index}" && \
-                  yabai -m space --focus "${index}"
-
-# -- Starting/Stopping/Restarting Yabai --
+# move to space #
+shift + alt - 1 : yabai -m space --focus 1;
+shift + alt - 2 : yabai -m space --focus 2;
+shift + alt - 3 : yabai -m space --focus 3;
+shift + alt - 4 : yabai -m space --focus 4;
+shift + alt - 5 : yabai -m space --focus 5;
+shift + alt - 6 : yabai -m space --focus 6;
+shift + alt - 7 : yabai -m space --focus 7;
 
 # stop/start/restart yabai
 ctrl + alt - q : brew services stop yabai
 ctrl + alt - s : brew services start yabai
 ctrl + alt - r : brew services restart yabai
+
+# create desktop, move window and follow focus - uses jq for parsing json (brew install jq)
+
+shift + cmd - n : yabai -m space --create && \
+                  index="$(yabai -m query --spaces --display | jq 'map(select(."is-native-fullscreen" == false))[-1].index')" && \
+                  yabai -m window --space "${index}" && \
+                  yabai -m space --focus "${index}"
+# find name of window
+shift + alt - i : yabai -m query --windows --window  > ~/temp.txt
+
+# hide and unhide the tana window
+shift + ctrl - u : open "/Users/zthieme/Library/Mobile Documents/com~apple~ScriptEditor2/Documents/ToggleTana.app"
+shift + ctrl - h : open "/Users/zthieme/Library/Mobile Documents/com~apple~ScriptEditor2/Documents/ToggleSlack.app"
