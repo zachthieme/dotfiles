@@ -87,5 +87,17 @@ shift + cmd - n : yabai -m space --create && \
 shift + alt - i : yabai -m query --windows --window  > ~/temp.txt
 
 # hide and unhide the tana window
-shift + ctrl - u : open "/Users/zthieme/Library/Mobile Documents/com~apple~ScriptEditor2/Documents/ToggleTana.app"
-shift + ctrl - h : open "/Users/zthieme/Library/Mobile Documents/com~apple~ScriptEditor2/Documents/ToggleSlack.app"
+shift + ctrl - u : ~/.config/yabai/toggle-app.sh Tana 
+
+# select the tana window
+shift + ctrl - b : yabai -m query --windows --space | jq '.[] | select(.app =="Tana") | .id ' | xargs yabai -m window --focus
+
+# hide and unhide the slack window
+shift + ctrl - h : ~/.config/yabai/toggle-app.sh Slack 
+
+# select the slack window
+shift + ctrl - g : yabai -m query --windows --space | jq '.[] | select(.app =="Slack") | .id ' | xargs yabai -m window --focus
+
+
+
+ 

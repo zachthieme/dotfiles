@@ -3,6 +3,8 @@
 	lnav (layer-toggle navigation)
 	lnum (layer-toggle numbers) 
 	lscr (layer-toggle screen)
+  lmove (layer-toggle move)
+  lgoto (layer-toggle goto)
 
 	;; app commands
 	new (around lmet n)
@@ -34,7 +36,9 @@
 	entnum (tap-hold 200 ret @lnum)
 	escnum (tap-hold 200 esc @lnum)
 	tabnum (tap-hold 200 tab @lnum)
-    lcnum (tap-hold 200 @launch @lnum)
+  lcnum (tap-hold 200 @launch @lnum)
+  vcs (tap-hold 200 v @lgoto)
+  cmw (tap-hold 200 c @lmove)
 
 	;; Meta Row
 	brcscr (tap-hold 200 [ @lscr)
@@ -77,6 +81,32 @@
 	r2thrd C-A-S-2
 	
 	wmax C-A-S-ret
+
+  ;; change to space
+  cs1 A-S-1
+  cs2 A-S-2
+  cs3 A-S-3
+  cs4 A-S-4
+  cs5 A-S-5
+  cs6 A-S-6
+  cs7 A-S-7
+  cs8 A-S-8
+  cs9 A-S-9
+
+  ;; move app to space
+  mw1 A-C-1
+  mw2 A-C-2
+  mw3 A-C-3
+  mw4 A-C-4
+  mw5 A-C-5
+  mw6 A-C-6
+  mw7 A-C-7
+  mw8 A-C-8
+  mw9 A-C-9
+  
+  ;; pin window
+  pw A-p
+
 )
 
 (defcfg
@@ -99,7 +129,7 @@
   grv     1       2       3       4       5       6       7       8       9       0       -       =       bspc
   tab     q       w       e       r       t       y       u       i       o       p       [       ]       \
   @escnum @ameta  @sctl   @dalt   @fsft   g       h       @jsft   @kalt   @llctl  @scmeta '       @entnum
-  @plsft  z       x       c       v       b       n       m       ,       .       /       @prsft  up
+  @plsft  z       x       @cmw    @vcs    b       n       m       ,       .       /       @prsft  up
   fn      lctl    @lcnum  @brcscr              @spcnav                    @minscr ralt    left    down    rght
 )
 
@@ -127,5 +157,23 @@
   _       _       _       _       _       _       _       _       @wmax   @sthf   _       _       _       _
   _       _       _       _       _       _       @lhalf  @lthrd  @mthrd  @rthrd  @rhalf  _       _
   _       _       _       _       _       _       _       @l2thrd @r2thrd @sbhf   _       _       _
+  _       _       _       _                       _                       _       _       _       _       _
+)
+
+(deflayer goto
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       @cs7    @cs8    @cs9   _       _       _       _
+  _       _       _       _       _       _       _       @cs4    @cs5    @cs6    _  _       _
+  _       _       _       _       _       _       _       @cs1    @cs2    @cs3   _       _       _
+  _       _       _       _                       _                       _       _       _       _       _
+)
+
+(deflayer move
+  _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       _       _       _       _       _       _       _
+  _       _       _       _       _       _       _       @pw     @mw8    @mw9   _       _       _       _
+  _       _       _       _       _       _       _       @mw4    @mw5    @mw6    _  _       _
+  _       _       _       _       _       _       _       @mw1    @mw2    @mw3   _       _       _
   _       _       _       _                       _                       _       _       _       _       _
 )

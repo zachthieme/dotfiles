@@ -48,10 +48,12 @@ yabai -m rule --add app="^Cisco AnyConnect Secure Mobility Client$" manage=off
 
 # set to always on top
 yabai -m rule --add app="^Tana$" manage=off sticky=on layer=above
+yabai -m rule --add app="^Slack$" manage=off sticky=on layer=above
+
 
 # Rules to move windows to the right space
 yabai -m space 1 --label term
-yabai -m rule --add app="^Tabby$" space=1
+yabai -m rule --add app="^(iTerm2|Tabby)$" space=1
 
 yabai -m space 2 --label mail
 yabai -m rule --add app="^Mail - Zach Thieme - Outlook$" space=2
@@ -59,7 +61,7 @@ yabai -m rule --add app="^Outlook \(PWA\)$" space=2
 
 yabai -m space 3 --label txt
 yabai -m rule --add app="^Messages$" space=3
-yabai -m rule --add app="^Slack$" space=3
+# yabai -m rule --add app="^Slack$" space=3
 
 # keep next two lines in current order due to inheritence of the rules
 yabai -m space 5 --label conf
