@@ -98,6 +98,10 @@ shift + ctrl - h : ~/.config/yabai/toggle-app.sh Slack
 # select the slack window
 shift + ctrl - g : yabai -m query --windows --space | jq '.[] | select(.app =="Slack") | .id ' | xargs yabai -m window --focus
 
+# hide and unhide the messages window
+shift + ctrl - i : ~/.config/yabai/toggle-app.sh Messages 
 
+# select the slack window
+shift + ctrl - k : yabai -m query --windows --space | jq '.[] | select(.app =="Messages") | .id ' | xargs yabai -m window --focus
 
  
