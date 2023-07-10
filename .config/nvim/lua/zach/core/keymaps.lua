@@ -9,6 +9,16 @@ local keymap = vim.keymap -- for conciseness
 -- use jk to exit insert mode
 keymap.set("i", "jk", "<ESC>")
 
+-- settings for undo while writing
+keymap.set("i", ".", ".<C-g>u")
+keymap.set("i", "!", "!<C-g>u")
+keymap.set("i", "?", "?<C-g>u")
+keymap.set("i", ":", ":<C-g>u")
+keymap.set("i", ";", ";<C-g>u")
+keymap.set("i", ")", ")<C-g>u")
+keymap.set("i", "(", "(<C-g>u")
+keymap.set("i", ",", ",<C-g>u")
+
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>")
 
@@ -32,8 +42,8 @@ keymap.set("n", "<leader>tp", ":tabp<CR>") --  go  toto previous tab
 
 -- move line in assorted modes
 -- mac only as the D- is the cmd button
-keymap.set("n", "<D-j>", ":m .+1<CR>==") -- move line down
-keymap.set("n", "<D-k>", ":m .-2<CR>==") -- move line down
+keymap.set("n", "<M-j>", ":m .+1<CR>==") -- move line down
+keymap.set("n", "<M-k>", ":m .-2<CR>==") -- move line down
 keymap.set("i", "<D-j>", "<Esc>:m .+1<CR>==gi") -- move line down
 keymap.set("i", "<D-k>", "<Esc>:m .-2<CR>==gi") -- move line down
 keymap.set("v", "<D-j>", ":m '>+1<CR>gv=gv") -- move line down
@@ -41,7 +51,7 @@ keymap.set("v", "<D-k>", ":m .-2<CR>==") -- move line down
 
 ----------------------
 -- Plugin Keybinds
-----------------------
+---------------------
 
 -- vim-maximizer
 keymap.set("n", "<leader>sm", ":MaximizerToggle<CR>") -- toggle split window maximization
