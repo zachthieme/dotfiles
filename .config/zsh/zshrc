@@ -1,4 +1,8 @@
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
+
+function zvm_config(){
+  ZVM_ESCAPE_KEYTIMEOUT = 0.01
+}
 export PATH="/home/zach/.cargo/bin:/snap/bin:$HOME/.local/bin:$PATH"
 eval "$(starship init zsh)" 
 eval "$(zoxide init zsh)"
