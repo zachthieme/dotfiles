@@ -8,10 +8,10 @@ yabai -m config layout bsp
 yabai -m config window_placement second_child
 
 # padding set to 12px
-yabai -m config top_padding 3 
-yabai -m config bottom_padding 3
-yabai -m config left_padding 3
-yabai -m config right_padding 3
+yabai -m config top_padding 15
+yabai -m config bottom_padding 6
+yabai -m config left_padding 6
+yabai -m config right_padding 6
 yabai -m config window_gap 6
 
 # modifier for clicking and dragging with mouse
@@ -21,15 +21,17 @@ yabai -m config mouse_action1 move
 # set modifier + right-click drag to resize window
 yabai -m config mouse_action2 resize
 
-yabai -m config normal_window_border_color   0x00FFFFFF
-yabai -m config active_window_border_color   0xff00ca4e
-yabai -m config window_opacity               off
+# yabai -m config normal_window_border_color   0x00FFFFFF
+yabai -m config insert_feedback_color        0xff00ca4e
+# yabai -m config active_window_border_color   0xff00ca4e
+yabai -m config window_opacity               on
+yabai -m config normal_window_opacity         .85
 #yabai -m config normal_window_opacity        1
-yabai -m config window_border_width          3              
-yabai -m config window_border_radius         12             
-yabai -m config window_border_blur           off            
-yabai -m config window_border_hidpi          on             
-yabai -m config window_border                on             
+#yabai -m config window_border_width          3              
+#yabai -m config window_border_radius         12             
+#yabai -m config window_border_blur           off            
+# yabai -m config window_border_hidpi          on             
+# yabai -m config window_border                on             
 
 # do not manage windows
 yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
@@ -45,11 +47,13 @@ yabai -m rule --add app="^Calculator$" manage=off
 yabai -m rule --add app="^Karabiner-Elements$" manage=off
 yabai -m rule --add app="^Fig$" manage=off
 yabai -m rule --add app="^Cisco AnyConnect Secure Mobility Client$" manage=off
+yabai -m rule --add app="^Keymapp$" manage=off
 
 # set to always on top
 yabai -m rule --add app="^Tana$" manage=off sticky=on layer=above
 yabai -m rule --add app="^Slack$" manage=off sticky=on layer=above
 yabai -m rule --add app="^Messages$" manage=off sticky=on layer=above
+yabai -m rule --add app="^Logseq$" manage=off sticky=on layer=above
 
 # Rules to move windows to the right space
 yabai -m space 1 --label term
@@ -65,7 +69,7 @@ yabai -m rule --add app="^Outlook \(PWA\)$" space=2
 
 # keep next two lines in current order due to inheritence of the rules
 yabai -m space 4 --label conf
-yabai -m rule --add app="^(Zoom|Microsoft Teams)$" space=5
+yabai -m rule --add app="^(Zoom|Microsoft Teams \(work or school\))$" space=5
 
 yabai -m space 3 --label cal
 yabai -m rule --add app="^Microsoft Teams$" title="^Calendar | Microsoft Teams$" space=4
