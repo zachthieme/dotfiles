@@ -1,3 +1,9 @@
+#
+meh - z : cmd - z 
+meh - x : cmd - x 
+meh - c : cmd - c 
+meh - v : cmd - v 
+
 # toggle sticky (show on all spaces)
 alt - s : yabai -m window --toggle sticky
 
@@ -73,9 +79,9 @@ shift + alt - 6 : yabai -m space --focus 6;
 shift + alt - 7 : yabai -m space --focus 7;
 
 # stop/start/restart yabai
-ctrl + alt - q : brew services stop yabai
-ctrl + alt - s : brew services start yabai
-ctrl + alt - r : brew services restart yabai
+ctrl + alt - q : yabai --stop-service
+ctrl + alt - s : yabai --start-service
+ctrl + alt - r : yabai --restart-service
 
 # create desktop, move window and follow focus - uses jq for parsing json (brew install jq)
 
@@ -86,11 +92,11 @@ shift + cmd - n : yabai -m space --create && \
 # find name of window
 shift + alt - i : yabai -m query --windows --window  > ~/temp.txt
 
-# hide and unhide the tana window
-shift + ctrl - u : ~/.config/yabai/toggle-app.sh Tana 
+# hide and unhide the roam research  window
+shift + ctrl - u : ~/.config/yabai/toggle-app.sh "Logseq" 
 
-# select the tana window
-shift + ctrl - b : yabai -m query --windows --space | jq '.[] | select(.app =="Tana") | .id ' | xargs yabai -m window --focus
+# select the roam research window
+shift + ctrl - b : yabai -m query --windows --space | jq '.[] | select(.app =="Logseq") | .id ' | xargs yabai -m window --focus
 
 # hide and unhide the slack window
 shift + ctrl - h : ~/.config/yabai/toggle-app.sh Slack 
@@ -101,7 +107,7 @@ shift + ctrl - g : yabai -m query --windows --space | jq '.[] | select(.app =="S
 # hide and unhide the messages window
 shift + ctrl - i : ~/.config/yabai/toggle-app.sh Messages 
 
-# select the slack window
+# select the messages window
 shift + ctrl - k : yabai -m query --windows --space | jq '.[] | select(.app =="Messages") | .id ' | xargs yabai -m window --focus
 
  
