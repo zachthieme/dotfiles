@@ -50,10 +50,10 @@ yabai -m rule --add app="^Cisco AnyConnect Secure Mobility Client$" manage=off
 yabai -m rule --add app="^Keymapp$" manage=off
 
 # set to always on top
-yabai -m rule --add app="^Tana$" manage=off sticky=on layer=above
-yabai -m rule --add app="^Slack$" manage=off sticky=on layer=above
-yabai -m rule --add app="^Messages$" manage=off sticky=on layer=above
-yabai -m rule --add app="^Logseq$" manage=off sticky=on layer=above
+yabai -m rule --add app="^Tana$" manage=off sticky=on sub-layer=above
+yabai -m rule --add app="^Slack$" manage=off sticky=on sub-layer=above
+yabai -m rule --add app="^Messages$" manage=off sticky=on sub-layer=above
+yabai -m rule --add app="^Logseq$" manage=off sticky=on sub-layer=above
 
 # Rules to move windows to the right space
 yabai -m space 1 --label term

@@ -1,17 +1,17 @@
+# #
+# meh - z : cmd - z 
+# meh - x : cmd - x 
+# meh - c : cmd - c 
+# meh - v : cmd - v 
 #
-meh - z : cmd - z 
-meh - x : cmd - x 
-meh - c : cmd - c 
-meh - v : cmd - v 
-
-# toggle sticky (show on all spaces)
-alt - s : yabai -m window --toggle sticky
+# # toggle sticky (show on all spaces)
+ alt - s : yabai -m window --toggle sticky
 
 
-# toggle sticky, topmost and resize to picture-in-picture size
-alt - p : yabai -m window --toggle sticky;\
-          yabai -m window --toggle topmost;\
-          yabai -m window --grid 5:5:4:0:1:1
+# # toggle sticky, topmost and resize to picture-in-picture size
+ alt - p : yabai -m window --toggle sticky;\
+           yabai -m window --toggle topmost;\
+           yabai -m window --grid 5:5:4:0:1:1
 
 # change window focus within space
 alt - j : yabai -m window --focus south
@@ -62,12 +62,12 @@ shift + alt - p : yabai -m window --space prev;
 shift + alt - n : yabai -m window --space next;
 
 # move window to space
-ctrl + alt - 1 : yabai -m window --space 1 ; yabai -m space --focus 1
-ctrl + alt - 2 : yabai -m window --space 2 ; yabai -m space --focus 2
-ctrl + alt - 3 : yabai -m window --space 3 ; yabai -m space --focus 3
-ctrl + alt - 4 : yabai -m window --space 4 ; yabai -m space --focus 4
-ctrl + alt - 5 : yabai -m window --space 5 ; yabai -m space --focus 5
-ctrl + alt - 6 : yabai -m window --space 6 ; yabai -m space --focus 6
+ctrl + alt - 1 : yabai -m window --space 1 ; yabai -m space --focus 1;
+ctrl + alt - 2 : yabai -m window --space 2 ; yabai -m space --focus 2;
+ctrl + alt - 3 : yabai -m window --space 3 ; yabai -m space --focus 3;
+ctrl + alt - 4 : yabai -m window --space 4 ; yabai -m space --focus 4;
+ctrl + alt - 5 : yabai -m window --space 5 ; yabai -m space --focus 5;
+ctrl + alt - 6 : yabai -m window --space 6 ; yabai -m space --focus 6;
 
 # move to space #
 shift + alt - 1 : yabai -m space --focus 1;

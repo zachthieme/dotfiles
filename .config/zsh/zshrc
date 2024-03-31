@@ -1,5 +1,6 @@
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
 export PATH="/home/zach/.cargo/bin:/snap/bin:$HOME/.local/bin:$PATH"
+export EDITOR="/opt/homebrew/bin/nvim"
 eval "$(starship init zsh)" 
 eval "$(zoxide init zsh)"
 alias exa='exa --group-directories-first'
