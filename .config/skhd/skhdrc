@@ -14,6 +14,7 @@
            yabai -m window --grid 5:5:4:0:1:1
 
 # change window focus within space
+# TODO change this to something other than alt as it makes my finger sleepy
 alt - j : yabai -m window --focus south
 alt - k : yabai -m window --focus north
 alt - h : yabai -m window --focus west
