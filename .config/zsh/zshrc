@@ -1,5 +1,5 @@
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
-export PATH="/home/zach/.cargo/bin:/snap/bin:$HOME/.local/bin:$PATH"
+#export PATH="/home/zach/.cargo/bin:/snap/bin:$HOME/.local/bin:$PATH"
 export EDITOR="/opt/homebrew/bin/nvim"
 eval "$(starship init zsh)" 
 eval "$(zoxide init zsh)"
@@ -21,15 +21,15 @@ alias nfa='fd . $HOME/.config -H --changed-within 1d -E chromium -x /usr/bin/git
 # Show current virtual environment (Python).
 #
 #
-export VIRTUAL_ENV_DISABLE_PROMPT=true
-
-spaceship_venv_status() {
-  [[ $SPACESHIP_VENV_SHOW == false ]] && return
-
-  # Check if the current directory running via Virtualenv
-  [ -n "$VIRTUAL_ENV" ] || return
-  echo -n " %Bvia%b "
-  echo -n "%{$fg_bold[blue]%}"
-  echo -n "$(basename $VIRTUAL_ENV)"
-  echo -n "%{$reset_color%}"
-}
+# export VIRTUAL_ENV_DISABLE_PROMPT=true
+#
+# spaceship_venv_status() {
+#   [[ $SPACESHIP_VENV_SHOW == false ]] && return
+#
+#   # Check if the current directory running via Virtualenv
+#   [ -n "$VIRTUAL_ENV" ] || return
+#   echo -n " %Bvia%b "
+#   echo -n "%{$fg_bold[blue]%}"
+#   echo -n "$(basename $VIRTUAL_ENV)"
+#   echo -n "%{$reset_color%}"
+# }
