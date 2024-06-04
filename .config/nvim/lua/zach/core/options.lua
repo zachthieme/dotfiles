@@ -11,7 +11,7 @@ opt.expandtab = true -- expand tab to spaces
 opt.autoindent = true -- copy indent from current line when starting new one
 
 -- line wrapping
-opt.wrap = false -- disable line wrapping
+opt.wrap = true -- disable line wrapping
 
 -- search settings
 opt.ignorecase = true -- ignore case when searching
@@ -38,7 +38,9 @@ opt.clipboard:append("unnamedplus") -- use system clipboard as default register
 opt.splitright = true -- split vertical window to the right
 opt.splitbelow = true -- split horizontal window to the bottom
 
-opt.iskeyword:append("-") -- consider string-string as whole word
+-- turn off swapfile
+opt.swapfile = false
 
--- items for config for writing
--- https://news.itsfoss.com/configuring-vim-writing/
+-- enable spell check
+vim.opt.spelllang = "en_us"
+vim.opt.spell = true
