@@ -63,13 +63,13 @@ return {
     -- callback where you can add custom code when the Zen window closes
     on_close = function() end,
 
-    vim.cmd("autocmd VimEnter *.md,*.txt :ZenMode"),
-    vim.api.nvim_create_autocmd({ "VimEnter", "BufReadPost" }, {
-      pattern = { "*.md", "*.txt" },
-      callback = function()
-        local zen_mode = require("zen-mode")
-        zen_mode.open()
-      end,
-    }),
+    --    vim.cmd("autocmd VimEnter *.md,*.txt :ZenMode"),
+    -- vim.api.nvim_create_autocmd({ "VimEnter", "BufReadPost" }, {
+    --   pattern = { "*.md", "*.txt" },
+    --   callback = function()
+    --     local zen_mode = require("zen-mode")
+    --     zen_mode.open()
+    --   end,
+    -- }),
   },
 }
