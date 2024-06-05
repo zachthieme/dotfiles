@@ -1,7 +1,7 @@
 return {
   "preservim/vim-pencil",
   init = function()
-    vim.g["pencil#wrapModeDefault"] = "soft"
+    vim.g["pencil#wrapModeDefault"] = "hard"
   end,
   config = function()
     local keymap = vim.keymap
