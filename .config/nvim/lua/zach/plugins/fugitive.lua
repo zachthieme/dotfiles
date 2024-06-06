@@ -5,7 +5,7 @@ return {
     keymap.set(
       "n",
       "<leader>q",
-      '<cmd>:Gwrite <BAR> Git commit -m "updated doc" <BAR> Git push <BAR> q<cr>',
+      '<cmd>:Gwrite <BAR> Git commit -m "updated doc :f" <BAR> Git push <BAR> q<cr>',
       { desc = "Push to github" }
     )
   end,

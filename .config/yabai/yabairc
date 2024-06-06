@@ -21,17 +21,9 @@ yabai -m config mouse_action1 move
 # set modifier + right-click drag to resize window
 yabai -m config mouse_action2 resize
 
-# yabai -m config normal_window_border_color   0x00FFFFFF
 yabai -m config insert_feedback_color        0xff00ca4e
-# yabai -m config active_window_border_color   0xff00ca4e
 yabai -m config window_opacity               on
 yabai -m config normal_window_opacity         .85
-#yabai -m config normal_window_opacity        1
-#yabai -m config window_border_width          3              
-#yabai -m config window_border_radius         12             
-#yabai -m config window_border_blur           off            
-# yabai -m config window_border_hidpi          on             
-# yabai -m config window_border                on             
 
 # do not manage windows
 yabai -m rule --add label="Finder" app="^Finder$" title="(Co(py|nnect)|Move|Info|Pref)" manage=off
@@ -50,11 +42,9 @@ yabai -m rule --add app="^Cisco AnyConnect Secure Mobility Client$" manage=off
 yabai -m rule --add app="^Keymapp$" manage=off
 
 # set to always on top
-# yabai -m rule --add app="^Tana$" manage=off sticky=on sub-layer=above
 yabai -m rule --add app="^Slack$" manage=off sticky=on sub-layer=above
 yabai -m rule --add app="^Messages$" manage=off sticky=on sub-layer=above
-# # yabai -m rule --add app="^Logseq$" manage=off sticky=on sub-layer=above
-#
+
 # # Rules to move windows to the right space
 yabai -m space 1 --label term
 yabai -m rule --add app="^(iTerm2|Tabby)$" space=1
