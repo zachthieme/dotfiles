@@ -11,6 +11,8 @@ return {
       javascriptreact = { "eslint_d" },
       typescriptreact = { "eslint_d" },
       svelte = { "eslint_d" },
+      -- markdown = { "alex" },
+      markdown = { "proselint" },
       --   python = { "pylint" },
     }
 
