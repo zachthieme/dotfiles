@@ -8,7 +8,7 @@ return {
     keymap.set(
       "n",
       "<leader>vs",
-      "<cmd>:topleft vs <BAR> vertical resize 50<cr>",
+      "<cmd>:topleft vs <BAR> vertical resize 50 <BAR> norm Gzt<cr>",
       { desc = "create split to the left" }
     )
   end,
