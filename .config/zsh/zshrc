@@ -1,9 +1,20 @@
+# Required for codewhisperer
+[[ -f "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.pre.zsh"
+
+source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
+antidote load ${ZDOTDIR:-$HOME}/.config/zsh/zsh_plugins.txt
+
+# zsh-history-substring-search configuration
+bindkey '^[[A' history-substring-search-up # or '\eOA'
+bindkey '^[[B' history-substring-search-down # or '\eOB'
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down
+HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
+
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
-function zvm_config(){
-  ZVM_ESCAPE_KEYTIMEOUT = 0.01
-}
+
 export PATH="/home/zach/.cargo/bin:/snap/bin:$HOME/.local/bin:$PATH:/usr/local/go/bin"
-# export EDITOR="/opt/homebrew/bin/nvim"
+
 eval "$(starship init zsh)" 
 eval "$(zoxide init zsh)"
 alias exa='exa --group-directories-first'
@@ -12,27 +23,17 @@ alias l='exa'
 alias la='exa -la'
 alias a='exa -a'
 alias j='z'
+
+# dotfiles aliases
 dot (){/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME "$@";}
 dot-ls (){/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-tree --full-tree -r HEAD;}
+
 # find files changed in the .config directory in the last day 
 alias nf='fd . $HOME/.config -H --changed-within 1d -E Code -E google-chrome -x /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-files | sort | uniq'
 # alias nf='fdfind . /home/zach/.config -H --changed-within 1d -E Code -E google-chrome -x /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-files --others {} | sort | uniq'
+
 # git add files that changed in last day in .config
 alias nfa='fd . $HOME/.config -H --changed-within 1d -E chromium -x /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-files | uniq | rargs /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME add {0}'
-# alias nfa='fdfind . /home/zach/.config -H --changed-within 1d -E chromium -x /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME ls-files --others {} | uniq | rargs /usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME add {0}'
-# Virtual environment.
-# Show current virtual environment (Python).
-#
-#
-# export VIRTUAL_ENV_DISABLE_PROMPT=true
-#
-# spaceship_venv_status() {
-#   [[ $SPACESHIP_VENV_SHOW == false ]] && return
-#
-#   # Check if the current directory running via Virtualenv
-#   [ -n "$VIRTUAL_ENV" ] || return
-#   echo -n " %Bvia%b "
-#   echo -n "%{$fg_bold[blue]%}"
-#   echo -n "$(basename $VIRTUAL_ENV)"
-#   echo -n "%{$reset_color%}"
-# }
+
+# Required for codewhisperer
+[[ -f "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/codewhisperer/shell/zshrc.post.zsh"
