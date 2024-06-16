@@ -55,6 +55,13 @@ return {
         theme = my_lualine_theme,
       },
       sections = {
+        lualine_b = {
+          {
+            require("noice").api.statusline.mode.get,
+            cond = require("noice").api.statusline.mode.has,
+            color = { fg = "#ff9e64" },
+          },
+        },
         lualine_x = {
           {
             lazy_status.updates,
