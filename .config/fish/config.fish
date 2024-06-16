@@ -1,6 +1,10 @@
 set -x STARSHIP_CONFIG $HOME/.config/starship.toml
 set -x EDITOR nvim
 
+set -x GOPATH $HOME/Code/ 
+
+
+fish_add_path /usr/local/go/bin
 fish_add_path ~/.cargo/bin
 fish_add_path ~/snap/bin
 fish_add_path /opt/homebrew/bin
