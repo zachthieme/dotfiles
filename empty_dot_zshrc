@@ -1,2 +1,2 @@
-source ~/.config/zsh/zshrc
+source $HOME/.config/zsh/zshrc
 alias ls='ls -a'
