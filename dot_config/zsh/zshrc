@@ -2,7 +2,17 @@ HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
 
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
 
-export PATH="/home/zach/.cargo/bin:/snap/bin:$HOME/.local/bin:$PATH:/usr/local/go/bin"
+export PATH=$HOME/.cargo/bin:$HOME/.local/bin:$PATH:/usr/local/go/bin
+
+
+{{- if eq .chezmoi.os "linux" }}
+export PATH=/snap/bin:$PATH
+{{- end }}
+
+{{- if eq .chezmoi.os "darwin" }}
+export PATH=/opt/homebrew/bin:$PATH
+export PATH=/opt/homebrew/sbin:$PATH
+{{- end }}
 
 #eval "$(starship init zsh)" 
 eval "$(zoxide init zsh)"
