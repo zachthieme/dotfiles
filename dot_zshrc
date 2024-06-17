@@ -128,7 +128,7 @@ for key ('j') bindkey -M vicmd ${key} history-substring-search-down
 unset key
 # }}} End configuration added by Zim install
 
-autoload -Uz compinit
-compinit
+# autoload -Uz compinit
+# compinit
 
 source $HOME/.config/zsh/zshrc
