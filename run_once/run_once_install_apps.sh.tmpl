@@ -1,0 +1,26 @@
+#!/bin/sh
+
+{{- if eq .chezmoi.os "linux" }}
+
+sudo add-apt-repository ppa:neovim-ppa/stable
+
+sudo apt update && sudo apt upgrade -y  
+
+sudo apt install -y bat exa fd-find fzf gh git jq mosh neovim pandoc  pass rargs ripgrep tmux vim zoxide zsh
+
+{{- end }}
+
+# For macOS systems
+{{- if eq .chezmoi.os "darwin" }}
+
+if ! command -v brew &> /dev/null
+then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+brew update
+
+# Install common packages
+brew install bat fd fzf gh git jq jupyterlab neovim pandoc pass rargs ripgrep skhd tmux vim wget yabai zoxide zsh 
+
+{{- end }}
