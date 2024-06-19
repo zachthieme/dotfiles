@@ -38,6 +38,6 @@ keymap.set("n", "<leader>zz", "<cmd> Pencil | TZMinimalist<CR>", { desc = "testi
 keymap.set(
   "n",
   "<leader>wn",
-  "<cmd>:topleft vs <BAR>vertical resize 50 <BAR>norm Gzt <BAR>Pencil <BAR>TZMinimalist<cr>",
+  "<cmd>:topleft vs <BAR>vertical resize 50 <BAR>norm Gzt <BAR><cmd>Pencil <BAR>TZMinimalist<cr>",
   { desc = "Setup my writing environment." }
 )
