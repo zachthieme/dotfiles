@@ -37,6 +37,6 @@ keymap.set("n", "<C-u>", "<C-u>zz", { desc = "move up and center" })
 keymap.set(
   "n",
   "<leader>wn",
-  "<cmd>:Pencil <BAR>TZMinimalist <BAR>topleft vs <BAR>vertical resize 50 <BAR>norm Gzt<cr> ",
+  "<cmd>Pencil <BAR>TZMinimalist <BAR>:topleft vs <BAR>vertical resize 50 <BAR>norm Gzt<cr>",
   { desc = "Setup my writing environment." }
 )
