@@ -1,13 +1,25 @@
 #!/bin/sh
 
+
+# install starship
+curl -sS https://starship.rs/install.sh | sh
+
+# install cargo and rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 {{- if eq .chezmoi.os "linux" }}
 
+# Add repo for neovim
 sudo add-apt-repository ppa:neovim-ppa/stable
 
 sudo apt update && sudo apt upgrade -y  
 
-sudo apt install -y bat exa fd-find fzf gh git jq mosh neovim pandoc pass rargs ripgrep tmux vim zsh
+sudo apt install -y bat exa fd-find fzf gh git jq mosh neovim pandoc pass ripgrep tmux vim zsh
 
+# install rargs
+cargo install --git https://github.com/lotabout/rargs.git
+
+# install zoxide
 curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 
 {{- end }}
