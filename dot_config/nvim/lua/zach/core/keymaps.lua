@@ -10,7 +10,7 @@ local keymap = vim.keymap -- for conciseness
 keymap.set("i", "jj", "<ESC>", { desc = "Exit insert mode with jj" })
 
 -- clear search highlights
-keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
+keymap.set("n", "<leader>nh", ":mohl<CR>", { desc = "Clear search highlights" })
 
 -- delete single character without copying into register
 -- keymap.set("n", "x", '"_x')
@@ -37,6 +37,6 @@ keymap.set("n", "<C-u>", "<C-u>zz", { desc = "move up and center" })
 keymap.set(
   "n",
   "<leader>wn",
-  "<cmd>topleft vs<BAR>vertical resize 50<cr><BAR><cmd>TZMinimalist<cr><BAR>norm Gzt<cr>",
+  "<cmd>topleft vs<BAR>vertical resize 50<cr><BAR><cmd>TZMinimalist<cr><BAR><cmd>norm Gzt<cr>",
   { desc = "Setup my writing environment." }
 )
