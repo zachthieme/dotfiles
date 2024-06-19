@@ -34,6 +34,7 @@ keymap.set("n", "<leader>a", "ggVG<CR>", { desc = "Select all" }) -- select all 
 keymap.set("v", "<leader>c", '"*y<CR>', { desc = "Copy to system clipboard" }) -- copy to system clipboard
 keymap.set("n", "<C-d>", "<C-d>zz", { desc = "move down and center" })
 keymap.set("n", "<C-u>", "<C-u>zz", { desc = "move up and center" })
+keymap.set("n", "<leader>zz", "<cmd> Pencil | TZMinimalist", { desc = "testing stuff" })
 keymap.set(
   "n",
   "<leader>wn",
