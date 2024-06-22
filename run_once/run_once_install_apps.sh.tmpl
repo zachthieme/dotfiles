@@ -14,17 +14,18 @@ if [ $? -eq 1 ]; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
-INSTALL=( bat fzf gh git jq mosh neovim pandoc pass ripgrep tmux vim wget zsh )
+INSTALL=( bat exa fzf gh git jq mosh neovim pandoc pass ripgrep tmux vim wget zoxide zsh )
 
 ######## LINUX 
 {{- if eq .chezmoi.os "linux" }}
 
 # Add repo for neovim
-sudo add-apt-repository ppa:neovim-ppa/stable
+apt-cache policy | grep neovims
+if [ $? -eq 1 ]; then
+  sudo add-apt-repository ppa:neovim-ppa/stable
+fi
 
 sudo apt update && sudo apt upgrade -y  
-
-# exa needs install
 
 sudo apt install -y fd-find 
 echo ${INSTALL[@]} | xargs sudo apt install -y 
@@ -36,10 +37,10 @@ if [ $? -eq 1 ]; then
 fi
 
 # install zoxide
-which zoxide
-if [ $? -eq 1 ]; then
-  curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-fi
+## which zoxide
+## if [ $? -eq 1 ]; then
+##   curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+## fi
 
 {{- end }}
 
@@ -54,7 +55,7 @@ fi
 brew update
 
 # Install common packages
-brew install exa fd rargs skhd yabai zoxide 
+brew install fd rargs skhd yabai 
 echo ${INSTALL[@]} | xargs brew install  
 
 {{- end }}
