@@ -14,7 +14,7 @@ if [ $? -eq 1 ]; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
-INSTALL=(bat fzf gh git jq mosh neovim pandoc pass ripgrep tmux vim wget zsh)
+INSTALL=( bat fzf gh git jq mosh neovim pandoc pass ripgrep tmux vim wget zsh )
 
 ######## LINUX 
 {{- if eq .chezmoi.os "linux" }}
