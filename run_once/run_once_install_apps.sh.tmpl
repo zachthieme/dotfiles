@@ -14,6 +14,7 @@ if [ $? -eq 1 ]; then
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 fi
 
+INSTALL=(bat fzf gh git jq mosh neovim pandoc pass ripgrep tmux vim wget zsh)
 
 ######## LINUX 
 {{- if eq .chezmoi.os "linux" }}
@@ -23,7 +24,10 @@ sudo add-apt-repository ppa:neovim-ppa/stable
 
 sudo apt update && sudo apt upgrade -y  
 
-sudo apt install -y bat exa fd-find fzf gh git jq mosh neovim pandoc pass ripgrep tmux vim zsh
+# exa needs install
+
+sudo apt install -y fd-find 
+echo ${INSTALL[@]} | xargs sudo apt install -y 
 
 # install rargs
 which rargs
@@ -50,6 +54,7 @@ fi
 brew update
 
 # Install common packages
-brew install bat fd fzf gh git jq jupyterlab neovim pandoc pass rargs ripgrep skhd tmux vim wget yabai zoxide zsh 
+brew install exa fd rargs skhd yabai zoxide 
+echo ${INSTALL[@]} | xargs brew install  
 
 {{- end }}
