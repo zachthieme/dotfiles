@@ -40,3 +40,4 @@ keymap.set(
   "<cmd>topleft vs<BAR>vertical resize 50<cr><BAR><cmd>TZMinimalist<cr><BAR><cmd>norm Gzt<cr>",
   { desc = "Setup my writing environment." }
 )
+keymap.set("i", "<A-BS>", "<C-W>", { desc = "deletl previous word" })
