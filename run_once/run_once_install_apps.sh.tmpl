@@ -23,6 +23,7 @@ fi
 INSTALL=( bat fzf gh git jq mosh neovim pandoc pass ripgrep tmux vim wget zoxide zsh )
 
 ######## LINUX 
+
 {{- if eq .chezmoi.os "linux" }}
 
 # Add repo for neovim
@@ -42,7 +43,10 @@ if [ $? -eq 1 ]; then
   cargo install --git https://github.com/lotabout/rargs.git
 fi
 
+{{- end }}
+
 ######## MAC 
+
 {{- if eq .chezmoi.os "darwin" }}
 
 if ! command -v brew &> /dev/null
