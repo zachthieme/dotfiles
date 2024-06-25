@@ -9,3 +9,5 @@ set.formatoptions:remove("o")
 -- enable spell checking
 vim.opt.spelllang = "en_us"
 vim.opt.spell = true
+
+vim.cmd("<leader>wn")
