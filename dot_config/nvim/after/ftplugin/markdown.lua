@@ -10,4 +10,4 @@ set.formatoptions:remove("o")
 vim.opt.spelllang = "en_us"
 vim.opt.spell = true
 
-vim.cmd("<leader>wn")
+-- vim.cmd("<leader>wn")
