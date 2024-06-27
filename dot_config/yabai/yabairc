@@ -50,8 +50,7 @@ yabai -m space 1 --label term
 yabai -m rule --add app="^(iTerm2|Tabby)$" space=1
 
 yabai -m space 2 --label mail
-yabai -m rule --add app="^Mail - Zach Thieme - Outlook$" space=2
-yabai -m rule --add app="^Outlook \(PWA\)$" space=2
+yabai -m rule --add app="^Mail Calendar" space=2
 
 yabai -m space 3 --label cal
 
