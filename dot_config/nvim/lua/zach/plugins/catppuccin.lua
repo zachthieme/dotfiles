@@ -9,6 +9,9 @@ return {
         integrations = {
           cmp = true,
           alpha = true,
+          dashboard = true,
+          harpoon = true,
+          hop = true,
           gitsigns = true,
           nvimtree = true,
           treesitter = true,
