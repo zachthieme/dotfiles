@@ -8,6 +8,7 @@ return {
       require("catppuccin").setup({
         integrations = {
           cmp = true,
+          alpha = true,
           gitsigns = true,
           nvimtree = true,
           treesitter = true,
