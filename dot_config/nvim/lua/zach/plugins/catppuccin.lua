@@ -7,15 +7,23 @@ return {
       vim.cmd([[colorscheme catppuccin]])
       require("catppuccin").setup({
         integrations = {
-          cmp = true,
           alpha = true,
+          cmp = true,
           dashboard = true,
-          harpoon = true,
-          hop = true,
           gitsigns = true,
-          nvimtree = true,
-          treesitter = true,
+          harpoon = true,
+          leap = true,
+          lsp_trouble = true,
+          markdown = true,
+          mason = true,
+          noice = true,
           notify = false,
+          nvimtree = true,
+          telescope = {
+            enabled = true,
+          },
+          treesitter = true,
+          which_key = true,
           -- mini = {
           --     enabled = true,
           --     indentscope_color = "",
