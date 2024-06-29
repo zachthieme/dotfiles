@@ -16,14 +16,10 @@ return {
         bottom = 0,
       },
       callbacks = { -- run functions when opening/closing Ataraxis mode
-        open_pre = function()
-          vim.cmd("TWEnable")
-        end,
+        open_pre = nil,
         open_pos = nil,
         close_pre = nil,
-        close_pos = function()
-          vim.cmd("TWDisable")
-        end,
+        close_pos = nil,
       },
     },
     minimalist = {
@@ -45,7 +41,9 @@ return {
         open_pre = function()
           vim.cmd("TWEnable")
         end,
-        open_pos = nil,
+        open_pos = function()
+          vim.cmd("vsplit")
+        end,
         close_pre = nil,
         close_pos = function()
           vim.cmd("TWDisable")
