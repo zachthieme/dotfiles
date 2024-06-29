@@ -42,10 +42,14 @@ return {
         numberwidth = 1,
       },
       callbacks = { -- run functions when opening/closing Minimalist mode
-        open_pre = nil,
+        open_pre = function()
+          vim.cmd("TWEnable")
+        end,
         open_pos = nil,
         close_pre = nil,
-        close_pos = nil,
+        close_pos = function()
+          vim.cmd("TWDisable")
+        end,
       },
     },
     narrow = {
