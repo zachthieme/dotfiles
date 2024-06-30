@@ -41,4 +41,3 @@ keymap.set(
   { desc = "Setup my writing environment." }
 )
 keymap.set("i", "<A-BS>", "<C-W>", { desc = "delete previous word" })
-keymap.set("c", "h", "vert help", { desc = "make help vertical" })
