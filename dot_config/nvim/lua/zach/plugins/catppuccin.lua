@@ -10,6 +10,7 @@ return {
           alpha = true,
           cmp = true,
           dashboard = true,
+          flash = true,
           gitsigns = true,
           harpoon = true,
           leap = true,
