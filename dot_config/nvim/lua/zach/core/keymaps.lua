@@ -40,4 +40,5 @@ keymap.set(
   "<cmd>topleft vs<BAR>vertical resize 50<cr><BAR><cmd>TZMinimalist<cr><BAR><cmd>norm Gzt<cr>",
   { desc = "Setup my writing environment." }
 )
-keymap.set("i", "<A-BS>", "<C-W>", { desc = "deletl previous word" })
+keymap.set("i", "<A-BS>", "<C-W>", { desc = "delete previous word" })
+keymap.set("c", "h", "vert help", { desc = "make help vertical" })
