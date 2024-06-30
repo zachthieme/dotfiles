@@ -17,7 +17,7 @@ return {
           markdown = true,
           mason = true,
           noice = true,
-          notify = false,
+          notify = true,
           nvimtree = true,
           telescope = {
             enabled = true,
