@@ -11,4 +11,4 @@ vim.opt.spelllang = "en_us"
 vim.opt.spell = true
 
 -- vim.cmd("<leader>wn")
-vim.cmd("<cmd>topleft vs<BAR>vertical resize 50<cr><BAR><cmd>TZMinimalist<cr><BAR><cmd>norm Gzt<cr>")
+-- vim.cmd("<cmd>topleft vs<BAR>vertical resize 50<cr><BAR><cmd>TZMinimalist<cr><BAR><cmd>norm Gzt<cr>")
