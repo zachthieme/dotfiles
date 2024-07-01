@@ -19,7 +19,7 @@ opt.smartcase = true -- if you include mixed case in your search, assumes you wa
 
 -- cursor line
 opt.cursorline = true -- highlight the current cursor line
--- opt.guicursor = "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20"
+opt.guicursor = { "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20" }
 -- appearance
 
 -- turn on termguicolors for nightfly colorscheme to work
