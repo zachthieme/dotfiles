@@ -28,7 +28,7 @@ opt.background = "dark" -- colorschemes that can be light or dark will be made d
 opt.signcolumn = "yes" -- show sign column so that text doesn't shift
 
 -- cursor changes
-opt.guicursor = "n-v-i-c:hor20"
+-- opt.guicursor = "n-v-i-c:hor20"
 -- opt.guicursor = ""
 -- opt.guicursor = { "n-v:hor20,i-c:ver25" }
 
