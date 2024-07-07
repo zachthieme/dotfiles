@@ -10,6 +10,7 @@ export PATH=/usr/local/go/bin:$PATH
 
 {{- if eq .chezmoi.os "linux" }}
 export PATH=/snap/bin:$PATH
+export PATH=$HOME/bin:$PATH
 {{- end }}
 
 {{- if eq .chezmoi.os "darwin" }}
