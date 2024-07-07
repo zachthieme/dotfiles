@@ -20,21 +20,21 @@ if [ $? -eq 1 ]; then
   cargo install exa 
 fi
 
-INSTALL=( bat fzf gh git jq mosh neovim pandoc pass ripgrep tmux vim wget zoxide zsh )
+INSTALL=( bat fzf gh git jq mosh neovim pandoc pass ripgrep  tmux vim wget zoxide zsh )
 
 ######## LINUX 
 
 {{- if eq .chezmoi.os "linux" }}
 
 # Add repo for neovim
-apt-cache policy | grep neovims
+apt-cache policy | grep neovim
 if [ $? -eq 1 ]; then
   sudo add-apt-repository ppa:neovim-ppa/stable
 fi
 
 sudo apt update && sudo apt upgrade -y  
 
-sudo apt install -y fd-find 
+sudo apt install -y fd-find software-properties-common python3-launchpadlib 
 echo ${INSTALL[@]} | xargs sudo apt install -y 
 
 # install rargs
