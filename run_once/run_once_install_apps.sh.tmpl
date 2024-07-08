@@ -1,9 +1,5 @@
 #!/bin/bash
 
-########################################################
-######## GLOBAL 
-########################################################
-
 echo "########################################################"
 echo "Starting global install!"
 echo "########################################################"
@@ -41,10 +37,6 @@ fi
 
 INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep tmux vim wget zoxide zsh )
 LINUX=( fd-find software-properties-common python3-launchpadlib ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen )
-
-########################################################
-######## Raspberry Pi 
-########################################################
 
 {{- if eq .chezmoi.osRelease.id "debian" }}
 
@@ -96,10 +88,6 @@ echo ${INSTALL[@]} | xargs sudo apt install -y
 echo ${LINUX[@]} | xargs sudo apt install -y 
 
 {{- end }}
-
-########################################################
-######## MAC 
-########################################################
 
 {{- if eq .chezmoi.os "darwin" }}
 
