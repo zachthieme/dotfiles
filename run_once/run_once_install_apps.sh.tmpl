@@ -20,6 +20,16 @@ if [ $? -eq 1 ]; then
   cargo install exa 
 fi
 
+# add nvm and npm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+nvm install node
+
+# install rargs
+which rargs
+if [ $? -eq 1 ]; then
+  cargo install --git https://github.com/lotabout/rargs.git
+fi
+
 INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep tmux vim wget zoxide zsh )
 LINUX=( fd-find software-properties-common python3-launchpadlib ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen )
 
@@ -31,10 +41,6 @@ sudo apt update && sudo apt upgrade -y
 
 echo ${INSTALL[@]} | xargs sudo apt install -y 
 echo ${LINUX[@]} | xargs sudo apt install -y 
-echo ${BUILDTOOLS[@]} | xargs sudo apt install -y 
-
-# add nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 # Add neovim
 which nvim
@@ -69,15 +75,6 @@ sudo apt install -y neovim
 echo ${INSTALL[@]} | xargs sudo apt install -y 
 echo ${LINUX[@]} | xargs sudo apt install -y 
 
-# add nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-
-# install rargs
-which rargs
-if [ $? -eq 1 ]; then
-  cargo install --git https://github.com/lotabout/rargs.git
-fi
-
 {{- end }}
 
 ######## MAC 
@@ -92,7 +89,7 @@ fi
 brew update
 
 # Install common packages
-brew install fd rargs skhd yabai neovim nvm 
+brew install fd skhd yabai neovim 
 echo ${INSTALL[@]} | xargs brew install  
 
 {{- end }}
