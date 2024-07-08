@@ -20,11 +20,39 @@ if [ $? -eq 1 ]; then
   cargo install exa 
 fi
 
-INSTALL=( bat fzf gh git jq mosh neovim pandoc pass ripgrep  tmux vim wget zoxide zsh )
+INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep  tmux vim wget zoxide zsh )
+LINUX=( fd-find software-properties-common python3-launchpadlib ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen )
 
-######## LINUX 
+######## Raspberry Pi 
 
-{{- if eq .chezmoi.os "linux" }}
+{{- if eq .chezmoi.osRelease.id "debian" }}
+
+sudo apt update && sudo apt upgrade -y  
+
+echo ${INSTALL[@]} | xargs sudo apt install -y 
+echo ${LINUX[@]} | xargs sudo apt install -y 
+echo ${BUILDTOOLS[@]} | xargs sudo apt install -y 
+
+# Add neovim
+which nvim
+if [ $? -eq 1 ]; then
+  git clone --depth=1 https://github.com/neovim/neovim
+  cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
+  git checkout stable
+  sudo make install
+fi
+
+# install rargs
+which rargs
+if [ $? -eq 1 ]; then
+  cargo install --git https://github.com/lotabout/rargs.git
+fi
+
+{{- end }}
+
+######## Pop!OS 
+
+{{- if eq .chezmoi.osRelease.name "Pop!_OS" }}
 
 # Add repo for neovim
 apt-cache policy | grep neovim
@@ -34,8 +62,9 @@ fi
 
 sudo apt update && sudo apt upgrade -y  
 
-sudo apt install -y fd-find software-properties-common python3-launchpadlib 
+sudo apt install -y neovim
 echo ${INSTALL[@]} | xargs sudo apt install -y 
+echo ${LINUX[@]} | xargs sudo apt install -y 
 
 # install rargs
 which rargs
@@ -57,7 +86,7 @@ fi
 brew update
 
 # Install common packages
-brew install fd rargs skhd yabai 
+brew install fd rargs skhd yabai neovim 
 echo ${INSTALL[@]} | xargs brew install  
 
 {{- end }}
