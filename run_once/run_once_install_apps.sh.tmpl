@@ -20,7 +20,7 @@ if [ $? -eq 1 ]; then
   cargo install exa 
 fi
 
-INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep  tmux vim wget zoxide zsh )
+INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep tmux vim wget zoxide zsh )
 LINUX=( fd-find software-properties-common python3-launchpadlib ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen )
 
 ######## Raspberry Pi 
@@ -32,6 +32,9 @@ sudo apt update && sudo apt upgrade -y
 echo ${INSTALL[@]} | xargs sudo apt install -y 
 echo ${LINUX[@]} | xargs sudo apt install -y 
 echo ${BUILDTOOLS[@]} | xargs sudo apt install -y 
+
+# add nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 # Add neovim
 which nvim
@@ -66,6 +69,9 @@ sudo apt install -y neovim
 echo ${INSTALL[@]} | xargs sudo apt install -y 
 echo ${LINUX[@]} | xargs sudo apt install -y 
 
+# add nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
 # install rargs
 which rargs
 if [ $? -eq 1 ]; then
@@ -86,7 +92,7 @@ fi
 brew update
 
 # Install common packages
-brew install fd rargs skhd yabai neovim 
+brew install fd rargs skhd yabai neovim nvm 
 echo ${INSTALL[@]} | xargs brew install  
 
 {{- end }}
