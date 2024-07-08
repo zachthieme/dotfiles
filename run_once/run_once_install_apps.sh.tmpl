@@ -1,6 +1,10 @@
 #!/bin/bash
 
+########################################################
 ######## GLOBAL 
+########################################################
+
+echo "Starting global install!"
 
 # install starship
 which starship
@@ -33,7 +37,11 @@ fi
 INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep tmux vim wget zoxide zsh )
 LINUX=( fd-find software-properties-common python3-launchpadlib ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip curl doxygen )
 
+########################################################
 ######## Raspberry Pi 
+########################################################
+
+echo "Starting Raspberry Pi install!"
 
 {{- if eq .chezmoi.osRelease.id "debian" }}
 
@@ -59,7 +67,11 @@ fi
 
 {{- end }}
 
+########################################################
 ######## Pop!OS 
+########################################################
+
+echo "Starting Pop!OS install!"
 
 {{- if eq .chezmoi.osRelease.name "Pop!_OS" }}
 
@@ -77,7 +89,10 @@ echo ${LINUX[@]} | xargs sudo apt install -y
 
 {{- end }}
 
+########################################################
 ######## MAC 
+########################################################
+echo "Starting Mac Install"
 
 {{- if eq .chezmoi.os "darwin" }}
 
