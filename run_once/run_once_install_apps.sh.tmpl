@@ -19,7 +19,7 @@ fi
 # install exa
 which exa
 if [ $? -eq 1 ]; then
-  cargo install exa 
+  $HOME/.cargo/bin/cargo install exa 
 fi
 
 # add nvm and npm
@@ -31,7 +31,7 @@ fi
 # install rargs
 which rargs
 if [ $? -eq 1 ]; then
-  cargo install --git https://github.com/lotabout/rargs.git
+  $HOME/.cargo/bin/cargo install --git https://github.com/lotabout/rargs.git
 fi
 
 # install TPM for TMUX
@@ -71,7 +71,7 @@ fi
 # install rargs
 which rargs
 if [ $? -eq 1 ]; then
-  cargo install --git https://github.com/lotabout/rargs.git
+  $HOME/.cargo/bin/cargo install --git https://github.com/lotabout/rargs.git
 fi
 
 {{- end }}
