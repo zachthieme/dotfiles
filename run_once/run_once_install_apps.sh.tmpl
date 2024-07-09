@@ -26,7 +26,6 @@ fi
 command -V nvm 
 if [ $? -eq 1 ]; then
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-  nvm install node
 fi
 
 # install rargs
@@ -40,6 +39,15 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep tmux vim wget zoxide zsh )
 LINUX=( autoconf automake cmake curl doxygen fd-find g++ gettext libtool libtool-bin ninja-build pkg-config python3-launchpadlib software-properties-common unzip )
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+which node
+if [ $? -eq 1 ]; then
+  nvm install node
+fi
 
 {{- if eq .chezmoi.osRelease.id "debian" }}
 
