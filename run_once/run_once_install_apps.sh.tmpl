@@ -49,7 +49,7 @@ if [ $? -eq 1 ]; then
   nvm install node
 fi
 
-{{- if eq .chezmoi.osRelease.id "debian" }}
+{{- if (or ( eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.id "raspbian" )) }}
 
 echo "########################################################"
 echo "           Starting Raspberry Pi install!"
