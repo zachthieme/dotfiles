@@ -55,7 +55,7 @@ then
   nvm install node
 fi
 
-## {{- if and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(or ( eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.id "raspbian" )) }}
+## - if and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(or ( eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.id "raspbian" )) 
 ## echo "  "
 ## echo "  "
 ## echo "########################################################"
@@ -78,9 +78,9 @@ fi
 ##   sudo make install
 ## fi
 ##
-## {{- end }}
+## - end 
 ##
-## {{- if (and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(eq .chezmoi.osRelease.name "Pop!_OS")) }}
+## - if (and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(eq .chezmoi.osRelease.name "Pop!_OS")) 
 ##
 ## echo "  "
 ## echo "  "
@@ -102,7 +102,7 @@ fi
 ## echo ${INSTALL[@]} | xargs sudo apt install -y 
 ## echo ${LINUX[@]} | xargs sudo apt install -y 
 ##
-## {{- end }}
+## - end 
 ##
 {{- if eq .chezmoi.os "darwin" }}
 
