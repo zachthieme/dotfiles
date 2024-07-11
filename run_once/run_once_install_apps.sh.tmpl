@@ -12,7 +12,6 @@ then
 fi
 
 # install cargo and rust
-
 if ! command -v cargo &> /dev/null
 then
   echo "installing cargo"
@@ -57,10 +56,13 @@ then
 fi
 
 {{- if (or ( eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.id "raspbian" )) }}
-
+echo "  "
+echo "  "
 echo "########################################################"
 echo "           Starting Raspberry Pi install!"
 echo "########################################################"
+echo "  "
+echo "  "
 sudo apt update && sudo apt upgrade -y  
 
 echo ${INSTALL[@]} | xargs sudo apt install -y 
@@ -76,20 +78,17 @@ then
   sudo make install
 fi
 
-# install rargs
-if ! command -v rargs &> /dev/null
-then
-  echo "installing rargs"
-  $HOME/.cargo/bin/cargo install --git https://github.com/lotabout/rargs.git
-fi
-
 {{- end }}
 
 {{- if eq .chezmoi.osRelease.name "Pop!_OS" }}
 
+echo "  "
+echo "  "
 echo "########################################################"
 echo "               Starting Pop!OS install!"
 echo "########################################################"
+echo "  "
+echo "  "
 
 # Add repo for neovim
 apt-cache policy | grep neovim
@@ -107,9 +106,13 @@ echo ${LINUX[@]} | xargs sudo apt install -y
 
 {{- if eq .chezmoi.os "darwin" }}
 
+echo "  "
+echo "  "
 echo "########################################################"
 echo "                  Starting Mac Install"
 echo "########################################################"
+echo "  "
+echo "  "
 
 if ! command -v brew &> /dev/null
 then
