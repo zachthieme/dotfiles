@@ -55,7 +55,7 @@ then
   nvm install node
 fi
 
-{{- if (or ( eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.id "raspbian" )) }}
+{{- if (and ((.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id"))(or ( eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.id "raspbian" ))) }}
 echo "  "
 echo "  "
 echo "########################################################"
@@ -80,7 +80,7 @@ fi
 
 {{- end }}
 
-{{- if eq .chezmoi.osRelease.name "Pop!_OS" }}
+{{- if (and ((.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id"))(eq .chezmoi.osRelease.name "Pop!_OS")) }}
 
 echo "  "
 echo "  "
