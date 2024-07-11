@@ -55,55 +55,55 @@ then
   nvm install node
 fi
 
-{{- if and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(or ( eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.id "raspbian" )) }}
-echo "  "
-echo "  "
-echo "########################################################"
-echo "           Starting Raspberry Pi install!"
-echo "########################################################"
-echo "  "
-echo "  "
-sudo apt update && sudo apt upgrade -y  
-
-echo ${INSTALL[@]} | xargs sudo apt install -y 
-echo ${LINUX[@]} | xargs sudo apt install -y 
-
-# Add neovim
-if ! command -v nvim &> /dev/null
-then
-  echo "installing nvim"
-  git clone --depth=1 https://github.com/neovim/neovim
-  cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
-  git checkout stable
-  sudo make install
-fi
-
-{{- end }}
-
-{{- if (and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(eq .chezmoi.osRelease.name "Pop!_OS")) }}
-
-echo "  "
-echo "  "
-echo "########################################################"
-echo "               Starting Pop!OS install!"
-echo "########################################################"
-echo "  "
-echo "  "
-
-# Add repo for neovim
-apt-cache policy | grep neovim
-if [ $? -eq 1 ]; then
-  sudo add-apt-repository ppa:neovim-ppa/stable
-fi
-
-sudo apt update && sudo apt upgrade -y  
-
-sudo apt install -y neovim
-echo ${INSTALL[@]} | xargs sudo apt install -y 
-echo ${LINUX[@]} | xargs sudo apt install -y 
-
-{{- end }}
-
+## {{- if and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(or ( eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.id "raspbian" )) }}
+## echo "  "
+## echo "  "
+## echo "########################################################"
+## echo "           Starting Raspberry Pi install!"
+## echo "########################################################"
+## echo "  "
+## echo "  "
+## sudo apt update && sudo apt upgrade -y  
+##
+## echo ${INSTALL[@]} | xargs sudo apt install -y 
+## echo ${LINUX[@]} | xargs sudo apt install -y 
+##
+## # Add neovim
+## if ! command -v nvim &> /dev/null
+## then
+##   echo "installing nvim"
+##   git clone --depth=1 https://github.com/neovim/neovim
+##   cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
+##   git checkout stable
+##   sudo make install
+## fi
+##
+## {{- end }}
+##
+## {{- if (and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(eq .chezmoi.osRelease.name "Pop!_OS")) }}
+##
+## echo "  "
+## echo "  "
+## echo "########################################################"
+## echo "               Starting Pop!OS install!"
+## echo "########################################################"
+## echo "  "
+## echo "  "
+##
+## # Add repo for neovim
+## apt-cache policy | grep neovim
+## if [ $? -eq 1 ]; then
+##   sudo add-apt-repository ppa:neovim-ppa/stable
+## fi
+##
+## sudo apt update && sudo apt upgrade -y  
+##
+## sudo apt install -y neovim
+## echo ${INSTALL[@]} | xargs sudo apt install -y 
+## echo ${LINUX[@]} | xargs sudo apt install -y 
+##
+## {{- end }}
+##
 {{- if eq .chezmoi.os "darwin" }}
 
 echo "  "
