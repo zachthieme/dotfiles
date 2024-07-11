@@ -150,11 +150,13 @@ export PATH=/usr/local/go/bin:$PATH
 {{- if eq .chezmoi.os "linux" }}
 export PATH=/snap/bin:$PATH
 export PATH=$HOME/bin:$PATH
+alias cat='batcat'
 {{- end }}
 
 {{- if eq .chezmoi.os "darwin" }}
 export PATH=/opt/homebrew/bin:$PATH
 export PATH=/opt/homebrew/sbin:$PATH
+alias cat='bat'
 {{- end }}
 
 eval "$(starship init zsh)" 
@@ -166,7 +168,6 @@ alias la='exa -la'
 alias a='exa -a'
 alias j='z'
 alias cm='chezmoi'
-alias cat='batcat'
 
 alias nvim-lazy="NVIM_APPNAME=LazyVim nvim"
 alias nvim-kick="NVIM_APPNAME=kickstart nvim"
