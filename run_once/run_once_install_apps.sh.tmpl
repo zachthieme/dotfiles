@@ -24,12 +24,8 @@ then
   $HOME/.cargo/bin/cargo install exa 
 fi
 
-# add nvm and npm
-if ! command -v nvm &> /dev/null
-then
-  echo "installing nvm"
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-fi
+# install nvm
+[ ! -d $HOME/.nvm ] && echo "installing nvm" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
 # install rargs
 if ! command -v rargs &> /dev/null
@@ -120,7 +116,7 @@ fi
 brew update
 
 # Install common packages
-brew fd install neovim skhd yabai
+brew install fd neovim skhd yabai
 echo ${INSTALL[@]} | xargs brew install  
 
 {{- end }}
