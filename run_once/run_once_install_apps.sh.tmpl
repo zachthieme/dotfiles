@@ -35,7 +35,7 @@ then
 fi
 
 # install TPM for TMUX
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+[ ! -d $HOME/.tmux/plugins ] && echo "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep tmux vim wget zoxide zsh )
 LINUX=( autoconf automake cmake curl doxygen fd-find g++ gettext libtool libtool-bin ninja-build pkg-config python3-launchpadlib software-properties-common unzip )
