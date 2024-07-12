@@ -54,8 +54,8 @@ then
   echo "installing node"
   nvm install node
 fi
-
-{{- if (and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(or ( eq .chezmoi.osRelease.id "debian") (eq .chezmoi.osRelease.id "raspbian" ))) }} 
+  
+{{- if eq .osid "linux-debian" "linux-raspbian" }}
 echo "  "
 echo "  "
 echo "########################################################"
@@ -80,8 +80,7 @@ fi
 
 {{- end }} 
 
-{{- if (and (.chezmoi.osRelease) (hasKey .chezmoi.osRelease "id")(eq .chezmoi.osRelease.name "Pop!_OS")) }} 
-
+{{- if eq .osid "linux-pop" }}
 echo "  "
 echo "  "
 echo "########################################################"
@@ -104,8 +103,7 @@ echo ${LINUX[@]} | xargs sudo apt install -y
 
 {{- end }} 
 
-{{- if eq .chezmoi.os "darwin" }}
-
+{{ if eq .osid "darwin" }}
 echo "  "
 echo "  "
 echo "########################################################"

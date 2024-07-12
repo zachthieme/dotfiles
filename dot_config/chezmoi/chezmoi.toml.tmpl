@@ -1,3 +1,12 @@
+# create osid that i can operate on for different os's
+{{- $osid := .chezmoi.os -}}
+{{- if hasKey .chezmoi.osRelease "id" -}}
+{{-   $osid = printf "%s-%s" .chezmoi.os .chezmoi.osRelease.id -}}
+{{- end -}}
+
+[data]
+    osid = {{ $osid | quote }}
+
 [git]
   autoCommit = true
   autoPush = true
