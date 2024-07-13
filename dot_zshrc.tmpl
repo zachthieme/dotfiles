@@ -143,7 +143,7 @@ HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
 
 # fix to ensure that i don't have to think about fd vs fdfind on different os's
-export PATH=/usr/lib/cargo/bin
+export PATH=/usr/lib/cargo/bin:$PATH
 
 # add cargo to paths
 export PATH=/usr/lib/cargo/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH
@@ -152,7 +152,7 @@ export PATH=/usr/lib/cargo/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH
 export PATH=/usr/local/go/bin:$PATH
 
 # add atuin to path
-export PATH=$HOME/.atuin/bin
+export PATH=$HOME/.atuin/bin:$PATH
 
 {{- if eq .chezmoi.os "linux" }}
 export PATH=/snap/bin:$PATH
@@ -195,5 +195,4 @@ function nvims() {
 
 # required for atuin to function
 . "$HOME/.atuin/bin/env"
-
 eval "$(atuin init zsh)"
