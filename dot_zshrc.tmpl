@@ -151,6 +151,9 @@ export PATH=/usr/lib/cargo/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH
 # add go to paths
 export PATH=/usr/local/go/bin:$PATH
 
+# add atuin to path
+export PATH=$HOME/.atuin/bin
+
 {{- if eq .chezmoi.os "linux" }}
 export PATH=/snap/bin:$PATH
 export PATH=$HOME/bin:$PATH
