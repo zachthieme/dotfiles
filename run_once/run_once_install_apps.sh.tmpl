@@ -34,6 +34,13 @@ then
   $HOME/.cargo/bin/cargo install --git https://github.com/lotabout/rargs.git
 fi
 
+#install atuin
+if ! command -v atuin &> /dev/null
+then
+  echo "installing atuin"
+  curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+fi
+
 # install TPM for TMUX
 [ ! -d $HOME/.tmux/plugins ] && echo "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
