@@ -161,17 +161,23 @@ path+=$HOME/.atuin/bin
 {{- if eq .chezmoi.os "linux" }}
 path+=/snap/bin
 path+=$HOME/bin
+
+# when you forget what you did: https://stackoverflow.com/questions/11530090/adding-a-new-entry-to-the-path-variable-in-zsh
+export PATH
+
 alias cat='batcat'
 {{- end }}
 
 {{- if eq .chezmoi.os "darwin" }}
 path+=/opt/homebrew/bin
 path+=/opt/homebrew/sbin
-alias cat='bat'
-{{- end }}
 
 # when you forget what you did: https://stackoverflow.com/questions/11530090/adding-a-new-entry-to-the-path-variable-in-zsh
 export PATH
+
+alias cat='bat'
+{{- end }}
+
 
 eval "$(starship init zsh)" 
 eval "$(zoxide init zsh)"
