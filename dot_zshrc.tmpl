@@ -145,20 +145,21 @@ ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
 echo $PATH
 
 # fix to ensure that i don't have to think about fd vs fdfind on different os's
-path=/usr/lib/cargo/bin $path
+path=(/usr/lib/cargo/bin $path)
 
 # add cargo to paths
-path+=$HOME/.cargo/bin $HOME/.local/bin 
+path+=($HOME/.cargo/bin)
+path+=($HOME/.local/bin)
 
 # add go to paths
-path+=/usr/local/go/bin
+path+=(/usr/local/go/bin)
 
 # add atuin to path
-path+=$HOME/.atuin/bin
+path+=($HOME/.atuin/bin)
 
 {{- if eq .chezmoi.os "linux" }}
-path+=/snap/bin
-path+=$HOME/bin
+path+=(/snap/bin)
+path+=($HOME/bin)
 
 export PATH
 
