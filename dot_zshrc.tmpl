@@ -189,3 +189,8 @@ function nvims() {
   fi
   NVIM_APPNAME=$config nvim $@
 }
+
+# required for atuin to function
+. "$HOME/.atuin/bin/env"
+
+eval "$(atuin init zsh)"
