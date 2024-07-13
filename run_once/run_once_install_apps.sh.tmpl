@@ -85,15 +85,15 @@ echo "########################################################"
 echo "  "
 echo "  "
 
-# Add repo for neovim
-apt-cache policy | grep neovim
-if [ $? -eq 1 ]; then
-  sudo add-apt-repository ppa:neovim-ppa/stable
+# install neovim with snap as it is most current
+if ! command -v nvim &> /dev/null
+then
+  "installing nvim with snap"
+  sudo snap install nvim --classic
 fi
 
 sudo apt update && sudo apt upgrade -y  
 
-sudo apt install -y neovim
 echo ${INSTALL[@]} | xargs sudo apt install -y 
 echo ${LINUX[@]} | xargs sudo apt install -y 
 

@@ -142,27 +142,24 @@ HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
 
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
 
+echo $PATH
+
 # fix to ensure that i don't have to think about fd vs fdfind on different os's
-## export PATH=/usr/lib/cargo/bin:$PATH
 path=/usr/lib/cargo/bin $path
 
 # add cargo to paths
-## export PATH=/usr/lib/cargo/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH
-path+=/usr/lib/cargo/bin $HOME/.cargo/bin $HOME/.local/bin 
+path+=$HOME/.cargo/bin $HOME/.local/bin 
 
 # add go to paths
-## export PATH=/usr/local/go/bin:$PATH
 path+=/usr/local/go/bin
 
 # add atuin to path
-## export PATH=$HOME/.atuin/bin:$PATH
 path+=$HOME/.atuin/bin
 
 {{- if eq .chezmoi.os "linux" }}
 path+=/snap/bin
 path+=$HOME/bin
 
-# when you forget what you did: https://stackoverflow.com/questions/11530090/adding-a-new-entry-to-the-path-variable-in-zsh
 export PATH
 
 alias cat='batcat'
@@ -172,7 +169,6 @@ alias cat='batcat'
 path+=/opt/homebrew/bin
 path+=/opt/homebrew/sbin
 
-# when you forget what you did: https://stackoverflow.com/questions/11530090/adding-a-new-entry-to-the-path-variable-in-zsh
 export PATH
 
 alias cat='bat'
