@@ -142,7 +142,13 @@ HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
 
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jj
 
+# fix to ensure that i don't have to think about fd vs fdfind on different os's
+export PATH=/usr/lib/cargo/bin
+
+# add cargo to paths
 export PATH=/usr/lib/cargo/bin:$HOME/.cargo/bin:$HOME/.local/bin:$PATH
+
+# add go to paths
 export PATH=/usr/local/go/bin:$PATH
 
 {{- if eq .chezmoi.os "linux" }}
