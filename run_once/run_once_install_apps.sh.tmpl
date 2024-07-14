@@ -1,7 +1,25 @@
 #!/bin/bash
 
+# INSTALL: any tool that can be deployed via a package manager across all distro's and have a new enough version
+# DEBIAN: developer tools that are required for other installs to work
+INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep tmux vim wget zoxide zsh )
+DEBIAN=( autoconf automake cmake curl doxygen fd-find g++ gettext libtool libtool-bin ninja-build  pkg-config protobuf-compiler python3-launchpadlib software-properties-common unzip )
+
 echo "########################################################"
-echo "                Install rust tools!"
+echo "                Update Debian distro's"
+echo "########################################################"
+
+{{- if eq .osid "linux-pop" "linux-debian" "linux-raspbian" }}
+
+sudo apt update && sudo apt upgrade -y  
+
+echo ${INSTALL[@]} | xargs sudo apt install -y 
+echo ${DEBIAN[@]} | xargs sudo apt install -y 
+
+{{- end}}
+
+echo "########################################################"
+echo "           Non-Package Manager Installs All OS"
 echo "########################################################"
 
 # install starship
@@ -44,8 +62,6 @@ fi
 # install TPM for TMUX
 [ ! -d $HOME/.tmux/plugins ] && echo "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
-INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep tmux vim wget zoxide zsh )
-LINUX=( autoconf automake cmake curl doxygen fd-find g++ gettext libtool libtool-bin ninja-build  pkg-config protobuf-compiler python3-launchpadlib software-properties-common unzip )
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -59,6 +75,7 @@ then
 fi
   
 {{- if eq .osid "linux-debian" "linux-raspbian" }}
+# TODO: seperate raspbian so that you can install a precompiled binary from s3 - need to compile binary
 echo "  "
 echo "  "
 echo "########################################################"
@@ -66,15 +83,11 @@ echo "           Starting Raspberry Pi install!"
 echo "########################################################"
 echo "  "
 echo "  "
-sudo apt update && sudo apt upgrade -y  
-
-echo ${INSTALL[@]} | xargs sudo apt install -y 
-echo ${LINUX[@]} | xargs sudo apt install -y 
 
 # Add neovim
 if ! command -v nvim &> /dev/null
 then
-  echo "installing nvim"
+  echo "building nvim"
   git clone --depth=1 https://github.com/neovim/neovim
   cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
   git checkout stable
@@ -98,11 +111,6 @@ then
   "installing nvim with snap"
   sudo snap install nvim --classic
 fi
-
-sudo apt update && sudo apt upgrade -y  
-
-echo ${INSTALL[@]} | xargs sudo apt install -y 
-echo ${LINUX[@]} | xargs sudo apt install -y 
 
 {{- end }} 
 
