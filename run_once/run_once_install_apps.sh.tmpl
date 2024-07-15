@@ -56,7 +56,7 @@ fi
 if ! command -v atuin &> /dev/null
 then
   echo "installing atuin"
-  cargo install atuin
+  curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 fi
 
 # install TPM for TMUX
