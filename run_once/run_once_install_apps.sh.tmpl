@@ -131,7 +131,15 @@ fi
 brew update
 
 # Install common packages
-brew install fd neovim skhd yabai
+#brew install fd neovim skhd yabai
+
+# Install aerospace window manager
+brew install --cask nikitabobko/tap/aerospace
+
+# install jankybar for the green window highlights
+brew tap FelixKratz/formulae
+brew install borders
+
 echo ${INSTALL[@]} | xargs brew install  
 
 {{- end }}
