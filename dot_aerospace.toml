@@ -137,6 +137,7 @@ alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
+alt-shift-period = 'mode zach'
 
 
 alt-e = 'balance-sizes'
@@ -157,6 +158,9 @@ alt-shift-h = ['join-with left', 'mode main']
 alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
+
+[mode.zach.binding]
+r = ['flatten-workspace-tree', 'mode main'] # reset layout
 
 
 # Bind windows to workspaces
