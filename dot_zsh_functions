@@ -15,3 +15,31 @@ function zkill() {
       fi
   ' --
 }
+
+function man() {
+    if command -v fzf >/dev/null 2>&1; then
+        # If fzf is available, use it for searching
+        local page=$(command man -k . | fzf --prompt='Man> ' | awk '{print $1}')
+        if [[ -n $page ]]; then
+            nvim +"Man $page | only"
+        fi
+    else
+        # If fzf is not available, use the argument directly
+        nvim +"Man $1 | only"
+    fi
+}
+
+function logg() {
+    git lg | fzf --ansi --no-sort \
+        --preview 'echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % git show % --color=always' \
+        --preview-window=right:50%:wrap --height 100% \
+        --bind 'enter:execute(echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % sh -c "git show % | nvim -c \"setlocal buftype=nofile bufhidden=wipe noswapfile nowrap\" -c \"nnoremap <buffer> q :q!<CR>\" -")' \
+        --bind 'ctrl-e:execute(echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % sh -c "gh browse %")' \
+}
+
+# Creates a folder named with the current or prefixed date, using the format "prefix-YYYY-MM-DD" if a prefix is provided.
+function mkdd ()
+{
+ mkdir -p ${1:+$1$prefix_separator}"$(date +%F)"; }
+
+
