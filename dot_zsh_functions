@@ -42,4 +42,120 @@ function mkdd ()
 {
  mkdir -p ${1:+$1$prefix_separator}"$(date +%F)"; }
 
+function man() {
+    if command -v fzf >/dev/null 2>&1; then
+        # If fzf is available, use it for searching
+        local page=$(command man -k . | fzf --prompt='Man> ' | awk '{print $1}')
+        if [[ -n $page ]]; then
+            nvim +"Man $page | only"
+        fi
+    else
+        # If fzf is not available, use the argument directly
+        nvim +"Man $1 | only"
+    fi
+}
+
+function apply_pattern() {
+    awk "NR == 1 || /$1/"
+}
+
+function mkdd ()
+{
+ mkdir -p ${1:+$1$prefix_separator}"$(date +%F)"; }
+
+# Creates a real-time countdown with alert sound, useful for bash scripts and terminal.
+function timer ()
+{
+  total=$1 
+  for ((i=total; i>0; i--)); do sleep 1; printf "Time remaining %s secs \r" "$i"; done
+  echo -e "\a" 
+}
+
+# Display calendar with day highlighted
+function cal ()
+{
+  if [ -t 1 ] ; then alias cal="ncal -b" ; else alias cal="/usr/bin/cal" ; fi
+}
+
+
+# Common function to search for a string in files using rga and fzf, and opens the file with nvim.
+function _fif_common() {
+  local ignore_case_flag="$1"
+  shift
+
+  local files
+  local preview_cmd=$(printf "rga %s --pretty --context 10 '%s' {}" "$ignore_case_flag" "$*")
+  local rga_output=$(rga --max-count=1 $ignore_case_flag --files-with-matches --no-messages "$*")
+  # PROJECT: project
+  # This is used to copy file names so that they can be used a project documentaiton
+  echo "$rga_output" | xsel --clipboard --input
+  IFS=$'\n' files=($(echo "$rga_output" | fzf-tmux +m --preview="$preview_cmd" --multi --select-1 --exit-0)) || return 1
+
+  if [ ${#files[@]} -eq 0 ]; then
+    echo "No files selected."
+    return 0
+  fi
+
+  typeset -a temp_files
+  for i in {1..${#files[@]}}; do
+    if [[ -n "${files[i]}" ]]; then
+      temp_files[i]=$(realpath "${files[i]}")
+    fi
+  done
+  files=("${temp_files[@]}")
+  local nvim_cmd=""
+  case "${#files[@]}" in
+    2)
+      nvim -O "${files[1]}" "${files[2]}"
+      ;;
+    3)
+      nvim_cmd="nvim -O \"${files[1]}\" -c 'wincmd j' -c \"vsplit ${files[2]}\" -c \"split ${files[3]}\""
+      ;;
+    4)
+      nvim_cmd="nvim -O \"${files[1]}\" -c \"vsplit ${files[2]}\" -c \"split ${files[3]}\" -c 'wincmd h' -c \"split ${files[4]}\""
+      ;;
+    *)
+      nvim_cmd="nvim \"${files[@]}\""
+      ;;
+  esac
+
+  eval "$nvim_cmd"
+}
+
+# Wrapper function for case-sensitive search
+function fifs() {
+    _fif_common "" "$@"
+}
+
+# Wrapper function for case-insensitive search
+function fif() {
+    _fif_common "--ignore-case" "$@"
+}
+
+
+# Copy the current working directory path to the clipboard
+function cpa() {
+    if command -v xclip > /dev/null; then
+        printf "%s" "$PWD" | xclip -selection clipboard
+        printf "%s\n" "Current working directory ('$(basename "$PWD")') path copied to clipboard."
+    else
+        printf "%s\n" "Error: 'xclip' command not found. Please install 'xclip' to use this function."
+    fi
+}
+
+# Change the directory to the path stored in the clipboard
+function dpa() {
+    if command -v xclip > /dev/null; then
+        local target_dir
+        target_dir="$(xclip -o -sel clipboard)"
+        if [[ -d "${target_dir}" ]]; then
+            cd "${target_dir}" && printf "%s\n" "Changed directory to: ${target_dir}"
+        else
+            printf "%s\n" "Error: Invalid directory path or directory does not exist."
+        fi
+    else
+        printf "%s\n" "Error: 'xclip' command not found. Please install 'xclip' to use this function."
+    fi
+}
+
 
