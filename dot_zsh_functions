@@ -132,11 +132,11 @@ function fif() {
 
 # Copy the current working directory path to the clipboard
 function cpa() {
-    if command -v xclip > /dev/null; then
-        printf "%s" "$PWD" | xclip -selection clipboard
+    if command -v pbcopy > /dev/null; then
+        printf "%s" "$PWD" | pbcopy
         printf "%s\n" "Current working directory ('$(basename "$PWD")') path copied to clipboard."
     else
-        printf "%s\n" "Error: 'xclip' command not found. Please install 'xclip' to use this function."
+        printf "%s\n" "Error: 'pbcopy' command not found. Please install 'pbcopy' to use this function."
     fi
 }
 
