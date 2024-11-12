@@ -142,16 +142,16 @@ function cpa() {
 
 # Change the directory to the path stored in the clipboard
 function dpa() {
-    if command -v xclip > /dev/null; then
+    if command -v pbpaste > /dev/null; then
         local target_dir
-        target_dir="$(xclip -o -sel clipboard)"
+        target_dir="$(pbpaste)"
         if [[ -d "${target_dir}" ]]; then
             cd "${target_dir}" && printf "%s\n" "Changed directory to: ${target_dir}"
         else
             printf "%s\n" "Error: Invalid directory path or directory does not exist."
         fi
     else
-        printf "%s\n" "Error: 'xclip' command not found. Please install 'xclip' to use this function."
+        printf "%s\n" "Error: 'pbpaste' command not found. Please install 'pbpaste' to use this function."
     fi
 }
 
