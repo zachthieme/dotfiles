@@ -29,7 +29,6 @@ return {
 			ensure_installed = {
 				"html",
 				"cssls",
-				"markdown",
 				"tailwindcss",
 				"svelte",
 				"lua_ls",
@@ -38,7 +37,6 @@ return {
 				"prismals",
 				"pyright",
 				"gopls",
-				"proselint",
 			},
 			-- auto-install configured servers (with lspconfig)
 			automatic_installation = true, -- not the same as ensure_installed
