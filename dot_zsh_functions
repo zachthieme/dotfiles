@@ -16,10 +16,6 @@ function zkill() {
   ' --
 }
 
-function fzf-search() {
-  find . -type f -print0 | fzf --preview="bat --color=always {}"
-}
-
 function logg() {
     git log | fzf --ansi --no-sort \
         --preview 'echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % git show % --color=always' \
