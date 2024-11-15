@@ -16,19 +16,6 @@ function zkill() {
   ' --
 }
 
-function man() {
-    if command -v fzf >/dev/null 2>&1; then
-        # If fzf is available, use it for searching
-        local page=$(command man -k . | fzf --prompt='Man> ' | awk '{print $1}')
-        if [[ -n $page ]]; then
-            nvim +"Man $page | only"
-        fi
-    else
-        # If fzf is not available, use the argument directly
-        nvim +"Man $1 | only"
-    fi
-}
-
 function logg() {
     git log | fzf --ansi --no-sort \
         --preview 'echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % git show % --color=always' \
@@ -36,11 +23,6 @@ function logg() {
         --bind 'enter:execute(echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % sh -c "git show % | nvim -c \"setlocal buftype=nofile bufhidden=wipe noswapfile nowrap\" -c \"nnoremap <buffer> q :q!<CR>\" -")' \
         --bind 'ctrl-e:execute(echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % sh -c "gh browse %")' \
 }
-
-# Creates a folder named with the current or prefixed date, using the format "prefix-YYYY-MM-DD" if a prefix is provided.
-function mkdd ()
-{
- mkdir -p ${1:+$1$prefix_separator}"$(date +%F)"; }
 
 function man() {
     if command -v fzf >/dev/null 2>&1; then
@@ -76,7 +58,6 @@ function cal ()
 {
   if [ -t 1 ] ; then alias cal="ncal -b" ; else alias cal="/usr/bin/cal" ; fi
 }
-
 
 # Common function to search for a string in files using rga and fzf, and opens the file with nvim.
 function _fif_common() {
@@ -129,7 +110,6 @@ function fif() {
     _fif_common "--ignore-case" "$@"
 }
 
-
 # Copy the current working directory path to the clipboard
 function cpa() {
     if command -v pbcopy > /dev/null; then
@@ -154,5 +134,3 @@ function dpa() {
         printf "%s\n" "Error: 'pbpaste' command not found. Please install 'pbpaste' to use this function."
     fi
 }
-
-
