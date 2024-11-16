@@ -44,7 +44,6 @@ key-mapping.preset = 'qwerty'
 # See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 on-focus-changed = "move-mouse window-lazy-center"
-automatically-unhide-macos-hidden-apps = true
 
 # Gaps between windows (inner-*) and between monitor edges (outer-*).
 # Possible values:
