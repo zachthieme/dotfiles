@@ -31,6 +31,7 @@ default=(
   icon.padding_right=4
   label.padding_left=4
   label.padding_right=4
+  corner_radius=5
 )
 sketchybar --default "${default[@]}"
 
