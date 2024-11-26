@@ -73,25 +73,19 @@ alt-shift-b = 'resize smart +50'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 alt-1 = 'workspace 1_Terminal' # terminal
-alt-2 = 'workspace 2' # Mail
-alt-3 = 'workspace 3' # Slack/Messages
-alt-4 = 'workspace 4' # Browser
-alt-5 = 'workspace 5' # Teams
-alt-6 = 'workspace 6' # Spotify
-alt-7 = 'workspace 7'
-alt-8 = 'workspace 8'
-alt-9 = 'workspace 9'
+alt-2 = 'workspace 2_Mail' # Mail
+alt-3 = 'workspace 3_IM' # Slack/Messages
+alt-4 = 'workspace 4_Browser' # Browser
+alt-5 = 'workspace 5_Teams' # Teams
+alt-6 = 'workspace 6_Music' # Spotify
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 alt-shift-1 = ['move-node-to-workspace 1','workspace 1_Terminal']
-alt-shift-2 = ['move-node-to-workspace 2','workspace 2']
-alt-shift-3 = ['move-node-to-workspace 3','workspace 3']
-alt-shift-4 = ['move-node-to-workspace 4','workspace 4']
-alt-shift-5 = ['move-node-to-workspace 5','workspace 5']
-alt-shift-6 = ['move-node-to-workspace 6','workspace 6']
-alt-shift-7 = ['move-node-to-workspace 7','workspace 7']
-alt-shift-8 = ['move-node-to-workspace 8','workspace 8']
-alt-shift-9 = ['move-node-to-workspace 9','workspace 9']
+alt-shift-2 = ['move-node-to-workspace 2','workspace 2_Mail']
+alt-shift-3 = ['move-node-to-workspace 3','workspace 3_IM']
+alt-shift-4 = ['move-node-to-workspace 4','workspace 4_Browser']
+alt-shift-5 = ['move-node-to-workspace 5','workspace 5_Teams']
+alt-shift-6 = ['move-node-to-workspace 6','workspace 6_Music']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-tab = 'workspace-back-and-forth'
@@ -114,23 +108,23 @@ run = "move-node-to-workspace 1_Terminal"
 
 [[on-window-detected]]
 if.app-id = 'com.brave.Browser.app.faolnafnngnfdaknnbpnkhgohbobgegn'
-run = "move-node-to-workspace 2"
+run = "move-node-to-workspace 2_Mail"
 
 [[on-window-detected]]
 if.app-id = 'com.brave.Browser'
-run = "move-node-to-workspace 3"
+run = "move-node-to-workspace 3_IM"
 
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
-run = "move-node-to-workspace 4"
+run = "move-node-to-workspace 4_Browser"
 
 [[on-window-detected]]
 if.app-id = 'com.apple.MobileSMS'
-run = "move-node-to-workspace 4"
+run = "move-node-to-workspace 4_Browser"
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
-run = "move-node-to-workspace 5"
+run = "move-node-to-workspace 5_Teams"
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
