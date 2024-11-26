@@ -112,15 +112,15 @@ run = "move-node-to-workspace 2_Mail"
 
 [[on-window-detected]]
 if.app-id = 'com.brave.Browser'
-run = "move-node-to-workspace 3_Browser"
+run = "move-node-to-workspace 4_Browser"
 
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
-run = "move-node-to-workspace 4_IM"
+run = "move-node-to-workspace 3_IM"
 
 [[on-window-detected]]
 if.app-id = 'com.apple.MobileSMS'
-run = "move-node-to-workspace 4_IM"
+run = "move-node-to-workspace 3_IM"
 
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
