@@ -104,9 +104,6 @@ sketchybar --add item clock center \
            --add item battery right \
            --set battery update_freq=120 script="$PLUGIN_DIR/battery.sh" \
            --subscribe battery system_woke power_source_change \
-           --add item calendar right \
-           --set calendar icon=􀧞  \
-                          label="$(date +'%a %d %b %I:%M %p')"
 
 ##### Force all scripts to run the first time (never do this in a script) #####
 sketchybar --update
