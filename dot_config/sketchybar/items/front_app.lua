@@ -8,6 +8,7 @@ local icon_string = "?"
 local front_app = sbar.add("item", "front_app", {
   display = "active",
   icon = { drawing = false },
+  position = "q",
   label = {
     font = {
       style = settings.font.style_map["Black"],
@@ -18,9 +19,9 @@ local front_app = sbar.add("item", "front_app", {
 })
 
 front_app:subscribe("front_app_switched", function(env)
-  front_app:set({ 
+  front_app:set({
     label = {
-     string = env.INFO,
+      string = env.INFO,
     },
   })
 end)
