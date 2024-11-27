@@ -62,6 +62,7 @@ function cal ()
 # Common function to search for a string in files using rga and fzf, and opens the file with nvim.
 function _fif_common() {
   local ignore_case_flag="$1"
+  local chezmoi="$3"
   shift
 
   local files
@@ -83,18 +84,22 @@ function _fif_common() {
   files=("${temp_files[@]}")
   local nvim_cmd=""
   case "${#files[@]}" in
-    2)
-      nvim -O "${files[1]}" "${files[2]}"
-      ;;
-    3)
-      nvim_cmd="nvim -O \"${files[1]}\" -c 'wincmd j' -c \"vsplit ${files[2]}\" -c \"split ${files[3]}\""
-      ;;
-    4)
-      nvim_cmd="nvim -O \"${files[1]}\" -c \"vsplit ${files[2]}\" -c \"split ${files[3]}\" -c 'wincmd h' -c \"split ${files[4]}\""
-      ;;
+    # 2)
+    #   nvim -O "${files[1]}" "${files[2]}"
+    #   ;;
+    # 3)
+    #   nvim_cmd="nvim -O \"${files[1]}\" -c 'wincmd j' -c \"vsplit ${files[2]}\" -c \"split ${files[3]}\""
+    #   ;;
+    # 4)
+    #   nvim_cmd="nvim -O \"${files[1]}\" -c \"vsplit ${files[2]}\" -c \"split ${files[3]}\" -c 'wincmd h' -c \"split ${files[4]}\""
+    #   ;;
     *)
-      nvim_cmd="nvim \"${files[@]}\""
-      ;;
+      if $chezmoi then
+        nvim_cmd="cm edit \"${files[@]}\""
+        ;;
+      else
+        nvim_cmd="nvim \"${files[@]}\""
+        ;;
   esac
 
   eval "$nvim_cmd"
