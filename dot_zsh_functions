@@ -110,6 +110,11 @@ function fifs() {
     _fif_common "" "$@"
 }
 
+# Wrapper function for case-sensitive search
+function fifc() {
+    _fif_common "" "$@" "--chezmoi"
+}
+
 # Wrapper function for case-insensitive search
 function fif() {
     _fif_common "--ignore-case" "$@"
