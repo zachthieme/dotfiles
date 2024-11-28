@@ -83,7 +83,7 @@ function _fif_common() {
   done
   files=("${temp_files[@]}")
   local nvim_cmd=""
-  case "${#files[@]}" in
+  # case "${#files[@]}" in
     # 2)
     #   nvim -O "${files[1]}" "${files[2]}"
     #   ;;
@@ -99,7 +99,7 @@ function _fif_common() {
       else
         nvim_cmd="nvim \"${files[@]}\""
       fi 
-  esac
+  # esac
 
   eval "$nvim_cmd"
 }
