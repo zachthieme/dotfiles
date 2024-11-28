@@ -67,6 +67,7 @@ function _fif_common() {
 
   local files
   local preview_cmd=$(printf "rg %s --pretty --context 10 '%s' {}" "$ignore_case_flag" "$*")
+  echo $preview_cmd
   local rga_output=$(rg --max-count=1 $ignore_case_flag --files-with-matches --no-messages "$*")
   IFS=$'\n' files=($(echo "$rga_output" | fzf-tmux +m --preview="$preview_cmd" --multi --select-1 --exit-0)) || return 1
 
