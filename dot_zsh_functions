@@ -85,8 +85,10 @@ function _fif_common() {
   local nvim_cmd=""
       if [[ $chezmoi == "--chezmoi" ]]; then
         nvim_cmd="cm edit \"${files[@]}\""
+        echo $nvim_cmd
       else
         nvim_cmd="nvim \"${files[@]}\""
+        echo $nvim_cmd
       fi 
 
   eval "$nvim_cmd"
