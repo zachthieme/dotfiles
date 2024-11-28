@@ -93,7 +93,7 @@ function _fif_common() {
     # 4)
     #   nvim_cmd="nvim -O \"${files[1]}\" -c \"vsplit ${files[2]}\" -c \"split ${files[3]}\" -c 'wincmd h' -c \"split ${files[4]}\""
     #   ;;
-    *)
+    # *)
       if [[ $chezmoi == "--chezmoi" ]]; then
         nvim_cmd="cm edit \"${files[@]}\""
       else
