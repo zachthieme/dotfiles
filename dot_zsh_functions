@@ -62,7 +62,7 @@ function cal ()
 # Common function to search for a string in files using rga and fzf, and opens the file with nvim.
 function _fif_common() {
   local ignore_case_flag="$1"
-  local chezmoi="$2"
+  local chezmoi="$3"
   shift
 
   local files
