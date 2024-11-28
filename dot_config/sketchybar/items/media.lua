@@ -1,3 +1,4 @@
+#foo
 local icons = require("icons")
 local colors = require("colors")
 
