@@ -128,6 +128,8 @@ then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
+defaults write -g NSWindowShouldDragOnGesture -bool true
+
 brew update
 
 # Install common packages
