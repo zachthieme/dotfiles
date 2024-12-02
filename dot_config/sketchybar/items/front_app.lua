@@ -2,7 +2,7 @@ local colors = require("colors")
 local settings = require("settings")
 local icons = require("icons")
 
-local icon_color = colors.green
+local icon_color = colors.grey
 local icon_string = "?"
 
 local front_app = sbar.add("item", "front_app", {
@@ -10,6 +10,7 @@ local front_app = sbar.add("item", "front_app", {
   icon = { drawing = false },
   position = "q",
   label = {
+    color = colors.green,
     font = {
       style = settings.font.style_map["Black"],
       size = 12.0,
