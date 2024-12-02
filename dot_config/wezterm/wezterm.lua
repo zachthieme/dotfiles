@@ -5,5 +5,7 @@ return {
   font = wezterm.font_with_fallback({
     { family = "Hack Nerd Font Mono", weight = "Bold" },
     { family = "JetBrains Mono", weight = "Bold" },
+    enable_tab_bar = false,
+    window_decorations = "RESIZE",
   }),
 }
