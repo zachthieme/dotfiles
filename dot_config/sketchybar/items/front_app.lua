@@ -25,3 +25,4 @@ front_app:subscribe("front_app_switched", function(env)
     },
   })
 end)
+sbar.exec("sketchybar --reorder calendar before front_app")
