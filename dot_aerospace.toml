@@ -1,4 +1,3 @@
-
 after-login-command = []
 # after-startup-command = ['exec-and-forget borders']
 
