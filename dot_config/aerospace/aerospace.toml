@@ -78,6 +78,7 @@ alt-2 = 'workspace 2_Mail' # Mail
 alt-3 = 'workspace 3_IM' # Slack/Messages
 alt-4 = 'workspace 4_Browser' # Browser
 alt-5 = 'workspace 5_Teams' # Teams
+alt-6 = 'workspace 6_Docs' # Docs
 # alt-6 = 'workspace 6_Music' # Spotify
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
@@ -86,7 +87,7 @@ alt-shift-2 = ['move-node-to-workspace 2_Mail','workspace 2_Mail']
 alt-shift-3 = ['move-node-to-workspace 3_IM','workspace 3_IM']
 alt-shift-4 = ['move-node-to-workspace 4_Browser','workspace 4_Browser']
 alt-shift-5 = ['move-node-to-workspace 5_Teams','workspace 5_Teams']
-# alt-shift-6 = ['move-node-to-workspace 6_Music','workspace 6_Music']
+alt-shift-6 = ['move-node-to-workspace 6_Docs','workspace 6_Docs']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-tab = 'workspace-back-and-forth'
@@ -126,6 +127,10 @@ run = "move-node-to-workspace 3_IM"
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
 run = "move-node-to-workspace 5_Teams"
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.Word'
+run = "move-node-to-workspace 6_Docs"
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
