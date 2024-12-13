@@ -136,7 +136,3 @@ run = "move-node-to-workspace 6_Docs"
 if.app-id = 'com.apple.finder'
 run = "layout floating"
 
-[[on-window-detected]]
-if.app-id = 'com.obsbot.OBSBOT_Center'
-run = "layout floating"
- 
