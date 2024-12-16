@@ -1,0 +1,16 @@
+# Nightfly Theme for zsh-syntax-highlighting
+ZSH_HIGHLIGHT_STYLES[default]='fg=#acb4c2'            # Default text
+ZSH_HIGHLIGHT_STYLES[comment]='fg=#637777'           # Comments
+ZSH_HIGHLIGHT_STYLES[command]='fg=#82aaff'           # Commands
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#ef5350'     # Errors
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=#82aaff'           # Builtins
+ZSH_HIGHLIGHT_STYLES[path]='fg=#21c7a8'              # Paths
+ZSH_HIGHLIGHT_STYLES[quote]='fg=#c792ea'             # Strings
+ZSH_HIGHLIGHT_STYLES[search-needle]='fg=#ecc48d,bold' # Search highlight
+ZSH_HIGHLIGHT_STYLES[history-expansion]='fg=#c792ea' # History expansions
+ZSH_HIGHLIGHT_STYLES[alias]='fg=#82aaff,bold'        # Aliases
+
+
+# Highlight color for matched items
+export ZSH_HIGHLIGHT_SUBSTRING_SEARCH_HIGHLIGHT_COLOR="fg=#82aaff,bg=#011627,bold"
+export ZSH_HIGHLIGHT_SUBSTRING_SEARCH_SELECTED_HIGHLIGHT_COLOR="fg=#c3e88d,bg=#011627,underline"

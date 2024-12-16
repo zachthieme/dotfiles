@@ -1,0 +1,79 @@
+# kill command using fzf
+function k() {
+  ps aux | 
+  fzf --height 40% \
+      --layout=reverse \
+      --header-lines=1 \
+      --prompt="Select process to kill: " \
+      --preview 'echo {}' \
+      --preview-window up:3:hidden:wrap \
+      --bind 'F2:toggle-preview' |
+  awk '{print $2}' |
+  xargs -r bash -c '
+      if ! kill "$1" 2>/dev/null; then
+          echo "Regular kill failed. Attempting with sudo..."
+          sudo kill "$1" || echo "Failed to kill process $1" >&2
+      fi
+  ' --
+}
+
+function logg() {
+    git log | fzf --ansi --no-sort \
+        --preview 'echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % git show % --color=always' \
+        --preview-window=right:50%:wrap --height 100% \
+        --bind 'enter:execute(echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % sh -c "git show % | nvim -c \"setlocal buftype=nofile bufhidden=wipe noswapfile nowrap\" -c \"nnoremap <buffer> q :q!<CR>\" -")' \
+        --bind 'ctrl-e:execute(echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % sh -c "gh browse %")' \
+}
+
+function mkdd ()
+{
+ mkdir -p ${1:+$1$prefix_separator}"$(date +%F)"; }
+
+# Common function to search for a string in files using rga and fzf, and opens the file with nvim.
+function _fif_common() {
+  local ignore_case_flag="$1"
+  local chezmoi="$3"
+  shift
+
+  local files
+  local preview_cmd=$(printf "rg %s --pretty --context 10 '%s' {}" "$ignore_case_flag" "$1")
+  local rga_output=$(rg --max-count=1 $ignore_case_flag --files-with-matches --no-messages "$1")
+  IFS=$'\n' files=($(echo "$rga_output" | fzf-tmux +m --preview="$preview_cmd" --multi --select-1 --exit-0)) || return 1
+
+  if [ ${#files[@]} -eq 0 ]; then
+    echo "No files selected."
+    return 0
+  fi
+
+  typeset -a temp_files
+  for i in {1..${#files[@]}}; do
+    if [[ -n "${files[i]}" ]]; then
+      temp_files[i]=$(realpath "${files[i]}")
+    fi
+  done
+  files=("${temp_files[@]}")
+  local nvim_cmd=""
+      if [[ $chezmoi == "--chezmoi" ]]; then
+        nvim_cmd="cm edit \"${files[@]}\""
+      else
+        nvim_cmd="nvim \"${files[@]}\""
+      fi 
+
+  eval "$nvim_cmd"
+}
+
+# Wrapper function for case-sensitive search
+function fifs() {
+    _fif_common "" "$@"
+}
+
+# Wrapper function for case-sensitive search
+function fifc() {
+    _fif_common "" "$@" "--chezmoi"
+}
+
+# Wrapper function for case-insensitive search
+function fif() {
+    _fif_common "--ignore-case" "$@"
+}
+
