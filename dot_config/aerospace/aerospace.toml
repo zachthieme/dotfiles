@@ -81,12 +81,20 @@ alt-6 = 'workspace 6_Docs' # Docs
 # alt-6 = 'workspace 6_Music' # Spotify
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
-alt-shift-1 = ['move-node-to-workspace 1_Code','workspace 1_Code']
-alt-shift-2 = ['move-node-to-workspace 2_Mail','workspace 2_Mail']
-alt-shift-3 = ['move-node-to-workspace 3_IM','workspace 3_IM']
-alt-shift-4 = ['move-node-to-workspace 4_Browser','workspace 4_Browser']
-alt-shift-5 = ['move-node-to-workspace 5_Teams','workspace 5_Teams']
-alt-shift-6 = ['move-node-to-workspace 6_Docs','workspace 6_Docs']
+alt-shift-ctrl-1 = ['move-node-to-workspace 1_Code','workspace 1_Code']
+alt-shift-ctrl-2 = ['move-node-to-workspace 2_Mail','workspace 2_Mail']
+alt-shift-ctrl-3 = ['move-node-to-workspace 3_IM','workspace 3_IM']
+alt-shift-ctrl-4 = ['move-node-to-workspace 4_Browser','workspace 4_Browser']
+alt-shift-ctrl-5 = ['move-node-to-workspace 5_Teams','workspace 5_Teams']
+alt-shift-ctrl-6 = ['move-node-to-workspace 6_Docs','workspace 6_Docs']
+
+# See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+alt-shift-1 = ['move-node-to-workspace 1_Code']
+alt-shift-2 = ['move-node-to-workspace 2_Mail']
+alt-shift-3 = ['move-node-to-workspace 3_IM']
+alt-shift-4 = ['move-node-to-workspace 4_Browser']
+alt-shift-5 = ['move-node-to-workspace 5_Teams']
+alt-shift-6 = ['move-node-to-workspace 6_Docs']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-tab = 'workspace-back-and-forth'
