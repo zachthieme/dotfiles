@@ -6,8 +6,23 @@ tmux, btop, podman, python3-libtmux
 ##
 # RUST INSTALLS
 ##
-cargo install tlrc
-
+```bash
+cargo install --locked yazi-fm yazi-cli
+```
+optional-yazi
+    already installed
+        nerd-font
+        jq
+        fd
+        rg
+        fzf
+        zoxide
+    add me
+        ffmpeg
+        7-zip 
+        poppler
+        ImageMagick
+        xclip, wl-clipboard, xsel # figure out which is for which 
 ##
 # MANUAL INSTALLS
 ##
