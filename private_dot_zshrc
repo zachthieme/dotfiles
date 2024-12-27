@@ -1,6 +1,3 @@
-
-
-
 # Setup files for functions and aliases
 . $HOME/.config/zsh/aliases
 . $HOME/.config/zsh/functions
