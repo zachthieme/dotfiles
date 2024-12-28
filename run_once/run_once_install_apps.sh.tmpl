@@ -136,6 +136,8 @@ if [[ ! $(update-alternatives --query editor | grep 'Value:' | awk '{print $2}')
   echo "setting nvim to default editor"
   sudo update-alternatives --install /usr/bin/editor editor $(which nvim) 60
   sudo update-alternatives --config editor
+else
+  echo "nvim is default editor"
 fi
 
 {{- end}}
