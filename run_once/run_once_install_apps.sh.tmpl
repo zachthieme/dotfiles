@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # INSTALL: any tool that can be deployed via a package manager across all distro's and have a new enough version
-INSTALL=( bat curl fzf gh git jq mosh pandoc pass ripgrep tmux btop podman wget zsh )
+INSTALL=( bat curl gh git jq mosh pandoc pass ripgrep tmux btop podman wget zsh )
 
 # BREW: any tools that need to be installed specefically for mac. 
 BREW=( fd )
@@ -41,6 +41,13 @@ if ! command -v oh-my-posh &> /dev/null
 then
   echo "installing ohmyposh"
   curl -s https://ohmyposh.dev/install.sh | bash -s
+fi
+
+# install fzf
+if ! command -v fzf &> /dev/null
+then
+  echo "installing fzf"
+  curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh --no-update-rc | sh
 fi
 
 # install zoxide
