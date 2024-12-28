@@ -13,7 +13,7 @@ echo "########################################################"
 echo "                Update Debian distro's"
 echo "########################################################"
 
-{{- if eq .osRelease.id "debian" }}
+{{- if eq .chezmoi.osRelease.id "debian" }}
 
 sudo apt update && sudo apt upgrade -y  
 
@@ -118,7 +118,7 @@ echo "########################################################"
 echo "  "
 echo "  "
 
-{{- if eq .osRelease.id "debian" }}
+{{- if eq .chezmoi.osRelease.id "debian" }}
 
 sudo update-alternatives --install /usr/bin/editor editor $(which nvim) 60
 sudo update-alternatives --config editor
