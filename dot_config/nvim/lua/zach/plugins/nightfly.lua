@@ -1,1 +1,11 @@
-return { "bluz71/vim-nightfly-colors", name = "nightfly", lazy = false, priority = 1000 }
+return {
+  {
+    'bluz71/vim-nightfly-colors',
+    lazy = false, -- Optional: ensures the theme is loaded immediately
+    priority = 1000, -- Optional: ensures the theme is loaded first
+    config = function()
+      vim.cmd([[colorscheme nightfly]])
+    end,
+  },
+}
+
