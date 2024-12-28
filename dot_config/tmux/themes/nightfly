@@ -20,3 +20,4 @@ set -g status-left "#[fg=#f78c6c]⠶ #[fg=#82aaff]#S@#h "
 if-shell '[[ $(uname) = Darwin ]]' \
     'set -g status-right "%a %d %b  #[fg=#82aaff]%I:%M%p"' \
     'set -g status-right "%a %d %b  #[fg=#82aaff]%I:%M%P"' \
+
