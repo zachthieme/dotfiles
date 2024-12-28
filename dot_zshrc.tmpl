@@ -2,6 +2,9 @@
 . $HOME/.config/zsh/aliases
 . $HOME/.config/zsh/functions
 
+# create theme variables before zsh-autosuggestions and zsh-history-search* are loaded
+. $HOME/.config/zsh/themes/nightfly_zsh-history-autosuggest.zsh
+
 # History
 HISTSIZE=5000
 SAVEHIST=$HISTSIZE
@@ -91,6 +94,7 @@ eval "$(zoxide init zsh)"
 eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
 #eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/catppuccin.omp.json)"
 
+# must be after syntax highlighting is loaded
 . $HOME/.config/zsh/themes/nightfly_zsh-syntax-highlighting.zsh
 . $HOME/.config/fzf/themes/NightFly.zsh
 # . $HOME/.config/zsh/themes/catppuccin.zsh
