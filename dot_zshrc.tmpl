@@ -66,6 +66,18 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$HOME/go/bin
 export PATH=$PATH:$HOME/.local/bin
 
+{{- if eq .osid "linux-debian" "linux-raspbian" }}
+export PATH=$PATH:/snap/bin
+export PATH=$PATH:/$HOME/bin
+
+{{- end }}
+
+{{- if eq .chezmoi.os "darwin" }}
+export PATH=$PATH:/opt/homebrew/bin
+export PATH=$PATH:/opt/homebrew/sbin
+
+{{- end }}
+
 # configure cargo
 . $HOME/.cargo/env 
 

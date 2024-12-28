@@ -1,155 +1,125 @@
-## #!/bin/bash
-##
-## # INSTALL: any tool that can be deployed via a package manager across all distro's and have a new enough version
-## # DEBIAN: developer tools that are required for other installs to work
-## INSTALL=( bat fzf gh git jq mosh pandoc pass ripgrep thefuck tmux vim wget zoxide zsh )
-## DEBIAN=( autoconf automake cmake curl doxygen fd-find g++ gettext libtool libtool-bin ninja-build  pkg-config protobuf-compiler python3-launchpadlib software-properties-common unzip )
-##
-## echo "########################################################"
-## echo "                Update Debian distro's"
-## echo "########################################################"
-##
-## {{- if eq .osid "linux-pop" "linux-debian" "linux-raspbian" }}
-##
-## sudo apt update && sudo apt upgrade -y  
-##
-## echo ${INSTALL[@]} | xargs sudo apt install -y 
-## echo ${DEBIAN[@]} | xargs sudo apt install -y 
-##
-## {{- end}}
-##
-## echo "########################################################"
-## echo "           Non-Package Manager Installs All OS"
-## echo "########################################################"
-##
-## # install starship
-## if ! command -v starship &> /dev/null
-## then
-##   echo "installing starship."
-##   curl -sS https://starship.rs/install.sh | sh
-## fi
-##
-## # install cargo and rust
-## if ! command -v cargo &> /dev/null
-## then
-##   echo "installing cargo"
-##   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-## fi
-##
-## # install exa
-## if ! command -v eza &> /dev/null
-## then
-##   $HOME/.cargo/bin/cargo install eza 
-## fi
-##
-## # install nvm
-## [ ! -d $HOME/.nvm ] && echo "installing nvm" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-##
-## # install rargs
-## if ! command -v rargs &> /dev/null
-## then
-##   echo "installing rargs"
-##   $HOME/.cargo/bin/cargo install --git https://github.com/lotabout/rargs.git
-## fi
-##
-## #install atuin
-## if ! command -v atuin &> /dev/null
-## then
-##   echo "installing atuin"
-##   curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
-## fi
-##
-## # install TPM for TMUX
-## [ ! -d $HOME/.tmux/plugins ] && echo "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-##
-##
-## export NVM_DIR="$HOME/.nvm"
-## [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-## [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-##
-## # install node
-## if ! command -v node &> /dev/null
-## then
-##   echo "installing node"
-##   nvm install node
-## fi
-##   
-## {{- if eq .osid "linux-debian" "linux-raspbian" }}
-## # TODO: seperate raspbian so that you can install a precompiled binary from s3 - need to compile binary
-## echo "  "
-## echo "  "
-## echo "########################################################"
-## echo "           Starting Raspberry Pi install!"
-## echo "########################################################"
-## echo "  "
-## echo "  "
-##
-## # Add neovim
-## if ! command -v nvim &> /dev/null
-## then
-##   echo "building nvim"
-##   git clone --depth=1 https://github.com/neovim/neovim
-##   cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
-##   git checkout stable
-##   sudo make install
-## fi
-##
-## {{- end }} 
-##
-## {{- if eq .osid "linux-pop" }}
-## echo "  "
-## echo "  "
-## echo "########################################################"
-## echo "               Starting Pop!OS install!"
-## echo "########################################################"
-## echo "  "
-## echo "  "
-##
-## # install neovim with snap as it is most current
-## if ! command -v nvim &> /dev/null
-## then
-##   "installing nvim with snap"
-##   sudo snap install nvim --classic
-## fi
-##
-## {{- end }} 
-##
-## {{ if eq .osid "darwin" }}
-## echo "  "
-## echo "  "
-## echo "########################################################"
-## echo "                  Starting Mac Install"
-## echo "########################################################"
-## echo "  "
-## echo "  "
-##
-## if ! command -v brew &> /dev/null
-## then
-##     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-## fi
-##
-## defaults write -g NSWindowShouldDragOnGesture -bool true
-##
-## brew update
-##
-## # Install common packages
-## #brew install fd neovim skhd yabai
-##
-## # Install aerospace window manager
-## brew install --cask nikitabobko/tap/aerospace
-##
-## # install jankybar for the green window highlights
-## brew tap FelixKratz/formulae
-## brew install borders
-##
-## brew tap FelixKratz/formulae
-## brew install svim
-## brew services start svim
-##
-## brew tap FelixKratz/formulae
-## brew install sketchybar
-## brew services start sketchybar
-##
-## echo ${INSTALL[@]} | xargs brew install  
-##
-## {{- end }}
+#!/bin/bash
+
+# INSTALL: any tool that can be deployed via a package manager across all distro's and have a new enough version
+INSTALL=( bat curl fzf gh git jq mosh pandoc pass ripgrep tmux btop podman wget zoxide zsh )
+
+# BREW: any tools that need to be installed specefically for mac. 
+BREW=( fd )
+
+# DEBIAN_DEV: developer tools that are required for other installs to work
+DEBIAN_DEV=( autoconf automake cmake python3-libtmux doxygen fd-find g++ gettext libtool libtool-bin ninja-build  pkg-config protobuf-compiler python3-launchpadlib software-properties-common unzip )
+
+echo "########################################################"
+echo "                Update Debian distro's"
+echo "########################################################"
+
+{{- if eq .osid "linux-pop" "linux-debian" "linux-raspbian" }}
+
+sudo apt update && sudo apt upgrade -y  
+
+echo ${INSTALL[@]} | xargs sudo apt install -y 
+echo ${DEBIAN[@]} | xargs sudo apt install -y 
+
+{{- end}}
+
+echo "########################################################"
+echo "           Non-Package Manager Installs All OS"
+echo "########################################################"
+
+# Add neovim
+if ! command -v nvim &> /dev/null
+then
+  echo "building nvim"
+  git clone --depth=1 https://github.com/neovim/neovim
+  cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
+  git checkout stable
+  sudo make install
+fi
+
+echo "installing ohmyposh"
+curl -s https://ohmyposh.dev/install.sh | bash -s
+
+# install zoxide
+if ! -v zoxide &> /dev/null
+then
+  echo "installing zoxide"
+  curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+fi
+
+# install cargo and rust
+if ! command -v cargo &> /dev/null
+then
+  echo "installing cargo"
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+fi
+
+# install exa
+if ! command -v eza &> /dev/null
+then
+  $HOME/.cargo/bin/cargo install eza 
+fi
+
+# install rargs
+if ! command -v rargs &> /dev/null
+then
+  echo "installing rargs"
+  $HOME/.cargo/bin/cargo install --git https://github.com/lotabout/rargs.git
+fi
+
+# install TPM for TMUX
+[ ! -d $HOME/.tmux/plugins ] && echo "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+# install cheat
+if command -v go &> /dev/null
+then
+  echo "Installing cheat"
+  go install github.com/cheat/cheat/cmd/cheat@latest
+else
+  echo "Please install go then install cheat"
+fi
+
+echo "  "
+echo "  "
+echo "########################################################"
+echo "                  Starting Mac Install"
+echo "########################################################"
+echo "  "
+echo "  "
+{{ if eq .osid "darwin" }}
+
+if ! command -v brew &> /dev/null
+then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+defaults write -g NSWindowShouldDragOnGesture -bool true
+
+brew update
+
+# Install aerospace window manager
+brew install --cask nikitabobko/tap/aerospace
+
+# install jankybar for the green window highlights
+brew tap FelixKratz/formulae
+brew install borders
+
+brew tap FelixKratz/formulae
+brew install sketchybar
+brew services start sketchybar
+
+echo ${INSTALL[@]} | xargs brew install  
+echo ${BREW[@]} | xargs brew install  
+
+{{- end }}
+
+echo "########################################################"
+echo "                Debian Post Install"
+echo "########################################################"
+echo "  "
+echo "  "
+{{- if eq .osid "linux-pop" "linux-debian" "linux-raspbian" }}
+
+sudo update-alternatives --install /usr/bin/editor editor $(which nvim) 60
+sudo update-alternatives --config editor
+
+{{- end}}
