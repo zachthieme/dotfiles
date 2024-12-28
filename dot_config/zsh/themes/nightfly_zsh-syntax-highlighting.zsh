@@ -31,11 +31,3 @@ ZSH_HIGHLIGHT_STYLES[assign]='fg=67'
 ZSH_HIGHLIGHT_STYLES[redirection]='fg=179'
 ZSH_HIGHLIGHT_STYLES[comment]='fg=7e8e9e,italic'
 
-### zsh-history-substring-search Nightfly Theme ###
-# Matches are highlighted with a soft blue foreground and dark navy background
-export ZSH_HIGHLIGHT_HISTORY_SUBSTRING_FG=81
-export ZSH_HIGHLIGHT_HISTORY_SUBSTRING_BG=1d3b53
-
-### zsh-autosuggestions Nightfly Theme ###
-# Suggestions are shown in muted gray-blue
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=7e8e9e"
