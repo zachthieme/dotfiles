@@ -85,7 +85,7 @@ echo "                  Starting Mac Install"
 echo "########################################################"
 echo "  "
 echo "  "
-{{ if eq .osid "darwin" }}
+{{- if eq .osRelease.id "darwin" }}
 
 if ! command -v brew &> /dev/null
 then
