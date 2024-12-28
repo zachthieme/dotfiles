@@ -2,7 +2,7 @@ local wezterm = require("wezterm")
 
 local config = wezterm.config_builder()
 
-config.color_scheme = "Catppuccin Mocha"
+config.color_scheme = "nightfly"
 config.font = wezterm.font_with_fallback({
   { family = "Hack Nerd Font Mono", weight = "Bold" },
   { family = "JetBrains Mono", weight = "Bold" },
