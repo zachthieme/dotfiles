@@ -1,1 +1,0 @@
-/home/test/.config/tmux/plugins/tmux-thumbs/target/release/thumbs: /home/test/.config/tmux/plugins/tmux-thumbs/src/alphabets.rs /home/test/.config/tmux/plugins/tmux-thumbs/src/colors.rs /home/test/.config/tmux/plugins/tmux-thumbs/src/main.rs /home/test/.config/tmux/plugins/tmux-thumbs/src/state.rs /home/test/.config/tmux/plugins/tmux-thumbs/src/view.rs
