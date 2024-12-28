@@ -27,8 +27,6 @@ opt.termguicolors = true
 opt.background = "dark" -- colorschemes that can be light or dark will be made dark
 opt.signcolumn = "yes" -- show sign column so that text doesn't shift
 -- Lua initialization file
-vim.cmd [[colorscheme nightfly]]
-
 
 -- cursor changes
 -- opt.guicursor = "n-v-i-c:hor20"
