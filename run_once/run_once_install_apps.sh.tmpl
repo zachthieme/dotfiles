@@ -13,7 +13,8 @@ echo "########################################################"
 echo "                Update Debian distro's"
 echo "########################################################"
 
-{{- if eq .osid "linux-pop" "linux-debian" "linux-raspbian" }}
+## {{- if eq .osid "linux-pop" "linux-debian" "linux-raspbian" }}
+{{- if eq osRelease.id "debian" }}
 
 sudo apt update && sudo apt upgrade -y  
 
@@ -117,8 +118,9 @@ echo "                Debian Post Install"
 echo "########################################################"
 echo "  "
 echo "  "
-{{- if eq .osid "linux-pop" "linux-debian" "linux-raspbian" }}
+## {{- if eq .osid "linux-pop" "linux-debian" "linux-raspbian" }}
 
+{{- if eq osRelease.id "debian" }}
 sudo update-alternatives --install /usr/bin/editor editor $(which nvim) 60
 sudo update-alternatives --config editor
 
