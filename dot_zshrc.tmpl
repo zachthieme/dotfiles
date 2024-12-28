@@ -1,6 +1,7 @@
 # Setup files for functions and aliases
 . $HOME/.config/zsh/aliases
 . $HOME/.config/zsh/functions
+. $HOME/.config/zsh/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh
 
 # History
 HISTSIZE=5000
@@ -54,7 +55,6 @@ for key ('k') bindkey -M vicmd ${key} history-substring-search-up
 for key ('j') bindkey -M vicmd ${key} history-substring-search-down
 unset key
 
-. $HOME/.config/zsh/themes/nightfly
 
 export EDITOR=nvim
 export VISUAL=nvim
