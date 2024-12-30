@@ -9,6 +9,9 @@ press the letter that corresponds to what you want and then past via <leader> ]
 # to launch floating window
 <leader> p
 
+# go into edit mode
+<leader> [
+
 # paste from buffer
 <leader> ]
 
