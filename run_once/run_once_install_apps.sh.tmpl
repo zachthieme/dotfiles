@@ -82,7 +82,7 @@ if ! command -v fzf &> /dev/null
 then
   log_message "installing fzf"
   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-  run_command ~/.fzf/install --no-update-rc
+  ~/.fzf/install --no-update-rc
 fi
 
 # install zoxide
@@ -183,8 +183,6 @@ echo ${BREW[@]} | xargs brew install
 log_message "########################################################"
 log_message "                Debian Post Install"
 log_message "########################################################"
-log_message "  "
-log_message "  "
 
 {{- if eq .chezmoi.osRelease.id "debian" }}
 log_message "checking if nvim is the default editor"
