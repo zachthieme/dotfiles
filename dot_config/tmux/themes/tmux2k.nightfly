@@ -1,5 +1,5 @@
 # Set the base colors
-set -g @plugin '2kabhishek/tmux2k'
+# set -g @plugin '2kabhishek/tmux2k'
 
 set -g @tmux2k_background_color '#011627'
 set -g @tmux2k_foreground_color '#acb4c2'
