@@ -1,15 +1,5 @@
 #!/usr/bin/zsh
 
-# used with cheat to ensure that any new files are added to chezmoi
-chezmoi_edit_or_add() {
-    local file="$1"
-    if chezmoi managed "$file" >/dev/null 2>&1; then
-        chezmoi edit "$file"
-    else
-        chezmoi add "$file" && chezmoi edit "$file"
-    fi
-}
-
 # kill command using fzf
 function k() {
   ps aux | 
