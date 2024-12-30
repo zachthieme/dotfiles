@@ -42,4 +42,4 @@ set -g @tmux2k_mode_fg '#fc514e'
 set -g @tmux2k_mode_bg '#011627'
 
 # Reload tmux2k theme
-run-shell ~/.tmux/plugins/tmux2k/scripts/tmux2k.tmux
+# run-shell ~/.tmux/plugins/tmux2k/scripts/tmux2k.tmux
