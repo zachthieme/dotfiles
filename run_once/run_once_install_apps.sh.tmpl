@@ -42,16 +42,17 @@ BREW=( fd )
 # DEBIAN_DEV: developer tools that are required for other installs to work
 DEBIAN_DEV=( autoconf automake cmake python3-libtmux doxygen fd-find g++ gettext libtool libtool-bin ninja-build  pkg-config protobuf-compiler python3-launchpadlib software-properties-common unzip )
 
+{{- if eq .chezmoi.osRelease.id "debian" }}
+
 log_message "########################################################"
 log_message "                Update Debian distro's"
 log_message "########################################################"
 
-{{- if eq .chezmoi.osRelease.id "debian" }}
 
-run_command sudo apt update && sudo apt upgrade -y  
+sudo apt update && sudo apt upgrade -y  
 
-run_command echo ${INSTALL[@]} | xargs sudo apt install -y 
-run_command echo ${DEBIAN[@]} | xargs sudo apt install -y 
+echo ${INSTALL[@]} | xargs sudo apt install -y 
+echo ${DEBIAN[@]} | xargs sudo apt install -y
 
 {{- end}}
 
@@ -63,9 +64,9 @@ log_message "########################################################"
 if ! command -v nvim &> /dev/null
 then
   log_message "building nvim"
-  run_command git clone --depth=1 https://github.com/neovim/neovim
-  run_command cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
-  run_command git checkout stable
+  git clone --depth=1 https://github.com/neovim/neovim
+  cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
+  git checkout stable
   run_command sudo make install
 fi
 
@@ -73,14 +74,14 @@ fi
 if ! command -v oh-my-posh &> /dev/null
 then
   log_message "installing ohmyposh"
-  run_command curl -s https://ohmyposh.dev/install.sh | bash -s
+  curl -s https://ohmyposh.dev/install.sh | bash -s
 fi
 
 # install fzf
 if ! command -v fzf &> /dev/null
 then
   log_message "installing fzf"
-  run_command git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
   run_command ~/.fzf/install --no-update-rc
 fi
 
@@ -88,26 +89,24 @@ fi
 if ! command -v zoxide &> /dev/null
 then
   log_message "installing zoxide"
-  run_command curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+  curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 fi
 
 # install cargo and rust
 if ! command -v cargo &> /dev/null
 then
   log_message "installing cargo"
-  run_command curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
-  run_command source $HOME/.cargo/env
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
 fi
 
 # install go
 if ! command -v go &> /dev/null
 then
   log_message "installing go"
-  run_command curl -LO https://get.golang.org/$(uname)/go_installer && \
+  curl -LO https://get.golang.org/$(uname)/go_installer && \
   chmod +x go_installer && \
   ./go_installer && \
   run_command rm go_installer
-  run_command export PATH=$PATH:/usr/local/go/bin
 fi
 
 # install eza
@@ -131,7 +130,7 @@ run_command [ ! -d $HOME/.tmux/plugins ] && log_message "installing tpm" && git 
 if ! command -v cheat &> /dev/null
 then
   log_message "Installing cheat"
-  run_command go install github.com/cheat/cheat/cmd/cheat@latest
+  run_command /usr/local/go/bin/go install github.com/cheat/cheat/cmd/cheat@latest
 fi
 
 {{- if eq .chezmoi.osRelease.id "darwin" }}
@@ -146,7 +145,7 @@ log_message "  "
 if ! command -v brew &> /dev/null
 then
   log_message "installing Homebrew"
-  run_command /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 run_command defaults write -g NSWindowShouldDragOnGesture -bool true
@@ -176,8 +175,8 @@ then
 fi
 
 log_message "Installing some apps"
-run_command echo ${INSTALL[@]} | xargs brew install  
-run_command echo ${BREW[@]} | xargs brew install  
+echo ${INSTALL[@]} | xargs brew install  
+echo ${BREW[@]} | xargs brew install  
 
 {{- end }}
 
@@ -191,8 +190,8 @@ log_message "  "
 log_message "checking if nvim is the default editor"
 if [[ ! $(update-alternatives --query editor | grep 'Value:' | awk '{print $2}') == *nvim* ]]; then
   log_message "setting nvim to default editor"
-  run_command sudo update-alternatives --install /usr/bin/editor editor $(which nvim) 60
-  run_command sudo update-alternatives --config editor
+  sudo update-alternatives --install /usr/bin/editor editor $(which nvim) 60
+  sudo update-alternatives --config editor
 else
   log_message "nvim is default editor"
 fi
