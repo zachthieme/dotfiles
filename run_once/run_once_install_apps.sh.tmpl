@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Generate the log file name with ISO 8601 datetime
+LOG_FILE="cm_install_$(date +"%Y-%m-%dT%H:%M:%S").log"
+
+# Function to log messages
+log_message() {
+    local message="$1"
+    local current_time=$(date +"%Y-%m-%d %H:%M:%S")
+    echo "[$current_time] $message" | tee -a "$LOG_FILE"
+}
+
 # INSTALL: any tool that can be deployed via a package manager across all distro's and have a new enough version
 INSTALL=( bat curl gh git jq mosh pandoc pass ripgrep tmux btop podman wget zsh )
 
@@ -9,9 +19,9 @@ BREW=( fd )
 # DEBIAN_DEV: developer tools that are required for other installs to work
 DEBIAN_DEV=( autoconf automake cmake python3-libtmux doxygen fd-find g++ gettext libtool libtool-bin ninja-build  pkg-config protobuf-compiler python3-launchpadlib software-properties-common unzip )
 
-echo "########################################################"
-echo "                Update Debian distro's"
-echo "########################################################"
+log_message "########################################################"
+log_message "                Update Debian distro's"
+log_message "########################################################"
 
 {{- if eq .chezmoi.osRelease.id "debian" }}
 
@@ -22,14 +32,14 @@ echo ${DEBIAN[@]} | xargs sudo apt install -y
 
 {{- end}}
 
-echo "########################################################"
-echo "           Non-Package Manager Installs All OS"
-echo "########################################################"
+log_message "########################################################"
+log_message "           Non-Package Manager Installs All OS"
+log_message "########################################################"
 
 # Add neovim
 if ! command -v nvim &> /dev/null
 then
-  echo "building nvim"
+  log_message "building nvim"
   git clone --depth=1 https://github.com/neovim/neovim
   cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
   git checkout stable
@@ -39,14 +49,14 @@ fi
 # install ohmyposh
 if ! command -v oh-my-posh &> /dev/null
 then
-  echo "installing ohmyposh"
+  log_message "installing ohmyposh"
   curl -s https://ohmyposh.dev/install.sh | bash -s
 fi
 
 # install fzf
 if ! command -v fzf &> /dev/null
 then
-  echo "installing fzf"
+  log_message "installing fzf"
   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
   ~/.fzf/install --no-update-rc --no-interaction
 fi
@@ -54,14 +64,14 @@ fi
 # install zoxide
 if ! command -v zoxide &> /dev/null
 then
-  echo "installing zoxide"
+  log_message "installing zoxide"
   curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
 fi
 
 # install cargo and rust
 if ! command -v cargo &> /dev/null
 then
-  echo "installing cargo"
+  log_message "installing cargo"
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
   source $HOME/.cargo/env
 fi
@@ -69,6 +79,7 @@ fi
 # install go
 if ! command -v go &> /dev/null
 then
+  log_message "installing go"
   curl -LO https://get.golang.org/$(uname)/go_installer && \
   chmod +x go_installer && \
   ./go_installer && \
@@ -79,35 +90,35 @@ fi
 # install eza
 if ! command -v eza &> /dev/null
 then
-  echo "installing eza"
+  log_message "installing eza"
   $HOME/.cargo/bin/cargo install eza 
 fi
 
 # install rargs
 if ! command -v rargs &> /dev/null
 then
-  echo "installing rargs"
+  log_message "installing rargs"
   $HOME/.cargo/bin/cargo install --git https://github.com/lotabout/rargs.git
 fi
 
 # install TPM for TMUX
-[ ! -d $HOME/.tmux/plugins ] && echo "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+[ ! -d $HOME/.tmux/plugins ] && log_message "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # install cheat
 if ! command -v cheat &> /dev/null
 then
-  echo "Installing cheat"
+  log_message "Installing cheat"
   go install github.com/cheat/cheat/cmd/cheat@latest
 fi
 
 {{- if eq .chezmoi.osRelease.id "darwin" }}
-echo "  "
-echo "  "
-echo "########################################################"
-echo "                  Starting Mac Install"
-echo "########################################################"
-echo "  "
-echo "  "
+log_message "  "
+log_message "  "
+log_message "########################################################"
+log_message "                  Starting Mac Install"
+log_message "########################################################"
+log_message "  "
+log_message "  "
 
 if ! command -v brew &> /dev/null
 then
@@ -134,20 +145,20 @@ echo ${BREW[@]} | xargs brew install
 
 {{- end }}
 
-echo "########################################################"
-echo "                Debian Post Install"
-echo "########################################################"
-echo "  "
-echo "  "
+log_message "########################################################"
+log_message "                Debian Post Install"
+log_message "########################################################"
+log_message "  "
+log_message "  "
 
 {{- if eq .chezmoi.osRelease.id "debian" }}
-echo "checking if nvim is the default editor"
+log_message "checking if nvim is the default editor"
 if [[ ! $(update-alternatives --query editor | grep 'Value:' | awk '{print $2}') == *nvim* ]]; then
-  echo "setting nvim to default editor"
+  log_message "setting nvim to default editor"
   sudo update-alternatives --install /usr/bin/editor editor $(which nvim) 60
   sudo update-alternatives --config editor
 else
-  echo "nvim is default editor"
+  log_message "nvim is default editor"
 fi
 
 {{- end}}
