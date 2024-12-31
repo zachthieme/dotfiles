@@ -18,7 +18,7 @@ function gff () {
   # Use fzf to interactively search and preview file history
   local selected_commit
   selected_commit=$(git log --oneline --follow -- "$rel_file" | \
-    fzf --preview "git show {1}:$rel_file | bat --paging=always --style=plain" \
+    fzf --preview "git show {1}:$rel_file | cat --paging=always --style=plain" \
         --preview-window=right:70%:wrap --height=80% --border)
 
   if [ -z "$selected_commit" ]; then
