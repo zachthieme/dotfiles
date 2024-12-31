@@ -1,5 +1,5 @@
 #!/usr/bin/zsh
-#
+# TODO: update me to use bat and be portable across mac/linux
 function gff () {
   if [ -z "$1" ]; then
     echo "\033[31mError:\033[0m Please provide a file path."
@@ -18,7 +18,7 @@ function gff () {
   # Use fzf to interactively search and preview file history
   local selected_commit
   selected_commit=$(git log --oneline --follow -- "$rel_file" | \
-    fzf --preview "git show {1}:$rel_file | cat --paging=always --color=always --style=plain" \
+    fzf --preview "git show {1}:$rel_file | cat " \
         --preview-window=right:70%:wrap --height=80% --border)
 
   if [ -z "$selected_commit" ]; then
@@ -30,10 +30,7 @@ function gff () {
   commit_hash=$(echo "$selected_commit" | awk '{print $1}')
 
   echo "\033[34mSelected Commit:\033[0m $commit_hash"
-  echo "\033[34mFile Content at Commit:\033[0m"
-
-  # Use bat to display the file's content with syntax highlighting
-  git show "$commit_hash:$rel_file" | cat --paging=always --color=always --style=plain
+  echo "\033[34mFile Content Previewed Above.\033[0m"
 }
 
 # kill command using fzf
