@@ -1,5 +1,22 @@
 #!/usr/bin/zsh
 
+# Function to search Git commits for a file with a preview of its content
+git_file_preview() {
+  # Check if a file name is provided
+  if [ -z "$1" ]; then
+    echo "Usage: git_file_preview <file>"
+    return 1
+  fi
+
+  local file="$1"
+
+  # Use fzf to interactively search commits with a preview of the file content
+  git log --oneline --follow -- "$file" | \
+    fzf --preview "git show {1}:$file" --preview-window=right:70%:wrap --height=80% --border | \
+    awk '{print $1}' | \
+    xargs -I {} git show {}:"$file"
+}
+
 # kill command using fzf
 function k() {
   ps aux | 
