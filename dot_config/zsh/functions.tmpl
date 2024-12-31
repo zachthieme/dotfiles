@@ -1,19 +1,39 @@
 #!/usr/bin/zsh
 
 function gff () {
-  # Check if a file name is provided
   if [ -z "$1" ]; then
+    echo "\033[31mError:\033[0m Please provide a file path."
     echo "Usage: git_file_preview <file>"
     return 1
   fi
 
   local file="$1"
 
-  # Use fzf to interactively search commits with a preview of the file content
-  git log --oneline --follow -- "$file" | \
-    fzf --preview "git show {1}:$file" --preview-window=right:70%:wrap --height=80% --border | \
-    awk '{print $1}' | \
-    xargs -I {} git show {}:"$file" --color=always 2>/dev/null || echo "Error: Unable to display file content. Check file path."
+  # Get the full relative path of the file from the repository root
+  local repo_root=$(git rev-parse --show-toplevel)
+  local rel_file="${file#$repo_root/}"
+
+  echo "\033[34mSearching Git history for:\033[0m $rel_file"
+
+  # Use fzf to interactively search and preview file history
+  local selected_commit
+  selected_commit=$(git log --oneline --follow -- "$rel_file" | \
+    fzf --preview "git show {1}:$rel_file | bat --paging=always --style=plain" \
+        --preview-window=right:70%:wrap --height=80% --border)
+
+  if [ -z "$selected_commit" ]; then
+    echo "\033[33mNo commit selected.\033[0m"
+    return 0
+  fi
+
+  local commit_hash
+  commit_hash=$(echo "$selected_commit" | awk '{print $1}')
+
+  echo "\033[34mSelected Commit:\033[0m $commit_hash"
+  echo "\033[34mFile Content at Commit:\033[0m"
+
+  # Use bat to display the file's content with syntax highlighting
+  git show "$commit_hash:$rel_file" | bat --paging=always --style=plain
 }
 
 # kill command using fzf
