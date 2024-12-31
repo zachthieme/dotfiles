@@ -1,7 +1,6 @@
 #!/usr/bin/zsh
 
-# Function to search Git commits for a file with a preview of its content
-git_file_preview() {
+function gff () {
   # Check if a file name is provided
   if [ -z "$1" ]; then
     echo "Usage: git_file_preview <file>"
@@ -14,7 +13,7 @@ git_file_preview() {
   git log --oneline --follow -- "$file" | \
     fzf --preview "git show {1}:$file" --preview-window=right:70%:wrap --height=80% --border | \
     awk '{print $1}' | \
-    xargs -I {} git show {}:"$file"
+    xargs -I {} git show {}:"$file" 2>/dev/null || echo "Error: Unable to display file content. Check file path."
 }
 
 # kill command using fzf
