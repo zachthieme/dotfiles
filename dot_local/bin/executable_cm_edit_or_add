@@ -15,6 +15,8 @@ if [[ "$output" == *"$file_basename"* ]]; then
     chezmoi edit "$file"
 else
     echo "Failure: '$file' is not managed by chezmoi. Adding it."
+    # ${EDITOR:-nvim} "$file"
+    touch "$file"
     chezmoi add "$file" && chezmoi edit "$file"
 fi
 
