@@ -1,9 +1,21 @@
 #!/usr/bin/zsh
-# used with cheat to ensure that any new files are added to chezmoi
+# Ensure any new files are added to chezmoi
+
 file="$1"
-if chezmoi managed "$file" >/dev/null 2>&1; then
+
+# Check if the provided file is managed by chezmoi
+output=$(chezmoi managed "$file" 2>/dev/null)
+
+# Get the basename of the file for comparison
+file_basename=$(basename "$file")
+
+# Check if the file matches the output of chezmoi managed
+if [[ "$output" == *"$file_basename"* ]]; then
+    echo "Success: '$file' is managed by chezmoi."
     chezmoi edit "$file"
 else
+    echo "Failure: '$file' is not managed by chezmoi. Adding it."
     chezmoi add "$file" && chezmoi edit "$file"
 fi
+
 
