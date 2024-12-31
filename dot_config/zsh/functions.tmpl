@@ -13,7 +13,7 @@ function gff () {
   git log --oneline --follow -- "$file" | \
     fzf --preview "git show {1}:$file" --preview-window=right:70%:wrap --height=80% --border | \
     awk '{print $1}' | \
-    xargs -I {} git show {}:"$file" 2>/dev/null || echo "Error: Unable to display file content. Check file path."
+    xargs -I {} git show {}:"$file" --color=always 2>/dev/null || echo "Error: Unable to display file content. Check file path."
 }
 
 # kill command using fzf
