@@ -72,6 +72,7 @@ alt-shift-s = 'resize smart -50'
 alt-shift-b = 'resize smart +50'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
+# Move to a particular workspace
 alt-1 = 'workspace 1_Code' # terminal
 alt-2 = 'workspace 2_Mail' # Mail
 alt-3 = 'workspace 3_IM' # Slack/Messages
@@ -81,6 +82,7 @@ alt-6 = 'workspace 6_Docs' # Docs
 # alt-6 = 'workspace 6_Music' # Spotify
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+# Move window to a particlar workspace and follow to the workspace
 alt-shift-ctrl-1 = ['move-node-to-workspace 1_Code','workspace 1_Code']
 alt-shift-ctrl-2 = ['move-node-to-workspace 2_Mail','workspace 2_Mail']
 alt-shift-ctrl-3 = ['move-node-to-workspace 3_IM','workspace 3_IM']
@@ -89,6 +91,7 @@ alt-shift-ctrl-5 = ['move-node-to-workspace 5_Teams','workspace 5_Teams']
 alt-shift-ctrl-6 = ['move-node-to-workspace 6_Docs','workspace 6_Docs']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+# Move window to a particlar workspace
 alt-shift-1 = ['move-node-to-workspace 1_Code']
 alt-shift-2 = ['move-node-to-workspace 2_Mail']
 alt-shift-3 = ['move-node-to-workspace 3_IM']
