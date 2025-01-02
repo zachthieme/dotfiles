@@ -1,6 +1,6 @@
 #!/usr/bin/zsh
 
-{{- if and (not (eq .chezmoi.osRelease nil)) (eq (.chezmoi.osRelease.id | default "unknown") "debian") }}
+{{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
 
 alias cat='batcat'
 
