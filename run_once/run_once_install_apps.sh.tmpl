@@ -133,7 +133,7 @@ then
   run_command /usr/local/go/bin/go install github.com/cheat/cheat/cmd/cheat@latest
 fi
 
-{{- if eq .chezmoi.osRelease.id "darwin" }}
+{{- if eq .chezmoi.os "darwin" }}
 log_message "  "
 log_message "  "
 log_message "########################################################"
