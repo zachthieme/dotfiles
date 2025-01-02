@@ -42,7 +42,7 @@ BREW=( fd )
 # DEBIAN_DEV: developer tools that are required for other installs to work
 DEBIAN_DEV=( autoconf automake cmake python3-libtmux doxygen fd-find g++ gettext libtool libtool-bin ninja-build  pkg-config protobuf-compiler python3-launchpadlib software-properties-common unzip )
 
-{{- if and (not (eq .chezmoi.osRelease nil)) (eq (.chezmoi.osRelease.id | default "unknown") "debian" ) }}
+{{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
 
 log_message "########################################################"
 log_message "                Update Debian distro's"
@@ -184,7 +184,7 @@ log_message "########################################################"
 log_message "                Debian Post Install"
 log_message "########################################################"
 
-{{- if and (not (eq .chezmoi.osRelease nil)) (eq (.chezmoi.osRelease.id | default "unknown") "debian") }}
+{{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
 
 log_message "checking if nvim is the default editor"
 if [[ ! $(update-alternatives --query editor | grep 'Value:' | awk '{print $2}') == *nvim* ]]; then
