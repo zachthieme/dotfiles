@@ -112,6 +112,31 @@ esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main'] # reset layout
 backspace = ['close-all-windows-but-current', 'mode main']
 
+# Optional: Define a binding mode for window adjustments
+[binding-modes.adjust]
+exit = ['esc', 'enter']
+bindings = [
+    # Enter Adjustment Mode
+    { key = 'super+enter', command = 'enter-binding-mode adjust' },
+
+    # Move Window in Adjustment Mode
+    { key = 'h', command = 'move left' },
+    { key = 'j', command = 'move down' },
+    { key = 'k', command = 'move up' },
+    { key = 'l', command = 'move right' },
+
+    # Resize Window in Adjustment Mode
+    { key = 'shift+h', command = 'resize shrink width 100' },
+    { key = 'shift+j', command = 'resize grow height 100' },
+    { key = 'shift+k', command = 'resize shrink height 100' },
+    { key = 'shift+l', command = 'resize grow width 100' },
+
+    # Swap Windows in Adjustment Mode
+    { key = 'ctrl+h', command = 'swap left' },
+    { key = 'ctrl+j', command = 'swap down' },
+    { key = 'ctrl+k', command = 'swap up' },
+    { key = 'ctrl+l', command = 'swap right' }
+]
 
 # Bind windows to workspaces
 [[on-window-detected]]
