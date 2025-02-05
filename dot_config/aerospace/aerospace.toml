@@ -113,7 +113,7 @@ r = ['flatten-workspace-tree', 'mode main'] # reset layout
 backspace = ['close-all-windows-but-current', 'mode main']
 
 # Optional: Define a binding mode for window adjustments
-[binding-modes.adjust]
+[mode.adjust.binding]
 exit = ['esc', 'enter']
 bindings = [
     # Enter Adjustment Mode
