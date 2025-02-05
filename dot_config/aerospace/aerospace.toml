@@ -62,14 +62,14 @@ ctrl-shift-k = 'join-with up'
 ctrl-shift-l = 'join-with right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move
-alt-shift-h = 'move left'
-alt-shift-j = 'move down'
-alt-shift-k = 'move up'
-alt-shift-l = 'move right'
+# alt-shift-h = 'move left'
+# alt-shift-j = 'move down'
+# alt-shift-k = 'move up'
+# alt-shift-l = 'move right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#resize
-alt-shift-s = 'resize smart -50'
-alt-shift-b = 'resize smart +50'
+# alt-shift-s = 'resize smart -50'
+# alt-shift-b = 'resize smart +50'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 # Move to a particular workspace
@@ -119,6 +119,10 @@ h = 'move left'
 j = 'move down'
 k = 'move up'
 l = 'move right'
+shift-h = 'resize smart -50'
+shift-l = 'resize smart +50'
+shift-k = 'resize smart -50'
+shift-j = 'resize smart +50'
 esc = 'mode main'
 
 #
