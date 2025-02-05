@@ -104,6 +104,7 @@ alt-tab = 'workspace-back-and-forth'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
+meta-enter = 'mode adjust'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -114,29 +115,35 @@ backspace = ['close-all-windows-but-current', 'mode main']
 
 # Optional: Define a binding mode for window adjustments
 [mode.adjust.binding]
-exit = ['esc', 'enter']
-bindings = [
-    # Enter Adjustment Mode
-    { key = 'super+enter', command = 'enter-binding-mode adjust' },
+h = 'move left'
+j = 'move down'
+k = 'move up'
+l = 'move right'
 
-    # Move Window in Adjustment Mode
-    { key = 'h', command = 'move left' },
-    { key = 'j', command = 'move down' },
-    { key = 'k', command = 'move up' },
-    { key = 'l', command = 'move right' },
-
-    # Resize Window in Adjustment Mode
-    { key = 'shift+h', command = 'resize shrink width 100' },
-    { key = 'shift+j', command = 'resize grow height 100' },
-    { key = 'shift+k', command = 'resize shrink height 100' },
-    { key = 'shift+l', command = 'resize grow width 100' },
-
-    # Swap Windows in Adjustment Mode
-    { key = 'ctrl+h', command = 'swap left' },
-    { key = 'ctrl+j', command = 'swap down' },
-    { key = 'ctrl+k', command = 'swap up' },
-    { key = 'ctrl+l', command = 'swap right' }
-]
+#
+# exit = ['esc', 'enter']
+# bindings = [
+#     # Enter Adjustment Mode
+#     { key = 'super+enter', command = 'enter-binding-mode adjust' },
+#
+#     # Move Window in Adjustment Mode
+#     { key = 'h', command = 'move left' },
+#     { key = 'j', command = 'move down' },
+#     { key = 'k', command = 'move up' },
+#     { key = 'l', command = 'move right' },
+#
+#     # Resize Window in Adjustment Mode
+#     { key = 'shift+h', command = 'resize shrink width 100' },
+#     { key = 'shift+j', command = 'resize grow height 100' },
+#     { key = 'shift+k', command = 'resize shrink height 100' },
+#     { key = 'shift+l', command = 'resize grow width 100' },
+#
+#     # Swap Windows in Adjustment Mode
+#     { key = 'ctrl+h', command = 'swap left' },
+#     { key = 'ctrl+j', command = 'swap down' },
+#     { key = 'ctrl+k', command = 'swap up' },
+#     { key = 'ctrl+l', command = 'swap right' }
+# ]
 
 # Bind windows to workspaces
 [[on-window-detected]]
