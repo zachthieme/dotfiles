@@ -119,6 +119,7 @@ h = 'move left'
 j = 'move down'
 k = 'move up'
 l = 'move right'
+esc = 'mode main'
 
 #
 # exit = ['esc', 'enter']
