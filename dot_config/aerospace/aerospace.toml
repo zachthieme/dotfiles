@@ -50,27 +50,17 @@ alt-m = 'fullscreen'
 alt-r = 'reload-config'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-alt-h = 'focus left --boundaries-action wrap-around-the-workspace'
-alt-j = 'focus down --boundaries-action wrap-around-the-workspace'
-alt-k = 'focus up --boundaries-action wrap-around-the-workspace'
-alt-l = 'focus right --boundaries-action wrap-around-the-workspace'
+# same as pop_os
+cmd-h = 'focus left --boundaries-action wrap-around-the-workspace'
+cmd-j = 'focus down --boundaries-action wrap-around-the-workspace'
+cmd-k = 'focus up --boundaries-action wrap-around-the-workspace'
+cmd-l = 'focus right --boundaries-action wrap-around-the-workspace'
 
 
 ctrl-shift-h = 'join-with left'
 ctrl-shift-j = 'join-with down'
 ctrl-shift-k = 'join-with up'
 ctrl-shift-l = 'join-with right'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#move
-# same as pop_os
-cmd-h = 'move left'
-cmd-j = 'move down'
-cmd-k = 'move up'
-cmd-l = 'move right'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#resize
-# alt-shift-s = 'resize smart -50'
-# alt-shift-b = 'resize smart +50'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 # Move to a particular workspace
