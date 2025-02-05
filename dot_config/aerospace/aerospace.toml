@@ -62,10 +62,11 @@ ctrl-shift-k = 'join-with up'
 ctrl-shift-l = 'join-with right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move
-# alt-shift-h = 'move left'
-# alt-shift-j = 'move down'
-# alt-shift-k = 'move up'
-# alt-shift-l = 'move right'
+# same as pop_os
+cmd-h = 'move left'
+cmd-j = 'move down'
+cmd-k = 'move up'
+cmd-l = 'move right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#resize
 # alt-shift-s = 'resize smart -50'
@@ -114,6 +115,7 @@ r = ['flatten-workspace-tree', 'mode main'] # reset layout
 backspace = ['close-all-windows-but-current', 'mode main']
 
 # Optional: Define a binding mode for window adjustments
+# same as pop_os
 [mode.adjust.binding]
 h = 'move left'
 j = 'move down'
