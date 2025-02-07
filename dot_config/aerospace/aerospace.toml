@@ -50,10 +50,11 @@ alt-m = 'fullscreen'
 alt-r = 'reload-config'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-alt-h = 'focus left --boundaries-action wrap-around-the-workspace'
-alt-j = 'focus down --boundaries-action wrap-around-the-workspace'
-alt-k = 'focus up --boundaries-action wrap-around-the-workspace'
-alt-l = 'focus right --boundaries-action wrap-around-the-workspace'
+# same as pop_os
+cmd-h = 'focus left --boundaries-action wrap-around-the-workspace'
+cmd-j = 'focus down --boundaries-action wrap-around-the-workspace'
+cmd-k = 'focus up --boundaries-action wrap-around-the-workspace'
+cmd-l = 'focus right --boundaries-action wrap-around-the-workspace'
 
 
 ctrl-shift-h = 'join-with left'
@@ -61,49 +62,40 @@ ctrl-shift-j = 'join-with down'
 ctrl-shift-k = 'join-with up'
 ctrl-shift-l = 'join-with right'
 
-# See: https://nikitabobko.github.io/AeroSpace/commands#move
-alt-shift-h = 'move left'
-alt-shift-j = 'move down'
-alt-shift-k = 'move up'
-alt-shift-l = 'move right'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#resize
-alt-shift-s = 'resize smart -50'
-alt-shift-b = 'resize smart +50'
-
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 # Move to a particular workspace
-alt-1 = 'workspace 1_Code' # terminal
-alt-2 = 'workspace 2_Mail' # Mail
-alt-3 = 'workspace 3_IM' # Slack/Messages
-alt-4 = 'workspace 4_Browser' # Browser
-alt-5 = 'workspace 5_Teams' # Teams
-alt-6 = 'workspace 6_Docs' # Docs
+cmd-1 = 'workspace 1_Code' # terminal
+cmd-2 = 'workspace 2_Mail' # Mail
+cmd-3 = 'workspace 3_IM' # Slack/Messages
+cmd-4 = 'workspace 4_Browser' # Browser
+cmd-5 = 'workspace 5_Teams' # Teams
+cmd-6 = 'workspace 6_Docs' # Docs
 # alt-6 = 'workspace 6_Music' # Spotify
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 # Move window to a particlar workspace and follow to the workspace
-alt-shift-ctrl-1 = ['move-node-to-workspace 1_Code','workspace 1_Code']
-alt-shift-ctrl-2 = ['move-node-to-workspace 2_Mail','workspace 2_Mail']
-alt-shift-ctrl-3 = ['move-node-to-workspace 3_IM','workspace 3_IM']
-alt-shift-ctrl-4 = ['move-node-to-workspace 4_Browser','workspace 4_Browser']
-alt-shift-ctrl-5 = ['move-node-to-workspace 5_Teams','workspace 5_Teams']
-alt-shift-ctrl-6 = ['move-node-to-workspace 6_Docs','workspace 6_Docs']
+cmd-shift-ctrl-1 = ['move-node-to-workspace 1_Code','workspace 1_Code']
+cmd-shift-ctrl-2 = ['move-node-to-workspace 2_Mail','workspace 2_Mail']
+cmd-shift-ctrl-3 = ['move-node-to-workspace 3_IM','workspace 3_IM']
+cmd-shift-ctrl-4 = ['move-node-to-workspace 4_Browser','workspace 4_Browser']
+cmd-shift-ctrl-5 = ['move-node-to-workspace 5_Teams','workspace 5_Teams']
+cmd-shift-ctrl-6 = ['move-node-to-workspace 6_Docs','workspace 6_Docs']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 # Move window to a particlar workspace
-alt-shift-1 = ['move-node-to-workspace 1_Code']
-alt-shift-2 = ['move-node-to-workspace 2_Mail']
-alt-shift-3 = ['move-node-to-workspace 3_IM']
-alt-shift-4 = ['move-node-to-workspace 4_Browser']
-alt-shift-5 = ['move-node-to-workspace 5_Teams']
-alt-shift-6 = ['move-node-to-workspace 6_Docs']
+cmd-shift-1 = ['move-node-to-workspace 1_Code']
+cmd-shift-2 = ['move-node-to-workspace 2_Mail']
+cmd-shift-3 = ['move-node-to-workspace 3_IM']
+cmd-shift-4 = ['move-node-to-workspace 4_Browser']
+cmd-shift-5 = ['move-node-to-workspace 5_Teams']
+cmd-shift-6 = ['move-node-to-workspace 6_Docs']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-tab = 'workspace-back-and-forth'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#mode
 alt-shift-semicolon = 'mode service'
+cmd-enter = 'mode adjust'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -112,6 +104,43 @@ esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main'] # reset layout
 backspace = ['close-all-windows-but-current', 'mode main']
 
+# Optional: Define a binding mode for window adjustments
+# same as pop_os
+[mode.adjust.binding]
+h = 'move left'
+j = 'move down'
+k = 'move up'
+l = 'move right'
+shift-h = 'resize smart -50'
+shift-l = 'resize smart +50'
+shift-k = 'resize smart -50'
+shift-j = 'resize smart +50'
+esc = 'mode main'
+
+#
+# exit = ['esc', 'enter']
+# bindings = [
+#     # Enter Adjustment Mode
+#     { key = 'super+enter', command = 'enter-binding-mode adjust' },
+#
+#     # Move Window in Adjustment Mode
+#     { key = 'h', command = 'move left' },
+#     { key = 'j', command = 'move down' },
+#     { key = 'k', command = 'move up' },
+#     { key = 'l', command = 'move right' },
+#
+#     # Resize Window in Adjustment Mode
+#     { key = 'shift+h', command = 'resize shrink width 100' },
+#     { key = 'shift+j', command = 'resize grow height 100' },
+#     { key = 'shift+k', command = 'resize shrink height 100' },
+#     { key = 'shift+l', command = 'resize grow width 100' },
+#
+#     # Swap Windows in Adjustment Mode
+#     { key = 'ctrl+h', command = 'swap left' },
+#     { key = 'ctrl+j', command = 'swap down' },
+#     { key = 'ctrl+k', command = 'swap up' },
+#     { key = 'ctrl+l', command = 'swap right' }
+# ]
 
 # Bind windows to workspaces
 [[on-window-detected]]
