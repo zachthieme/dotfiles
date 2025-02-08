@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Generate the log file name with ISO 8601 datetime
-LOG_FILE="cm_install_$(date +"%Y-%m-%dT%H:%M:%S").log"
+LOG_FILE="$HOME/cm_install_$(date +"%Y-%m-%dT%H:%M:%S").log"
 
 # Function to log messages
 log_message() {
@@ -39,15 +39,28 @@ INSTALL=( bat curl gh git gettext jq mosh pandoc pass ripgrep tmux btop podman w
 # BREW: any tools that need to be installed specefically for mac. 
 BREW=( fd )
 
+# POP: any tools that need to be installed specefically for PopOS. 
+POP=( openssh-server )
+
 # DEBIAN_DEV: developer tools that are required for other installs to work
 DEBIAN_DEV=( autoconf automake cmake python3-libtmux doxygen fd-find g++ gettext libtool libtool-bin ninja-build  pkg-config protobuf-compiler python3-launchpadlib software-properties-common unzip )
 # id = pop
+{{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "pop") }}
+
+log_message "########################################################"
+log_message "                Update PopOS distro's"
+log_message "########################################################"
+
+sudo apt update && sudo apt upgrade -y  
+echo ${POP[@]} | xargs sudo apt install -y
+
+{{- end}}
+
 {{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian" "pop") }}
 
 log_message "########################################################"
 log_message "                Update Debian distro's"
 log_message "########################################################"
-
 
 sudo apt update && sudo apt upgrade -y  
 
