@@ -129,6 +129,7 @@ fi
 
 if ! command -v yazi &> /dev/null
 then
+  rustup update
   cargo install --locked yazi-fm yazi-cli
 fi
 
