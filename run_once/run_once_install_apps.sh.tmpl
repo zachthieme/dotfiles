@@ -72,6 +72,11 @@ echo ${DEBIAN[@]} | xargs sudo apt install -y
 log_message "########################################################"
 log_message "           Non-Package Manager Installs All OS"
 log_message "########################################################"
+# add xh (curl replacement)
+if ! command -v xh &> /dev/null
+then
+  curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
+fi
 
 # Add neovim
 if ! command -v nvim &> /dev/null
@@ -120,6 +125,11 @@ then
   chmod +x go_installer && \
   ./go_installer && \
   rm go_installer
+fi
+
+if ! command -v yazi &> /dev/null
+then
+  cargo install --locked yazi-fm yazi-cli
 fi
 
 # install eza
