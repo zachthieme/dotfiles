@@ -71,7 +71,7 @@ cmd-3 = 'workspace 3_IM' # Slack/Messages
 cmd-4 = 'workspace 4_Browser' # Browser
 cmd-5 = 'workspace 5_Teams' # Teams
 cmd-6 = 'workspace 6_Docs' # Docs
-# alt-6 = 'workspace 6_Music' # Spotify
+cmd-7 = 'workspace 7_Misc' # misc
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 # Move window to a particlar workspace and follow to the workspace
@@ -81,6 +81,7 @@ cmd-shift-ctrl-3 = ['move-node-to-workspace 3_IM','workspace 3_IM']
 cmd-shift-ctrl-4 = ['move-node-to-workspace 4_Browser','workspace 4_Browser']
 cmd-shift-ctrl-5 = ['move-node-to-workspace 5_Teams','workspace 5_Teams']
 cmd-shift-ctrl-6 = ['move-node-to-workspace 6_Docs','workspace 6_Docs']
+cmd-shift-ctrl-7 = ['move-node-to-workspace 7_Misc','workspace 7_Misc']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 # Move window to a particlar workspace
@@ -90,6 +91,7 @@ cmd-shift-3 = ['move-node-to-workspace 3_IM']
 cmd-shift-4 = ['move-node-to-workspace 4_Browser']
 cmd-shift-5 = ['move-node-to-workspace 5_Teams']
 cmd-shift-6 = ['move-node-to-workspace 6_Docs']
+cmd-shift-7 = ['move-node-to-workspace 7_Misc']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-tab = 'workspace-back-and-forth'
@@ -124,6 +126,10 @@ if.app-id = 'com.github.wez.wezterm'
 run = "move-node-to-workspace 1_Code"
 
 [[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+run = "move-node-to-workspace 1_Code"
+
+[[on-window-detected]]
 if.app-id = 'com.brave.Browser.app.faolnafnngnfdaknnbpnkhgohbobgegn'
 run = "move-node-to-workspace 2_Mail"
 
@@ -146,6 +152,10 @@ run = "move-node-to-workspace 5_Teams"
 [[on-window-detected]]
 if.app-id = 'com.microsoft.Word'
 run = "move-node-to-workspace 6_Docs"
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.rdc.macos'
+run = "move-node-to-workspace 7_Misc"
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
