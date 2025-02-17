@@ -130,7 +130,8 @@ if.app-id = 'com.mitchellh.ghostty'
 run = "move-node-to-workspace 1_Code"
 
 [[on-window-detected]]
-if.app-id = 'com.brave.Browser.app.faolnafnngnfdaknnbpnkhgohbobgegn'
+# if.app-id = 'com.brave.Browser.app.faolnafnngnfdaknnbpnkhgohbobgegn'
+if.app-id = 'com.google.Chrome.app.faolnafnngnfdaknnbpnkhgohbobgegn'
 run = "move-node-to-workspace 2_Mail"
 
 [[on-window-detected]]
