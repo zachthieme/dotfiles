@@ -9,5 +9,10 @@ return {
       -- This will match TODO or TODO: in search and Trouble
       pattern = [[\b(KEYWORDS):?]],
     },
+    keywords = {
+      TODO = {
+        alt = { "TODO", "TODAY" },
+      },
+    },
   },
 }
