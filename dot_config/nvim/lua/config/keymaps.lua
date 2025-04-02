@@ -4,6 +4,6 @@
 vim.keymap.set(
   "n",
   "<leader>wn",
-  "<cmd>VimwikiIndex<cr><bar><cmd>Calendar -view=year -split=vertical -width=27 -position=right<cr><bar><cmd>Trouble todo<cr>",
+  "<cmd>Calendar -view=year -split=vertical -width=27 -position=right<cr><bar><cmd>Trouble todo<cr><bar><cmd>VimwikiIndex<cr>",
   { desc = "Setup my notes environment." }
 )
