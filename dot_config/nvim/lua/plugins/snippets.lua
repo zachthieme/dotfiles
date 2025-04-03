@@ -1,2 +1,8 @@
--- In your luasnip setup:
-require("luasnip.loaders.from_lua").lazy_load({ paths = "~/.config/nvim/lua/snippets" })
+return {
+	"L3MON4D3/LuaSnip",
+	opts = function(_, opts)
+		require("luasnip.loaders.from_lua").lazy_load({
+			paths = { vim.fn.stdpath("config") .. "/lua/snippets" },
+		})
+	end,
+}
