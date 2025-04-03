@@ -26,27 +26,21 @@ vim.keymap.set(
 --
 -- 	vim.api.nvim_set_current_line(line)
 -- end, { desc = "Toggle TODO/DONE", noremap = true, silent = true })
-
 vim.keymap.set("n", "<leader>td", function()
 	local line = vim.api.nvim_get_current_line()
 	local date = os.date("%Y-%m-%d")
 
-	-- Check for DONE state
 	if line:match("^%s*DONE") then
-		-- Check if the original state was TODO or TODAY (stored as a comment)
+		-- Restore the original keyword (TODO or TODAY), defaulting to TODO
 		local original = line:match("original:(TODO|TODAY)")
-		local restore = original or "TODO" -- fallback to TODO
+		local restore = original or "TODO"
 
-		-- Replace DONE with the original, and remove metadata
 		line = line:gsub("^%s*DONE", restore, 1)
 		line = line:gsub("%s+completed:%d%d%d%d%-%d%d%-%d%d", "")
 		line = line:gsub("%s+original:(TODO|TODAY)", "")
 	elseif line:match("^%s*TODO") or line:match("^%s*TODAY") then
-		local original = line:match("^(%s*)(TODO|TODAY)")
-		--		local prefix = original and original:match("^%s*") or ""
 		local keyword = line:match("^%s*(TODO|TODAY)")
 
-		-- Replace TODO or TODAY with DONE and add metadata
 		line = line:gsub("^%s*" .. keyword, "DONE", 1)
 		if not line:match("completed:%d%d%d%d%-%d%d%-%d%d") then
 			line = line .. " completed:" .. date .. " original:" .. keyword
