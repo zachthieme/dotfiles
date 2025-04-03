@@ -20,7 +20,7 @@ vim.keymap.set("n", "<leader>td", function()
 		-- Replace DONE with the original keyword
 		line = line:gsub("^%s*DONE", restore, 1)
 		-- Remove the metadata (completed date and original tag)
-		line = line:gsub("%s*completed:*", "")
+		line = line:gsub("%s*completed:.*", "")
 		line = line:gsub("%s*original:(TODO|TODAY)", "")
 	else
 		-- Check for TODO or TODAY keyword at line start
