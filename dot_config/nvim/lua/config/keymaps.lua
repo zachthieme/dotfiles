@@ -14,14 +14,14 @@ vim.keymap.set("n", "<leader>td", function()
 
 	if line:match("^%s*DONE") then
 		-- Restore the original keyword (TODO or TODAY), defaulting to TODO
-		local original = line:match("original:(TODO)") or line:match("original:(TODAY)")
-		local restore = original or "TODO"
+		local original = line:match("original:(todo)") or line:match("original:(today)")
+		local restore = string.upper(original) or "TODO"
 
 		-- Replace DONE with the original keyword
 		line = line:gsub("^%s*DONE", restore, 1)
 		-- Remove the metadata (completed date and original tag)
 		line = line:gsub("%s*completed:.*", "")
-		line = line:gsub("%s*original:(TODO|TODAY)", "")
+		line = line:gsub("%s*original:(todo|today)", "")
 	else
 		-- Check for TODO or TODAY keyword at line start
 		local keyword = line:match("^%s*(TODO)") or line:match("^%s*(TODAY)")
@@ -29,7 +29,7 @@ vim.keymap.set("n", "<leader>td", function()
 			-- Replace keyword with DONE
 			line = line:gsub("^%s*" .. keyword, "DONE", 1)
 			-- Add completed date and original keyword
-			line = line .. " completed:" .. date .. " original:" .. keyword
+			line = line .. " completed:" .. date .. " original:" .. string.lower(keyword)
 		end
 	end
 
