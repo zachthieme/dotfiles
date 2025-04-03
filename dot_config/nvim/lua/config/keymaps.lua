@@ -43,7 +43,7 @@ vim.keymap.set("n", "<leader>td", function()
 		line = line:gsub("%s+original:(TODO|TODAY)", "")
 	elseif line:match("^%s*TODO") or line:match("^%s*TODAY") then
 		local original = line:match("^(%s*)(TODO|TODAY)")
-		local prefix = original and original:match("^%s*") or ""
+		--		local prefix = original and original:match("^%s*") or ""
 		local keyword = line:match("^%s*(TODO|TODAY)")
 
 		-- Replace TODO or TODAY with DONE and add metadata
