@@ -7,7 +7,7 @@ return {
     local telekasten = require("telekasten")
 
     telekasten.setup({
-      home = vim.fn.expand("~/zettelkasten"), -- your note directory
+      home = vim.fn.expand("~/Dropbox/notes"), -- your note directory
       template_new_daily = home .. "/" .. "templates/daily.md",
       -- you can add more options here
     })
