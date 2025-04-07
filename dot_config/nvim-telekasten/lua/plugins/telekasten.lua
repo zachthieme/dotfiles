@@ -1,4 +1,4 @@
-local home = vim.fn.expand("~/zettelkasten")
+local home = vim.fn.expand("~/Dropbox/notes")
 
 return {
   "renerocksai/telekasten.nvim",
@@ -7,9 +7,20 @@ return {
     local telekasten = require("telekasten")
 
     telekasten.setup({
-      home = vim.fn.expand("~/Dropbox/notes"), -- your note directory
+      home = home,
+      dailies = home .. "/" .. "daily",
+      weeklies = home .. "/" .. "weekly",
+      templates = home .. "/" .. "templates",
+
+      follow_creates_nonexisting = true,
+      dailies_create_nonexisting = true,
+      weeklies_create_nonexisting = true,
+
+      template_new_person = home .. "/" .. "templates/people.md",
       template_new_daily = home .. "/" .. "templates/daily.md",
-      -- you can add more options here
+      template_new_weekly = home .. "/" .. "templates/weekly.md",
+
+      insert_after_inserting = true,
     })
     --
     vim.api.nvim_create_autocmd("FileType", {
