@@ -20,7 +20,7 @@ return {
       template_new_daily = home .. "/" .. "templates/daily.md",
       template_new_weekly = home .. "/" .. "templates/weekly.md",
       journal_auto_open = true,
-      insert_after_inserting = false,
+      insert_after_inserting = true,
     })
     --
     vim.api.nvim_create_autocmd("FileType", {
