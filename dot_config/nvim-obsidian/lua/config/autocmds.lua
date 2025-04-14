@@ -7,9 +7,17 @@
 -- })
 --
 vim.api.nvim_create_autocmd("VimEnter", {
-	callback = function()
-		if vim.fn.argc() == 0 then
-			vim.cmd("cd ~/Dropbox/vaults/work")
-		end
-	end,
+  callback = function()
+    if vim.fn.argc() == 0 then
+      vim.cmd("cd ~/Dropbox/vaults/work")
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("InsertLeave", {
+  pattern = "*.md",
+  callback = function()
+    vim.cmd("silent! write")
+  end,
+  desc = "Auto-save Markdown files on InsertLeave",
 })
