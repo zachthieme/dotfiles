@@ -8,6 +8,7 @@ return {
     "nvim-lua/plenary.nvim",
     "hrsh7th/nvim-cmp",
     "nvim-telescope/telescope.nvim",
+    "nvim-telekasten/calendar-vim",
   },
   opts = {
     note_id_func = function(title)
