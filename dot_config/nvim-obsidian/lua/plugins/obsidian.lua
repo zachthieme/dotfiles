@@ -30,7 +30,6 @@ return {
     daily_notes = {
       template = "~/.config/nvim-obsidian/templates/daily.md",
     },
-
   },
   completion = {
     nvim_cmp = true,
@@ -61,7 +60,7 @@ return {
     -- lua/plugins/markdown-todos.lua or any config file
     vim.api.nvim_create_user_command("MarkdownTodos", function()
       vim.fn.setqflist({})
-      vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*-\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
+      vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*(\\*|-)\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
       -- vim.cmd("CToggle")
     end, { desc = "Update quickfix with markdown checkboxes" })
 
@@ -82,7 +81,7 @@ return {
         end)
       end,
     })
- require("lazy").load({ plugins = { "which-key.nvim" } })
+    require("lazy").load({ plugins = { "which-key.nvim" } })
     local wk = require("which-key")
 
     wk.add({
@@ -98,6 +97,5 @@ return {
       { "<leader>nm", "<cmd>ObsidianMetadata<CR>", desc = "Show Metadata", mode = "n" },
       { "<leader>ns", "<cmd>ObsidianSwitch<CR>", desc = "Switch Workspace", mode = "n" },
     })
-
   end,
 }
