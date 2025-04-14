@@ -28,7 +28,7 @@ return {
     },
 
     daily_notes = {
-      -- template = "~/.config/nvim-obsidian/templates/daily.md",
+      template = "~/.config/nvim-obsidian/templates/daily.md",
     },
 
   },
