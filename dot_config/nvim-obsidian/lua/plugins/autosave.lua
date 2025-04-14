@@ -1,0 +1,18 @@
+-- TODO: this seems to conflict with obsidian.nvim - causes the cursor to jump around when cycling through todo's
+return {}
+--
+-- 	"pocco81/auto-save.nvim",
+--   	version = "*", -- recommended, use latest release instead of latest commit
+-- 	config = function()
+-- 		require("auto-save").setup({
+-- 			enabled = true,
+-- 			execution_message = { enabled = false },
+-- 			trigger_events = { "InsertLeave", "TextChanged" },
+-- 			condition = function(buf)
+-- 				local ft = vim.bo[buf].filetype
+-- 				return ft ~= "" and ft ~= "help" and vim.bo[buf].modifiable
+-- 			end,
+-- 			write_all_buffers = false,
+-- 		})
+-- 	end,
+-- }
