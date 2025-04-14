@@ -18,6 +18,7 @@ vim.api.nvim_create_autocmd("InsertLeave", {
   pattern = "*.md",
   callback = function()
     vim.cmd("silent! write")
+    print("saved")
   end,
   desc = "Auto-save Markdown files on InsertLeave",
 })
