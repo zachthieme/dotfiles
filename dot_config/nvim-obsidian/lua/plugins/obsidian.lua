@@ -60,7 +60,8 @@ return {
     -- lua/plugins/markdown-todos.lua or any config file
     vim.api.nvim_create_user_command("MarkdownTodos", function()
       vim.fn.setqflist({})
-      vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*(\\\\*|-)\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
+      vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
+      -- vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*(\\\\*|-)\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
       -- vim.cmd("CToggle")
     end, { desc = "Update quickfix with markdown checkboxes" })
 
