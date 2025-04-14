@@ -10,6 +10,14 @@ return {
     "nvim-telescope/telescope.nvim",
   },
   opts = {
+    note_id_func = function(title)
+      -- If there's a title, slugify it; otherwise, use a timestamp
+      if title ~= nil then
+        return title:gsub(" ", "-"):gsub("[^A-Za-z0-9%-]", ""):lower()
+      else
+        return tostring(os.time()) -- fallback to timestamp if no title
+      end
+    end,
     wiki_link_func = "use_alias_only",
     markdown_link_func = "use_alias_only",
     disable_frontmatter = true, --{ enabled = true },
