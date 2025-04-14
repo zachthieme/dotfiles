@@ -10,4 +10,5 @@ return {
   { "olimorris/onedarkpro.nvim", name = "onedarkpro", lazy = false, priority = 1000 },
   { "Mofiqul/vscode.nvim", name = "vscode", lazy = false, priority = 1000 },
   { "ayu-theme/ayu-vim", name = "vscode", lazy = false, priority = 1000 },
+  { "junegunn/seoul256.vim", name = "vscode", lazy = false, priority = 1000 },
 }
