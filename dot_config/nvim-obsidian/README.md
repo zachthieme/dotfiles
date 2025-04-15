@@ -25,4 +25,19 @@ attendee's: ~ 11people in meeting
 A meeting that did not take the whole time.
 ### Post MVP Time Slot Availability   Continued (30/54 min) #meeting
 attendee's: [[Ross Marshall]], [[Zach Thieme]], [[Amy Funk]], [[Jeff Jones]]
--
+
+## How task information is codified 
+
+- [ ] Normal task
+- [x] Completed task
+- [~] Cancelled task
+- [>] Delegated task
+* [ ] Weekly goal or important task
+
+Tasks can have a due date: due:2025-05-11
+Tasks can have a completed date: completed:2025-04-15
+
+Here are some examples:
+* [ ] Discuss issue with nick
+- [ ] Mop the kitchen due:2025-04-15
+- [x] Do your taxes due:2025-04-14 <!-- completed:2025-04-14 -->
