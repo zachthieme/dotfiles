@@ -133,10 +133,12 @@ require("lazy").setup({
 			"hrsh7th/cmp-buffer", -- Buffer source
 			"hrsh7th/cmp-path", -- File path source
 			-- 9. Added luasnip in the hopes of getting list completion
+			--  it did not work
 			"L3MON4D3/LuaSnip", -- Snippet engine
 			"saadparwaiz1/cmp_luasnip", -- LuaSnip source
 			"echasnovski/mini.snippets",
 			"abeldekat/cmp-mini-snippets",
+			"rafamadriz/friendly-snippets",
 		},
 		config = function()
 			local cmp = require("cmp")
@@ -154,7 +156,7 @@ require("lazy").setup({
 				}),
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
-					-- { name = "luasnip" },
+					{ name = "luasnip" },
 					{ name = "buffer" },
 					{ name = "path" },
 				}),
