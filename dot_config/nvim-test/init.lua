@@ -146,7 +146,18 @@ require("lazy").setup({
 					return tostring(os.time()) -- fallback to timestamp if no title
 				end
 			end,
-
+			-- 17. custom icons and states that should be a single character width
+			ui = {
+				enable = true,
+				update_debounce = 200,
+				todo = {
+					-- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
+					[" "] = { icon = "󰄱", hl_group = "ObsidianTodo" },
+					["x"] = { icon = "", hl_group = "ObsidianDone" },
+					[">"] = { icon = "", hl_group = "ObsidianDelegated" },
+					["c"] = { icon = "", hl_group = "ObsidianCancelled" },
+				},
+			},
 			workspaces = {
 				{
 					name = "work",
