@@ -134,7 +134,7 @@ require("lazy").setup({
 			"hrsh7th/cmp-path", -- File path source
 			-- 9. Added luasnip in the hopes of getting list completion
 			"L3MON4D3/LuaSnip", -- Snippet engine
-			-- "saadparwaiz1/cmp_luasnip", -- LuaSnip source
+			"saadparwaiz1/cmp_luasnip", -- LuaSnip source
 			"echasnovski/mini.snippets",
 			"abeldekat/cmp-mini-snippets",
 		},
