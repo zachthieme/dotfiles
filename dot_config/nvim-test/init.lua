@@ -93,17 +93,21 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	-- 6. Added a small version of my obsidian.nvim config
+	-- 12. refactor of obsidian plugin
 	{
 		"epwalsh/obsidian.nvim",
 		version = "*", -- recommended, use latest release instead of latest commit
 		lazy = false,
 		ft = "markdown",
 		dependencies = {
-			-- Required.
 			"nvim-lua/plenary.nvim",
 			"hrsh7th/nvim-cmp",
 			"nvim-telescope/telescope.nvim",
 			"nvim-telekasten/calendar-vim",
+		},
+		completion = {
+			nvim_cmp = true,
+			min_chars = 2,
 		},
 		opts = {
 			wiki_link_func = "use_alias_only",
@@ -131,16 +135,12 @@ require("lazy").setup({
 			},
 
 			templates = {
-				folder = "~/.config/nvim-obsidian/templates",
+				folder = "~/Dropbox/vaults/work/templates",
 			},
 
 			daily_notes = {
-				template = "~/.config/nvim-obsidian/templates/daily.md",
+				template = "~/Dropbox/vaults/work/templates/daily.md",
 			},
-		},
-		completion = {
-			nvim_cmp = true,
-			min_chars = 2,
 		},
 	},
 	-- 7. Added a custom config for nvim-cmp
