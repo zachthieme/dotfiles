@@ -294,4 +294,37 @@ require("lazy").setup({
 			"MunifTanjim/nui.nvim",
 		},
 	},
+	-- 18 added a lualine that is set to be more for writers
+	{
+		"nvim-lualine/lualine.nvim",
+		event = "VeryLazy",
+		opts = {
+			options = {
+				theme = "auto", -- lualine picks up habamax from your colorscheme
+				icons_enabled = true,
+				globalstatus = true,
+				component_separators = "",
+				section_separators = "",
+				disabled_filetypes = { statusline = { "dashboard", "alpha", "starter" } },
+			},
+			sections = {
+				lualine_a = { "mode" },
+				lualine_b = {},
+				lualine_c = { "filename" },
+				lualine_x = { "filetype" },
+				lualine_y = {},
+				lualine_z = { "location" },
+			},
+			inactive_sections = {
+				lualine_a = {},
+				lualine_b = {},
+				lualine_c = { "filename" },
+				lualine_x = { "location" },
+				lualine_y = {},
+				lualine_z = {},
+			},
+			tabline = {},
+			extensions = {},
+		},
+	},
 })
