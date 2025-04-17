@@ -23,7 +23,7 @@ vim.opt.updatetime = 250
 vim.opt.timeoutlen = 300
 vim.opt.splitright = true
 vim.opt.splitbelow = true
-vim.opt.list = true
+-- 13. noticed that hyphens were appearing between words and noticed that vim.opt.list was true - deleted
 vim.opt.inccommand = "split"
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
@@ -59,6 +59,20 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
 	callback = function()
 		vim.highlight.on_yank()
+	end,
+})
+
+-- 14. adding autocmds to enable softwrap and gj/gk for markdown
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "markdown", "text", "obsidian" },
+	callback = function()
+		vim.opt_local.wrap = true
+		vim.opt_local.linebreak = true
+
+		-- Visual line navigation
+		local opts = { buffer = true, silent = true }
+		vim.keymap.set("n", "j", "gj", opts)
+		vim.keymap.set("n", "k", "gk", opts)
 	end,
 })
 
