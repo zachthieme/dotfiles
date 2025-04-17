@@ -178,6 +178,7 @@ require("lazy").setup({
 					{ name = "luasnip" },
 					{ name = "buffer" },
 					{ name = "path" },
+					{ name = "natdat" },
 				}),
 			})
 		end,
