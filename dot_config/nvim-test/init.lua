@@ -161,7 +161,7 @@ require("lazy").setup({
 					[" "] = { icon = "○", hl_group = "ObsidianTodo" },
 					["x"] = { icon = "✓", hl_group = "ObsidianDone" },
 					[">"] = { icon = "→", hl_group = "ObsidianDelegated" },
-					["c"] = { icon = "✗", hl_group = "ObsidianCancelled" },
+					["c"] = { icon = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
 				},
 			},
 			workspaces = {
