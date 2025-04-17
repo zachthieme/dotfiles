@@ -62,6 +62,24 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
+-- part of 10
+vim.keymap.set("i", "/d", function()
+	vim.schedule(function()
+		-- Prompt the user for natural language date
+		vim.ui.input({ prompt = "Enter natural date (e.g. next Tuesday): " }, function(input)
+			if input and input ~= "" then
+				local parsed = require("naturally").parse_date(input)
+				if parsed then
+					-- Insert the parsed date
+					vim.api.nvim_feedkeys(parsed, "i", true)
+				else
+					vim.notify("Could not parse: " .. input, vim.log.levels.WARN)
+				end
+			end
+		end)
+	end)
+end, { expr = false, desc = "Insert parsed natural date on /d" })
+
 -- 5. Removed all configs in lazy and deleted custom/ and kickstart/
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -133,7 +151,7 @@ require("lazy").setup({
 			"hrsh7th/cmp-buffer", -- Buffer source
 			"hrsh7th/cmp-path", -- File path source
 			-- 9. Added luasnip in the hopes of getting list completion
-			--  it did not work
+			--  it did not work - but i got date completion
 			"L3MON4D3/LuaSnip", -- Snippet engine
 			"saadparwaiz1/cmp_luasnip", -- LuaSnip source
 			"echasnovski/mini.snippets",
@@ -162,6 +180,15 @@ require("lazy").setup({
 					{ name = "path" },
 				}),
 			})
+		end,
+	},
+	-- 10. wanted to add fuzzy date completion for due dates
+	-- TODO: figure out how to make completions available at different triggers
+	-- e.g. [[ only does obsidian.nvim
+	{
+		"lukamanitta/naturally.nvim",
+		config = function()
+			require("naturally").setup()
 		end,
 	},
 })
