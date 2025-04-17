@@ -153,6 +153,7 @@ require("lazy").setup({
 				end
 			end,
 			-- 17. custom icons and states that should be a single character width
+			-- TODO figure out why the custom icons don't seem to be working
 			ui = {
 				enable = true,
 				update_debounce = 200,
