@@ -157,7 +157,7 @@ require("lazy").setup({
 			ui = {
 				enable = true,
 				update_debounce = 200,
-				todo = {
+				checkboxes = {
 					-- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
 					[" "] = { icon = "○", hl_group = "ObsidianTodo" },
 					["x"] = { icon = "✓", hl_group = "ObsidianDone" },
