@@ -147,16 +147,16 @@ require("lazy").setup({
 	{
 		"hrsh7th/nvim-cmp",
 		dependencies = {
-			"hrsh7th/cmp-nvim-lsp", -- LSP source
+			-- "hrsh7th/cmp-nvim-lsp", -- LSP source
 			"hrsh7th/cmp-buffer", -- Buffer source
 			"hrsh7th/cmp-path", -- File path source
 			-- 9. Added luasnip in the hopes of getting list completion
 			--  it did not work - but i got date completion
-			"L3MON4D3/LuaSnip", -- Snippet engine
-			"saadparwaiz1/cmp_luasnip", -- LuaSnip source
+			-- "L3MON4D3/LuaSnip", -- Snippet engine
+			-- "saadparwaiz1/cmp_luasnip", -- LuaSnip source
 			"echasnovski/mini.snippets",
 			"abeldekat/cmp-mini-snippets",
-			"rafamadriz/friendly-snippets",
+			-- "rafamadriz/friendly-snippets",
 		},
 		config = function()
 			local cmp = require("cmp")
@@ -174,10 +174,10 @@ require("lazy").setup({
 					["<C-Space>"] = cmp.mapping.complete(),
 				}),
 				sources = cmp.config.sources({
-					{ name = "nvim_lsp" },
-					{ name = "luasnip" },
+					-- { name = "nvim_lsp" },
+					-- { name = "luasnip" },
 					{ name = "buffer" },
-					{ name = "path" },
+					-- { name = "path" },
 					{ name = "natdat" },
 				}),
 			})
