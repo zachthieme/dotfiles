@@ -93,7 +93,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	-- 6. Added a small version of my obsidian.nvim config
-	-- 12. refactor of obsidian plugin
+	-- 12. refactor of obsidian plugin and add some autocommands and helper functions
 	{
 		"epwalsh/obsidian.nvim",
 		version = "*", -- recommended, use latest release instead of latest commit
@@ -142,6 +142,64 @@ require("lazy").setup({
 				template = "~/Dropbox/vaults/work/templates/daily.md",
 			},
 		},
+		config = function(_, opts)
+			require("obsidian").setup(opts)
+
+			-- Function to toggle quick fix and key binding
+			local function toggle_quickfix()
+				for _, win in ipairs(vim.fn.getwininfo()) do
+					if win.quickfix == 1 then
+						vim.cmd("cclose")
+						return
+					end
+				end
+				vim.cmd("copen")
+			end
+
+			vim.api.nvim_create_user_command("CToggle", toggle_quickfix, { desc = "Toggle quickfix list" })
+
+			-- User command to find markdown todo's and add hem to the quick fix list
+			vim.api.nvim_create_user_command("MarkdownTodos", function()
+				vim.fn.setqflist({})
+				vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
+			end, { desc = "Update quickfix with markdown checkboxes" })
+
+			-- Update markdown todo quickfix list when saving a buffer
+			vim.api.nvim_create_autocmd("BufWritePost", {
+				pattern = "*.md",
+				callback = function()
+					vim.cmd("MarkdownTodos")
+				end,
+				desc = "Update markdown checkbox quickfix list on save",
+			})
+
+			-- Run :ObsidianToday once Neovim starts and Obsidian is loaded
+			vim.api.nvim_create_autocmd("VimEnter", {
+				once = true,
+				callback = function()
+					vim.schedule(function()
+						vim.cmd("ObsidianToday")
+						vim.cmd("MarkdownTodos")
+					end)
+				end,
+			})
+			-- 	require("lazy").load({ plugins = { "which-key.nvim" } })
+			-- 	local wk = require("which-key")
+			--
+			-- 	wk.add({
+			-- 		{ "<leader>n", group = "notes" },
+			-- 		{ "<leader>nt", "<cmd>ObsidianToday<CR>", desc = "Today’s Note", mode = "n" },
+			-- 		{ "<leader>ny", "<cmd>ObsidianYesterday<CR>", desc = "Yesterday’s Note", mode = "n" },
+			-- 		{ "<leader>nw", "<cmd>ObsidianThisWeek<CR>", desc = "This Week’s Note", mode = "n" },
+			-- 		{ "<leader>nn", "<cmd>ObsidianNew<CR>", desc = "New Note", mode = "n" },
+			-- 		{ "<leader>nf", "<cmd>ObsidianSearch<CR>", desc = "Search Vault", mode = "n" },
+			-- 		{ "<leader>nb", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks", mode = "n" },
+			-- 		{ "<leader>nl", "<cmd>ObsidianFollowLink<CR>", desc = "Follow Link", mode = "n" },
+			-- 		{ "<leader>no", "<cmd>ObsidianOpen<CR>", desc = "Open in Obsidian App", mode = "n" },
+			-- 		{ "<leader>nm", "<cmd>ObsidianMetadata<CR>", desc = "Show Metadata", mode = "n" },
+			-- 		{ "<leader>ns", "<cmd>ObsidianSwitch<CR>", desc = "Switch Workspace", mode = "n" },
+			-- 	})
+		end,
 	},
 	-- 7. Added a custom config for nvim-cmp
 	{
