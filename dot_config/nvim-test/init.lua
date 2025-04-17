@@ -76,6 +76,16 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+-- 15. adding autocmds to change cwd and make sure we are in the work vault
+
+vim.api.nvim_create_autocmd("VimEnter", {
+	callback = function()
+		if vim.fn.argc() == 0 then
+			vim.cmd("cd ~/Dropbox/vaults/work")
+		end
+	end,
+})
+
 -- part of 10
 vim.keymap.set("i", "/d", function()
 	vim.schedule(function()
