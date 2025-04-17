@@ -186,7 +186,7 @@ require("lazy").setup({
 	-- TODO: figure out how to make completions available at different triggers
 	-- e.g. [[ only does obsidian.nvim
 	{
-		"lukamanitta/naturally.nvim",
+		"lukas-reineke/naturally.nvim",
 		config = function()
 			require("naturally").setup()
 		end,
