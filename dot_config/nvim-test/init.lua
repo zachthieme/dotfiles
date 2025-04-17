@@ -53,6 +53,12 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+-- part of 17
+vim.api.nvim_set_hl(0, "ObsidianCancelled", {
+	strikethrough = true,
+	fg = "#888888", -- optional: faded grey
+})
+
 -- 4. Kept one autocmd
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
@@ -152,10 +158,10 @@ require("lazy").setup({
 				update_debounce = 200,
 				todo = {
 					-- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
-					[" "] = { icon = "󰄱", hl_group = "ObsidianTodo" },
-					["x"] = { icon = "", hl_group = "ObsidianDone" },
-					[">"] = { icon = "", hl_group = "ObsidianDelegated" },
-					["c"] = { icon = "", hl_group = "ObsidianCancelled" },
+					[" "] = { icon = "○", hl_group = "ObsidianTodo" },
+					["x"] = { icon = "✓", hl_group = "ObsidianDone" },
+					[">"] = { icon = "→", hl_group = "ObsidianDelegated" },
+					["c"] = { icon = "✗", hl_group = "ObsidianCancelled" },
 				},
 			},
 			workspaces = {
