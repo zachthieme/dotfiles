@@ -145,6 +145,7 @@ require("lazy").setup({
 	},
 	-- 7. Added a custom config for nvim-cmp
 	{
+		-- 11. commented out things i didn't need may delete at a later date
 		"hrsh7th/nvim-cmp",
 		dependencies = {
 			-- "hrsh7th/cmp-nvim-lsp", -- LSP source
@@ -184,7 +185,5 @@ require("lazy").setup({
 		end,
 	},
 	-- 10. wanted to add fuzzy date completion for due dates
-	-- TODO: figure out how to make completions available at different triggers
-	-- e.g. [[ only does obsidian.nvim
 	{ "Gelio/cmp-natdat", config = true },
 })
