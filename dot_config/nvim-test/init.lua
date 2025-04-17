@@ -185,10 +185,5 @@ require("lazy").setup({
 	-- 10. wanted to add fuzzy date completion for due dates
 	-- TODO: figure out how to make completions available at different triggers
 	-- e.g. [[ only does obsidian.nvim
-	{
-		"lukas-reineke/naturally.nvim",
-		config = function()
-			require("naturally").setup()
-		end,
-	},
+	{ "Gelio/cmp-natdat", config = true },
 })
