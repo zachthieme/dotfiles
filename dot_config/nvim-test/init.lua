@@ -146,6 +146,7 @@ require("lazy").setup({
 				snippet = {
 					expand = function(args)
 						require("luasnip").lsp_expand(args.body)
+						require("luasnip.loaders.from_vscode").lazy_load()
 					end,
 				},
 				mapping = cmp.mapping.preset.insert({
