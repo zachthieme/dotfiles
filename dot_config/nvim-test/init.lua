@@ -296,22 +296,22 @@ require("lazy").setup({
           end)
         end,
       })
-      -- 	require("lazy").load({ plugins = { "which-key.nvim" } })
-      -- 	local wk = require("which-key")
-      --
-      -- 	wk.add({
-      -- 		{ "<leader>n", group = "notes" },
-      -- 		{ "<leader>nt", "<cmd>ObsidianToday<CR>", desc = "Today’s Note", mode = "n" },
-      -- 		{ "<leader>ny", "<cmd>ObsidianYesterday<CR>", desc = "Yesterday’s Note", mode = "n" },
-      -- 		{ "<leader>nw", "<cmd>ObsidianThisWeek<CR>", desc = "This Week’s Note", mode = "n" },
-      -- 		{ "<leader>nn", "<cmd>ObsidianNew<CR>", desc = "New Note", mode = "n" },
-      -- 		{ "<leader>nf", "<cmd>ObsidianSearch<CR>", desc = "Search Vault", mode = "n" },
-      -- 		{ "<leader>nb", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks", mode = "n" },
-      -- 		{ "<leader>nl", "<cmd>ObsidianFollowLink<CR>", desc = "Follow Link", mode = "n" },
-      -- 		{ "<leader>no", "<cmd>ObsidianOpen<CR>", desc = "Open in Obsidian App", mode = "n" },
-      -- 		{ "<leader>nm", "<cmd>ObsidianMetadata<CR>", desc = "Show Metadata", mode = "n" },
-      -- 		{ "<leader>ns", "<cmd>ObsidianSwitch<CR>", desc = "Switch Workspace", mode = "n" },
-      -- 	})
+      require("lazy").load({ plugins = { "which-key.nvim" } })
+      local wk = require("which-key")
+
+      wk.add({
+        { "<leader>n", group = "notes" },
+        { "<leader>nt", "<cmd>ObsidianToday<CR>", desc = "Today’s Note", mode = "n" },
+        { "<leader>ny", "<cmd>ObsidianYesterday<CR>", desc = "Yesterday’s Note", mode = "n" },
+        { "<leader>nw", "<cmd>ObsidianThisWeek<CR>", desc = "This Week’s Note", mode = "n" },
+        { "<leader>nn", "<cmd>ObsidianNew<CR>", desc = "New Note", mode = "n" },
+        { "<leader>nf", "<cmd>ObsidianSearch<CR>", desc = "Search Vault", mode = "n" },
+        { "<leader>nb", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks", mode = "n" },
+        { "<leader>nl", "<cmd>ObsidianFollowLink<CR>", desc = "Follow Link", mode = "n" },
+        { "<leader>no", "<cmd>ObsidianOpen<CR>", desc = "Open in Obsidian App", mode = "n" },
+        { "<leader>nm", "<cmd>ObsidianMetadata<CR>", desc = "Show Metadata", mode = "n" },
+        { "<leader>ns", "<cmd>ObsidianSwitch<CR>", desc = "Switch Workspace", mode = "n" },
+      })
     end,
   },
   -- 7. Added a custom config for nvim-cmp
@@ -379,6 +379,25 @@ require("lazy").setup({
       },
     },
     opts = {},
+  },
+  -- Added which key
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    },
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
+    },
   },
   -- 19 on work computer noticed that the cursor jumping on save was back. need to see if it's just my work computer
   --  validated it happens on my linux computer in the cloud!!!
