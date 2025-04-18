@@ -272,7 +272,7 @@ require("lazy").setup({
         { "<leader>y", "<cmd>ObsidianYesterday<CR>", desc = "Yesterday’s Note", mode = "n" },
         { "<leader>nw", "<cmd>ObsidianThisWeek<CR>", desc = "This Week’s Note", mode = "n" },
         { "<leader>nn", "<cmd>ObsidianNew<CR>", desc = "New Note", mode = "n" },
-        { "<leader>f", "<cmd>ObsidianSearch<CR>", desc = "Search Vault", mode = "n" },
+        { "<leader>s", "<cmd>ObsidianSearch<CR>", desc = "Search Vault", mode = "n" },
         { "<leader>nb", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks", mode = "n" },
         { "<leader>ns", "<cmd>ObsidianSwitch<CR>", desc = "Switch Workspace", mode = "n" },
       })
