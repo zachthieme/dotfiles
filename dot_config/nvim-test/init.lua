@@ -377,7 +377,7 @@ require("lazy").setup({
     },
     opts = {},
   },
-  -- Added which key
+  -- 24. which key
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
@@ -396,6 +396,26 @@ require("lazy").setup({
       },
     },
   },
+  -- 25. added autosave
+  {
+    "pocco81/auto-save.nvim",
+    version = "*", -- latest tagged release
+    config = function()
+      require("auto-save").setup({
+        enabled = true,
+        execution_message = {
+          enabled = false,
+        },
+        trigger_events = { "InsertLeave", "TextChanged" },
+        condition = function(buf)
+          local ft = vim.bo[buf].filetype
+          return ft ~= "" and ft ~= "help" and vim.bo[buf].modifiable
+        end,
+        write_all_buffers = false,
+      })
+    end,
+  },
+
   -- 19 on work computer noticed that the cursor jumping on save was back. need to see if it's just my work computer
   --  validated it happens on my linux computer in the cloud!!!
   -- 18 added a lualine that is set to be more for writers
