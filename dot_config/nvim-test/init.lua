@@ -90,18 +90,19 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- 14. adding autocmds to enable softwrap and gj/gk for markdown
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "markdown", "text", "obsidian" },
-  callback = function()
-    vim.opt_local.wrap = true
-    vim.opt_local.linebreak = true
-
-    -- Visual line navigation
-    local opts = { buffer = true, silent = true }
-    vim.keymap.set("n", "j", "gj", opts)
-    vim.keymap.set("n", "k", "gk", opts)
-  end,
-})
+-- 22. removing softwrap for now
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = { "markdown", "text", "obsidian" },
+--   callback = function()
+--     vim.opt_local.wrap = true
+--     vim.opt_local.linebreak = true
+--
+--     -- Visual line navigation
+--     local opts = { buffer = true, silent = true }
+--     vim.keymap.set("n", "j", "gj", opts)
+--     vim.keymap.set("n", "k", "gk", opts)
+--   end,
+-- })
 
 -- 15. adding autocmds to change cwd and make sure we are in the work vault
 
