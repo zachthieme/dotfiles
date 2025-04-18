@@ -129,6 +129,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
       return
     end
 
+    vim.cmd("cd ~/Dropbox/vaults/work")
     vim.cmd("ObsidianToday")
     vim.cmd("MarkdownTodos")
   end,
