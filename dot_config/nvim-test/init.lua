@@ -10,6 +10,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.have_nerd_font = false
 vim.opt.conceallevel = 2
+-- added as part of 20
+vim.opt.concealcursor = "nc"
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.mouse = "a"
@@ -216,20 +218,54 @@ require("lazy").setup({
 			-- 	desc = "Update markdown checkbox quickfix list on save",
 			-- })
 			--  part of 20 autocmd that returns cursor to position
+			-- failed due to conceal
+			-- vim.api.nvim_create_autocmd("BufWritePost", {
+			-- 	pattern = "*.md",
+			-- 	callback = function()
+			-- 		local pos = vim.api.nvim_win_get_cursor(0)
+			-- 		vim.schedule(function()
+			-- 			pcall(function()
+			-- 				vim.cmd("silent! MarkdownTodos")
+			-- 			end)
+			-- 			vim.api.nvim_win_set_cursor(0, pos)
+			-- 		end)
+			-- 	end,
+			-- 	desc = "Update markdown checkbox quickfix list on save",
+			-- })
+			-- part of 20 - with concealer taken into account
 			vim.api.nvim_create_autocmd("BufWritePost", {
 				pattern = "*.md",
 				callback = function()
-					local pos = vim.api.nvim_win_get_cursor(0)
+					local win = vim.api.nvim_get_current_win()
+					local buf = vim.api.nvim_get_current_buf()
+
+					-- Get cursor position safely
+					local pos = vim.api.nvim_win_get_cursor(win)
+					local saved_row = pos[1]
+					local saved_col = pos[2]
+
 					vim.schedule(function()
+						-- Run the update
 						pcall(function()
 							vim.cmd("silent! MarkdownTodos")
 						end)
-						vim.api.nvim_win_set_cursor(0, pos)
+
+						if vim.api.nvim_win_is_valid(win) and vim.api.nvim_buf_is_valid(buf) then
+							-- restore window/buffer focus
+							vim.api.nvim_set_current_win(win)
+							vim.api.nvim_win_set_buf(win, buf)
+
+							-- Get actual line length (since it may be concealed/modified)
+							local line = vim.api.nvim_buf_get_lines(buf, saved_row - 1, saved_row, false)[1] or ""
+							local clipped_col = math.min(saved_col, #line)
+
+							-- Try setting the cursor, fallback to start of line
+							pcall(vim.api.nvim_win_set_cursor, win, { saved_row, clipped_col })
+						end
 					end)
 				end,
-				desc = "Update markdown checkbox quickfix list on save",
+				desc = "Update markdown checkbox quickfix list on save (with cursor restore)",
 			})
-
 			-- Run :ObsidianToday once Neovim starts and Obsidian is loaded
 			vim.api.nvim_create_autocmd("VimEnter", {
 				once = true,
