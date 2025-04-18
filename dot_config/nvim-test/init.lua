@@ -215,6 +215,20 @@ require("lazy").setup({
 			-- 	end,
 			-- 	desc = "Update markdown checkbox quickfix list on save",
 			-- })
+			--  part of 20 autocmd that returns cursor to position
+			vim.api.nvim_create_autocmd("BufWritePost", {
+				pattern = "*.md",
+				callback = function()
+					local pos = vim.api.nvim_win_get_cursor(0)
+					vim.schedule(function()
+						pcall(function()
+							vim.cmd("silent! MarkdownTodos")
+						end)
+						vim.api.nvim_win_set_cursor(0, pos)
+					end)
+				end,
+				desc = "Update markdown checkbox quickfix list on save",
+			})
 
 			-- Run :ObsidianToday once Neovim starts and Obsidian is loaded
 			vim.api.nvim_create_autocmd("VimEnter", {
