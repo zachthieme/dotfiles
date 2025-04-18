@@ -90,27 +90,47 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 -- 14. adding autocmds to enable softwrap and gj/gk for markdown
--- 22. removing softwrap for now
--- vim.api.nvim_create_autocmd("FileType", {
---   pattern = { "markdown", "text", "obsidian" },
---   callback = function()
---     vim.opt_local.wrap = true
---     vim.opt_local.linebreak = true
---
---     -- Visual line navigation
---     local opts = { buffer = true, silent = true }
---     vim.keymap.set("n", "j", "gj", opts)
---     vim.keymap.set("n", "k", "gk", opts)
---   end,
--- })
+-- 22. removing softwrap for now - and added it backi
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "text", "obsidian" },
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+
+    -- Visual line navigation
+    local opts = { buffer = true, silent = true }
+    vim.keymap.set("n", "j", "gj", opts)
+    vim.keymap.set("n", "k", "gk", opts)
+  end,
+})
 
 -- 15. adding autocmds to change cwd and make sure we are in the work vault
-
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--   callback = function()
+--     if vim.fn.argc() == 0 then
+--       vim.cmd("cd ~/Dropbox/vaults/work")
+--     end
+--   end,
+-- })
+-- -- Run :ObsidianToday once Neovim starts and Obsidian is loaded
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--   once = true,
+--   callback = function()
+--     vim.schedule(function()
+--       vim.cmd("ObsidianToday")
+--       vim.cmd("MarkdownTodos")
+--     end)
+--   end,
+-- })
+-- 27. testing a single function to start today and change cwd
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
-    if vim.fn.argc() == 0 then
-      vim.cmd("cd ~/Dropbox/vaults/work")
+    if vim.fn.argc() > 0 then
+      return
     end
+
+    vim.cmd("ObsidianToday")
+    vim.cmd("MarkdownTodos")
   end,
 })
 
@@ -285,16 +305,6 @@ require("lazy").setup({
           end)
         end,
         desc = "Update markdown checkbox quickfix list on save (with cursor restore)",
-      })
-      -- Run :ObsidianToday once Neovim starts and Obsidian is loaded
-      vim.api.nvim_create_autocmd("VimEnter", {
-        once = true,
-        callback = function()
-          vim.schedule(function()
-            vim.cmd("ObsidianToday")
-            vim.cmd("MarkdownTodos")
-          end)
-        end,
       })
       require("lazy").load({ plugins = { "which-key.nvim" } })
       local wk = require("which-key")
