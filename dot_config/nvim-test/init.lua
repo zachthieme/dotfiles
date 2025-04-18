@@ -46,7 +46,6 @@ vim.schedule(function()
 end)
 
 -- 21. autofold concealed markdown links
--- Folding function for markdown links
 function MarkdownFoldExpr(lnum)
   local line = vim.fn.getline(lnum)
   if line:match("%[[^%]]+%]%([^)]+%)") then
@@ -104,24 +103,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- 15. adding autocmds to change cwd and make sure we are in the work vault
--- vim.api.nvim_create_autocmd("VimEnter", {
---   callback = function()
---     if vim.fn.argc() == 0 then
---       vim.cmd("cd ~/Dropbox/vaults/work")
---     end
---   end,
--- })
--- -- Run :ObsidianToday once Neovim starts and Obsidian is loaded
--- vim.api.nvim_create_autocmd("VimEnter", {
---   once = true,
---   callback = function()
---     vim.schedule(function()
---       vim.cmd("ObsidianToday")
---       vim.cmd("MarkdownTodos")
---     end)
---   end,
--- })
 -- 27. testing a single function to start today and change cwd
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
@@ -169,7 +150,7 @@ require("lazy").setup({
   -- 12. refactor of obsidian plugin and add some autocommands and helper functions
   {
     "epwalsh/obsidian.nvim",
-    version = "*", -- recommended, use latest release instead of latest commit
+    version = "*",
     lazy = false,
     ft = "markdown",
     dependencies = {
@@ -249,31 +230,6 @@ require("lazy").setup({
         vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
       end, { desc = "Update quickfix with markdown checkboxes" })
 
-      -- 20. commenting this out to see if it stops the strange movement
-      -- Update markdown todo quickfix list when saving a buffer
-      -- vim.api.nvim_create_autocmd("BufWritePost", {
-      -- 	pattern = "*.md",
-      -- 	callback = function()
-      -- 		vim.cmd("MarkdownTodos")
-      -- 	end,
-      -- 	desc = "Update markdown checkbox quickfix list on save",
-      -- })
-      --  part of 20 autocmd that returns cursor to position
-      -- failed due to conceal
-      -- vim.api.nvim_create_autocmd("BufWritePost", {
-      -- 	pattern = "*.md",
-      -- 	callback = function()
-      -- 		local pos = vim.api.nvim_win_get_cursor(0)
-      -- 		vim.schedule(function()
-      -- 			pcall(function()
-      -- 				vim.cmd("silent! MarkdownTodos")
-      -- 			end)
-      -- 			vim.api.nvim_win_set_cursor(0, pos)
-      -- 		end)
-      -- 	end,
-      -- 	desc = "Update markdown checkbox quickfix list on save",
-      -- })
-      -- part of 20 - with concealer taken into account
       vim.api.nvim_create_autocmd("BufWritePost", {
         pattern = "*.md",
         callback = function()
@@ -327,20 +283,13 @@ require("lazy").setup({
     -- 11. commented out things i didn't need may delete at a later date
     "hrsh7th/nvim-cmp",
     dependencies = {
-      -- "hrsh7th/cmp-nvim-lsp", -- LSP source
       "hrsh7th/cmp-buffer", -- Buffer source
       "hrsh7th/cmp-path", -- File path source
-      -- 9. Added luasnip in the hopes of getting list completion
-      --  it did not work - but i got date completion
-      -- "L3MON4D3/LuaSnip", -- Snippet engine
-      -- "saadparwaiz1/cmp_luasnip", -- LuaSnip source
       "echasnovski/mini.snippets",
       "abeldekat/cmp-mini-snippets",
-      -- "rafamadriz/friendly-snippets",
     },
     config = function()
       local cmp = require("cmp")
-      -- require("luasnip.loaders.from_vscode").lazy_load()
       cmp.setup({
         snippet = {
           expand = function(args)
@@ -354,10 +303,7 @@ require("lazy").setup({
           ["<C-Space>"] = cmp.mapping.complete(),
         }),
         sources = cmp.config.sources({
-          -- { name = "nvim_lsp" },
-          -- { name = "luasnip" },
           { name = "buffer" },
-          -- { name = "path" },
           { name = "natdat" },
         }),
       })
@@ -392,11 +338,7 @@ require("lazy").setup({
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
-    opts = {
-      -- your configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
-    },
+    opts = {},
     keys = {
       {
         "<leader>?",
@@ -410,7 +352,7 @@ require("lazy").setup({
   -- 25. added autosave
   {
     "pocco81/auto-save.nvim",
-    version = "*", -- latest tagged release
+    version = "*",
     config = function()
       require("auto-save").setup({
         enabled = true,
@@ -435,7 +377,7 @@ require("lazy").setup({
     event = "VeryLazy",
     opts = {
       options = {
-        theme = "auto", -- lualine picks up habamax from your colorscheme
+        theme = "auto",
         icons_enabled = true,
         globalstatus = true,
         component_separators = "",
