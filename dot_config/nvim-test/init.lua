@@ -366,6 +366,20 @@ require("lazy").setup({
       "MunifTanjim/nui.nvim",
     },
   },
+  -- 23. Added Snipe
+  {
+    "leath-dub/snipe.nvim",
+    keys = {
+      {
+        "gb",
+        function()
+          require("snipe").open_buffer_menu()
+        end,
+        desc = "Open Snipe buffer menu",
+      },
+    },
+    opts = {},
+  },
   -- 19 on work computer noticed that the cursor jumping on save was back. need to see if it's just my work computer
   --  validated it happens on my linux computer in the cloud!!!
   -- 18 added a lualine that is set to be more for writers
