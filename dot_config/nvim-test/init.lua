@@ -63,22 +63,22 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- 8. added an autocommand to skin obsidian in the habamax style.
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
-  callback = function()
-    vim.cmd("highlight markdownH1 guifg=#ff8700")
-    vim.cmd("highlight markdownH2 guifg=#d7af5f")
-    vim.cmd("highlight markdownH3 guifg=#87af87")
-  end,
-})
-
--- part of 17
-vim.api.nvim_set_hl(0, "ObsidianCancelled", {
-  strikethrough = true,
-  fg = "#888888", -- optional: faded grey
-})
-
+-- -- 8. added an autocommand to skin obsidian in the habamax style.
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = "markdown",
+--   callback = function()
+--     vim.cmd("highlight markdownH1 guifg=#ff8700")
+--     vim.cmd("highlight markdownH2 guifg=#d7af5f")
+--     vim.cmd("highlight markdownH3 guifg=#87af87")
+--   end,
+-- })
+--
+-- -- part of 17
+-- vim.api.nvim_set_hl(0, "ObsidianCancelled", {
+--   strikethrough = true,
+--   fg = "#888888", -- optional: faded grey
+-- })
+--
 -- 4. Kept one autocmd
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking (copying) text",
