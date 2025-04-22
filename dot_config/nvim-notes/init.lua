@@ -369,6 +369,30 @@ require("lazy").setup({
     end,
   },
 
+  {
+    "echasnovski/mini.nvim",
+    version = "*", -- Use the latest stable version
+    config = function()
+      -- Enable mini.nvim modules
+      require("mini.ai").setup()
+      require("mini.align").setup()
+      require("mini.comment").setup()
+      require("mini.cursorword").setup()
+      require("mini.surround").setup()
+      require("mini.trailspace").setup()
+    end,
+  },
+
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      toggle = { enabled = true },
+      zen = { enabled = true },
+    },
+  },
+
   -- 19 on work computer noticed that the cursor jumping on save was back. need to see if it's just my work computer
   --  validated it happens on my linux computer in the cloud!!!
   -- 18 added a lualine that is set to be more for writers
