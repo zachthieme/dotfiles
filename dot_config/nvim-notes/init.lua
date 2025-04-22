@@ -224,11 +224,29 @@ require("lazy").setup({
 
       vim.api.nvim_create_user_command("CToggle", toggle_quickfix, { desc = "Toggle quickfix list" })
 
-      -- User command to find markdown todo's and add hem to the quick fix list
       vim.api.nvim_create_user_command("MarkdownTodos", function()
-        vim.fn.setqflist({})
-        vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
-      end, { desc = "Update quickfix with markdown checkboxes" })
+        -- Get today's date in ISO format
+        local today = os.date("%Y-%m-%d")
+
+        -- Run ripgrep and capture all markdown todos with optional due tags
+        local results = vim.fn.systemlist('rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"')
+
+        local filtered = {}
+        for _, line in ipairs(results) do
+          local due = string.match(line, "@due:(%d%d%d%d%-%d%d%-%d%d)")
+          if due == nil or due <= today then
+            table.insert(filtered, line)
+          end
+        end
+
+        vim.fn.setqflist({}, " ", { title = "Markdown Todos (due today or earlier)", lines = filtered })
+      end, { desc = "Update quickfix with markdown checkboxes due today or earlier" })
+
+      -- User command to find markdown todo's and add hem to the quick fix list
+      -- vim.api.nvim_create_user_command("MarkdownTodos", function()
+      --   vim.fn.setqflist({})
+      --   vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
+      -- end, { desc = "Update quickfix with markdown checkboxes" })
 
       vim.api.nvim_create_autocmd("BufWritePost", {
         pattern = "*.md",
