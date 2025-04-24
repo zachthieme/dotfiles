@@ -330,7 +330,7 @@ require("lazy").setup({
     end,
   },
   -- 10. wanted to add fuzzy date completion for due dates
-  { "Gelio/cmp-natdat", config = true },
+  { "Gelio/cmp-natdat", config = true, lazy = false },
   -- 16. added noice
   {
     "folke/noice.nvim",
