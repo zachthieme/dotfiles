@@ -41,7 +41,7 @@ vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower win
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 vim.keymap.set("i", "<M-BS>", "<C-w>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>z", ":lua Snacks.zen()<CR>", { desc = "Toggle Zen mode" })
-vim.keymap.set("n", "<leader>c", "CalendarVR", { desc = "Toggle the calendar." })
+vim.keymap.set("n", "<leader>c", "<cmd>CalendarVR<CR>", { desc = "Toggle the calendar." })
 
 -- 3. Kept one function
 vim.schedule(function()
