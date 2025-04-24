@@ -479,7 +479,20 @@ require("lazy").setup({
 		lazy = false,
 		priority = 1000,
 		config = function()
-			require("kanagawa").setup({})
+			require("kanagawa").setup({
+				overrides = function(colors)
+					local theme = colors.theme
+					return {
+						-- Markdown Header Colors
+						["@markup.heading.1.markdown"] = { fg = theme.syn.number, bold = true },
+						["@markup.heading.2.markdown"] = { fg = theme.syn.constant, bold = true },
+						["@markup.heading.3.markdown"] = { fg = theme.syn.identifier, bold = true },
+						["@markup.heading.4.markdown"] = { fg = theme.syn.statement, bold = true },
+						["@markup.heading.5.markdown"] = { fg = theme.syn.special, bold = true },
+						["@markup.heading.6.markdown"] = { fg = theme.syn.comment, bold = true },
+					}
+				end,
+			})
 			vim.cmd("colorscheme kanagawa")
 		end,
 	},
