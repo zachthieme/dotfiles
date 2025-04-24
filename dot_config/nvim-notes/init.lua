@@ -56,6 +56,12 @@ function MarkdownFoldExpr(lnum)
 	end
 	return 0
 end
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = { "*.md", "*.lua" },
+	callback = function()
+		vim.cmd([[silent! %s/\s\+$//e]])
+	end,
+})
 
 -- Autocmd to enable folding for markdown
 vim.api.nvim_create_autocmd("FileType", {
