@@ -41,31 +41,30 @@ vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower win
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 vim.keymap.set("i", "<M-BS>", "<C-w>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>z", ":lua Snacks.zen()<CR>", { desc = "Toggle Zen mode" })
--- Keep track of the CalendarVR window ID
+
+-- Track the CalendarVR window
 local calendar_win_id = nil
 
 vim.keymap.set("n", "<leader>c", function()
 	if calendar_win_id and vim.api.nvim_win_is_valid(calendar_win_id) then
-		-- If already open, close the window
 		vim.api.nvim_win_close(calendar_win_id, true)
 		calendar_win_id = nil
 		return
 	end
 
-	-- Open CalendarVR
+	-- Launch CalendarVR
 	vim.cmd("CalendarVR")
 
-	-- Defer to let CalendarVR finish opening
+	-- Defer to allow the window to open
 	vim.defer_fn(function()
-		-- Get the current window ID (should now be CalendarVR)
 		local win = vim.api.nvim_get_current_win()
 		calendar_win_id = win
 
-		-- Apply minimalist styling to the Calendar window
-		vim.api.nvim_set_option_value("number", false, { scope = "window", win = win })
-		vim.api.nvim_set_option_value("relativenumber", false, { scope = "window", win = win })
-		vim.api.nvim_set_option_value("signcolumn", "no", { scope = "window", win = win })
-		vim.api.nvim_set_option_value("foldcolumn", "0", { scope = "window", win = win })
+		-- Set clean UI (use vim.api.nvim_win_set_option for window options)
+		vim.api.nvim_win_set_option(win, "number", false)
+		vim.api.nvim_win_set_option(win, "relativenumber", false)
+		vim.api.nvim_win_set_option(win, "signcolumn", "no")
+		vim.api.nvim_win_set_option(win, "foldcolumn", "0")
 	end, 100)
 end, { desc = "Toggle CalendarVR with clean view" })
 
