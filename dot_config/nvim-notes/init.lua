@@ -167,7 +167,7 @@ require("lazy").setup({
 					[" "] = { order = 1, char = "○", hl_group = "ObsidianTodo" },
 					["x"] = { order = 2, char = "✓", hl_group = "ObsidianDone" },
 					[">"] = { order = 3, char = "→", hl_group = "ObsidianRightArrow" },
-					["~"] = { order = 4, char = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
+					["c"] = { order = 4, char = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
 				},
 			},
 			workspaces = {
