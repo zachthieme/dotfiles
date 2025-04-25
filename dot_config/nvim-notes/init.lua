@@ -31,10 +31,6 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 vim.keymap.set("i", "<M-BS>", "<C-w>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>z", ":lua Snacks.zen()<CR>", { desc = "Toggle Zen mode" })
 
-local function get_today()
-	return os.date("%Y-%m-%d")
-end
-
 -- Track the CalendarVR window
 local calendar_win_id = nil
 
@@ -168,7 +164,6 @@ require("lazy").setup({
 					return tostring(os.time()) -- fallback to timestamp if no title
 				end
 			end,
-			-- 17. custom icons and states that should be a single character width
 			ui = {
 				enable = true,
 				update_debounce = 200,
@@ -200,54 +195,6 @@ require("lazy").setup({
 		},
 		config = function(_, opts)
 			require("obsidian").setup(opts)
-			-- Customize your own cycle and metadata logic
-			local todo_states = {
-				["[ ]"] = "[x]",
-				["[x]"] = "[c]",
-				["[c]"] = "[ ]",
-			}
-
-			local function custom_toggle_checkbox()
-				local row = vim.api.nvim_win_get_cursor(0)[1] - 1
-				local line = vim.api.nvim_get_current_line()
-
-				local current_state = line:match("^%s*[-*]?%s*(%[[ xXcC]%])")
-				if not current_state then
-					return
-				end
-
-				local new_state = todo_states[current_state]
-				if not new_state then
-					return
-				end
-
-				-- Replace checkbox state
-				local new_line = line:gsub(vim.pesc(current_state), new_state, 1)
-
-				-- Manage metadata
-				if new_state == "[x]" or new_state == "[c]" then
-					if not new_line:find("<!-- completed: ") then
-						new_line = new_line .. " <!-- completed: " .. get_today() .. " -->"
-					end
-				else
-					new_line = new_line:gsub("%s*<!-- completed:.- -->", "")
-				end
-
-				vim.api.nvim_buf_set_lines(0, row, row + 1, false, { new_line })
-			end
-
-			-- Remove the default command
-			pcall(vim.api.nvim_del_user_command, "ObsidianToggleCheckbox")
-
-			-- Register my command
-			vim.api.nvim_create_user_command("ObsidianToggleCheckbox", custom_toggle_checkbox, {})
-
-			vim.keymap.set(
-				"n",
-				"<CR>",
-				custom_toggle_checkbox,
-				{ desc = "Custom Toggle To-Do", noremap = true, silent = true }
-			)
 
 			-- Function to toggle quick fix and key binding
 			local function toggle_quickfix()
