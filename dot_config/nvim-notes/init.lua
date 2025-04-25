@@ -235,6 +235,13 @@ require("lazy").setup({
 			ui = {
 				enable = true,
 				update_debounce = 200,
+				checkboxes = {
+					-- NOTE: the 'char' value has to be a single character, and the highlight groups are defined below.
+					[" "] = { order = 1, char = "󰄱", hl_group = "ObsidianTodo" },
+					["x"] = { order = 2, char = "", hl_group = "ObsidianDone" },
+					[">"] = { order = 3, char = "", hl_group = "ObsidianRightArrow" },
+					["~"] = { order = 4, char = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
+				},
 				-- todo = {
 				-- 	-- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
 				-- 	[" "] = { icon = "○", hl_group = "ObsidianTodo" },
