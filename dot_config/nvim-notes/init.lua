@@ -1,16 +1,7 @@
--- Why we are here:
--- I wanted to start using vim for my writing and my note taking but wanted to have some of the convienenve of the personal knowledge management systems i've been using for years (mostly roam research and logseq).
--- I started with Lazyvim and added obsidian.nvim but strange things were happening. autocomplete didn't always work and i couldn't figure out the configurations i needed to keep it working consistently.
--- So i started with kickstart and built a clean and new obsidian config and added a ton of customization - and then my cursor started jumping around when i would save, the concealer sometimes got stuck to 3 (not 2 like i need), and sometimes the concealer would just stop working.
--- At my wits end i grabbed and neutered a version of kickstart.  Stripped it to the bar minimum and have been building back slowly...below is my story.
-
--- 1. Kept kickstart defaults for vim.opts and adjusted a few
---
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.have_nerd_font = false
 vim.opt.conceallevel = 2
--- added as part of 20
 vim.opt.concealcursor = "nc"
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -25,13 +16,11 @@ vim.opt.updatetime = 250
 vim.opt.timeoutlen = 300
 vim.opt.splitright = true
 vim.opt.splitbelow = true
--- 13. noticed that hyphens were appearing between words and noticed that vim.opt.list was true - deleted
 vim.opt.inccommand = "split"
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 vim.opt.confirm = true
 
--- 2. kept minimal set of keymaps
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
@@ -41,43 +30,6 @@ vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower win
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 vim.keymap.set("i", "<M-BS>", "<C-w>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>z", ":lua Snacks.zen()<CR>", { desc = "Toggle Zen mode" })
-
-local cycle_states = {
-	["[ ]"] = "[x]",
-	["[x]"] = "[ ]",
-}
-
-local function get_today()
-	return os.date("%Y-%m-%d")
-end
-
-local function cycle_todo()
-	local row = vim.api.nvim_win_get_cursor(0)[1] - 1
-	local line = vim.api.nvim_buf_get_lines(0, row, row + 1, false)[1]
-
-	local current_state = line:match("^%s*[-*]?%s*(%[[ xX%-]?%])")
-	if not current_state then
-		return
-	end
-
-	local new_state = cycle_states[current_state] or "[ ]"
-	local new_line = line:gsub(vim.pesc(current_state), new_state, 1)
-
-	if new_state == "[x]" then
-		-- Add metadata if not already there
-		if not new_line:find("<!-- completed: ") then
-			new_line = new_line .. " <!-- completed: " .. get_today() .. " -->"
-		end
-	else
-		-- Remove metadata if going back to incomplete
-		new_line = new_line:gsub("%s*<!-- completed:.- -->", "")
-	end
-
-	vim.api.nvim_buf_set_lines(0, row, row + 1, false, { new_line })
-end
-
--- Map it to <CR> or whatever key you prefer
-vim.keymap.set("n", "<CR>", cycle_todo, { desc = "Custom To-Do Cycle" })
 
 -- Track the CalendarVR window
 local calendar_win_id = nil
