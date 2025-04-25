@@ -1,51 +1,44 @@
--- Why we are here:
--- I wanted to start using vim for my writing and my note taking but wanted to have some of the convienenve of the personal knowledge management systems i've been using for years (mostly roam research and logseq).
--- I started with Lazyvim and added obsidian.nvim but strange things were happening. autocomplete didn't always work and i couldn't figure out the configurations i needed to keep it working consistently.
--- So i started with kickstart and built a clean and new obsidian config and added a ton of customization - and then my cursor started jumping around when i would save, the concealer sometimes got stuck to 3 (not 2 like i need), and sometimes the concealer would just stop working.
--- At my wits end i grabbed and neutered a version of kickstart.  Stripped it to the bar minimum and have been building back slowly...below is my story.
+local g = vim.g
+local opt = vim.opt
+local keymap = vim.keymap
 
--- 1. Kept kickstart defaults for vim.opts and adjusted a few
---
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
-vim.g.have_nerd_font = false
-vim.opt.conceallevel = 2
--- added as part of 20
-vim.opt.concealcursor = "nc"
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.mouse = "a"
-vim.opt.showmode = false
-vim.opt.breakindent = true
-vim.opt.undofile = true
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.signcolumn = "yes"
-vim.opt.updatetime = 250
-vim.opt.timeoutlen = 300
-vim.opt.splitright = true
-vim.opt.splitbelow = true
--- 13. noticed that hyphens were appearing between words and noticed that vim.opt.list was true - deleted
-vim.opt.inccommand = "split"
-vim.opt.cursorline = true
-vim.opt.scrolloff = 10
-vim.opt.confirm = true
+g.mapleader = " "
+g.maplocalleader = " "
+g.have_nerd_font = false
+opt.conceallevel = 2
+opt.concealcursor = "nc"
+opt.number = true
+opt.relativenumber = true
+opt.mouse = "a"
+opt.showmode = false
+opt.breakindent = true
+opt.undofile = true
+opt.ignorecase = true
+opt.smartcase = true
+opt.signcolumn = "yes"
+opt.updatetime = 250
+opt.timeoutlen = 300
+opt.splitright = true
+opt.splitbelow = true
+opt.inccommand = "split"
+opt.cursorline = true
+opt.scrolloff = 10
+opt.confirm = true
 
--- 2. kept minimal set of keymaps
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
-vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
-vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
-vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
-vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
-vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
-vim.keymap.set("i", "<M-BS>", "<C-w>", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>z", ":lua Snacks.zen()<CR>", { desc = "Toggle Zen mode" })
+keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
+keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
+keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
+keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+keymap.set("i", "<M-BS>", "<C-w>", { noremap = true, silent = true })
+keymap.set("n", "<leader>z", ":lua Snacks.zen()<CR>", { desc = "Toggle Zen mode" })
 
 -- Track the CalendarVR window
 local calendar_win_id = nil
 
-vim.keymap.set("n", "<leader>c", function()
+keymap.set("n", "<leader>c", function()
 	if calendar_win_id and vim.api.nvim_win_is_valid(calendar_win_id) then
 		vim.api.nvim_win_close(calendar_win_id, true)
 		calendar_win_id = nil
@@ -57,7 +50,7 @@ vim.keymap.set("n", "<leader>c", function()
 
 	-- Defer to allow the window to open
 	vim.defer_fn(function()
-		local win = vim.api.nvim_get_current_win()
+		local win = vim.api.nget_current_win()
 		calendar_win_id = win
 
 		-- Set clean UI (use vim.api.nvim_win_set_option for window options)
@@ -70,7 +63,7 @@ end, { desc = "Toggle CalendarVR with clean view" })
 
 -- 3. Kept one function
 vim.schedule(function()
-	vim.opt.clipboard = "unnamedplus"
+	opt.clipboard = "unnamedplus"
 end)
 
 -- 21. autofold concealed markdown links
@@ -92,8 +85,8 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "markdown",
 	callback = function()
-		vim.opt_local.foldmethod = "expr"
-		vim.opt_local.foldexpr = "v:lua.MarkdownFoldExpr(v:lnum)"
+		opt_local.foldmethod = "expr"
+		opt_local.foldexpr = "v:lua.MarkdownFoldExpr(v:lnum)"
 	end,
 })
 
@@ -116,13 +109,13 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "markdown", "text", "obsidian" },
 	callback = function()
-		vim.opt_local.wrap = true
-		vim.opt_local.linebreak = true
+		opt_local.wrap = true
+		opt_local.linebreak = true
 
 		-- Visual line navigation
 		local opts = { buffer = true, silent = true }
-		vim.keymap.set("n", "j", "gj", opts)
-		vim.keymap.set("n", "k", "gk", opts)
+		keymap.set("n", "j", "gj", opts)
+		keymap.set("n", "k", "gk", opts)
 	end,
 })
 
@@ -142,13 +135,13 @@ vim.api.nvim_create_autocmd("VimEnter", {
 -- 5. Removed all configs in lazy and deleted custom/ and kickstart/
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+	local lazyrepo = "https://github.com/folke/lazy.ngit"
 	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 	if vim.v.shell_error ~= 0 then
 		error("Error cloning lazy.nvim:\n" .. out)
 	end
 end ---@diagnostic disable-next-line: undefined-field
-vim.opt.rtp:prepend(lazypath)
+opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	-- 6. Added a small version of my obsidian.nvim config
@@ -224,7 +217,7 @@ require("lazy").setup({
 
 			local function custom_toggle_checkbox()
 				local row = vim.api.nvim_win_get_cursor(0)[1] - 1
-				local line = vim.api.nvim_get_current_line()
+				local line = vim.api.nget_current_line()
 
 				local current_state = line:match("^%s*[-*]?%s*(%[[ xXcC]%])")
 				if not current_state then
@@ -258,7 +251,7 @@ require("lazy").setup({
 			vim.api.nvim_create_user_command("ObsidianToggleCheckbox", custom_toggle_checkbox, {})
 
 			-- (Optional) Also bind it to <CR> if you'd like
-			vim.keymap.set(
+			keymap.set(
 				"n",
 				"<CR>",
 				custom_toggle_checkbox,
@@ -299,8 +292,8 @@ require("lazy").setup({
 			vim.api.nvim_create_autocmd("BufWritePost", {
 				pattern = "*.md",
 				callback = function()
-					local win = vim.api.nvim_get_current_win()
-					local buf = vim.api.nvim_get_current_buf()
+					local win = vim.api.nget_current_win()
+					local buf = vim.api.nget_current_buf()
 
 					-- Get cursor position safely
 					local pos = vim.api.nvim_win_get_cursor(win)
@@ -501,8 +494,8 @@ require("lazy").setup({
 				leap.opts[k] = v
 			end
 			leap.add_default_mappings(true)
-			vim.keymap.del({ "x", "o" }, "x")
-			vim.keymap.del({ "x", "o" }, "X")
+			keymap.del({ "x", "o" }, "x")
+			keymap.del({ "x", "o" }, "X")
 		end,
 	},
 	{
