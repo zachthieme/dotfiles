@@ -231,7 +231,6 @@ require("lazy").setup({
 				end
 			end,
 			-- 17. custom icons and states that should be a single character width
-			-- TODO figure out why the custom icons don't seem to be working
 			ui = {
 				enable = true,
 				update_debounce = 200,
@@ -242,13 +241,6 @@ require("lazy").setup({
 					[">"] = { order = 3, char = "", hl_group = "ObsidianRightArrow" },
 					["~"] = { order = 4, char = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
 				},
-				-- todo = {
-				-- 	-- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
-				-- 	[" "] = { icon = "○", hl_group = "ObsidianTodo" },
-				-- 	["x"] = { icon = "✓", hl_group = "ObsidianDone" },
-				-- 	[">"] = { icon = "→", hl_group = "ObsidianDelegated" },
-				-- 	["c"] = { icon = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
-				-- },
 			},
 			workspaces = {
 				{
@@ -271,8 +263,60 @@ require("lazy").setup({
 		},
 		config = function(_, opts)
 			require("obsidian").setup(opts)
+			-- Customize your own cycle and metadata logic
+			local todo_states = {
+				["[ ]"] = "[x]",
+				["[x]"] = "[c]",
+				["[c]"] = "[ ]",
+			}
 
-			vim.keymap.set("n", "<CR>", cycle_todo, { desc = "Custom To-Do Cycle", noremap = true, silent = true })
+			local function get_today()
+				return os.date("%Y-%m-%d")
+			end
+
+			local function custom_toggle_checkbox()
+				local row = vim.api.nvim_win_get_cursor(0)[1] - 1
+				local line = vim.api.nvim_get_current_line()
+
+				local current_state = line:match("^%s*[-*]?%s*(%[[ xXcC]%])")
+				if not current_state then
+					return
+				end
+
+				local new_state = todo_states[current_state]
+				if not new_state then
+					return
+				end
+
+				-- Replace checkbox state
+				local new_line = line:gsub(vim.pesc(current_state), new_state, 1)
+
+				-- Manage metadata
+				if new_state == "[x]" or new_state == "[c]" then
+					if not new_line:find("<!-- completed: ") then
+						new_line = new_line .. " <!-- completed: " .. get_today() .. " -->"
+					end
+				else
+					new_line = new_line:gsub("%s*<!-- completed:.- -->", "")
+				end
+
+				vim.api.nvim_buf_set_lines(0, row, row + 1, false, { new_line })
+			end
+
+			-- Remove the default command
+			pcall(vim.api.nvim_del_user_command, "ObsidianToggleCheckbox")
+
+			-- Register your own command
+			vim.api.nvim_create_user_command("ObsidianToggleCheckbox", custom_toggle_checkbox, {})
+
+			-- (Optional) Also bind it to <CR> if you'd like
+			vim.keymap.set(
+				"n",
+				"<CR>",
+				custom_toggle_checkbox,
+				{ desc = "Custom Toggle To-Do", noremap = true, silent = true }
+			)
+
 			-- Function to toggle quick fix and key binding
 			local function toggle_quickfix()
 				for _, win in ipairs(vim.fn.getwininfo()) do
@@ -303,12 +347,6 @@ require("lazy").setup({
 
 				vim.fn.setqflist({}, " ", { title = "Markdown Todos (due today or earlier)", lines = filtered })
 			end, { desc = "Update quickfix with markdown checkboxes due today or earlier" })
-
-			-- User command to find markdown todo's and add hem to the quick fix list
-			-- vim.api.nvim_create_user_command("MarkdownTodos", function()
-			--   vim.fn.setqflist({})
-			--   vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
-			-- end, { desc = "Update quickfix with markdown checkboxes" })
 
 			vim.api.nvim_create_autocmd("BufWritePost", {
 				pattern = "*.md",
