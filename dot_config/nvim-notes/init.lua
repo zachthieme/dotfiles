@@ -151,7 +151,7 @@ require("lazy").setup({
 			wiki_link_func = "use_alias_only",
 			markdown_link_func = "use_alias_only",
 			disable_frontmatter = true, --{ enabled = true },
-
+			use_metadata_comments = true,
 			note_id_func = function(title)
 				-- If there's a title, slugify it; otherwise, use a timestamp
 				if title ~= nil then
