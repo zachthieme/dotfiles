@@ -87,6 +87,40 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+local highlight_ns = vim.api.nvim_create_namespace("obsidian_cancelled_ns")
+local highlights_enabled = true
+
+local function toggle_cancelled_highlights()
+	local buf = vim.api.nvim_get_current_buf()
+	vim.api.nvim_buf_clear_namespace(buf, highlight_ns, 0, -1)
+
+	if not highlights_enabled then
+		highlights_enabled = true
+		return
+	end
+
+	for row = 0, vim.api.nvim_buf_line_count(buf) - 1 do
+		local line = vim.api.nvim_buf_get_lines(buf, row, row + 1, false)[1]
+		if line and line:match("^%s*[-*]?%s*%[c%]") then
+			vim.highlight.range(
+				buf,
+				highlight_ns,
+				"ObsidianCancelled",
+				{ row, 0 },
+				{ row, #line },
+				{ inclusive = true }
+			)
+		end
+	end
+
+	highlights_enabled = false
+end
+
+vim.api.nvim_create_autocmd({ "BufEnter", "TextChanged", "TextChangedI" }, {
+	pattern = "*.md",
+	callback = toggle_cancelled_highlights,
+})
+
 vim.api.nvim_set_hl(0, "ObsidianCancelled", {
 	strikethrough = true,
 	fg = "#888888", -- optional: faded grey
