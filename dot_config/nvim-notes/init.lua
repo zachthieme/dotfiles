@@ -101,7 +101,7 @@ local function toggle_cancelled_highlights()
 
 	for row = 0, vim.api.nvim_buf_line_count(buf) - 1 do
 		local line = vim.api.nvim_buf_get_lines(buf, row, row + 1, false)[1]
-		if line and line:match("^%s*[-*]?%s*%[c%]") then
+		if line and line:match("^%s*[-*]?%s*%[~%]") then
 			vim.highlight.range(
 				buf,
 				highlight_ns,
