@@ -235,13 +235,13 @@ require("lazy").setup({
 			ui = {
 				enable = true,
 				update_debounce = 200,
-				todo = {
-					-- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
-					[" "] = { icon = "○", hl_group = "ObsidianTodo" },
-					["x"] = { icon = "✓", hl_group = "ObsidianDone" },
-					[">"] = { icon = "→", hl_group = "ObsidianDelegated" },
-					["c"] = { icon = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
-				},
+				-- todo = {
+				-- 	-- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
+				-- 	[" "] = { icon = "○", hl_group = "ObsidianTodo" },
+				-- 	["x"] = { icon = "✓", hl_group = "ObsidianDone" },
+				-- 	[">"] = { icon = "→", hl_group = "ObsidianDelegated" },
+				-- 	["c"] = { icon = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
+				-- },
 			},
 			workspaces = {
 				{
@@ -265,6 +265,7 @@ require("lazy").setup({
 		config = function(_, opts)
 			require("obsidian").setup(opts)
 
+			vim.keymap.set("n", "<CR>", cycle_todo, { desc = "Custom To-Do Cycle", noremap = true, silent = true })
 			-- Function to toggle quick fix and key binding
 			local function toggle_quickfix()
 				for _, win in ipairs(vim.fn.getwininfo()) do
