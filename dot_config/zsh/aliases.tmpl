@@ -1,4 +1,5 @@
 #!/usr/bin/zsh
+ZED_ALLOW_EMULATED_GPU=1
 
 {{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
 
