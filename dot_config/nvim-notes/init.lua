@@ -301,14 +301,14 @@ require("lazy").setup({
 		end,
 	},
 	{ "Gelio/cmp-natdat", config = true, lazy = false },
-	-- {
-	-- 	"folke/noice.nvim",
-	-- 	event = "VeryLazy",
-	-- 	opts = {},
-	-- 	dependencies = {
-	-- 		"MunifTanjim/nui.nvim",
-	-- 	},
-	-- },
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		opts = {},
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+		},
+	},
 	{
 		"leath-dub/snipe.nvim",
 		lazy = false,
