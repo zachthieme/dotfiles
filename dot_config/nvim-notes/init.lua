@@ -46,55 +46,55 @@ vim.keymap.set("n", "<leader>z", ":lua Snacks.zen()<CR>", { desc = "Toggle Zen m
 local calendar_win_id = nil
 
 vim.keymap.set("n", "<leader>c", function()
-	if calendar_win_id and vim.api.nvim_win_is_valid(calendar_win_id) then
-		vim.api.nvim_win_close(calendar_win_id, true)
-		calendar_win_id = nil
-		return
-	end
+  if calendar_win_id and vim.api.nvim_win_is_valid(calendar_win_id) then
+    vim.api.nvim_win_close(calendar_win_id, true)
+    calendar_win_id = nil
+    return
+  end
 
-	-- Launch CalendarVR
-	vim.cmd("CalendarVR")
+  -- Launch CalendarVR
+  vim.cmd("CalendarVR")
 
-	-- Defer to allow the window to open
-	vim.defer_fn(function()
-		local win = vim.api.nvim_get_current_win()
-		calendar_win_id = win
+  -- Defer to allow the window to open
+  vim.defer_fn(function()
+    local win = vim.api.nvim_get_current_win()
+    calendar_win_id = win
 
-		-- Set clean UI (use vim.api.nvim_win_set_option for window options)
-		vim.api.nvim_win_set_option(win, "number", false)
-		vim.api.nvim_win_set_option(win, "relativenumber", false)
-		vim.api.nvim_win_set_option(win, "signcolumn", "no")
-		vim.api.nvim_win_set_option(win, "foldcolumn", "0")
-	end, 100)
+    -- Set clean UI (use vim.api.nvim_win_set_option for window options)
+    vim.api.nvim_win_set_option(win, "number", false)
+    vim.api.nvim_win_set_option(win, "relativenumber", false)
+    vim.api.nvim_win_set_option(win, "signcolumn", "no")
+    vim.api.nvim_win_set_option(win, "foldcolumn", "0")
+  end, 100)
 end, { desc = "Toggle CalendarVR with clean view" })
 
 -- 3. Kept one function
 vim.schedule(function()
-	vim.opt.clipboard = "unnamedplus"
+  vim.opt.clipboard = "unnamedplus"
 end)
 
 -- 21. autofold concealed markdown links
 function MarkdownFoldExpr(lnum)
-	local line = vim.fn.getline(lnum)
-	if line:match("%[[^%]]+%]%([^)]+%)") then
-		return 1
-	end
-	return 0
+  local line = vim.fn.getline(lnum)
+  if line:match("%[[^%]]+%]%([^)]+%)") then
+    return 1
+  end
+  return 0
 end
 vim.api.nvim_create_autocmd("BufWritePre", {
-	pattern = { "*.md", "*.lua" },
-	callback = function()
-		vim.cmd([[silent! %s/\s\+$//e]])
-	end,
+  pattern = { "*.md", "*.lua" },
+  callback = function()
+    vim.cmd([[silent! %s/\s\+$//e]])
+  end,
 })
 
 -- Autocmd to enable folding for markdown
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = "markdown",
-	callback = function()
-		vim.opt_local.foldmethod = "expr"
-		vim.opt_local.foldexpr = "v:lua.MarkdownFoldExpr(v:lnum)"
-	end,
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.foldmethod = "expr"
+    vim.opt_local.foldexpr = "v:lua.MarkdownFoldExpr(v:lnum)"
+  end,
 })
 
 -- 8. added an autocommand to skin obsidian in the habamax style.
@@ -115,416 +115,427 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- 4. Kept one autocmd
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight when yanking (copying) text",
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-	callback = function()
-		vim.highlight.on_yank()
-	end,
+  desc = "Highlight when yanking (copying) text",
+  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
 })
 
 -- 14. adding autocmds to enable softwrap and gj/gk for markdown
 -- 22. removing softwrap for now - and added it backi
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = { "markdown", "text", "obsidian" },
-	callback = function()
-		vim.opt_local.wrap = true
-		vim.opt_local.linebreak = true
+  pattern = { "markdown", "text", "obsidian" },
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
 
-		-- Visual line navigation
-		local opts = { buffer = true, silent = true }
-		vim.keymap.set("n", "j", "gj", opts)
-		vim.keymap.set("n", "k", "gk", opts)
-	end,
+    -- Visual line navigation
+    local opts = { buffer = true, silent = true }
+    vim.keymap.set("n", "j", "gj", opts)
+    vim.keymap.set("n", "k", "gk", opts)
+  end,
 })
 
 -- 27. testing a single function to start today and change cwd
 vim.api.nvim_create_autocmd("VimEnter", {
-	callback = function()
-		if vim.fn.argc() > 0 then
-			return
-		end
+  callback = function()
+    if vim.fn.argc() > 0 then
+      return
+    end
 
-		vim.cmd("cd ~/Dropbox/vaults/work")
-		vim.cmd("ObsidianToday")
-		vim.cmd("MarkdownTodos")
-	end,
+    vim.cmd("cd ~/Dropbox/vaults/work")
+    vim.cmd("ObsidianToday")
+    vim.cmd("MarkdownTodos")
+  end,
 })
 
 -- 5. Removed all configs in lazy and deleted custom/ and kickstart/
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-	if vim.v.shell_error ~= 0 then
-		error("Error cloning lazy.nvim:\n" .. out)
-	end
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    error("Error cloning lazy.nvim:\n" .. out)
+  end
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	-- 6. Added a small version of my obsidian.nvim config
-	-- 12. refactor of obsidian plugin and add some autocommands and helper functions
-	{
-		"epwalsh/obsidian.nvim",
-		version = "*",
-		lazy = false,
-		ft = "markdown",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"hrsh7th/nvim-cmp",
-			"nvim-telescope/telescope.nvim",
-			"nvim-telekasten/calendar-vim",
-		},
-		completion = {
-			nvim_cmp = true,
-			min_chars = 2,
-		},
-		opts = {
-			wiki_link_func = "use_alias_only",
-			markdown_link_func = "use_alias_only",
-			disable_frontmatter = true, --{ enabled = true },
+  -- 6. Added a small version of my obsidian.nvim config
+  -- 12. refactor of obsidian plugin and add some autocommands and helper functions
+  {
+    "epwalsh/obsidian.nvim",
+    version = "*",
+    lazy = false,
+    ft = "markdown",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "hrsh7th/nvim-cmp",
+      "nvim-telescope/telescope.nvim",
+      "nvim-telekasten/calendar-vim",
+    },
+    completion = {
+      nvim_cmp = true,
+      min_chars = 2,
+    },
+    opts = {
+      wiki_link_func = "use_alias_only",
+      markdown_link_func = "use_alias_only",
+      disable_frontmatter = true, --{ enabled = true },
 
-			note_id_func = function(title)
-				-- If there's a title, slugify it; otherwise, use a timestamp
-				if title ~= nil then
-					return title:gsub(" ", "-"):gsub("[^A-Za-z0-9%-]", ""):lower()
-				else
-					return tostring(os.time()) -- fallback to timestamp if no title
-				end
-			end,
-			-- 17. custom icons and states that should be a single character width
-			-- TODO figure out why the custom icons don't seem to be working
-			ui = {
-				enable = true,
-				update_debounce = 200,
-				todo = {
-					-- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
-					[" "] = { icon = "○", hl_group = "ObsidianTodo" },
-					["x"] = { icon = "✓", hl_group = "ObsidianDone" },
-					[">"] = { icon = "→", hl_group = "ObsidianDelegated" },
-					["c"] = { icon = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
-				},
-			},
-			workspaces = {
-				{
-					name = "work",
-					path = "~/Dropbox/vaults/work",
-				},
-				{
-					name = "personal",
-					path = "~/Dropbox/vaults/personal",
-				},
-			},
+      note_id_func = function(title)
+        -- If there's a title, slugify it; otherwise, use a timestamp
+        if title ~= nil then
+          return title:gsub(" ", "-"):gsub("[^A-Za-z0-9%-]", ""):lower()
+        else
+          return tostring(os.time()) -- fallback to timestamp if no title
+        end
+      end,
+      -- 17. custom icons and states that should be a single character width
+      -- TODO figure out why the custom icons don't seem to be working
+      ui = {
+        enable = true,
+        update_debounce = 200,
+        todo = {
+          -- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
+          [" "] = { icon = "○", hl_group = "ObsidianTodo" },
+          ["x"] = { icon = "✓", hl_group = "ObsidianDone" },
+          [">"] = { icon = "→", hl_group = "ObsidianDelegated" },
+          ["c"] = { icon = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
+        },
+      },
+      workspaces = {
+        {
+          name = "work",
+          path = "~/Dropbox/vaults/work",
+        },
+        {
+          name = "personal",
+          path = "~/Dropbox/vaults/personal",
+        },
+      },
 
-			templates = {
-				folder = "~/Dropbox/vaults/work/templates",
-			},
+      templates = {
+        folder = "~/Dropbox/vaults/work/templates",
+        substitutions = {
+          fday = function()
+            local suffixes = { "st", "nd", "rd" }
+            local day = tonumber(os.date("%d"))
+            local suffix = "th"
+            if day % 10 >= 1 and day % 10 <= 3 and not (day >= 11 and day <= 13) then
+              suffix = suffixes[day % 10] or "th"
+            end
+            return os.date("%A %B ") .. tostring(day) .. suffix .. os.date(", %Y")
+          end,
+        },
+      },
 
-			daily_notes = {
-				template = "~/Dropbox/vaults/work/templates/daily.md",
-			},
-		},
-		config = function(_, opts)
-			require("obsidian").setup(opts)
+      daily_notes = {
+        template = "~/Dropbox/vaults/work/templates/daily.md",
+      },
+    },
+    config = function(_, opts)
+      require("obsidian").setup(opts)
 
-			-- Function to toggle quick fix and key binding
-			local function toggle_quickfix()
-				for _, win in ipairs(vim.fn.getwininfo()) do
-					if win.quickfix == 1 then
-						vim.cmd("cclose")
-						return
-					end
-				end
-				vim.cmd("copen")
-			end
+      -- Function to toggle quick fix and key binding
+      local function toggle_quickfix()
+        for _, win in ipairs(vim.fn.getwininfo()) do
+          if win.quickfix == 1 then
+            vim.cmd("cclose")
+            return
+          end
+        end
+        vim.cmd("copen")
+      end
 
-			vim.api.nvim_create_user_command("CToggle", toggle_quickfix, { desc = "Toggle quickfix list" })
+      vim.api.nvim_create_user_command("CToggle", toggle_quickfix, { desc = "Toggle quickfix list" })
 
-			vim.api.nvim_create_user_command("MarkdownTodos", function()
-				-- Get today's date in ISO format
-				local today = os.date("%Y-%m-%d")
+      vim.api.nvim_create_user_command("MarkdownTodos", function()
+        -- Get today's date in ISO format
+        local today = os.date("%Y-%m-%d")
 
-				-- Run ripgrep and capture all markdown todos with optional due tags
-				local results = vim.fn.systemlist('rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"')
+        -- Run ripgrep and capture all markdown todos with optional due tags
+        local results = vim.fn.systemlist('rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"')
 
-				local filtered = {}
-				for _, line in ipairs(results) do
-					local due = string.match(line, "@due:(%d%d%d%d%-%d%d%-%d%d)")
-					if due == nil or due <= today then
-						table.insert(filtered, line)
-					end
-				end
+        local filtered = {}
+        for _, line in ipairs(results) do
+          local due = string.match(line, "@due:(%d%d%d%d%-%d%d%-%d%d)")
+          if due == nil or due <= today then
+            table.insert(filtered, line)
+          end
+        end
 
-				vim.fn.setqflist({}, " ", { title = "Markdown Todos (due today or earlier)", lines = filtered })
-			end, { desc = "Update quickfix with markdown checkboxes due today or earlier" })
+        vim.fn.setqflist({}, " ", { title = "Markdown Todos (due today or earlier)", lines = filtered })
+      end, { desc = "Update quickfix with markdown checkboxes due today or earlier" })
 
-			-- User command to find markdown todo's and add hem to the quick fix list
-			-- vim.api.nvim_create_user_command("MarkdownTodos", function()
-			--   vim.fn.setqflist({})
-			--   vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
-			-- end, { desc = "Update quickfix with markdown checkboxes" })
+      -- User command to find markdown todo's and add hem to the quick fix list
+      -- vim.api.nvim_create_user_command("MarkdownTodos", function()
+      --   vim.fn.setqflist({})
+      --   vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
+      -- end, { desc = "Update quickfix with markdown checkboxes" })
 
-			vim.api.nvim_create_autocmd("BufWritePost", {
-				pattern = "*.md",
-				callback = function()
-					local win = vim.api.nvim_get_current_win()
-					local buf = vim.api.nvim_get_current_buf()
+      vim.api.nvim_create_autocmd("BufWritePost", {
+        pattern = "*.md",
+        callback = function()
+          local win = vim.api.nvim_get_current_win()
+          local buf = vim.api.nvim_get_current_buf()
 
-					-- Get cursor position safely
-					local pos = vim.api.nvim_win_get_cursor(win)
-					local saved_row = pos[1]
-					local saved_col = pos[2]
+          -- Get cursor position safely
+          local pos = vim.api.nvim_win_get_cursor(win)
+          local saved_row = pos[1]
+          local saved_col = pos[2]
 
-					vim.schedule(function()
-						-- Run the update
-						pcall(function()
-							vim.cmd("silent! MarkdownTodos")
-						end)
+          vim.schedule(function()
+            -- Run the update
+            pcall(function()
+              vim.cmd("silent! MarkdownTodos")
+            end)
 
-						if vim.api.nvim_win_is_valid(win) and vim.api.nvim_buf_is_valid(buf) then
-							-- restore window/buffer focus
-							vim.api.nvim_set_current_win(win)
-							vim.api.nvim_win_set_buf(win, buf)
+            if vim.api.nvim_win_is_valid(win) and vim.api.nvim_buf_is_valid(buf) then
+              -- restore window/buffer focus
+              vim.api.nvim_set_current_win(win)
+              vim.api.nvim_win_set_buf(win, buf)
 
-							-- Get actual line length (since it may be concealed/modified)
-							local line = vim.api.nvim_buf_get_lines(buf, saved_row - 1, saved_row, false)[1] or ""
-							local clipped_col = math.min(saved_col, #line)
+              -- Get actual line length (since it may be concealed/modified)
+              local line = vim.api.nvim_buf_get_lines(buf, saved_row - 1, saved_row, false)[1] or ""
+              local clipped_col = math.min(saved_col, #line)
 
-							-- Try setting the cursor, fallback to start of line
-							pcall(vim.api.nvim_win_set_cursor, win, { saved_row, clipped_col })
-						end
-					end)
-				end,
-				desc = "Update markdown checkbox quickfix list on save (with cursor restore)",
-			})
-			require("lazy").load({ plugins = { "which-key.nvim" } })
-			local wk = require("which-key")
+              -- Try setting the cursor, fallback to start of line
+              pcall(vim.api.nvim_win_set_cursor, win, { saved_row, clipped_col })
+            end
+          end)
+        end,
+        desc = "Update markdown checkbox quickfix list on save (with cursor restore)",
+      })
+      require("lazy").load({ plugins = { "which-key.nvim" } })
+      local wk = require("which-key")
 
-			wk.add({
-				{ "<leader>n", group = "notes" },
-				{ "<leader>t", "<cmd>ObsidianToday<CR>", desc = "Today’s Note", mode = "n" },
-				{ "<leader>y", "<cmd>ObsidianYesterday<CR>", desc = "Yesterday’s Note", mode = "n" },
-				{ "<leader>nw", "<cmd>ObsidianThisWeek<CR>", desc = "This Week’s Note", mode = "n" },
-				{ "<leader>nn", "<cmd>ObsidianNew<CR>", desc = "New Note", mode = "n" },
-				{ "<leader>s", "<cmd>ObsidianSearch<CR>", desc = "Search Vault", mode = "n" },
-				{ "<leader>nb", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks", mode = "n" },
-				{ "<leader>ns", "<cmd>ObsidianSwitch<CR>", desc = "Switch Workspace", mode = "n" },
-			})
-		end,
-	},
-	-- 7. Added a custom config for nvim-cmp
-	{
-		-- 11. commented out things i didn't need may delete at a later date
-		"hrsh7th/nvim-cmp",
-		dependencies = {
-			"hrsh7th/cmp-buffer", -- Buffer source
-			"hrsh7th/cmp-path", -- File path source
-			"echasnovski/mini.snippets",
-			"abeldekat/cmp-mini-snippets",
-		},
-		config = function()
-			local cmp = require("cmp")
-			cmp.setup({
-				snippet = {
-					expand = function(args)
-						require("luasnip").lsp_expand(args.body)
-					end,
-				},
-				mapping = cmp.mapping.preset.insert({
-					["<Tab>"] = cmp.mapping.select_next_item(),
-					["<S-Tab>"] = cmp.mapping.select_prev_item(),
-					["<CR>"] = cmp.mapping.confirm({ select = true }),
-					["<C-Space>"] = cmp.mapping.complete(),
-				}),
-				sources = cmp.config.sources({
-					{ name = "buffer" },
-					{ name = "natdat" },
-				}),
-			})
-		end,
-	},
-	-- 10. wanted to add fuzzy date completion for due dates
-	{ "Gelio/cmp-natdat", config = true, lazy = false },
-	-- 16. added noice
-	{
-		"folke/noice.nvim",
-		event = "VeryLazy",
-		opts = {},
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-		},
-	},
-	-- 23. Added Snipe
-	{
-		"leath-dub/snipe.nvim",
-		lazy = false,
-		keys = {
-			{
-				"gb",
-				function()
-					require("snipe").open_buffer_menu()
-				end,
-				desc = "Open Snipe buffer menu",
-			},
-		},
-		opts = {},
-	},
-	-- 24. which key
-	{
-		"folke/which-key.nvim",
-		event = "VeryLazy",
-		opts = {},
-		keys = {
-			{
-				"<leader>?",
-				function()
-					require("which-key").show({ global = false })
-				end,
-				desc = "Buffer Local Keymaps (which-key)",
-			},
-		},
-	},
-	-- 25. added autosave
-	{
-		"pocco81/auto-save.nvim",
-		version = "*",
-		config = function()
-			require("auto-save").setup({
-				enabled = true,
-				execution_message = {
-					enabled = false,
-				},
-				trigger_events = { "InsertLeave", "TextChanged" },
-				condition = function(buf)
-					local ft = vim.bo[buf].filetype
-					return ft ~= "" and ft ~= "help" and vim.bo[buf].modifiable
-				end,
-				write_all_buffers = false,
-			})
-		end,
-	},
+      wk.add({
+        { "<leader>n", group = "notes" },
+        { "<leader>t", "<cmd>ObsidianToday<CR>", desc = "Today’s Note", mode = "n" },
+        { "<leader>y", "<cmd>ObsidianYesterday<CR>", desc = "Yesterday’s Note", mode = "n" },
+        { "<leader>nw", "<cmd>ObsidianThisWeek<CR>", desc = "This Week’s Note", mode = "n" },
+        { "<leader>nn", "<cmd>ObsidianNew<CR>", desc = "New Note", mode = "n" },
+        { "<leader>s", "<cmd>ObsidianSearch<CR>", desc = "Search Vault", mode = "n" },
+        { "<leader>nb", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks", mode = "n" },
+        { "<leader>ns", "<cmd>ObsidianSwitch<CR>", desc = "Switch Workspace", mode = "n" },
+      })
+    end,
+  },
+  -- 7. Added a custom config for nvim-cmp
+  {
+    -- 11. commented out things i didn't need may delete at a later date
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      "hrsh7th/cmp-buffer", -- Buffer source
+      "hrsh7th/cmp-path", -- File path source
+      "echasnovski/mini.snippets",
+      "abeldekat/cmp-mini-snippets",
+    },
+    config = function()
+      local cmp = require("cmp")
+      cmp.setup({
+        snippet = {
+          expand = function(args)
+            require("luasnip").lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert({
+          ["<Tab>"] = cmp.mapping.select_next_item(),
+          ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+          ["<C-Space>"] = cmp.mapping.complete(),
+        }),
+        sources = cmp.config.sources({
+          { name = "buffer" },
+          { name = "natdat" },
+        }),
+      })
+    end,
+  },
+  -- 10. wanted to add fuzzy date completion for due dates
+  { "Gelio/cmp-natdat", config = true, lazy = false },
+  -- 16. added noice
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {},
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+    },
+  },
+  -- 23. Added Snipe
+  {
+    "leath-dub/snipe.nvim",
+    lazy = false,
+    keys = {
+      {
+        "gb",
+        function()
+          require("snipe").open_buffer_menu()
+        end,
+        desc = "Open Snipe buffer menu",
+      },
+    },
+    opts = {},
+  },
+  -- 24. which key
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {},
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
+    },
+  },
+  -- 25. added autosave
+  {
+    "pocco81/auto-save.nvim",
+    version = "*",
+    config = function()
+      require("auto-save").setup({
+        enabled = true,
+        execution_message = {
+          enabled = false,
+        },
+        trigger_events = { "InsertLeave", "TextChanged" },
+        condition = function(buf)
+          local ft = vim.bo[buf].filetype
+          return ft ~= "" and ft ~= "help" and vim.bo[buf].modifiable
+        end,
+        write_all_buffers = false,
+      })
+    end,
+  },
 
-	{
-		"echasnovski/mini.nvim",
-		version = "*", -- Use the latest stable version
-		config = function()
-			-- Enable mini.nvim modules
-			require("mini.ai").setup()
-			require("mini.align").setup()
-			require("mini.cursorword").setup()
-			require("mini.surround").setup()
-			require("mini.trailspace").setup()
-		end,
-	},
+  {
+    "echasnovski/mini.nvim",
+    version = "*", -- Use the latest stable version
+    config = function()
+      -- Enable mini.nvim modules
+      require("mini.ai").setup()
+      require("mini.align").setup()
+      require("mini.cursorword").setup()
+      require("mini.surround").setup()
+      require("mini.trailspace").setup()
+    end,
+  },
 
-	{
-		"folke/snacks.nvim",
-		priority = 1000,
-		lazy = false,
-		opts = {
-			toggle = { enabled = true },
-			zen = { enabled = true },
-		},
-	},
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      toggle = { enabled = true },
+      zen = { enabled = true },
+    },
+  },
 
-	-- 19 on work computer noticed that the cursor jumping on save was back. need to see if it's just my work computer
-	--  validated it happens on my linux computer in the cloud!!!
-	-- 18 added a lualine that is set to be more for writers
+  -- 19 on work computer noticed that the cursor jumping on save was back. need to see if it's just my work computer
+  --  validated it happens on my linux computer in the cloud!!!
+  -- 18 added a lualine that is set to be more for writers
 
-	{
-		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate", -- auto-update parsers on install
-		event = { "BufReadPost", "BufNewFile" },
-		config = function()
-			require("nvim-treesitter.configs").setup({
-				ensure_installed = {
-					"lua",
-					"markdown",
-					"markdown_inline",
-					"bash",
-					"json",
-					"yaml",
-				},
-				highlight = {
-					enable = true,
-					additional_vim_regex_highlighting = false,
-				},
-				indent = {
-					enable = true,
-				},
-			})
-		end,
-	},
-	{
-		"ggandor/leap.nvim",
-		enabled = true,
-		keys = {
-			{ "s", mode = { "n", "x", "o" }, desc = "Leap Forward to" },
-			{ "S", mode = { "n", "x", "o" }, desc = "Leap Backward to" },
-			{ "gs", mode = { "n", "x", "o" }, desc = "Leap from Windows" },
-		},
-		config = function(_, opts)
-			local leap = require("leap")
-			for k, v in pairs(opts) do
-				leap.opts[k] = v
-			end
-			leap.add_default_mappings(true)
-			vim.keymap.del({ "x", "o" }, "x")
-			vim.keymap.del({ "x", "o" }, "X")
-		end,
-	},
-	{
-		"nvim-lualine/lualine.nvim",
-		event = "VeryLazy",
-		opts = {
-			options = {
-				theme = "auto",
-				icons_enabled = true,
-				globalstatus = true,
-				component_separators = "",
-				section_separators = "",
-				disabled_filetypes = { statusline = { "dashboard", "alpha", "starter" } },
-			},
-			sections = {
-				lualine_a = { "mode" },
-				lualine_b = {},
-				lualine_c = { "filename" },
-				lualine_x = { "filetype" },
-				lualine_y = {},
-				lualine_z = { "location" },
-			},
-			inactive_sections = {
-				lualine_a = {},
-				lualine_b = {},
-				lualine_c = { "filename" },
-				lualine_x = { "location" },
-				lualine_y = {},
-				lualine_z = {},
-			},
-			tabline = {},
-			extensions = {},
-		},
-	},
-	{
-		"rebelot/kanagawa.nvim",
-		lazy = false,
-		priority = 1000,
-		config = function()
-			require("kanagawa").setup({
-				overrides = function(colors)
-					local theme = colors.theme
-					return {
-						-- Markdown Header Colors
-						["@markup.heading.1.markdown"] = { fg = theme.syn.number, bold = true },
-						["@markup.heading.2.markdown"] = { fg = theme.syn.constant, bold = true },
-						["@markup.heading.3.markdown"] = { fg = theme.syn.identifier, bold = true },
-						["@markup.heading.4.markdown"] = { fg = theme.syn.statement, bold = true },
-						["@markup.heading.5.markdown"] = { fg = theme.syn.special, bold = true },
-						["@markup.heading.6.markdown"] = { fg = theme.syn.comment, bold = true },
-					}
-				end,
-			})
-			vim.cmd("colorscheme kanagawa")
-		end,
-	},
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate", -- auto-update parsers on install
+    event = { "BufReadPost", "BufNewFile" },
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = {
+          "lua",
+          "markdown",
+          "markdown_inline",
+          "bash",
+          "json",
+          "yaml",
+        },
+        highlight = {
+          enable = true,
+          additional_vim_regex_highlighting = false,
+        },
+        indent = {
+          enable = true,
+        },
+      })
+    end,
+  },
+  {
+    "ggandor/leap.nvim",
+    enabled = true,
+    keys = {
+      { "s", mode = { "n", "x", "o" }, desc = "Leap Forward to" },
+      { "S", mode = { "n", "x", "o" }, desc = "Leap Backward to" },
+      { "gs", mode = { "n", "x", "o" }, desc = "Leap from Windows" },
+    },
+    config = function(_, opts)
+      local leap = require("leap")
+      for k, v in pairs(opts) do
+        leap.opts[k] = v
+      end
+      leap.add_default_mappings(true)
+      vim.keymap.del({ "x", "o" }, "x")
+      vim.keymap.del({ "x", "o" }, "X")
+    end,
+  },
+  {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    opts = {
+      options = {
+        theme = "auto",
+        icons_enabled = true,
+        globalstatus = true,
+        component_separators = "",
+        section_separators = "",
+        disabled_filetypes = { statusline = { "dashboard", "alpha", "starter" } },
+      },
+      sections = {
+        lualine_a = { "mode" },
+        lualine_b = {},
+        lualine_c = { "filename" },
+        lualine_x = { "filetype" },
+        lualine_y = {},
+        lualine_z = { "location" },
+      },
+      inactive_sections = {
+        lualine_a = {},
+        lualine_b = {},
+        lualine_c = { "filename" },
+        lualine_x = { "location" },
+        lualine_y = {},
+        lualine_z = {},
+      },
+      tabline = {},
+      extensions = {},
+    },
+  },
+  {
+    "rebelot/kanagawa.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require("kanagawa").setup({
+        overrides = function(colors)
+          local theme = colors.theme
+          return {
+            -- Markdown Header Colors
+            ["@markup.heading.1.markdown"] = { fg = theme.syn.number, bold = true },
+            ["@markup.heading.2.markdown"] = { fg = theme.syn.constant, bold = true },
+            ["@markup.heading.3.markdown"] = { fg = theme.syn.identifier, bold = true },
+            ["@markup.heading.4.markdown"] = { fg = theme.syn.statement, bold = true },
+            ["@markup.heading.5.markdown"] = { fg = theme.syn.special, bold = true },
+            ["@markup.heading.6.markdown"] = { fg = theme.syn.comment, bold = true },
+          }
+        end,
+      })
+      vim.cmd("colorscheme kanagawa")
+    end,
+  },
 })
