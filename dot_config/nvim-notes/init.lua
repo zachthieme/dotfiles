@@ -1,16 +1,7 @@
--- Why we are here:
--- I wanted to start using vim for my writing and my note taking but wanted to have some of the convienenve of the personal knowledge management systems i've been using for years (mostly roam research and logseq).
--- I started with Lazyvim and added obsidian.nvim but strange things were happening. autocomplete didn't always work and i couldn't figure out the configurations i needed to keep it working consistently.
--- So i started with kickstart and built a clean and new obsidian config and added a ton of customization - and then my cursor started jumping around when i would save, the concealer sometimes got stuck to 3 (not 2 like i need), and sometimes the concealer would just stop working.
--- At my wits end i grabbed and neutered a version of kickstart.  Stripped it to the bar minimum and have been building back slowly...below is my story.
-
--- 1. Kept kickstart defaults for vim.opts and adjusted a few
---
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.have_nerd_font = false
 vim.opt.conceallevel = 2
--- added as part of 20
 vim.opt.concealcursor = "nc"
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -25,13 +16,11 @@ vim.opt.updatetime = 250
 vim.opt.timeoutlen = 300
 vim.opt.splitright = true
 vim.opt.splitbelow = true
--- 13. noticed that hyphens were appearing between words and noticed that vim.opt.list was true - deleted
 vim.opt.inccommand = "split"
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 vim.opt.confirm = true
 
--- 2. kept minimal set of keymaps
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
@@ -61,19 +50,18 @@ vim.keymap.set("n", "<leader>c", function()
     calendar_win_id = win
 
     -- Set clean UI (use vim.api.nvim_win_set_option for window options)
-    vim.api.nvim_win_set_option(win, "number", false)
-    vim.api.nvim_win_set_option(win, "relativenumber", false)
-    vim.api.nvim_win_set_option(win, "signcolumn", "no")
-    vim.api.nvim_win_set_option(win, "foldcolumn", "0")
+    vim.api.nvim_set_option_value("number", false, { scope = "local", win = win })
+    vim.api.nvim_set_option_value("relativenumber", false, { scope = "local", win = win })
+    vim.api.nvim_set_option_value("signcolumn", "no", { scope = "local", win = win })
+    vim.api.nvim_set_option_value("foldcolumn", "0", { scope = "local", win = win })
   end, 100)
 end, { desc = "Toggle CalendarVR with clean view" })
 
--- 3. Kept one function
 vim.schedule(function()
   vim.opt.clipboard = "unnamedplus"
 end)
 
--- 21. autofold concealed markdown links
+-- autofold concealed markdown links
 function MarkdownFoldExpr(lnum)
   local line = vim.fn.getline(lnum)
   if line:match("%[[^%]]+%]%([^)]+%)") then
@@ -81,6 +69,8 @@ function MarkdownFoldExpr(lnum)
   end
   return 0
 end
+
+-- remove trailing spaces
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = { "*.md", "*.lua" },
   callback = function()
@@ -97,23 +87,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- 8. added an autocommand to skin obsidian in the habamax style.
--- vim.api.nvim_create_autocmd("FileType", {
---   pattern = "markdown",
---   callback = function()
---     vim.cmd("highlight markdownH1 guifg=#ff8700")
---     vim.cmd("highlight markdownH2 guifg=#d7af5f")
---     vim.cmd("highlight markdownH3 guifg=#87af87")
---   end,
--- })
---
--- part of 17
--- vim.api.nvim_set_hl(0, "ObsidianCancelled", {
---   strikethrough = true,
---   fg = "#888888", -- optional: faded grey
--- })
-
--- 4. Kept one autocmd
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking (copying) text",
   group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
@@ -122,8 +95,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
--- 14. adding autocmds to enable softwrap and gj/gk for markdown
--- 22. removing softwrap for now - and added it backi
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "markdown", "text", "obsidian" },
   callback = function()
@@ -137,7 +108,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- 27. testing a single function to start today and change cwd
 vim.api.nvim_create_autocmd("VimEnter", {
   callback = function()
     if vim.fn.argc() > 0 then
@@ -150,7 +120,6 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
--- 5. Removed all configs in lazy and deleted custom/ and kickstart/
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -162,10 +131,9 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-  -- 6. Added a small version of my obsidian.nvim config
-  -- 12. refactor of obsidian plugin and add some autocommands and helper functions
   {
-    "epwalsh/obsidian.nvim",
+    "zachthieme/obsidian.nvim",
+    branch = "completed_todo",
     version = "*",
     lazy = false,
     ft = "markdown",
@@ -183,7 +151,7 @@ require("lazy").setup({
       wiki_link_func = "use_alias_only",
       markdown_link_func = "use_alias_only",
       disable_frontmatter = true, --{ enabled = true },
-
+      use_metadata_comments = true,
       note_id_func = function(title)
         -- If there's a title, slugify it; otherwise, use a timestamp
         if title ~= nil then
@@ -192,17 +160,14 @@ require("lazy").setup({
           return tostring(os.time()) -- fallback to timestamp if no title
         end
       end,
-      -- 17. custom icons and states that should be a single character width
-      -- TODO figure out why the custom icons don't seem to be working
       ui = {
         enable = true,
         update_debounce = 200,
-        todo = {
-          -- format: [marker] = { icon = "symbol", hl_group = "HighlightGroup" }
-          [" "] = { icon = "○", hl_group = "ObsidianTodo" },
-          ["x"] = { icon = "✓", hl_group = "ObsidianDone" },
-          [">"] = { icon = "→", hl_group = "ObsidianDelegated" },
-          ["c"] = { icon = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
+        checkboxes = {
+          [" "] = { order = 1, char = "○", hl_group = "ObsidianTodo" },
+          ["x"] = { order = 2, char = "✓", hl_group = "ObsidianDone" },
+          [">"] = { order = 3, char = "→", hl_group = "ObsidianRightArrow" },
+          ["c"] = { order = 4, char = "✗", hl_group = "ObsidianCancelled", hl_mode = "line" },
         },
       },
       workspaces = {
@@ -215,7 +180,6 @@ require("lazy").setup({
           path = "~/Dropbox/vaults/personal",
         },
       },
-
       templates = {
         folder = "~/Dropbox/vaults/work/templates",
         substitutions = {
@@ -269,12 +233,6 @@ require("lazy").setup({
         vim.fn.setqflist({}, " ", { title = "Markdown Todos (due today or earlier)", lines = filtered })
       end, { desc = "Update quickfix with markdown checkboxes due today or earlier" })
 
-      -- User command to find markdown todo's and add hem to the quick fix list
-      -- vim.api.nvim_create_user_command("MarkdownTodos", function()
-      --   vim.fn.setqflist({})
-      --   vim.cmd('cexpr system(\'rg -n --no-heading "^\\\\s*\\\\W\\\\s\\\\[ \\\\]" --glob "**/*.md"\')')
-      -- end, { desc = "Update quickfix with markdown checkboxes" })
-
       vim.api.nvim_create_autocmd("BufWritePost", {
         pattern = "*.md",
         callback = function()
@@ -323,9 +281,7 @@ require("lazy").setup({
       })
     end,
   },
-  -- 7. Added a custom config for nvim-cmp
   {
-    -- 11. commented out things i didn't need may delete at a later date
     "hrsh7th/nvim-cmp",
     dependencies = {
       "hrsh7th/cmp-buffer", -- Buffer source
@@ -354,9 +310,7 @@ require("lazy").setup({
       })
     end,
   },
-  -- 10. wanted to add fuzzy date completion for due dates
   { "Gelio/cmp-natdat", config = true, lazy = false },
-  -- 16. added noice
   {
     "folke/noice.nvim",
     event = "VeryLazy",
@@ -365,7 +319,6 @@ require("lazy").setup({
       "MunifTanjim/nui.nvim",
     },
   },
-  -- 23. Added Snipe
   {
     "leath-dub/snipe.nvim",
     lazy = false,
@@ -380,7 +333,6 @@ require("lazy").setup({
     },
     opts = {},
   },
-  -- 24. which key
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
@@ -395,7 +347,6 @@ require("lazy").setup({
       },
     },
   },
-  -- 25. added autosave
   {
     "pocco81/auto-save.nvim",
     version = "*",
@@ -414,7 +365,6 @@ require("lazy").setup({
       })
     end,
   },
-
   {
     "echasnovski/mini.nvim",
     version = "*", -- Use the latest stable version
@@ -437,11 +387,6 @@ require("lazy").setup({
       zen = { enabled = true },
     },
   },
-
-  -- 19 on work computer noticed that the cursor jumping on save was back. need to see if it's just my work computer
-  --  validated it happens on my linux computer in the cloud!!!
-  -- 18 added a lualine that is set to be more for writers
-
   {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate", -- auto-update parsers on install
