@@ -120,6 +120,35 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
+local slugify = function(str)
+  return str:lower():gsub(" ", "-"):gsub("[^a-z0-9%-]", "")
+end
+
+local function find_backlinks_for_current_note()
+  local filename = vim.fn.expand("%:t:r") -- e.g., "zach-thieme"
+  local original_title = slugify(filename) -- get the search key
+
+  local cmd = {
+    "rg",
+    "--no-heading",
+    "--line-number",
+    "--color=never",
+    "%[%[" .. original_title:gsub("-", " ") .. "%]%]", -- match [[Zach Thieme]]
+    "--glob",
+    "**/*.md",
+  }
+
+  require("telescope.pickers")
+    .new({}, {
+      prompt_title = "Backlinks for " .. original_title,
+      finder = require("telescope.finders").new_oneshot_job(cmd),
+      sorter = require("telescope.config").values.generic_sorter({}),
+    })
+    :find()
+end
+
+vim.api.nvim_create_user_command("BacklinksSlug", find_backlinks_for_current_note, {})
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
