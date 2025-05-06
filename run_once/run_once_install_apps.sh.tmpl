@@ -82,7 +82,7 @@ then
 fi
 
 # install TPM for TMUX
-run_command [ ! -d $HOME/.tmux/plugins ] && log_message "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+[ ! -d $HOME/.tmux/plugins ] && log_message "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
  {{- if eq .chezmoi.os "darwin" }}
 log_message "  "
