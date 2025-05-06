@@ -50,7 +50,7 @@
           ];
           brews = [
             "oh-my-posh"
-            "FelixKratz/formulae/jankyborders"
+            "FelixKratz/formulae/borders"
             "FelixKratz/formulae/sketchybar"
           ];
           casks = [
