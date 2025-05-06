@@ -58,7 +58,7 @@
               "FelixKratz/formulae/borders"
               "FelixKratz/formulae/sketchybar"
               "oh-my-posh"
-              "spotify-player"
+              "spotify_player"
             ];
             casks = [
               "brave-browser"
