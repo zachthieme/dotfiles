@@ -45,14 +45,21 @@
           enable = true;
           # onActivation.cleanup = "uninstall";
 
-          taps = [ ];
-          brews = [ "oh-my-posh" ];
+          taps = [
+            "FelixKratz/formulae"
+          ];
+          brews = [
+            "oh-my-posh"
+            "FelixKratz/formulae/jankyborders"
+            "FelixKratz/formulae/sketchybar"
+          ];
           casks = [
-            "raycast"
             "brave-browser"
-            "zed"
             "ghostty"
             "nikitabobko/tap/aerospace"
+            "raycast"
+            "spotify"
+            "zed"
           ];
         };
 
