@@ -36,9 +36,6 @@ run_command() {
 # INSTALL: any tool that can be deployed via a package manager across all distro's and have a new enough version
 INSTALL=( bat curl gh git gettext jq mosh pandoc pass ripgrep tmux btop podman wget zsh )
 
-# BREW: any tools that need to be installed specefically for mac. 
-BREW=( fd )
-
 # POP: any tools that need to be installed specefically for PopOS. 
 POP=( openssh-server )
 
@@ -69,148 +66,53 @@ echo ${DEBIAN[@]} | xargs sudo apt install -y
 
 {{- end}}
 
-# log_message "########################################################"
-# log_message "           Non-Package Manager Installs All OS"
-# log_message "########################################################"
-# # add xh (curl replacement)
-# if ! command -v xh &> /dev/null
-# then
-#   curl -sfL https://raw.githubusercontent.com/ducaale/xh/master/install.sh | sh
-# fi
-#
-# # Add neovim
-# if ! command -v nvim &> /dev/null
-# then
-#   log_message "building nvim"
-#   git clone --depth=1 https://github.com/neovim/neovim
-#   cd neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo
-#   git checkout stable
-#   run_command sudo make install
-# fi
-#
-# # install ohmyposh
-# if ! command -v oh-my-posh &> /dev/null
-# then
-#   log_message "installing ohmyposh"
-#   curl -s https://ohmyposh.dev/install.sh | bash -s
-# fi
-#
-# # install fzf
-# if ! command -v fzf &> /dev/null
-# then
-#   log_message "installing fzf"
-#   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-#   ~/.fzf/install --no-update-rc
-# fi
-#
-# # install zoxide
-# if ! command -v zoxide &> /dev/null
-# then
-#   log_message "installing zoxide"
-#   curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
-# fi
-#
-# # install cargo and rust
-# if ! command -v cargo &> /dev/null
-# then
-#   log_message "installing cargo"
-#   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
-# fi
-#
-# # install go
-# if ! command -v go &> /dev/null
-# then
-#   log_message "installing go"
-#   curl -LO https://get.golang.org/$(uname)/go_installer && \
-#   chmod +x go_installer && \
-#   ./go_installer && \
-#   rm go_installer
-# fi
-#
-# if ! command -v yazi &> /dev/null
-# then
-#   rustup update
-#   cargo install --locked yazi-fm yazi-cli
-# fi
-#
-# # install eza
-# if ! command -v eza &> /dev/null
-# then
-#   log_message "installing eza"
-#   run_command $HOME/.cargo/bin/cargo install eza 
-# fi
-#
-# # install rargs
-# if ! command -v rargs &> /dev/null
-# then
-#   log_message "installing rargs"
-#   run_command $HOME/.cargo/bin/cargo install --git https://github.com/lotabout/rargs.git
-# fi
-#
-# # install TPM for TMUX
-# run_command [ ! -d $HOME/.tmux/plugins ] && log_message "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-#
-# # install cheat
-# if ! command -v cheat &> /dev/null
-# then
-#   log_message "Installing cheat"
-#   run_command /usr/local/go/bin/go install github.com/cheat/cheat/cmd/cheat@latest
-# fi
-#
-# {{- if eq .chezmoi.os "darwin" }}
-# log_message "  "
-# log_message "  "
-# log_message "########################################################"
-# log_message "                  Starting Mac Install"
-# log_message "########################################################"
-# log_message "  "
-# log_message "  "
-#
-# if ! command -v brew &> /dev/null
-# then
-#   log_message "installing Homebrew"
-#   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-# fi
-#
-# run_command defaults write -g NSWindowShouldDragOnGesture -bool true
-# run_command defaults write -g NSAutomaticWindowAnimationsEnabled -bool false
-# run_command brew update
-#
-# # Install aerospace window manager
-# if ! command -v aerospace &> /dev/null
-# then
-#   log_message "Installing aerospace"
-#   run_command brew install --cask nikitabobko/tap/aerospace
-# fi
-#
-# install jankybar for the green window highlights
-# if ! command -v borders &> /dev/null
-# then
-#   log_message "Installing Borders"
-#   run_command brew tap FelixKratz/formulae
-#   run_command brew install borders
-# fi
-#
-# if ! command -v sketchybar &> /dev/null
-# then
-#   run_command brew tap FelixKratz/formulae
-#   run_command brew install sketchybar
-#   # brew services start sketchybar
-# fi
-#
-# log_message "Installing some apps"
-# echo ${INSTALL[@]} | xargs brew install  
-# echo ${BREW[@]} | xargs brew install  
-#
-# {{- end }}
-#
+log_message "  "
+log_message "  "
 log_message "########################################################"
-log_message "                Debian Post Install"
+log_message "           Non-Package Manager Installs All OS"
 log_message "########################################################"
+log_message "  "
+log_message "  "
+
+# install cargo and rust
+if ! command -v cargo &> /dev/null
+then
+  log_message "installing cargo"
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path
+fi
+
+# install TPM for TMUX
+run_command [ ! -d $HOME/.tmux/plugins ] && log_message "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
+ {{- if eq .chezmoi.os "darwin" }}
+log_message "  "
+log_message "  "
+log_message "########################################################"
+log_message "                  Starting Mac Install"
+log_message "########################################################"
+log_message "  "
+log_message "  "
+
+ if ! command -v brew &> /dev/null
+ then
+   log_message "installing Homebrew"
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+ fi
+
+{{- end }}
+
 
 {{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian" "pop") }}
 
+log_message "  "
+log_message "  "
+log_message "########################################################"
+log_message "                Debian Post Install"
+log_message "########################################################"
+log_message "  "
+log_message "  "
 log_message "checking if nvim is the default editor"
+
 if [[ ! $(update-alternatives --query editor | grep 'Value:' | awk '{print $2}') == *nvim* ]]; then
   log_message "setting nvim to default editor"
   sudo update-alternatives --install /usr/bin/editor editor $(which nvim) 60
