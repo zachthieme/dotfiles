@@ -11,7 +11,6 @@
     let
     configuration = { pkgs, ... }: {
 # List packages installed in system profile. To search by name, run:
-# $ nix-env -qaP | grep wget
       environment.systemPackages =
         [ 
           pkgs.bat
@@ -43,7 +42,7 @@
 
       homebrew = {
         enable = true;
-# onActivation.cleanup = "uninstall";
+       # onActivation.cleanup = "uninstall";
 
         taps = [ ];
         brews = [ "oh-my-posh" ];
@@ -58,9 +57,6 @@
 # Necessary for using flakes on this system.
 nix.settings.experimental-features = "nix-command flakes";
 nix.enable = false;
-
-# Enable alternative shell support in nix-darwin.
-# programs.fish.enable = true;
 
 # Set Git commit hash for darwin-version.
 system.configurationRevision = self.rev or self.dirtyRev or null;
