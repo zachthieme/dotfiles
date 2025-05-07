@@ -100,12 +100,7 @@ log_message "foo"
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
  fi
 log_message "bar"
- if ! command -v foo &> /dev/null
- then
-   brew services list
- fi
-log_message "baz"
-log_message "baza"
+
 {{- end }}
 
 
