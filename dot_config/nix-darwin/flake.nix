@@ -58,10 +58,12 @@
               "FelixKratz/formulae/borders"
               "FelixKratz/formulae/sketchybar"
               "oh-my-posh"
+              "sesh"
               "spotify_player"
             ];
             casks = [
               "brave-browser"
+              "dropbox"
               "ghostty"
               "nikitabobko/tap/aerospace"
               "raycast"
