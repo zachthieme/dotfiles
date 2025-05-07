@@ -99,6 +99,10 @@ log_message "  "
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
  fi
 
+ if command -v brew &> /dev/null
+   brew services list
+ then
+ fi
 {{- end }}
 
 
