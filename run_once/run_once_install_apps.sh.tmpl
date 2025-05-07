@@ -84,7 +84,7 @@ fi
 # install TPM for TMUX
 [ ! -d $HOME/.tmux/plugins ] && log_message "installing tpm" && git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
- {{- if eq .chezmoi.os "darwin" }}
+{{- if eq .chezmoi.os "darwin" }}
 log_message "  "
 log_message "  "
 log_message "########################################################"
@@ -99,6 +99,9 @@ log_message "  "
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
  fi
 
+ if command -v zsh &> /dev/null
+   echo foo
+ fi
 {{- end }}
 
 
