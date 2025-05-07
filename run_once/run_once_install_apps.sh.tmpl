@@ -93,12 +93,13 @@ log_message "########################################################"
 log_message "  "
 log_message "  "
 
+log_message "foo"
  if ! command -v brew &> /dev/null
  then
    log_message "installing Homebrew"
    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
  fi
-
+log_message "bar"
  if command -v brew &> /dev/null
    brew services list
  then
