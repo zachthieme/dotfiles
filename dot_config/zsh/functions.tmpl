@@ -117,6 +117,7 @@ function fif() {
     _fif_common "--ignore-case" "$@"
 }
 
+# function to run yazi
 function y() {
   local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
   yazi "$@" --cwd-file="$tmp"
@@ -126,6 +127,7 @@ function y() {
   rm -f -- "$tmp"
 }
 
+# open a customized version of nvim
 vv() {
   # Assumes all configs exist in directories named ~/.config/nvim-*
   {{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
