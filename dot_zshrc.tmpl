@@ -49,10 +49,12 @@ if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
         https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
   fi
 fi
+
 # Install missing modules, and update ${ZIM_HOME}/init.zsh if missing or outdated.
 if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
   source ${ZIM_HOME}/zimfw.zsh init -q
 fi
+
 # Initialize modules.
 source ${ZIM_HOME}/init.zsh
 
@@ -63,21 +65,12 @@ for key ('k') bindkey -M vicmd ${key} history-substring-search-up
 for key ('j') bindkey -M vicmd ${key} history-substring-search-down
 unset key
 
-
 export EDITOR=nvim
 export VISUAL=nvim
 export FZF_CTRL_T_OPTS="--height 20%"
 export FZF_CTRL_R_OPTS="--height 20% --reverse"
 # export FZF_DEFAULT_OPTS="" # edit this to change the colors of FZF
 export _ZO_FZF_OPTS="--height 20% --reverse"
-
-# add path for go
-# export PATH=$PATH:/usr/local/go/bin
-# export PATH=$PATH:$HOME/go/bin
-# export PATH=$PATH:$HOME/.local/bin
-
-# add path for chezmoi
-export PATH=$PATH:$HOME/bin
 
 {{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
 
@@ -86,13 +79,11 @@ export PATH=$PATH:$HOME/bin
 {{- end }}
 
 {{- if eq .chezmoi.os "darwin" }}
+
 export PATH=$PATH:/opt/homebrew/bin
 export PATH=$PATH:/opt/homebrew/sbin
 
 {{- end }}
-
-# configure cargo
-# . $HOME/.cargo/env 
 
 # Configure fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
