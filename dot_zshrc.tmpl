@@ -1,17 +1,21 @@
-{{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
+
+# {{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
 
 ### ─────────────────────────────────────
 ### Stop compinit from double running
 ### ─────────────────────────────────────
 skip_global_compinit=1
 
-{{- end }}
+# {{- end }}
 
 ### ─────────────────────────────────────
 ### Paths and Environment Variables
 ### ─────────────────────────────────────
 
 {{- if eq .chezmoi.os "darwin" }}
+# Load zimfw
+# source ${ZIM_HOME}/init.zsh
+
 export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:$PATH
 {{- end }}
 export PATH=$HOME/bin:$PATH
@@ -88,6 +92,7 @@ if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
   source ${ZIM_HOME}/zimfw.zsh init -q
 fi
 
+
 # Load zimfw
 source ${ZIM_HOME}/init.zsh
 
@@ -110,123 +115,5 @@ eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
 # export ZSH_HIGHLIGHT_HISTORY_SUBSTRING_BG=1d3b53
 
 # Must come after plugins
-# . $HOME/.config/zsh/themes/nightfly_zsh-syntax-highlighting.zsh
-# . $HOME/.config/fzf/themes/NightFly.zsh
-# ─── Forcefully re-init compinit (macOS /etc/zshrc workaround) ───
-
-{{- if eq .chezmoi.os "darwin" }}
-# Unload any previously loaded comp* functions
-for f in ${(k)functions}; do
-  if [[ "$f" == comp* ]]; then
-    unfunction "$f"
-  fi
-done
-
-# Clear completion system state
-unset -m '_comps _comp_ _complete _compdir _compautos'
-
-# Re-autoload and re-init compinit properly
-autoload -Uz compinit
-compinit -i -C
-{{- end }}
-
-# Commenting out for refactor
-# anything that is double commented should be left commented if restoring
-# # Setup files for functions and aliases
-# . $HOME/.config/zsh/aliases
-# . $HOME/.config/zsh/functions
-#
-# . "$HOME/.cargo/env"
-# # add path for go
-# # export PATH=$PATH:/usr/local/go/bin
-# # export PATH=$PATH:$HOME/go/bin
-# # export PATH=$PATH:$HOME/.local/bin
-#
-# # add path for chezmoi
-# export PATH=$PATH:$HOME/bin
-#
-# # configure cargo
-# # . $HOME/.cargo/env 
-#
-# export TERM=xterm-256color
-# export HELIX_RUNTIME=$HOME/.config/helix/runtime
-#
-# # create theme variables before zsh-autosuggestions and zsh-history-search* are loaded
-# . $HOME/.config/zsh/themes/nightfly_zsh-history-autosuggest.zsh
-#
-# export ZSH_HIGHLIGHT_HISTORY_SUBSTRING_FG=81
-# export ZSH_HIGHLIGHT_HISTORY_SUBSTRING_BG=1d3b53
-#
-# # History
-# HISTSIZE=5000
-# SAVEHIST=$HISTSIZE
-# HISTDUP=erase
-# setopt APPENDHISTORY
-# setopt HIST_FIND_NO_DUPS
-# setopt HIST_IGNORE_ALL_DUPS
-# setopt HIST_IGNORE_DUPS
-# setopt HIST_IGNORE_SPACE
-# setopt HIST_SAVE_NO_DUPS
-# setopt SHAREHISTORY
-#
-# # Set editor default keymap to emacs (`-e`) or vi (`-v`)
-# bindkey -v
-#
-# # Remove path separator from WORDCHARS.
-# WORDCHARS=${WORDCHARS//[\/]}
-#
-# # zsh-users/zsh-autosuggestions is the last module in your ~/.zimrc.
-# ZSH_AUTOSUGGEST_MANUAL_REBIND=1
-#
-# ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
-#
-# # ------------------
-# # Initialize Zim modules
-# # ------------------
-#
-# ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
-# # Download zimfw plugin manager if missing.
-# if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
-#   if (( ${+commands[curl]} )); then
-#     curl -fsSL --create-dirs -o ${ZIM_HOME}/zimfw.zsh \
-#         https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
-#   else
-#     mkdir -p ${ZIM_HOME} && wget -nv -O ${ZIM_HOME}/zimfw.zsh \
-#         https://github.com/zimfw/zimfw/releases/latest/download/zimfw.zsh
-#   fi
-# fi
-#
-# # Install missing modules, and update ${ZIM_HOME}/init.zsh if missing or outdated.
-# if [[ ! ${ZIM_HOME}/init.zsh -nt ${ZDOTDIR:-${HOME}}/.zimrc ]]; then
-#   source ${ZIM_HOME}/zimfw.zsh init -q
-# fi
-#
-# # Initialize modules.
-# source ${ZIM_HOME}/init.zsh
-#
-# zmodload -F zsh/terminfo +p:terminfo
-# for key ('^[[A' '^P' ${terminfo[kcuu1]}) bindkey ${key} history-substring-search-up
-# for key ('^[[B' '^N' ${terminfo[kcud1]}) bindkey ${key} history-substring-search-down
-# for key ('k') bindkey -M vicmd ${key} history-substring-search-up
-# for key ('j') bindkey -M vicmd ${key} history-substring-search-down
-# unset key
-#
-# export EDITOR=nvim
-# export VISUAL=nvim
-# export FZF_CTRL_T_OPTS="--height 20%"
-# export FZF_CTRL_R_OPTS="--height 20% --reverse"
-# # export FZF_DEFAULT_OPTS="" # edit this to change the colors of FZF
-# export _ZO_FZF_OPTS="--height 20% --reverse"
-#
-# # Configure fzf
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-#
-# # Configure zoxide
-# eval "$(zoxide init zsh)"
-#
-# # configure ohmyposh
-# eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
-#
-# # must be after syntax highlighting is loaded
 # . $HOME/.config/zsh/themes/nightfly_zsh-syntax-highlighting.zsh
 # . $HOME/.config/fzf/themes/NightFly.zsh
