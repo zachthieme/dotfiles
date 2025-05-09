@@ -7,13 +7,6 @@ skip_global_compinit=1
 
 {{- end }}
 
-{{- if eq .chezmoi.os "darwin" }}
-### ─────────────────────────────────────
-### Stop /etc/zsh from loading compinit
-### ─────────────────────────────────────
-# Force reinitialization if needed
-autoload -Uz compinit && compinit -i
-{{- end }}
 ### ─────────────────────────────────────
 ### Paths and Environment Variables
 ### ─────────────────────────────────────
@@ -98,6 +91,21 @@ fi
 # Load zimfw
 source ${ZIM_HOME}/init.zsh
 
+{{- if eq .chezmoi.os "darwin" }}
+### ─────────────────────────────────────
+### Defensive compinit override
+### ─────────────────────────────────────
+# Prevent "compinit called twice" or "compinit already initialized" errors
+# Reset compinit if it was run early (e.g., by /etc/zshrc)
+if whence compinit >/dev/null; then
+  unfunction compinit 2>/dev/null
+  unfunction _compinit 2>/dev/null
+fi
+
+# Re-initialize completions safely
+autoload -Uz compinit
+compinit -i
+{{- end }}
 ### ─────────────────────────────────────
 ### Plugin/Tool Configuration
 ### ─────────────────────────────────────
