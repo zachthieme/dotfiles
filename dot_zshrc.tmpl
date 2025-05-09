@@ -11,8 +11,8 @@ skip_global_compinit=1
 ### ─────────────────────────────────────
 ### Stop /etc/zsh from loading compinit
 ### ─────────────────────────────────────
-# Avoid duplicate compinit
-[[ -n "$ZSH_DISABLE_COMPFIX" ]] || ZSH_DISABLE_COMPFIX=true
+# Force reinitialization if needed
+autoload -Uz compinit && compinit -i
 {{- end }}
 ### ─────────────────────────────────────
 ### Paths and Environment Variables
