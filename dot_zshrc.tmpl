@@ -3,12 +3,12 @@
 . $HOME/.config/zsh/functions
 
 # Determinate Nix installer setup
-{{- if eq .chezmoi.os "darwin" }}
-
-if [ -e /etc/profile.d/nix.sh ]; then
-  . /etc/profile.d/nix.sh
-fi
-{{- end }}
+# {{- if eq .chezmoi.os "darwin" }}
+#
+# if [ -e /etc/profile.d/nix.sh ]; then
+#   . /etc/profile.d/nix.sh
+# fi
+# {{- end }}
 
 {{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
 
