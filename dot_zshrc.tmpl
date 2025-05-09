@@ -19,13 +19,10 @@ autoload -Uz compinit
 ### Paths and Environment Variables
 ### ─────────────────────────────────────
 
-{{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
-# determin if i need this
-export PATH=$HOME/bin:$PATH
-{{- end }}
 {{- if eq .chezmoi.os "darwin" }}
 export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:$PATH
 {{- end }}
+export PATH=$HOME/bin:$PATH
 export TERM=xterm-256color
 export HELIX_RUNTIME=$HOME/.config/helix/runtime
 
