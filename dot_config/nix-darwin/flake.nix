@@ -39,7 +39,6 @@
             pkgs.pass
             pkgs.python3
             pkgs.ripgrep
-            pkgs.td
             pkgs.tmux
             pkgs.vim
             pkgs.wget
