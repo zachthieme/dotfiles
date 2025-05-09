@@ -11,9 +11,8 @@ skip_global_compinit=1
 ### ─────────────────────────────────────
 ### Stop /etc/zsh from loading compinit
 ### ─────────────────────────────────────
-autoload -Uz compinit
-# delay init until after plugins are loaded
-# or let your framework handle it
+# Avoid duplicate compinit
+[[ -n "$ZSH_DISABLE_COMPFIX" ]] || ZSH_DISABLE_COMPFIX=true
 {{- end }}
 ### ─────────────────────────────────────
 ### Paths and Environment Variables
