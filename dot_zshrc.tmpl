@@ -1,12 +1,10 @@
 
-# {{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
 
 ### ─────────────────────────────────────
 ### Stop compinit from double running
 ### ─────────────────────────────────────
 skip_global_compinit=1
 
-# {{- end }}
 
 ### ─────────────────────────────────────
 ### Paths and Environment Variables
