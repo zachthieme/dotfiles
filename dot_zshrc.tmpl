@@ -91,21 +91,6 @@ fi
 # Load zimfw
 source ${ZIM_HOME}/init.zsh
 
-{{- if eq .chezmoi.os "darwin" }}
-### ─────────────────────────────────────
-### Defensive compinit override
-### ─────────────────────────────────────
-# Prevent "compinit called twice" or "compinit already initialized" errors
-# Reset compinit if it was run early (e.g., by /etc/zshrc)
-if whence compinit >/dev/null; then
-  unfunction compinit 2>/dev/null
-  unfunction _compinit 2>/dev/null
-fi
-
-# Re-initialize completions safely
-autoload -Uz compinit
-compinit -i
-{{- end }}
 ### ─────────────────────────────────────
 ### Plugin/Tool Configuration
 ### ─────────────────────────────────────
@@ -127,6 +112,23 @@ eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
 # Must come after plugins
 # . $HOME/.config/zsh/themes/nightfly_zsh-syntax-highlighting.zsh
 # . $HOME/.config/fzf/themes/NightFly.zsh
+# ─── Forcefully re-init compinit (macOS /etc/zshrc workaround) ───
+
+{{- if eq .chezmoi.os "darwin" }}
+# Unload any previously loaded comp* functions
+for f in ${(k)functions}; do
+  if [[ "$f" == comp* ]]; then
+    unfunction "$f"
+  fi
+done
+
+# Clear completion system state
+unset -m '_comps _comp_ _complete _compdir _compautos'
+
+# Re-autoload and re-init compinit properly
+autoload -Uz compinit
+compinit -i -C
+{{- end }}
 
 # Commenting out for refactor
 # anything that is double commented should be left commented if restoring
