@@ -68,6 +68,7 @@
               "nikitabobko/tap/aerospace"
               "raycast"
               "spotify"
+              "wezterm"
               "zed"
             ];
           };
