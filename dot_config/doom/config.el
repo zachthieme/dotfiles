@@ -131,24 +131,24 @@
                (when (equal org-state "DONE")
                  (my/org-roam-copy-todo-to-today))))
 
-(setq org-agenda-custom-commands
-      '(("c" "⚡ Clarity View"
-         ((agenda ""
-                  ((org-agenda-span 1)
-                   (org-super-agenda-groups
-                    '((:name "📅 Today"
-                             :time-grid t
-                             :scheduled today
-                             :deadline past
-                             :deadline today))))
-          (alltodo ""
-                   ((org-agenda-overriding-header "")
-                    (org-super-agenda-groups
-                     '((:name "🥅 Weekly Goals"
-                              :todo "WEEKLY")
-                       (:name "🔜 Upcoming (next 7 days)"
-                              :scheduled future
-                              :scheduled (before "+7d")))))))))
+; (setq org-agenda-custom-commands
+;       '(("c" "⚡ Clarity View"
+;          ((agenda ""
+;                   ((org-agenda-span 1)
+;                    (org-super-agenda-groups
+;                     '((:name "📅 Today"
+;                              :time-grid t
+;                              :scheduled today
+;                              :deadline past
+;                              :deadline today))))
+;           (alltodo ""
+;                    ((org-agenda-overriding-header "")
+;                     (org-super-agenda-groups
+;                      '((:name "🥅 Weekly Goals"
+;                               :todo "WEEKLY")
+;                        (:name "🔜 Upcoming (next 7 days)"
+;                               :scheduled future
+;                               :scheduled (before "+7d")))))))))
 
 ; (setq org-agenda-skip-deadline-if-done t
 ;       org-agenda-include-deadlines t
@@ -173,5 +173,5 @@
 ;
 (org-super-agenda-mode)
 
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "WEEKLY(w)" "DONE(d)")))
+; (setq org-todo-keywords
+;       '((sequence "TODO(t)" "WEEKLY(w)" "DONE(d)")))
