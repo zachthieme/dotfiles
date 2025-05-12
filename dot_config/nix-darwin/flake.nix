@@ -23,6 +23,7 @@
             pkgs.curl
             pkgs.dotnetCorePackages.dotnet_9.runtime
             pkgs.dotnetCorePackages.dotnet_9.sdk
+            pkgs.emacs
             pkgs.eza
             pkgs.fd
             pkgs.fzf
