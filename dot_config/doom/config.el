@@ -145,7 +145,7 @@
                    ((org-agenda-overriding-header "")
                     (org-super-agenda-groups
                      '((:name "🥅 Weekly Goals"
-                              :tag "WEEKLY")
+                              :todo "WEEKLY")
                        (:name "🔜 Upcoming (next 7 days)"
                               :scheduled future
                               :scheduled (before "+7d")))))))))
@@ -172,3 +172,6 @@
 ;          :priority<= "B")))
 ;
 (org-super-agenda-mode)
+
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "WEEKLY(w)" "DONE(d)")))
