@@ -131,31 +131,44 @@
                (when (equal org-state "DONE")
                  (my/org-roam-copy-todo-to-today))))
 
-(setq org-agenda-skip-deadline-if-done t
-      org-agenda-include-deadlines t
-      org-agenda-block-separator nil
-      org-agenda-compact-blocks t
-      org-agenda-start-day nil ;; i.e. today
-      org-agenda-span 1
-      org-agenda-start-on-weekday nil
-      org-super-agenda-groups
-      '(;; Each group has an implicit boolean OR operator between its selectors.
-        (:name "Important"  ; Optionally specify section name
-         :todo "TODAY"
-         :tag "bills"
-         :priority "A")
+(setq org-agenda-custom-commands
+      '(("c" "⚡ Clarity View"
+         ((agenda ""
+                  ((org-agenda-span 1)
+                   (org-super-agenda-groups
+                    '((:name "📅 Today"
+                             :time-grid t
+                             :scheduled today
+                             :deadline past
+                             :deadline today))))
+          (alltodo ""
+                   ((org-agenda-overriding-header "")
+                    (org-super-agenda-groups
+                     '((:name "🥅 Weekly Goals"
+                              :tag "WEEKLY")
+                       (:name "🔜 Upcoming (next 7 days)"
+                              :scheduled future
+                              :scheduled (before "+7d")))))))))
 
-        (:name "Habits"  ; Optionally specify section name
-         :todo "TODAY"
-         :habit t)
-
-        (:name "Errands"
-         :todo "TODAY"
-         :tag "errand")
-
-        (:name "Media"
-         :todo ("TO-READ" "TO-WATCH" "WATCHING"))
-        (:name "Other"
-         :priority<= "B")))
-
+; (setq org-agenda-skip-deadline-if-done t
+;       org-agenda-include-deadlines t
+;       org-agenda-block-separator nil
+;       org-agenda-compact-blocks t
+;       org-agenda-start-day nil ;; i.e. today
+;       org-agenda-span 1
+;       org-agenda-start-on-weekday nil
+;       org-super-agenda-groups
+;       '(;; Each group has an implicit boolean OR operator between its selectors.
+;         (:name "Weekly"  ; Optionally specify section name
+;          :todo "WEEKLY")
+;
+;         (:name "Errands"
+;          :todo "TODAY"
+;          :tag "errand")
+;
+;         (:name "Media"
+;          :todo ("TO-READ" "TO-WATCH" "WATCHING"))
+;         (:name "Other"
+;          :priority<= "B")))
+;
 (org-super-agenda-mode)
