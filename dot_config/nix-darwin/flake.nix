@@ -3,14 +3,21 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-darwin.url = "github:nix-darwin/nix-darwin/master";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    };
+    # home-manager = {
+    #   url = "github:nix-community/home-manager";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   outputs =
     inputs@{
       self,
       nix-darwin,
+      home-manager,
       nixpkgs,
     }:
     let
@@ -103,29 +110,6 @@
             remapCapsLockToEscape = true;
           };
 
-          programs.zsh = {
-            enable = true;
-            enableCompletions = true;
-            # autosuggestions.enable = true;
-            syntaxHighlighting.enable = true;
-
-            shellAliases = {
-              c = "clear";
-              cat = "bat";
-              cm = "chezmoi";
-              emacs = "emacs -nw";
-              j = "z";
-              ll = "ls -l";
-              mkdir = "mkdir -p";
-              norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
-              notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
-              tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
-              update = "sudo nixos-rebuild switch";
-              v = "/usr/bin/vi";
-              vi = "nvim";
-            };
-            history.size = 10000;
-          };
           # Used for backwards compatibility, please read the changelog before changing.
           # $ darwin-rebuild changelog
           system.stateVersion = 6;
@@ -140,5 +124,30 @@
       darwinConfigurations."Cortex" = nix-darwin.lib.darwinSystem {
         modules = [ configuration ];
       };
+      # homeConfigurations = {
+      #   programs.zsh = {
+      #     enable = true;
+      #     enableCompletions = true;
+      #     # autosuggestions.enable = true;
+      #     syntaxHighlighting.enable = true;
+      #
+      #     shellAliases = {
+      #       c = "clear";
+      #       cat = "bat";
+      #       cm = "chezmoi";
+      #       emacs = "emacs -nw";
+      #       j = "z";
+      #       ll = "ls -l";
+      #       mkdir = "mkdir -p";
+      #       norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
+      #       notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
+      #       tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+      #       update = "sudo nixos-rebuild switch";
+      #       v = "/usr/bin/vi";
+      #       vi = "nvim";
+      #     };
+      #     history.size = 10000;
+      #   };
+      # };
     };
 }
