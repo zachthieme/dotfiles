@@ -110,23 +110,19 @@
             syntaxHighlighting.enable = true;
 
             shellAliases = {
-              ll = "ls -l";
-              update = "sudo nixos-rebuild switch";
-              cm = "chezmoi";
               c = "clear";
-              # ch = 'cheat -l | awk "{print \$1}" | fzf --preview "cheat --colorize {1}" --preview-window=right,70%';
+              cat = "bat";
+              cm = "chezmoi";
               emacs = "emacs -nw";
               j = "z";
+              ll = "ls -l";
               mkdir = "mkdir -p";
-              tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
-              # t='tldr --list | fzf --preview "tldr {1} --color=always" --preview-window=right,70% | xargs tldr';
-              vi = "nvim";
-              v = "/usr/bin/vi";
-              # ft='fzf-tmux --height 70% -- fzf --preview="cat --color=always {}" --preview-window=right:50% --border';
-
-              notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
               norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
-
+              notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
+              tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+              update = "sudo nixos-rebuild switch";
+              v = "/usr/bin/vi";
+              vi = "nvim";
             };
             history.size = 10000;
           };
