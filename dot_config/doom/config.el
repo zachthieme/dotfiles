@@ -4,6 +4,14 @@
 (setq doom-theme 'doom-one)
 ; (setq display-line-numbers-type `relative`)
 
+(remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
+(setq doom-fallback-buffer-name "scratch")
+(setq +doom-dashboard-functions '())
+
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (org-roam-dailies-goto-today)))
+
 (setq org-directory "~/Dropbox/org/")
 ; (setq org-agenda-files (append org-agenda-files '("~/RoamNotes")))
 
