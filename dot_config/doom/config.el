@@ -186,5 +186,6 @@
 ;
 (org-super-agenda-mode)
 
-; (setq org-todo-keywords
-;       '((sequence "TODO(t)" "WEEKLY(w)" "DONE(d)")))
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "DONE(d)" "DELEGATED(D)" "CANCELED(c)" "WEEKLY(w)")))
+
