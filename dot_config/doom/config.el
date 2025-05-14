@@ -139,10 +139,10 @@
                    (file-truename (buffer-file-name)))
       (org-refile nil nil (list "Tasks" today-file nil pos)))))
 
-(add-to-list 'org-after-todo-state-change-hook
-             (lambda ()
-               (when (equal org-state "DONE")
-                 (my/org-roam-copy-todo-to-today))))
+; (add-to-list 'org-after-todo-state-change-hook
+;              (lambda ()
+;                (when (equal org-state "DONE")
+;                  (my/org-roam-copy-todo-to-today))))
 
 ; (setq org-agenda-custom-commands
 ;       '(("c" "⚡ Clarity View"
