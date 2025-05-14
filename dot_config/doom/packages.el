@@ -1,4 +1,5 @@
 (package! org-super-agenda)
+(package! adaptive-wrap)
 ; (use-package! consult-org-roam
 ;   :after org-roam
 ;   :config
