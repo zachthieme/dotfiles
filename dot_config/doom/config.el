@@ -4,6 +4,11 @@
 (setq doom-theme 'doom-one)
 (setq display-line-numbers-type `relative)
 
+;; Enable visual-line-mode (soft wrap) in agenda views, including tag searches
+(add-hook! 'org-agenda-mode-hook
+  (visual-line-mode 1)
+  (adaptive-wrap-prefix-mode 1)) ;; Optional, better-looking wraps
+
  ; ensure that TODO log completion date
 (setq org-log-done 'time)
 (setq org-log-into-drawer t)
