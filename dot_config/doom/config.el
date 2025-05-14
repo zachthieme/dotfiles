@@ -6,7 +6,6 @@
 
  ; ensure that TODO log completion date
 (setq org-log-done 'time)
-(setq org-log-done 'note)
 (setq org-log-into-drawer t)
 
 (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
