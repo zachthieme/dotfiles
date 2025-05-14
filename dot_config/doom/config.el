@@ -197,7 +197,7 @@
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "DELEGATED(D)" "WEEKLY(w)" "|" "DONE(d)" "CANCELED(c@)" )))
-
+(after! org
 (map! :map org-mode-map
       :localleader
       (:prefix ("t" . "todo state")
@@ -206,4 +206,4 @@
        :desc "Mark WEEKLY"   "w" (lambda () (interactive) (org-todo "WEEKLY"))
        :desc "Mark DONE"     "d" (lambda () (interactive) (org-todo "DONE"))
        :desc "Mark CANCELED" "c" (lambda () (interactive) (org-todo "CANCELED"))))
-
+)
