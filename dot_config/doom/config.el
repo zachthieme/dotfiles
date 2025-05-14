@@ -2,7 +2,10 @@
       user-mail-address "zach@techsage.org")
 
 (setq doom-theme 'doom-one)
-; (setq display-line-numbers-type `relative`)
+(setq display-line-numbers-type `relative)
+
+ ; ensure that tasks log completion date
+(setq org-log-done 'time)
 
 (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 (setq doom-fallback-buffer-name "scratch")
