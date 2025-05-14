@@ -8,13 +8,23 @@
 (setq org-log-done 'time)
 (setq org-log-into-drawer t)
 
+; ignore dashboard on startup
 (remove-hook '+doom-dashboard-functions #'doom-dashboard-widget-shortmenu)
 (setq doom-fallback-buffer-name "scratch")
 (setq +doom-dashboard-functions '())
 
+; open daily note on emacs startup
 (add-hook 'emacs-startup-hook
           (lambda ()
             (org-roam-dailies-goto-today)))
+
+; Daily template
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         "* %<A%A %B %d, %Y>\nShortcuts | Events\n\n** Meetings\n\n** Notes\n"
+         :if-new (file+head "%<%Y-%m-%d>.org"
+                            "#+title: %<%Y-%m-%d>\n")
+         :unnarrowed t)))
 
 (setq org-directory "~/Dropbox/org/")
 ; (setq org-agenda-files (append org-agenda-files '("~/RoamNotes")))
