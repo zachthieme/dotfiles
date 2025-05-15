@@ -4,24 +4,6 @@
 (setq doom-theme 'doom-one)
 (setq display-line-numbers-type `relative)
 
-;; Make all tags appear in C-c C-c
-(defun my/org-get-global-tags ()
-  "Return a list of all unique tags from org-agenda-files."
-  (let ((tags ()))
-    (dolist (file (org-agenda-files))
-      (with-temp-buffer
-        (insert-file-contents file)
-        (org-mode)
-        (setq tags (append tags (org-get-buffer-tags)))))
-    (delete-dups tags)))
-
-(defun my/org-tag-completion-at-point ()
-  "Provide global tag completion for C-c C-c."
-  (setq-local org-complete-tags-always-offer-all-agenda-tags t)
-  (setq-local org-tag-alist (my/org-get-global-tags)))
-
-(add-hook 'org-mode-hook #'my/org-tag-completion-at-point)
-
 ;; Enable visual-line-mode (soft wrap) in agenda views, including tag searches
 (add-hook! 'org-agenda-mode-hook
   (visual-line-mode 1)
