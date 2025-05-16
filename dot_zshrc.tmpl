@@ -73,7 +73,7 @@ export ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 
 {{- if eq .chezmoi.hostname "zthieme34911" }}
-Download zimfw if missing
+# Download zimfw if missing
 ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
 if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
   if (( ${+commands[curl]} )); then
