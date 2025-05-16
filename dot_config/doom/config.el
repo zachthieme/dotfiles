@@ -31,11 +31,14 @@
                             "#+title: %<%Y-%m-%d>\n")
          :unnarrowed t)))
 
-(setq org-directory "~/Dropbox/org/")
+(setq org-directory "~/Library/Mobile Documents/com~apple~CloudDocs/org/")
+; (setq org-directory "~/Dropbox/org/")
 ; (setq org-agenda-files (append org-agenda-files '("~/RoamNotes")))
 
 (setq org-agenda-files 
-   (directory-files-recursively "~/Dropbox/org/RoamNotes" "\\.org$"))
+
+   (directory-files-recursively "~/Library/Mobile Documents/com~apple~CloudDocs/org" "\\.org$"))
+   ; (directory-files-recursively "~/Dropbox/org/RoamNotes" "\\.org$"))
 
 (use-package! org-roam
   :ensure t
@@ -43,7 +46,7 @@
   :init
   (setq org-roam-v2-ack t)
   :custom
-  (org-roam-directory "~/Dropbox/org/RoamNotes")
+  (org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/org/RoamNotes")
   (org-roam-completion-everywhere t)
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
