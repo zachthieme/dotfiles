@@ -70,6 +70,7 @@
               "spotify_player"
             ];
             casks = [
+              "balenaetcher"
               "brave-browser"
               "dropbox"
               "ghostty"
