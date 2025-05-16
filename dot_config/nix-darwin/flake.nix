@@ -70,6 +70,7 @@
               "spotify_player"
             ];
             casks = [
+              "balenaetcher"
               "brave-browser"
               "dropbox"
               "ghostty"
@@ -111,18 +112,30 @@
           };
 
           # Used for backwards compatibility, please read the changelog before changing.
-          # $ darwin-rebuild changelog
           system.stateVersion = 6;
 
           # The platform the configuration will be used on.
           nixpkgs.hostPlatform = "aarch64-darwin";
+
+          users.users.zach = {
+            name = "zach";
+            home = "/Users/zach";
+          };
         };
     in
     {
       # Build darwin flake using:
       # $ darwin-rebuild build --flake .#simple
       darwinConfigurations."Cortex" = nix-darwin.lib.darwinSystem {
-        modules = [ configuration ];
+        modules = [
+          configuration
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.zach = import ./home.nix;
+          }
+        ];
       };
       # homeConfigurations = {
       #   programs.zsh = {
