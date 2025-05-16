@@ -72,7 +72,7 @@ unset key
 export ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 
-{{- if (eq .chezmoi.config.hostname "zthieme34911") }}
+{{- if eq .chezmoi.hostname "zthieme34911" }}
 Download zimfw if missing
 ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
 if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
