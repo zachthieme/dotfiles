@@ -1,9 +1,12 @@
 {
-  description = "nix-darwin with home-manager, per-host";
+  description = "nix-darwin configuration";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-darwin.url = "github:nix-darwin/nix-darwin/master";
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -13,254 +16,204 @@
   outputs =
     inputs@{
       self,
-      nixpkgs,
       nix-darwin,
       home-manager,
-      ...
+      nixpkgs,
     }:
     let
-      system = "aarch64-darwin"; # or x86_64-darwin for Intel Macs
-
-      mkHost =
-        name: module:
-        nix-darwin.lib.darwinSystem {
-          system = system;
-          modules = [
-            ./hosts/${module}.nix
-            home-manager.darwinModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.zach = import ./hosts/home.nix;
-            }
+      configuration =
+        { pkgs, ... }:
+        {
+          # List packages installed in system profile. To search by name, run:
+          environment.systemPackages = [
+            pkgs.bat
+            pkgs.curl
+            pkgs.dotnetCorePackages.dotnet_9.runtime
+            pkgs.dotnetCorePackages.dotnet_9.sdk
+            pkgs.emacs
+            pkgs.eza
+            pkgs.fd
+            pkgs.fzf
+            pkgs.gh
+            pkgs.git
+            pkgs.go
+            pkgs.gotools
+            pkgs.jq
+            pkgs.mosh
+            pkgs.neovim
+            pkgs.nixfmt-rfc-style
+            pkgs.nodejs_23
+            pkgs.pandoc
+            pkgs.pass
+            pkgs.python3
+            pkgs.ripgrep
+            pkgs.tmux
+            pkgs.vim
+            pkgs.wget
+            pkgs.yazi
+            pkgs.zoxide
+            pkgs.zsh
           ];
-        };
 
+          homebrew = {
+            enable = true;
+            # onActivation.cleanup = "uninstall";
+
+            taps = [
+              "FelixKratz/formulae"
+            ];
+            brews = [
+              "FelixKratz/formulae/borders"
+              "FelixKratz/formulae/sketchybar"
+              "oh-my-posh"
+              "sesh"
+              "spotify_player"
+            ];
+            casks = [
+              "balenaetcher"
+              "bartender"
+              "brave-browser"
+              "dropbox"
+              "ghostty"
+              "homerow"
+              "nikitabobko/tap/aerospace"
+              "raycast"
+              "spotify"
+              "wezterm"
+              "zed"
+            ];
+          };
+
+          # Necessary for using flakes on this system.
+          nix.settings.experimental-features = "nix-command flakes";
+          nix.enable = false;
+
+          # Set Git commit hash for darwin-version.
+          system.configurationRevision = self.rev or self.dirtyRev or null;
+
+          # configuring mac os
+          # use touchid in terminal
+          security.pam.services.sudo_local.touchIdAuth = true;
+
+          system.defaults = {
+            dock.autohide = true;
+            finder.AppleShowAllExtensions = true;
+            finder.FXPreferredViewStyle = "clmv";
+            screencapture.location = "~/Pictures/screenshots";
+            screensaver.askForPasswordDelay = 10;
+
+            # aerospace configuration
+            dock.mru-spaces = false;
+            dock.expose-group-apps = true;
+            spaces.spans-displays = true;
+            NSGlobalDomain.NSWindowShouldDragOnGesture = true;
+          };
+          system.keyboard = {
+            enableKeyMapping = true;
+            remapCapsLockToEscape = true;
+          };
+
+          environment.variables = {
+            EDITOR = "nvim"; # or "emacs", "vim", etc.
+            VISUAL = "nvim";
+          };
+          # Used for backwards compatibility, please read the changelog before changing.
+          system.stateVersion = 6;
+
+          # The platform the configuration will be used on.
+          nixpkgs.hostPlatform = "aarch64-darwin";
+
+          # programs.zsh = {
+          #   enable = true;
+          #   shellAliases = {
+          #     c = "clear";
+          #     cat = "bat";
+          #   };
+          # };
+          #   cm = "chezmoi";
+          #   emacs = "emacs -nw";
+          #   j = "z";
+          #   ll = "ls -l";
+          #   mkdir = "mkdir -p";
+          #   norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
+          #   notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
+          #   tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+          #   update = "sudo nixos-rebuild switch";
+          #   v = "/usr/bin/vi";
+          #   vi = "nvim";
+          # };
+          #     history.size = 10000;
+          # enableCompletion = true;
+          # enableAutosuggestions = true; # Shows ghosted suggestions like fish
+          # enableSyntaxHighlighting = true; # Syntax coloring
+          #
+          # Optional: extra plugins manually
+          # plugins = [
+          #   {
+          #     name = "zsh-autosuggestions";
+          #     src = pkgs.fetchFromGitHub {
+          #       owner = "zsh-users";
+          #       repo = "zsh-autosuggestions";
+          #       # rev = "v0.7.0";
+          #       # sha256 = "sha256-...";
+          #     };
+          #   }
+          #   {
+          #     name = "zsh-syntax-highlighting";
+          #     src = pkgs.fetchFromGitHub {
+          #       owner = "zsh-users";
+          #       repo = "zsh-syntax-highlighting";
+          #       # rev = "0.7.1";
+          #       # sha256 = "sha256-...";
+          #     };
+          #   }
+          # ];
+          # };
+
+          users.users.zach = {
+            name = "zach";
+            home = "/Users/zach";
+          };
+        };
     in
     {
-      darwinConfigurations = {
-        "Cortex" = mkHost "Cortex" "Cortex"; # special host
-        "OtherMac" = mkHost "OtherMac" "common"; # fallback/default host
+      # Build darwin flake using:
+      # $ darwin-rebuild build --flake .#simple
+      darwinConfigurations."Cortex" = nix-darwin.lib.darwinSystem {
+        modules = [
+          configuration
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.zach = import ./home.nix;
+          }
+        ];
       };
+      # homeConfigurations = {
+      #   programs.zsh = {
+      #     enable = true;
+      #     enableCompletions = true;
+      #     # autosuggestions.enable = true;
+      #     syntaxHighlighting.enable = true;
+      #
+      #     shellAliases = {
+      #       c = "clear";
+      #       cat = "bat";
+      #       cm = "chezmoi";
+      #       emacs = "emacs -nw";
+      #       j = "z";
+      #       ll = "ls -l";
+      #       mkdir = "mkdir -p";
+      #       norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
+      #       notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
+      #       tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+      #       update = "sudo nixos-rebuild switch";
+      #       v = "/usr/bin/vi";
+      #       vi = "nvim";
+      #     };
+      #     history.size = 10000;
+      #   };
+      # };
     };
 }
-
-# {
-#   description = "nix-darwin configuration";
-#
-#   inputs = {
-#     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-#     nix-darwin = {
-#       url = "github:nix-darwin/nix-darwin/master";
-#       inputs.nixpkgs.follows = "nixpkgs";
-#     };
-#     home-manager = {
-#       url = "github:nix-community/home-manager";
-#       inputs.nixpkgs.follows = "nixpkgs";
-#     };
-#   };
-#
-#   outputs =
-#     inputs@{
-#       self,
-#       nix-darwin,
-#       home-manager,
-#       nixpkgs,
-#     }:
-#     let
-#       configuration =
-#         { pkgs, ... }:
-#         {
-#           # List packages installed in system profile. To search by name, run:
-#           environment.systemPackages = [
-#             pkgs.bat
-#             pkgs.curl
-#             pkgs.dotnetCorePackages.dotnet_9.runtime
-#             pkgs.dotnetCorePackages.dotnet_9.sdk
-#             pkgs.emacs
-#             pkgs.eza
-#             pkgs.fd
-#             pkgs.fzf
-#             pkgs.gh
-#             pkgs.git
-#             pkgs.go
-#             pkgs.gotools
-#             pkgs.jq
-#             pkgs.mosh
-#             pkgs.neovim
-#             pkgs.nixfmt-rfc-style
-#             pkgs.nodejs_23
-#             pkgs.pandoc
-#             pkgs.pass
-#             pkgs.python3
-#             pkgs.ripgrep
-#             pkgs.tmux
-#             pkgs.vim
-#             pkgs.wget
-#             pkgs.yazi
-#             pkgs.zoxide
-#             pkgs.zsh
-#           ];
-#
-#           homebrew = {
-#             enable = true;
-#             # onActivation.cleanup = "uninstall";
-#
-#             taps = [
-#               "FelixKratz/formulae"
-#             ];
-#             brews = [
-#               "FelixKratz/formulae/borders"
-#               "FelixKratz/formulae/sketchybar"
-#               "oh-my-posh"
-#               "sesh"
-#               "spotify_player"
-#             ];
-#             casks = [
-#               "balenaetcher"
-#               "bartender"
-#               "brave-browser"
-#               "dropbox"
-#               "ghostty"
-#               "homerow"
-#               "nikitabobko/tap/aerospace"
-#               "raycast"
-#               "spotify"
-#               "wezterm"
-#               "zed"
-#             ];
-#           };
-#
-#           # Necessary for using flakes on this system.
-#           nix.settings.experimental-features = "nix-command flakes";
-#           nix.enable = false;
-#
-#           # Set Git commit hash for darwin-version.
-#           system.configurationRevision = self.rev or self.dirtyRev or null;
-#
-#           # configuring mac os
-#           # use touchid in terminal
-#           security.pam.services.sudo_local.touchIdAuth = true;
-#
-#           system.defaults = {
-#             dock.autohide = true;
-#             finder.AppleShowAllExtensions = true;
-#             finder.FXPreferredViewStyle = "clmv";
-#             screencapture.location = "~/Pictures/screenshots";
-#             screensaver.askForPasswordDelay = 10;
-#
-#             # aerospace configuration
-#             dock.mru-spaces = false;
-#             dock.expose-group-apps = true;
-#             spaces.spans-displays = true;
-#             NSGlobalDomain.NSWindowShouldDragOnGesture = true;
-#           };
-#           system.keyboard = {
-#             enableKeyMapping = true;
-#             remapCapsLockToEscape = true;
-#           };
-#
-#           environment.variables = {
-#             EDITOR = "nvim"; # or "emacs", "vim", etc.
-#             VISUAL = "nvim";
-#           };
-#           # Used for backwards compatibility, please read the changelog before changing.
-#           system.stateVersion = 6;
-#
-#           # The platform the configuration will be used on.
-#           nixpkgs.hostPlatform = "aarch64-darwin";
-#
-#           programs.zsh = {
-#             enable = true;
-#             shellAliases = {
-#               c = "clear";
-#               cat = "bat";
-#             };
-#           };
-#           #   cm = "chezmoi";
-#           #   emacs = "emacs -nw";
-#           #   j = "z";
-#           #   ll = "ls -l";
-#           #   mkdir = "mkdir -p";
-#           #   norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
-#           #   notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
-#           #   tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
-#           #   update = "sudo nixos-rebuild switch";
-#           #   v = "/usr/bin/vi";
-#           #   vi = "nvim";
-#           # };
-#           #     history.size = 10000;
-#           # enableCompletion = true;
-#           # enableAutosuggestions = true; # Shows ghosted suggestions like fish
-#           # enableSyntaxHighlighting = true; # Syntax coloring
-#           #
-#           # Optional: extra plugins manually
-#           # plugins = [
-#           #   {
-#           #     name = "zsh-autosuggestions";
-#           #     src = pkgs.fetchFromGitHub {
-#           #       owner = "zsh-users";
-#           #       repo = "zsh-autosuggestions";
-#           #       # rev = "v0.7.0";
-#           #       # sha256 = "sha256-...";
-#           #     };
-#           #   }
-#           #   {
-#           #     name = "zsh-syntax-highlighting";
-#           #     src = pkgs.fetchFromGitHub {
-#           #       owner = "zsh-users";
-#           #       repo = "zsh-syntax-highlighting";
-#           #       # rev = "0.7.1";
-#           #       # sha256 = "sha256-...";
-#           #     };
-#           #   }
-#           # ];
-#           # };
-#
-#           users.users.zach = {
-#             name = "zach";
-#             home = "/Users/zach";
-#           };
-#         };
-#     in
-#     {
-#       # Build darwin flake using:
-#       # $ darwin-rebuild build --flake .#simple
-#       darwinConfigurations."Cortex" = nix-darwin.lib.darwinSystem {
-#         modules = [
-#           configuration
-#           home-manager.darwinModules.home-manager
-#           {
-#             home-manager.useGlobalPkgs = true;
-#             home-manager.useUserPackages = true;
-#             home-manager.users.zach = import ./home.nix;
-#           }
-#         ];
-#       };
-#       # homeConfigurations = {
-#       #   programs.zsh = {
-#       #     enable = true;
-#       #     enableCompletions = true;
-#       #     # autosuggestions.enable = true;
-#       #     syntaxHighlighting.enable = true;
-#       #
-#       #     shellAliases = {
-#       #       c = "clear";
-#       #       cat = "bat";
-#       #       cm = "chezmoi";
-#       #       emacs = "emacs -nw";
-#       #       j = "z";
-#       #       ll = "ls -l";
-#       #       mkdir = "mkdir -p";
-#       #       norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
-#       #       notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
-#       #       tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
-#       #       update = "sudo nixos-rebuild switch";
-#       #       v = "/usr/bin/vi";
-#       #       vi = "nvim";
-#       #     };
-#       #     history.size = 10000;
-#       #   };
-#       # };
-#     };
-# }
