@@ -71,6 +71,7 @@
             ];
             casks = [
               "balenaetcher"
+              "bartender"
               "brave-browser"
               "dropbox"
               "ghostty"
