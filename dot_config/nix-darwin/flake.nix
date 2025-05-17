@@ -74,6 +74,7 @@
               "brave-browser"
               "dropbox"
               "ghostty"
+              "homerow"
               "nikitabobko/tap/aerospace"
               "raycast"
               "spotify"
