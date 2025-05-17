@@ -113,6 +113,10 @@
             remapCapsLockToEscape = true;
           };
 
+          environment.variables = {
+            EDITOR = "nvim"; # or "emacs", "vim", etc.
+            VISUAL = "nvim";
+          };
           # Used for backwards compatibility, please read the changelog before changing.
           system.stateVersion = 6;
 
@@ -121,6 +125,22 @@
 
           programs.zsh = {
             enable = true;
+            shellAliases = {
+              c = "clear";
+              cat = "bat";
+              cm = "chezmoi";
+              emacs = "emacs -nw";
+              j = "z";
+              ll = "ls -l";
+              mkdir = "mkdir -p";
+              norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
+              notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
+              tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+              update = "sudo nixos-rebuild switch";
+              v = "/usr/bin/vi";
+              vi = "nvim";
+            };
+            #     history.size = 10000;
             # enableCompletion = true;
             # enableAutosuggestions = true; # Shows ghosted suggestions like fish
             # enableSyntaxHighlighting = true; # Syntax coloring
