@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  home.stateVersion = "25.05";
+  home.stateVersion = "24.11";
 
   programs.zsh = {
     enable = true;
