@@ -10,7 +10,7 @@ skip_global_compinit=1
 ### Paths and Environment Variables
 ### ─────────────────────────────────────
 
-{{- if eq .chezmoi.os "darwin" }}
+{{- if eq .chezmoi.hostname "zthieme34911" }}
 export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 {{- end }}
@@ -72,7 +72,6 @@ unset key
 export ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 
-{{- if eq .chezmoi.hostname "zthieme34911" }}
 # Download zimfw if missing
 ZIM_HOME=${ZDOTDIR:-${HOME}}/.zim
 if [[ ! -e ${ZIM_HOME}/zimfw.zsh ]]; then
@@ -92,7 +91,6 @@ fi
 
 # Load zimfw
 source ${ZIM_HOME}/init.zsh
-{{- end}}
 ### ─────────────────────────────────────
 ### Plugin/Tool Configuration
 ### ─────────────────────────────────────
@@ -101,6 +99,7 @@ source ${ZIM_HOME}/init.zsh
 eval "$(zoxide init zsh)"
 eval "$(oh-my-posh init zsh --config $HOME/.config/ohmyposh/zen.toml)"
 
+{{- end}}
 ### ─────────────────────────────────────
 ### Theme Customization
 ### ─────────────────────────────────────
