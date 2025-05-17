@@ -1,13 +1,13 @@
 { config, pkgs, ... }:
 
 {
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.11";
 
   programs.zsh = {
     enable = true;
-#    enableCompletion = true;
-#    enableAutosuggestions = true;
-#    enableSyntaxHighlighting = true;
+    #    enableCompletion = true;
+    #    enableAutosuggestions = true;
+    #    enableSyntaxHighlighting = true;
 
     shellAliases = {
       ll = "ls -la";
@@ -21,4 +21,3 @@
     VISUAL = "nvim";
   };
 }
-
