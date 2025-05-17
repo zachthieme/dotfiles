@@ -122,7 +122,7 @@
           programs.zsh = {
             enable = true;
             # enableAutosuggestions = true;
-            syntaxHighlighting.enable = true;
+            # syntaxHighlighting.enable = true;
           };
 
           users.users.zach = {
