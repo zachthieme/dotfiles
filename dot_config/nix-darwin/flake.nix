@@ -125,48 +125,50 @@
 
           programs.zsh = {
             enable = true;
-            # shellAliases = {
-            #   c = "clear";
-            #   cat = "bat";
-            #   cm = "chezmoi";
-            #   emacs = "emacs -nw";
-            #   j = "z";
-            #   ll = "ls -l";
-            #   mkdir = "mkdir -p";
-            #   norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
-            #   notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
-            #   tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
-            #   update = "sudo nixos-rebuild switch";
-            #   v = "/usr/bin/vi";
-            #   vi = "nvim";
-            # };
-            #     history.size = 10000;
-            # enableCompletion = true;
-            # enableAutosuggestions = true; # Shows ghosted suggestions like fish
-            # enableSyntaxHighlighting = true; # Syntax coloring
-            #
-            # Optional: extra plugins manually
-            # plugins = [
-            #   {
-            #     name = "zsh-autosuggestions";
-            #     src = pkgs.fetchFromGitHub {
-            #       owner = "zsh-users";
-            #       repo = "zsh-autosuggestions";
-            #       # rev = "v0.7.0";
-            #       # sha256 = "sha256-...";
-            #     };
-            #   }
-            #   {
-            #     name = "zsh-syntax-highlighting";
-            #     src = pkgs.fetchFromGitHub {
-            #       owner = "zsh-users";
-            #       repo = "zsh-syntax-highlighting";
-            #       # rev = "0.7.1";
-            #       # sha256 = "sha256-...";
-            #     };
-            #   }
-            # ];
+            shellAliases = {
+              c = "clear";
+              cat = "bat";
+            };
           };
+          #   cm = "chezmoi";
+          #   emacs = "emacs -nw";
+          #   j = "z";
+          #   ll = "ls -l";
+          #   mkdir = "mkdir -p";
+          #   norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
+          #   notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
+          #   tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+          #   update = "sudo nixos-rebuild switch";
+          #   v = "/usr/bin/vi";
+          #   vi = "nvim";
+          # };
+          #     history.size = 10000;
+          # enableCompletion = true;
+          # enableAutosuggestions = true; # Shows ghosted suggestions like fish
+          # enableSyntaxHighlighting = true; # Syntax coloring
+          #
+          # Optional: extra plugins manually
+          # plugins = [
+          #   {
+          #     name = "zsh-autosuggestions";
+          #     src = pkgs.fetchFromGitHub {
+          #       owner = "zsh-users";
+          #       repo = "zsh-autosuggestions";
+          #       # rev = "v0.7.0";
+          #       # sha256 = "sha256-...";
+          #     };
+          #   }
+          #   {
+          #     name = "zsh-syntax-highlighting";
+          #     src = pkgs.fetchFromGitHub {
+          #       owner = "zsh-users";
+          #       repo = "zsh-syntax-highlighting";
+          #       # rev = "0.7.1";
+          #       # sha256 = "sha256-...";
+          #     };
+          #   }
+          # ];
+          # };
 
           users.users.zach = {
             name = "zach";
