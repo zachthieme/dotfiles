@@ -170,10 +170,10 @@
           # ];
           # };
 
-          users.users.zach = {
-            name = "zach";
-            home = "/Users/zach";
-          };
+          # users.users.zach = {
+          #   name = "zach";
+          #   home = "/Users/zach";
+          # };
         };
     in
     {
