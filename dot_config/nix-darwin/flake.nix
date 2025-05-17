@@ -121,9 +121,37 @@
 
           programs.zsh = {
             enable = true;
-            # enableAutosuggestions = true;
-            # syntaxHighlighting.enable = true;
+            enableCompletion = true;
+            enableAutosuggestions = true; # Shows ghosted suggestions like fish
+            enableSyntaxHighlighting = true; # Syntax coloring
+
+            # Optional: extra plugins manually
+            plugins = [
+              {
+                name = "zsh-autosuggestions";
+                src = pkgs.fetchFromGitHub {
+                  owner = "zsh-users";
+                  repo = "zsh-autosuggestions";
+                  # rev = "v0.7.0";
+                  # sha256 = "sha256-...";
+                };
+              }
+              {
+                name = "zsh-syntax-highlighting";
+                src = pkgs.fetchFromGitHub {
+                  owner = "zsh-users";
+                  repo = "zsh-syntax-highlighting";
+                  # rev = "0.7.1";
+                  # sha256 = "sha256-...";
+                };
+              }
+            ];
           };
+          # programs.zsh = {
+          #   enable = true;
+          #   # enableAutosuggestions = true;
+          #   # syntaxHighlighting.enable = true;
+          # };
 
           users.users.zach = {
             name = "zach";
