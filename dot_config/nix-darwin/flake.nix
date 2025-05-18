@@ -13,7 +13,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    pure-prompt = {
+    purePrompt = {
       url = "github:sindresorhus/pure";
       flake = false;
     };
@@ -25,6 +25,7 @@
       nixpkgs,
       nix-darwin,
       home-manager,
+      purePrompt,
       ...
     }:
     let
@@ -137,7 +138,7 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.zach = import ./home.nix {
-              inherit pure-prompt;
+              inherit purePrompt;
             };
           }
         ];
