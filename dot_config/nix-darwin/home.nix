@@ -44,6 +44,8 @@
     };
 
     initContent = ''
+      eval "$(oh-my-posh init zsh)"
+
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
       # Fish-like prompt
@@ -92,12 +94,13 @@
   };
 
   home.packages = with pkgs; [
-    chezmoi
-    fzf
-    fd
-    eza
     bat
+    chezmoi
+    eza
+    fd
+    fzf
     git
+    oh-my-posh
     zoxide
     zsh-autosuggestions
     zsh-syntax-highlighting
