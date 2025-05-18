@@ -61,7 +61,6 @@
               "FelixKratz/formulae/borders"
               "FelixKratz/formulae/sketchybar"
               "oh-my-posh"
-              "sesh"
               "spotify_player"
             ];
             casks = [
@@ -108,10 +107,6 @@
             remapCapsLockToEscape = true;
           };
 
-          environment.variables = {
-            EDITOR = "nvim"; # or "emacs", "vim", etc.
-            VISUAL = "nvim";
-          };
           # Used for backwards compatibility, please read the changelog before changing.
           system.stateVersion = 6;
 
@@ -124,15 +119,7 @@
       # Build darwin flake using:
       # $ darwin-rebuild build --flake .#simple
       darwinConfigurations."Cortex" = nix-darwin.lib.darwinSystem {
-        modules = [
-          configuration
-          # home-manager.darwinModules.home-manager
-          # {
-          #   home-manager.useGlobalPkgs = true;
-          #   home-manager.useUserPackages = true;
-          #   home-manager.users.zach = import ./home.nix;
-          # }
-        ];
+        modules = [ configuration ];
       };
     };
 }
