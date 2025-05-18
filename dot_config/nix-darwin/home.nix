@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  purePrompt,
+  ...
+}:
 
 {
   home.username = "zach";
@@ -41,7 +46,7 @@
 
     initExtra = ''
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-      fpath+=("${inputs.pure-prompt}/share/zsh/site-functions")
+      fpath+=("${purePrompt}/share/zsh/site-functions")
       autoload -U promptinit; promptinit
       prompt pure
     '';
