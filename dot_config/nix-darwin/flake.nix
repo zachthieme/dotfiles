@@ -19,6 +19,7 @@
       configuration =
         { pkgs, ... }:
         {
+          system.primaryUser = "zach";
           # List packages installed in system profile. To search by name, run:
           environment.systemPackages = [
             pkgs.bat
