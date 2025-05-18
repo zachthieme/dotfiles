@@ -1,56 +1,73 @@
 {
-  description = "nix-darwin configuration";
+  description = "nix-darwin + Home Manager setup with fish-like Zsh";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
     nix-darwin = {
-      url = "github:nix-darwin/nix-darwin/master";
+      url = "github:nix-darwin/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs =
-    inputs@{
+    {
       self,
-      nix-darwin,
       nixpkgs,
+      nix-darwin,
+      home-manager,
+      ...
     }:
     let
-      configuration =
-        { pkgs, ... }:
-        {
-          system.primaryUser = "zach";
-          # List packages installed in system profile. To search by name, run:
-          environment.systemPackages = [
-            pkgs.bat
-            pkgs.curl
-            pkgs.dotnetCorePackages.dotnet_9.runtime
-            pkgs.dotnetCorePackages.dotnet_9.sdk
-            pkgs.emacs
-            pkgs.eza
-            pkgs.fd
-            pkgs.fzf
-            pkgs.gh
-            pkgs.git
-            pkgs.go
-            pkgs.gotools
-            pkgs.jq
-            pkgs.mosh
-            pkgs.neovim
-            pkgs.nixfmt-rfc-style
-            pkgs.nodejs_24
-            pkgs.pandoc
-            pkgs.pass
-            pkgs.python3
-            pkgs.ripgrep
-            pkgs.tmux
-            pkgs.vim
-            pkgs.wget
-            pkgs.yazi
-            pkgs.zoxide
-            pkgs.zsh
-          ];
+      system = "aarch64-darwin"; # or "x86_64-darwin" if you're on Intel
+      pkgs = import nixpkgs { inherit system; };
+    in
+    {
+      darwinConfigurations."Cortex" = nix-darwin.lib.darwinSystem {
+        inherit system;
 
+        modules = [
+          {
+            nixpkgs.hostPlatform = system;
+
+            # Enable nix-darwin system settings
+            environment.systemPackages = with pkgs; [
+            bat
+            curl
+            dotnetCorePackages.dotnet_9.runtime
+            dotnetCorePackages.dotnet_9.sdk
+            emacs
+            eza
+            fd
+            fzf
+            gh
+            git
+            go
+            gotools
+            jq
+            mosh
+            neovim
+            nixfmt-rfc-style
+            nodejs_24
+            pandoc
+            pass
+            python3
+            ripgrep
+            tmux
+            vim
+            wget
+            yazi
+            zoxide
+            zsh
+            ];
+
+system.primaryUser = "zach";
+          
           homebrew = {
             enable = true;
             # onActivation.cleanup = "uninstall";
@@ -78,14 +95,16 @@
               "zed"
             ];
           };
+            nix.enable = false;
+            system.stateVersion = 6;
+            system.configurationRevision = self.rev or self.dirtyRev or null;
 
-          # Necessary for using flakes on this system.
-          nix.settings.experimental-features = "nix-command flakes";
-          nix.enable = false;
+            programs.zsh.enable = true;
 
-          # Set Git commit hash for darwin-version.
-          system.configurationRevision = self.rev or self.dirtyRev or null;
-
+            users.users.zach = {
+              home = "/Users/zach";
+              shell = pkgs.zsh;
+            };
           # configuring mac os
           # use touchid in terminal
           security.pam.services.sudo_local.touchIdAuth = true;
@@ -107,20 +126,15 @@
             enableKeyMapping = true;
             remapCapsLockToEscape = true;
           };
+          }
 
-          # Used for backwards compatibility, please read the changelog before changing.
-          system.stateVersion = 6;
-
-          # The platform the configuration will be used on.
-          nixpkgs.hostPlatform = "aarch64-darwin";
-
-        };
-    in
-    {
-      # Build darwin flake using:
-      # $ darwin-rebuild build --flake .#simple
-      darwinConfigurations."Cortex" = nix-darwin.lib.darwinSystem {
-        modules = [ configuration ];
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.zach = import ./home.nix;
+          }
+        ];
       };
     };
 }
