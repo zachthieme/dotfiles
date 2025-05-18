@@ -44,6 +44,8 @@
     };
 
     initContent = ''
+      source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+
       # Fish-like prompt
       autoload -Uz promptinit; promptinit
 
@@ -62,13 +64,15 @@
       bindkey -M vicmd '^R' fzf-history-widget
       bindkey -M vicmd '^T' fzf-file-widget
 
-      source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+      # needed instead of fzf.enableZshIntegration = true so zsh-vi-mode and fzf do not conflict
+      zvm_after_init_commands+=(eval "$(fzf --zsh)")
+
     '';
   };
 
   programs.fzf = {
     enable = true;
-    enableZshIntegration = true;
+    # enableZshIntegration = true;
     defaultCommand = "fd --type f";
     defaultOptions = [
       "--height 40%"
