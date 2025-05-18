@@ -7,17 +7,12 @@
       url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
     inputs@{
       self,
       nix-darwin,
-      home-manager,
       nixpkgs,
     }:
     let
@@ -123,57 +118,6 @@
           # The platform the configuration will be used on.
           nixpkgs.hostPlatform = "aarch64-darwin";
 
-          # programs.zsh = {
-          #   enable = true;
-          #   shellAliases = {
-          #     c = "clear";
-          #     cat = "bat";
-          #   };
-          # };
-          #   cm = "chezmoi";
-          #   emacs = "emacs -nw";
-          #   j = "z";
-          #   ll = "ls -l";
-          #   mkdir = "mkdir -p";
-          #   norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
-          #   notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
-          #   tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
-          #   update = "sudo nixos-rebuild switch";
-          #   v = "/usr/bin/vi";
-          #   vi = "nvim";
-          # };
-          #     history.size = 10000;
-          # enableCompletion = true;
-          # enableAutosuggestions = true; # Shows ghosted suggestions like fish
-          # enableSyntaxHighlighting = true; # Syntax coloring
-          #
-          # Optional: extra plugins manually
-          # plugins = [
-          #   {
-          #     name = "zsh-autosuggestions";
-          #     src = pkgs.fetchFromGitHub {
-          #       owner = "zsh-users";
-          #       repo = "zsh-autosuggestions";
-          #       # rev = "v0.7.0";
-          #       # sha256 = "sha256-...";
-          #     };
-          #   }
-          #   {
-          #     name = "zsh-syntax-highlighting";
-          #     src = pkgs.fetchFromGitHub {
-          #       owner = "zsh-users";
-          #       repo = "zsh-syntax-highlighting";
-          #       # rev = "0.7.1";
-          #       # sha256 = "sha256-...";
-          #     };
-          #   }
-          # ];
-          # };
-          system.primaryUser = "zach";
-          users.users.zach = {
-            name = "zach";
-            home = "/Users/zach";
-          };
         };
     in
     {
@@ -182,38 +126,13 @@
       darwinConfigurations."Cortex" = nix-darwin.lib.darwinSystem {
         modules = [
           configuration
-          home-manager.darwinModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.zach = import ./home.nix;
-          }
+          # home-manager.darwinModules.home-manager
+          # {
+          #   home-manager.useGlobalPkgs = true;
+          #   home-manager.useUserPackages = true;
+          #   home-manager.users.zach = import ./home.nix;
+          # }
         ];
       };
-      # homeConfigurations = {
-      #   programs.zsh = {
-      #     enable = true;
-      #     enableCompletions = true;
-      #     # autosuggestions.enable = true;
-      #     syntaxHighlighting.enable = true;
-      #
-      #     shellAliases = {
-      #       c = "clear";
-      #       cat = "bat";
-      #       cm = "chezmoi";
-      #       emacs = "emacs -nw";
-      #       j = "z";
-      #       ll = "ls -l";
-      #       mkdir = "mkdir -p";
-      #       norg = "NVIM_APPNAME=$(basename nvim-norg) nvim";
-      #       notes = "NVIM_APPNAME=$(basename nvim-notes) nvim";
-      #       tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
-      #       update = "sudo nixos-rebuild switch";
-      #       v = "/usr/bin/vi";
-      #       vi = "nvim";
-      #     };
-      #     history.size = 10000;
-      #   };
-      # };
     };
 }
