@@ -52,6 +52,15 @@
       # fzf keybindings
       [ -f ${pkgs.fzf}/share/fzf/key-bindings.zsh ] && source ${pkgs.fzf}/share/fzf/key-bindings.zsh
       [ -f ${pkgs.fzf}/share/fzf/completion.zsh ] && source ${pkgs.fzf}/share/fzf/completion.zsh
+
+      # Ensure fzf widgets are loaded
+      autoload -Uz fzf-file-widget fzf-cd-widget fzf-history-widget
+      zle -N fzf-file-widget
+      zle -N fzf-history-widget
+
+      # Manually bind if not already present
+      bindkey '^T' fzf-file-widget
+      bindkey '^R' fzf-history-widget
     '';
   };
 
