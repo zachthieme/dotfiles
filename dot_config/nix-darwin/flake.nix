@@ -13,6 +13,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    pure-prompt = {
+      url = "github:sindresorhus/pure";
+      flake = false;
+    };
   };
 
   outputs =
@@ -37,64 +41,64 @@
 
             # Enable nix-darwin system settings
             environment.systemPackages = with pkgs; [
-            bat
-            curl
-            dotnetCorePackages.dotnet_9.runtime
-            dotnetCorePackages.dotnet_9.sdk
-            emacs
-            eza
-            fd
-            fzf
-            gh
-            git
-            go
-            gotools
-            jq
-            mosh
-            neovim
-            nixfmt-rfc-style
-            nodejs_24
-            pandoc
-            pass
-            python3
-            ripgrep
-            tmux
-            vim
-            wget
-            yazi
-            zoxide
-            zsh
+              bat
+              curl
+              dotnetCorePackages.dotnet_9.runtime
+              dotnetCorePackages.dotnet_9.sdk
+              emacs
+              eza
+              fd
+              fzf
+              gh
+              git
+              go
+              gotools
+              jq
+              mosh
+              neovim
+              nixfmt-rfc-style
+              nodejs_24
+              pandoc
+              pass
+              python3
+              ripgrep
+              tmux
+              vim
+              wget
+              yazi
+              zoxide
+              zsh
             ];
 
-system.primaryUser = "zach";
-          
-          homebrew = {
-            enable = true;
-            # onActivation.cleanup = "uninstall";
+            system.primaryUser = "zach";
 
-            taps = [
-              "FelixKratz/formulae"
-            ];
-            brews = [
-              "FelixKratz/formulae/borders"
-              "FelixKratz/formulae/sketchybar"
-              "oh-my-posh"
-              "spotify_player"
-            ];
-            casks = [
-              "balenaetcher"
-              "bartender"
-              "brave-browser"
-              "dropbox"
-              "ghostty"
-              "homerow"
-              "nikitabobko/tap/aerospace"
-              "raycast"
-              "spotify"
-              "wezterm"
-              "zed"
-            ];
-          };
+            homebrew = {
+              enable = true;
+              # onActivation.cleanup = "uninstall";
+
+              taps = [
+                "FelixKratz/formulae"
+              ];
+              brews = [
+                "FelixKratz/formulae/borders"
+                "FelixKratz/formulae/sketchybar"
+                "oh-my-posh"
+                "spotify_player"
+              ];
+              casks = [
+                "balenaetcher"
+                "bartender"
+                "brave-browser"
+                "dropbox"
+                "ghostty"
+                "homerow"
+                "nikitabobko/tap/aerospace"
+                "raycast"
+                "spotify"
+                "wezterm"
+                "zed"
+              ];
+            };
             nix.enable = false;
             system.stateVersion = 6;
             system.configurationRevision = self.rev or self.dirtyRev or null;
@@ -105,34 +109,36 @@ system.primaryUser = "zach";
               home = "/Users/zach";
               shell = pkgs.zsh;
             };
-          # configuring mac os
-          # use touchid in terminal
-          security.pam.services.sudo_local.touchIdAuth = true;
+            # configuring mac os
+            # use touchid in terminal
+            security.pam.services.sudo_local.touchIdAuth = true;
 
-          system.defaults = {
-            dock.autohide = true;
-            finder.AppleShowAllExtensions = true;
-            finder.FXPreferredViewStyle = "clmv";
-            screencapture.location = "~/Pictures/screenshots";
-            screensaver.askForPasswordDelay = 10;
+            system.defaults = {
+              dock.autohide = true;
+              finder.AppleShowAllExtensions = true;
+              finder.FXPreferredViewStyle = "clmv";
+              screencapture.location = "~/Pictures/screenshots";
+              screensaver.askForPasswordDelay = 10;
 
-            # aerospace configuration
-            dock.mru-spaces = false;
-            dock.expose-group-apps = true;
-            spaces.spans-displays = true;
-            NSGlobalDomain.NSWindowShouldDragOnGesture = true;
-          };
-          system.keyboard = {
-            enableKeyMapping = true;
-            remapCapsLockToEscape = true;
-          };
+              # aerospace configuration
+              dock.mru-spaces = false;
+              dock.expose-group-apps = true;
+              spaces.spans-displays = true;
+              NSGlobalDomain.NSWindowShouldDragOnGesture = true;
+            };
+            system.keyboard = {
+              enableKeyMapping = true;
+              remapCapsLockToEscape = true;
+            };
           }
 
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.zach = import ./home.nix;
+            home-manager.users.zach = import ./home.nix {
+              inherit pure-prompt;
+            };
           }
         ];
       };

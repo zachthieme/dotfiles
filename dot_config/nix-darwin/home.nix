@@ -41,6 +41,9 @@
 
     initExtra = ''
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+      fpath+=("${inputs.pure-prompt}/share/zsh/site-functions")
+      autoload -U promptinit; promptinit
+      prompt pure
     '';
 
     initContent = ''
