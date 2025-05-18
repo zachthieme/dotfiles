@@ -43,9 +43,7 @@
 
     };
 
-    initExtra = ''
-      # source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-
+    initContent = ''
       # Fish-like prompt
       autoload -Uz promptinit; promptinit
 
@@ -63,6 +61,8 @@
       bindkey -M viins '^T' fzf-file-widget
       bindkey -M vicmd '^R' fzf-history-widget
       bindkey -M vicmd '^T' fzf-file-widget
+
+      source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
     '';
   };
 
