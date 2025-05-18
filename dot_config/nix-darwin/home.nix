@@ -59,8 +59,10 @@
       zle -N fzf-history-widget
 
       # Manually bind if not already present
-      bindkey '^T' fzf-file-widget
-      bindkey '^R' fzf-history-widget
+      bindkey -M viins '^R' fzf-history-widget
+      bindkey -M viins '^T' fzf-file-widget
+      bindkey -M vicmd '^R' fzf-history-widget
+      bindkey -M vicmd '^T' fzf-file-widget
     '';
   };
 
