@@ -39,6 +39,10 @@
 
     };
 
+    initExtra = ''
+      source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+    '';
+
     initContent = ''
       # Fish-like prompt
       autoload -Uz promptinit; promptinit
@@ -72,6 +76,7 @@
   };
 
   home.packages = with pkgs; [
+    chezmoi
     fzf
     fd
     eza
@@ -80,5 +85,6 @@
     zoxide
     zsh-autosuggestions
     zsh-syntax-highlighting
+    zsh-vi-mode
   ];
 }
