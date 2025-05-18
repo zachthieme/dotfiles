@@ -4,6 +4,13 @@
   home.username = "zach";
   home.homeDirectory = "/Users/zach";
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+    FZF_CTRL_T_OPTS = "--height 20%";
+    FZF_CTRL_R_OPTS = "--height 20% --reverse";
+    _ZO_FZF_OPTS = "--height 20% --reverse";
+  };
 
   programs.zsh = {
     enable = true;
@@ -15,6 +22,21 @@
     shellAliases = {
       ll = "eza -lah";
       gs = "git status";
+      cm = "chezmoi";
+      c = "clear";
+      ch = ''cheat -l | awk "{print \\$1}" | fzf --preview "cheat --colorize {1}" --preview-window=right,70%'';
+      emacs = "emacs -nw";
+      j = "z";
+      mkdir = "mkdir -p";
+      tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+      t = ''tldr --list | fzf --preview "tldr {1} --color=always" --preview-window=right,70% | xargs tldr'';
+      vi = "nvim";
+      v = "/usr/bin/vi";
+      ft = ''fzf-tmux --height 70% -- fzf --preview="cat --color=always {}" --preview-window=right:50% --border'';
+
+      notes = ''NVIM_APPNAME=$(basename nvim-notes) nvim'';
+      norg = ''NVIM_APPNAME=$(basename nvim-norg) nvim'';
+
     };
 
     initContent = ''
