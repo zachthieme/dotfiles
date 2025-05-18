@@ -43,7 +43,7 @@
 
     };
 
-    initExtras = ''
+    initExtra = ''
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
       # Fish-like prompt
