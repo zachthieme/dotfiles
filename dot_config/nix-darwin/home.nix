@@ -44,7 +44,7 @@
     };
 
     initContent = ''
-      eval "$(oh-my-posh init zsh)"
+      eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/zen.toml)"
 
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
