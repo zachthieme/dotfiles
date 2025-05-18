@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  purePrompt,
   ...
 }:
 
@@ -46,15 +45,11 @@
 
     initExtra = ''
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-      fpath+=("${purePrompt}/share/zsh/site-functions")
-      autoload -U promptinit; promptinit
-      prompt pure
     '';
 
     initContent = ''
       # Fish-like prompt
       autoload -Uz promptinit; promptinit
-      prompt pure
 
       # fzf keybindings
       [ -f ${pkgs.fzf}/share/fzf/key-bindings.zsh ] && source ${pkgs.fzf}/share/fzf/key-bindings.zsh
