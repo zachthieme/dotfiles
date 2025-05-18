@@ -169,6 +169,7 @@
           #   }
           # ];
           # };
+          system.primaryUser = "zach";
           users.users.zach = {
             name = "zach";
             home = "/Users/zach";
