@@ -169,11 +169,10 @@
           #   }
           # ];
           # };
-
-          # users.users.zach = {
-          #   name = "zach";
-          #   home = "/Users/zach";
-          # };
+          users.users.zach = {
+            name = "zach";
+            home = "/Users/zach";
+          };
         };
     in
     {
@@ -186,7 +185,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-#            home-manager.users.zach = import ./home.nix;
+            home-manager.users.zach = import ./home.nix;
           }
         ];
       };
