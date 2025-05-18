@@ -38,7 +38,7 @@
             pkgs.mosh
             pkgs.neovim
             pkgs.nixfmt-rfc-style
-            pkgs.nodejs_23
+            pkgs.nodejs_24
             pkgs.pandoc
             pkgs.pass
             pkgs.python3
