@@ -24,11 +24,6 @@
       ...
     }:
     let
-      username =
-        let
-          u = builtins.getEnv "USER";
-        in
-        if u != "" then u else "zach";
       system =
         if
           builtins.elem (builtins.getEnv "NIX_SYSTEM") [
@@ -83,7 +78,7 @@
               zsh
             ];
 
-            system.primaryUser = username;
+            system.primaryUser = "zach";
 
             homebrew = {
               enable = true;
@@ -117,8 +112,8 @@
 
             programs.zsh.enable = true;
 
-            users.users.${username} = {
-              home = "/Users/${username}";
+            users.users.zach = {
+              home = "/Users/zach";
               shell = pkgs.zsh;
             };
             # configuring mac os
@@ -148,7 +143,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.${username} = import ./home.nix;
+            home-manager.users.zach = import ./home.nix;
           }
         ];
       };
