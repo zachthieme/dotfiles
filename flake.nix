@@ -122,17 +122,16 @@
 
             system.defaults = {
               dock.autohide = true;
+              dock.expose-group-apps = true;
+              dock.mru-spaces = false;
               finder.AppleShowAllExtensions = true;
-              finder.ShowPathbar = true;
               finder.FXPreferredViewStyle = "clmv";
+              finder.ShowPathbar = true;
+              NSGlobalDomain._HIHideMenuBar = true;
+              NSGlobalDomain.NSWindowShouldDragOnGesture = true;
               screencapture.location = "~/Pictures/screenshots";
               screensaver.askForPasswordDelay = 10;
-
-              # aerospace configuration
-              dock.mru-spaces = false;
-              dock.expose-group-apps = true;
               spaces.spans-displays = true;
-              NSGlobalDomain.NSWindowShouldDragOnGesture = true;
             };
             system.keyboard = {
               enableKeyMapping = true;
