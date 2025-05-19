@@ -24,7 +24,11 @@
       ...
     }:
     let
-      username = builtins.getEnv "USER";
+      username =
+        let
+          u = builtins.getEnv "USER";
+        in
+        if u != "" then u else "zach";
       system =
         if
           builtins.elem (builtins.getEnv "NIX_SYSTEM") [
