@@ -123,7 +123,7 @@
             system.defaults = {
               dock.autohide = true;
               finder.AppleShowAllExtensions = true;
-              system.defaults.finder.ShowPathbar = true;
+              finder.ShowPathbar = true;
               finder.FXPreferredViewStyle = "clmv";
               screencapture.location = "~/Pictures/screenshots";
               screensaver.askForPasswordDelay = 10;
