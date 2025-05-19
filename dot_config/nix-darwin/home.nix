@@ -92,6 +92,7 @@
   };
 
   home.packages = with pkgs; [
+    oh-my-posh
     zsh-autosuggestions
     zsh-syntax-highlighting
     zsh-vi-mode

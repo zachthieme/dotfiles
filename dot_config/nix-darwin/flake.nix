@@ -55,7 +55,6 @@
               neovim
               nixfmt-rfc-style
               nodejs_24
-              oh-my-posh
               pandoc
               pass
               python3
