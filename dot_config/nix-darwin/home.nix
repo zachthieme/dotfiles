@@ -24,23 +24,22 @@
     oh-my-zsh.enable = false;
 
     shellAliases = {
-      ll = "eza -lah";
-      gs = "git status";
-      cm = "chezmoi";
       c = "clear";
       ch = ''cheat -l | awk "{print \\$1}" | fzf --preview "cheat --colorize {1}" --preview-window=right,70%'';
+      cm = "chezmoi";
       emacs = "emacs -nw";
-      j = "z";
-      mkdir = "mkdir -p";
-      tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
-      t = ''tldr --list | fzf --preview "tldr {1} --color=always" --preview-window=right,70% | xargs tldr'';
-      vi = "nvim";
-      v = "/usr/bin/vi";
       ft = ''fzf-tmux --height 70% -- fzf --preview="cat --color=always {}" --preview-window=right:50% --border'';
+      gs = "git status";
+      j = "z";
+      ll = "eza -lah";
+      mkdir = "mkdir -p";
+      t = ''tldr --list | fzf --preview "tldr {1} --color=always" --preview-window=right,70% | xargs tldr'';
+      tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+      v = "/usr/bin/vi";
+      vi = "nvim";
 
       notes = ''NVIM_APPNAME=$(basename nvim-notes) nvim'';
       norg = ''NVIM_APPNAME=$(basename nvim-norg) nvim'';
-
     };
 
     initContent = ''
@@ -68,7 +67,6 @@
 
       # needed instead of fzf.enableZshIntegration = true so zsh-vi-mode and fzf do not conflict
       zvm_after_init_commands+=(eval "$(fzf --zsh)")
-
     '';
   };
 
