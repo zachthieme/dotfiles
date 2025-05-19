@@ -25,7 +25,17 @@
     }:
     let
       username = builtins.getEnv "USER";
-      system = "aarch64-darwin"; # or "x86_64-darwin" if you're on Intel
+      system =
+        if
+          builtins.elem (builtins.getEnv "NIX_SYSTEM") [
+            "aarch64-darwin"
+            "x86_64-darwin"
+          ]
+        then
+          builtins.getEnv "NIX_SYSTEM"
+        else
+          "aarch64-darwin"; # fallback default for M1/M2
+
       pkgs = import nixpkgs { inherit system; };
     in
     {
@@ -134,7 +144,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.zach = import ./home.nix;
+            home-manager.users.${username} = import ./home.nix;
           }
         ];
       };
