@@ -5,8 +5,8 @@
 }:
 
 {
-  home.username = "zach";
-  home.homeDirectory = "/Users/zach";
+  home.username = builtins.getEnv "USER";
+  home.homeDirectory = "/Users/${config.home.username}";
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
   home.sessionVariables = {
     EDITOR = "nvim";
