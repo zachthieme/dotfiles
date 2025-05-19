@@ -11,5 +11,5 @@
          "This module requires (:tools tree-sitter)")
 
 (when (modulep! :editor format)
-  (unless (executable-find "csharpier")
+  (unless (executable-find "dotnet-csharpier")
     (warn! "csharpier is not installed, formatting will be disabled.")))

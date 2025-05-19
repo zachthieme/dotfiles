@@ -10,8 +10,7 @@
            (buffer-local-value 'gptel-mode (get-buffer bname))))
     :select t
     :size 0.3
-    :quit nil
-    :ttl nil))
+    :quit nil))
 
 
 (use-package! gptel-quick
