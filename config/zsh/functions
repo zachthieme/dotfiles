@@ -130,12 +130,8 @@ function y() {
 # open a customized version of nvim
 vv() {
   # Assumes all configs exist in directories named ~/.config/nvim-*
-  {{- if and (not (eq .chezmoi.osRelease nil)) (eq (index .chezmoi.osRelease "id" | default "unknown") "debian") }}
-  local config=$(fdfind --max-depth 1 --glob 'nvim-*' ~/.config | fzf --prompt="Neovim Configs > " --height=~50% --layout=reverse --border --exit-0)
-  {{- end }} 
-  {{- if eq .chezmoi.os "darwin" }}
   local config=$(fd --max-depth 1 --glob 'nvim-*' ~/.config | fzf --prompt="Neovim Configs > " --height=~50% --layout=reverse --border --exit-0)
-  {{- end }} 
+  
   # If I exit fzf without selecting a config, don't open Neovim
   [[ -z $config ]] && echo "No config selected" && return
  

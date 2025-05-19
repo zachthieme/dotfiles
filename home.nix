@@ -25,7 +25,7 @@
     ".config/doom".source = ./config/doom;
     ".config/emacs".source = ./config/emacs;
     ".config/fzf".source = ./config/fzf;
-    ".config/gh".source = ./config/gh;
+    # ".config/gh".source = ./config/gh;
     ".config/ghostty".source = ./config/ghostty;
     # ".config/helix".source = ./config/helix;
     ".config/lazygit".source = ./config/lazygit;
@@ -34,14 +34,14 @@
     ".config/nvim-obsidian".source = ./config/nvim-obsidian;
     # ".config/nvim-test".source = ./config/nvim-test;
     ".config/ohmyposh".source = ./config/ohmyposh;
-    ".config/raycast".source = ./config/raycast;
+    # ".config/raycast".source = ./config/raycast;
     ".config/sketchybar".source = ./config/sketchybar;
     # ".config/skhd".source = ./config/skhd;
-    ".config/spotify-player".source = ./config/spotify-player;
+    # ".config/spotify-player".source = ./config/spotify-player;
     ".config/tmux".source = ./config/tmux;
     ".config/wezterm".source = ./config/wezterm;
     # ".config/yabai".source = ./config/yabai;
-    ".config/zed".source = ./config/zed;
+    # ".config/zed".source = ./config/zed;
     ".config/zsh".source = ./config/zsh;
   };
 
