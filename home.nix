@@ -17,33 +17,33 @@
   };
 
   home.file = {
+    "./.ssh".source = ./config/ssh;
     ".config/aerospace".source = ./config/aerospace;
     ".config/bat".source = ./config/bat;
     ".config/btop".source = ./config/btop;
-    # ".config/cheat".source = ./config/cheat;
-    # ".config/direnv".source = ./config/direnv;
     ".config/doom".source = ./config/doom;
     ".config/emacs".source = ./config/emacs;
     ".config/fzf".source = ./config/fzf;
-    # ".config/gh".source = ./config/gh;
     ".config/ghostty".source = ./config/ghostty;
-    # ".config/helix".source = ./config/helix;
     ".config/lazygit".source = ./config/lazygit;
-    ".config/nvim".source = ./config/nvim;
     ".config/nvim-notes".source = ./config/nvim-notes;
     ".config/nvim-obsidian".source = ./config/nvim-obsidian;
-    # ".config/nvim-test".source = ./config/nvim-test;
+    ".config/nvim".source = ./config/nvim;
     ".config/ohmyposh".source = ./config/ohmyposh;
-    # ".config/raycast".source = ./config/raycast;
     ".config/sketchybar".source = ./config/sketchybar;
-    # ".config/skhd".source = ./config/skhd;
-    # ".config/spotify-player".source = ./config/spotify-player;
     ".config/tmux".source = ./config/tmux;
     ".config/wezterm".source = ./config/wezterm;
+    ".config/zsh".source = ./config/zsh;
+    # ".config/cheat".source = ./config/cheat;
+    # ".config/direnv".source = ./config/direnv;
+    # ".config/gh".source = ./config/gh;
+    # ".config/helix".source = ./config/helix;
+    # ".config/nvim-test".source = ./config/nvim-test;
+    # ".config/raycast".source = ./config/raycast;
+    # ".config/skhd".source = ./config/skhd;
+    # ".config/spotify-player".source = ./config/spotify-player;
     # ".config/yabai".source = ./config/yabai;
     # ".config/zed".source = ./config/zed;
-    ".config/zsh".source = ./config/zsh;
-    "./.ssh".source = ./config/ssh;
   };
 
   programs.zsh = {
