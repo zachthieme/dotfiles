@@ -43,6 +43,7 @@
     # ".config/yabai".source = ./config/yabai;
     # ".config/zed".source = ./config/zed;
     ".config/zsh".source = ./config/zsh;
+    "./.ssh".source = ./config/ssh;
   };
 
   programs.zsh = {
