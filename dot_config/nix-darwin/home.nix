@@ -16,6 +16,35 @@
     _ZO_FZF_OPTS = "--height 20% --reverse";
   };
 
+  # home.file = {
+  #   ".config/aerospace".source = ./aerospace;
+  #   ".config/bat".source = ./bat;
+  #   ".config/btop".source = ./btop;
+  #   ".config/cheat".source = ./cheat;
+  #   ".config/direnv".source = ./direnv;
+  #   ".config/doom".source = ./doom;
+  #   ".config/emacs".source = ./emacs;
+  #   ".config/fzf".source = ./fzf;
+  #   ".config/gh".source = ./gh;
+  #   ".config/ghostty".source = ./ghostty;
+  #   ".config/helix".source = ./helix;
+  #   ".config/lazygit".source = ./lazygit;
+  #   ".config/nvim".source = ./nvim;
+  #   ".config/nvim-notes".source = ./nvim-notes;
+  #   ".config/nvim-obsidian".source = ./nvim-obsidian;
+  #   ".config/nvim-test".source = ./nvim-test;
+  #   ".config/ohmyposh".source = ./ohmyposh;
+  #   ".config/raycast".source = ./raycast;
+  #   ".config/sketchybar".source = ./sketchybar;
+  #   ".config/skhd".source = ./skhd;
+  #   ".config/spotify-player".source = ./spotify-player;
+  #   ".config/tmux".source = ./tmux;
+  #   ".config/wezterm".source = ./wezterm;
+  #   ".config/yabai".source = ./yabai;
+  #   ".config/zed".source = ./zed;
+  #   ".config/zsh".source = ./zsh;
+  # };
+
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
@@ -43,6 +72,8 @@
     };
 
     initContent = ''
+      source ~/.config/zsh/functions
+
       eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/zen.toml)"
 
       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
