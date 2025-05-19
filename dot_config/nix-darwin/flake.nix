@@ -79,7 +79,6 @@
               brews = [
                 "FelixKratz/formulae/borders"
                 "FelixKratz/formulae/sketchybar"
-                "oh-my-posh"
                 "spotify_player"
               ];
               casks = [
