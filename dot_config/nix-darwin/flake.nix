@@ -60,6 +60,7 @@
               python3
               ripgrep
               tmux
+              tree
               vim
               wget
               yazi
