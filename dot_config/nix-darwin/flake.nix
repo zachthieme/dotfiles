@@ -24,6 +24,7 @@
       ...
     }:
     let
+      username = builtins.getEnv "USER";
       system = "aarch64-darwin"; # or "x86_64-darwin" if you're on Intel
       pkgs = import nixpkgs { inherit system; };
     in
@@ -68,7 +69,7 @@
               zsh
             ];
 
-            system.primaryUser = "zach";
+            system.primaryUser = username;
 
             homebrew = {
               enable = true;
@@ -102,8 +103,8 @@
 
             programs.zsh.enable = true;
 
-            users.users.zach = {
-              home = "/Users/zach";
+            users.users.${username} = {
+              home = "/Users/${username}";
               shell = pkgs.zsh;
             };
             # configuring mac os
