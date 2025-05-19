@@ -38,6 +38,7 @@
             # Enable nix-darwin system settings
             environment.systemPackages = with pkgs; [
               bat
+              chezmoi
               curl
               dotnetCorePackages.dotnet_9.runtime
               dotnetCorePackages.dotnet_9.sdk
@@ -54,6 +55,7 @@
               neovim
               nixfmt-rfc-style
               nodejs_24
+              oh-my-posh
               pandoc
               pass
               python3

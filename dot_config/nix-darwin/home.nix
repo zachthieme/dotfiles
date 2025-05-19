@@ -92,14 +92,6 @@
   };
 
   home.packages = with pkgs; [
-    bat
-    chezmoi
-    eza
-    fd
-    fzf
-    git
-    oh-my-posh
-    zoxide
     zsh-autosuggestions
     zsh-syntax-highlighting
     zsh-vi-mode
