@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+<dict>
+    <key>name</key>
+    <string>Nightfly</string>
+    <key>settings</key>
+    <array>
+        <dict>
+            <key>settings</key>
+            <dict>
+                <key>background</key>
+                <string>#011627</string> <!-- Dark navy blue -->
+                <key>foreground</key>
+                <string>#acb4c2</string> <!-- Soft white -->
+                <key>caret</key>
+                <string>#82aaff</string> <!-- Light blue -->
+                <key>selection</key>
+                <string>#1d3b53</string> <!-- Deep navy -->
+                <key>lineHighlight</key>
+                <string>#1e2939</string> <!-- Lighter navy -->
+            </dict>
+        </dict>
+        <dict>
+            <key>scope</key>
+            <string>comment</string>
+            <key>settings</key>
+            <dict>
+                <key>foreground</key>
+                <string>#7e8e9e</string> <!-- Muted gray-blue -->
+                <key>fontStyle</key>
+                <string>italic</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>scope</key>
+            <string>keyword</string>
+            <key>settings</key>
+            <dict>
+                <key>foreground</key>
+                <string>#c792ea</string> <!-- Purple -->
+            </dict>
+        </dict>
+        <dict>
+            <key>scope</key>
+            <string>variable</string>
+            <key>settings</key>
+            <dict>
+                <key>foreground</key>
+                <string>#82aaff</string> <!-- Light blue -->
+            </dict>
+        </dict>
+        <dict>
+            <key>scope</key>
+            <string>string</string>
+            <key>settings</key>
+            <dict>
+                <key>foreground</key>
+                <string>#ecc48d</string> <!-- Warm gold -->
+            </dict>
+        </dict>
+        <dict>
+            <key>scope</key>
+            <string>function</string>
+            <key>settings</key>
+            <dict>
+                <key>foreground</key>
+                <string>#82aaff</string> <!-- Light blue -->
+            </dict>
+        </dict>
+        <dict>
+            <key>scope</key>
+            <string>type</string>
+            <key>settings</key>
+            <dict>
+                <key>foreground</key>
+                <string>#7fdbca</string> <!-- Teal -->
+            </dict>
+        </dict>
+        <dict>
+            <key>scope</key>
+            <string>constant</string>
+            <key>settings</key>
+            <dict>
+                <key>foreground</key>
+                <string>#f07178</string> <!-- Red -->
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>

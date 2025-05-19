@@ -1,0 +1,24 @@
+History expansion
+!!      ->  Last command-line
+!*      ->  Arguments of last command
+!^      ->  First argument of last command
+!$      ->  Last argument of last command
+
+Glob qualifiers
+*(.)    ->  Plain files
+*(/)    ->  Directories
+*(m0)   ->  Last modified today
+*(m-4)  ->  Last modified <4 days ago 
+
+Common Commands
+..      ->  cd ..
+...     ->  cd ../..
+s       ->  sudo
+c       ->  clear
+h       ->  history
+
+Directory Operations
+md      ->  mkdir -p
+rd      ->  rmdir
+
+
