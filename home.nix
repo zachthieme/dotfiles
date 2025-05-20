@@ -74,6 +74,10 @@
     };
 
     initContent = ''
+      #make sure brew is on the path for M1 
+      if [[ $(uname -m) == 'arm64' ]]; then
+         eval "$(/opt/homebrew/bin/brew shellenv)"
+      fi
       source ~/.config/zsh/functions
 
       eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/zen.toml)"
