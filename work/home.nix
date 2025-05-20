@@ -21,8 +21,8 @@
     ".config/aerospace".source = ./config/aerospace;
     ".config/bat".source = ./config/bat;
     ".config/btop".source = ./config/btop;
-    ".config/doom".source = ./config/doom;
-    ".config/emacs".source = ./config/emacs;
+    # ".config/doom".source = ./config/doom;
+    # ".config/emacs".source = ./config/emacs;
     ".config/fzf".source = ./config/fzf;
     ".config/ghostty".source = ./config/ghostty;
     ".config/lazygit".source = ./config/lazygit;
