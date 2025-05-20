@@ -4,13 +4,13 @@
 (setq doom-theme 'doom-one)
 (setq display-line-numbers-type `relative)
 
-(setq doom-modeline-modal-icon nil)
-(setq evil-normal-state-tag   (propertize "[Normal]" 'face '((:background "green" :foreground "black")))
-      evil-emacs-state-tag    (propertize "[Emacs]" 'face '((:background "orange" :foreground "black")))
-      evil-insert-state-tag   (propertize "[Insert]" 'face '((:background "red") :foreground "white"))
-      evil-motion-state-tag   (propertize "[Motion]" 'face '((:background "blue") :foreground "white"))
-      evil-visual-state-tag   (propertize "[Visual]" 'face '((:background "grey80" :foreground "black")))
-      evil-operator-state-tag (propertize "[Operator]" 'face '((:background "purple"))))
+; (setq doom-modeline-modal-icon nil)
+; (setq evil-normal-state-tag   (propertize "[Normal]" 'face '((:background "green" :foreground "black")))
+;       evil-emacs-state-tag    (propertize "[Emacs]" 'face '((:background "orange" :foreground "black")))
+;       evil-insert-state-tag   (propertize "[Insert]" 'face '((:background "red") :foreground "white"))
+;       evil-motion-state-tag   (propertize "[Motion]" 'face '((:background "blue") :foreground "white"))
+;       evil-visual-state-tag   (propertize "[Visual]" 'face '((:background "grey80" :foreground "black")))
+;       evil-operator-state-tag (propertize "[Operator]" 'face '((:background "purple"))))
 
 ;; Enable visual-line-mode (soft wrap) in agenda views, including tag searches
 (add-hook! 'org-agenda-mode-hook
