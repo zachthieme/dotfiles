@@ -41,7 +41,7 @@ inner.horizontal = 10
 inner.vertical = 10
 outer.left = 10
 outer.bottom = 10
-outer.top = [{ monitor."built-in" = 15 }, 30]
+outer.top = [{ monitor."built-in" = 15 }, 15]
 outer.right = 10
 
 [mode.main.binding]
