@@ -1,5 +1,7 @@
 {
   description = "nix-darwin + Home Manager setup with fish-like Zsh";
+  # work machine: zthieme34911
+  # work username: zthieme
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
