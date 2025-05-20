@@ -91,13 +91,13 @@
               ];
               brews = [
                 "FelixKratz/formulae/borders"
-                "FelixKratz/formulae/sketchybar"
+                # "FelixKratz/formulae/sketchybar"
                 "spotify_player"
               ];
               casks = [
                 "balenaetcher"
                 "bartender"
-              # must make chrome for work and brave forhome "brave-browser"
+                # must make chrome for work and brave forhome "brave-browser"
                 "dropbox"
                 "ghostty"
                 "homerow"
