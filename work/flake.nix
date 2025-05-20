@@ -130,7 +130,7 @@
               finder.AppleShowAllExtensions = true;
               finder.FXPreferredViewStyle = "clmv";
               finder.ShowPathbar = true;
-              NSGlobalDomain._HIHideMenuBar = true;
+              # NSGlobalDomain._HIHideMenuBar = true;
               NSGlobalDomain.NSWindowShouldDragOnGesture = true;
               screencapture.location = "~/Pictures/screenshots";
               screensaver.askForPasswordDelay = 10;
