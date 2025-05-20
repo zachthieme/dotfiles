@@ -5,8 +5,8 @@
 }:
 
 {
-  home.username = "zach";
-  home.homeDirectory = "/Users/zach";
+  home.username = "zthieme";
+  home.homeDirectory = "/Users/zthieme";
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
   home.sessionVariables = {
     EDITOR = "nvim";
@@ -55,6 +55,7 @@
 
     shellAliases = {
       c = "clear";
+      cat = "bat";
       ch = ''cheat -l | awk "{print \\$1}" | fzf --preview "cheat --colorize {1}" --preview-window=right,70%'';
       cm = "chezmoi";
       emacs = "emacs -nw";

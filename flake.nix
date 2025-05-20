@@ -40,7 +40,7 @@
       pkgs = import nixpkgs { inherit system; };
     in
     {
-      darwinConfigurations."Cortex" = nix-darwin.lib.darwinSystem {
+      darwinConfigurations."zthieme34911" = nix-darwin.lib.darwinSystem {
         inherit system;
 
         modules = [
@@ -80,7 +80,7 @@
               zsh
             ];
 
-            system.primaryUser = "zach";
+            system.primaryUser = "zthieme";
 
             homebrew = {
               enable = true;
@@ -97,12 +97,12 @@
               casks = [
                 "balenaetcher"
                 "bartender"
-                "brave-browser"
+              # must make chrome for work and brave forhome "brave-browser"
                 "dropbox"
                 "ghostty"
                 "homerow"
                 "nikitabobko/tap/aerospace"
-                "raycast"
+                # "raycast"
                 "spotify"
                 "wezterm"
                 "zed"
@@ -114,8 +114,8 @@
 
             programs.zsh.enable = true;
 
-            users.users.zach = {
-              home = "/Users/zach";
+            users.users.zthieme = {
+              home = "/Users/zthieme";
               shell = pkgs.zsh;
             };
             # configuring mac os
@@ -145,7 +145,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.zach = import ./home.nix;
+            home-manager.users.zthieme = import ./home.nix;
           }
         ];
       };

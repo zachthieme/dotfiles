@@ -1,4 +1,9 @@
 #!/bin/bash
+# install nix-darwin
+# nix run nix-darwin -- switch --flake
+
+# rebuild nix-darwin
+# sudo darwin-rebuild switch --flake ~/Code/dotfiles/flake.nix
 
 # install doom-emacs
 if ! command -v "$HOME/.config/emacs/bin/doom" &>/dev/null; then
