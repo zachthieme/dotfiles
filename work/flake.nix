@@ -15,6 +15,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # flake input
+    minimal-tmux = {
+      url = "github:niksingh710/minimal-tmux-status";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -50,13 +57,15 @@
             # Enable nix-darwin system settings
             environment.systemPackages = with pkgs; [
               bat
+              btop
               chezmoi
               curl
               dotnetCorePackages.dotnet_9.runtime
               dotnetCorePackages.dotnet_9.sdk
-              # emacs
+              emacs
               eza
               fd
+              fish
               fzf
               gh
               git
@@ -98,7 +107,6 @@
                 "balenaetcher"
                 "bartender"
                 # must make chrome for work and brave forhome "brave-browser"
-                "emacs"
                 "dropbox"
                 "ghostty"
                 "homerow"
@@ -147,6 +155,9 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.zthieme = import ./home.nix;
+            # {
+            # inherit pkgs minimal-tmux;
+            #  };
           }
         ];
       };

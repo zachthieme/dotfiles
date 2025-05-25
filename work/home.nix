@@ -1,9 +1,8 @@
 {
-  config,
   pkgs,
+  # minimal-tmux,
   ...
 }:
-
 {
   home.username = "zthieme";
   home.homeDirectory = "/Users/zthieme";
@@ -31,7 +30,7 @@
     ".config/nvim".source = ./config/nvim;
     ".config/ohmyposh".source = ./config/ohmyposh;
     ".config/sketchybar".source = ./config/sketchybar;
-    ".config/tmux".source = ./config/tmux;
+    # ".config/tmux".source = ./config/tmux;
     ".config/wezterm".source = ./config/wezterm;
     ".config/zsh".source = ./config/zsh;
     # ".config/cheat".source = ./config/cheat;
@@ -45,6 +44,55 @@
     # ".config/yabai".source = ./config/yabai;
     # ".config/zed".source = ./config/zed;
   };
+  programs.tmux = {
+    enable = true;
+    baseIndex = 1;
+    shortcut = "a";
+    aggressiveResize = true;
+    escapeTime = 0;
+    clock24 = true;
+
+    plugins = with pkgs; [
+      # {
+      #   plugin = minimal-tmux.packages.${pkgs.system}.default;
+      # }
+      tmuxPlugins.better-mouse-mode
+      tmuxPlugins.catppuccin
+      # tmuxPlugins.rose-pine
+      # tmuxPlugins.sensible
+      tmuxPlugins.vim-tmux-navigator
+    ];
+
+    extraConfig = ''
+      set -g default-terminal "tmux-256color"
+      set -ga terminal-overrides "tmux-256color"
+
+      set -g default-command ${pkgs.zsh}/bin/zsh
+
+      set-option -g status-position top
+      set-option -g renumber-windows on
+
+      set -g mouse on
+      bind -n M-h select-pane -L
+      bind -n M-j select-pane -D
+      bind -n M-k select-pane -U
+      bind -n M-l select-pane -R
+
+      # easy-to-remember split pane commands
+      bind | split-window -h -c "#{pane_current_path}"
+      bind - split-window -v -c "#{pane_current_path}"
+      bind c new-window -c "#{pane_current_path}"
+
+      set -g @catppuccin_flavour 'mocha'
+    '';
+  };
+
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = ''
+      set fish_greeting # Disable greeting  
+    '';
+  };
 
   programs.zsh = {
     enable = true;
@@ -55,7 +103,7 @@
 
     shellAliases = {
       c = "clear";
-      cat = "bat";
+      # cat = "bat";
       ch = ''cheat -l | awk "{print \\$1}" | fzf --preview "cheat --colorize {1}" --preview-window=right,70%'';
       cm = "chezmoi";
       emacs = "emacs -nw";
