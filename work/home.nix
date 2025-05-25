@@ -16,7 +16,7 @@
   };
 
   home.file = {
-    "./.ssh".source = ./config/ssh;
+    # "./.ssh".source = ./config/ssh;
     ".config/aerospace".source = ./config/aerospace;
     ".config/bat".source = ./config/bat;
     ".config/btop".source = ./config/btop;
@@ -29,7 +29,7 @@
     ".config/nvim-obsidian".source = ./config/nvim-obsidian;
     ".config/nvim".source = ./config/nvim;
     ".config/ohmyposh".source = ./config/ohmyposh;
-    ".config/sketchybar".source = ./config/sketchybar;
+    # ".config/sketchybar".source = ./config/sketchybar;
     # ".config/tmux".source = ./config/tmux;
     ".config/wezterm".source = ./config/wezterm;
     ".config/zsh".source = ./config/zsh;

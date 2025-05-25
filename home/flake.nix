@@ -50,11 +50,11 @@
             # Enable nix-darwin system settings
             environment.systemPackages = with pkgs; [
               bat
-              chezmoi
+              btop
               curl
               dotnetCorePackages.dotnet_9.runtime
               dotnetCorePackages.dotnet_9.sdk
-              # emacs
+              emacs
               eza
               fd
               fzf
@@ -91,13 +91,13 @@
               ];
               brews = [
                 "FelixKratz/formulae/borders"
-                # "FelixKratz/formulae/sketchybar"
                 "spotify_player"
               ];
               casks = [
                 "balenaetcher"
                 "bartender"
                 # must make chrome for work and brave forhome "brave-browser"
+                "brave-browser"
                 "emacs"
                 "dropbox"
                 "ghostty"
@@ -130,7 +130,7 @@
               finder.AppleShowAllExtensions = true;
               finder.FXPreferredViewStyle = "clmv";
               finder.ShowPathbar = true;
-              # NSGlobalDomain._HIHideMenuBar = true;
+              # NSGlobalDomain._HIHideMenuBar = true; # autohide menubar
               NSGlobalDomain.NSWindowShouldDragOnGesture = true;
               screencapture.location = "~/Pictures/screenshots";
               screensaver.askForPasswordDelay = 10;
