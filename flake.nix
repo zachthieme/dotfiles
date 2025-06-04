@@ -26,12 +26,12 @@
     let
       # Host definitions
       hosts = {
-        "cortex-m4" = {
+        "cortex" = {
           system = "aarch64-darwin";
           user = "zach";
           isWork = false;
         };
-        "cortex-intel" = {
+        "malv2" = {
           system = "x86_64-darwin";
           user = "zach";
           isWork = false;
@@ -42,9 +42,9 @@
           isWork = true;
         };
       };
-      
+
       # Helper function to create Darwin configurations
-      mkDarwinConfig = hostname: { system, user, isWork, ... }: 
+      mkDarwinConfig = hostname: { system, user, isWork, ... }:
         let
           # Context-specific files
           contextModule = if isWork then ./home-manager/work.nix else ./home-manager/home.nix;
@@ -54,7 +54,7 @@
           modules = [
             # System configuration
             ./hosts/${if isWork then "work-m1" else if system == "aarch64-darwin" then "home-m4" else "home-intel"}/default.nix
-            
+
             # Home Manager module
             home-manager.darwinModules.home-manager
             {
@@ -65,9 +65,9 @@
           ];
           specialArgs = { inherit minimal-tmux; };
         };
-        
+
       # Auto-detection for default configuration
-      detectHost = 
+      detectHost =
         let
           hostname = builtins.getEnv "HOSTNAME";
           system = builtins.getEnv "NIX_SYSTEM";
@@ -79,9 +79,9 @@
           else if isWork then
             "zthieme34911"
           else if isAarch64 then
-            "cortex-m4"
+            "cortex"
           else
-            "cortex-intel";
+            "malv2";
     in
     {
       darwinConfigurations = builtins.mapAttrs mkDarwinConfig hosts // {

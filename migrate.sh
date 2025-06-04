@@ -8,6 +8,7 @@ cd "$SCRIPT_DIR"
 
 echo "=== Dotfiles Migration Script ==="
 echo "This script will help transition from the old structure to the new one."
+echo "It will also remove duplicated configuration files that are no longer needed."
 
 # Detect the current system
 HOSTNAME=$(hostname)
@@ -73,7 +74,7 @@ apply_config() {
 echo "What would you like to do?"
 echo "1. Apply the new configuration"
 echo "2. Fix file permissions"
-echo "3. Clean up old directories (home/work)"
+echo "3. Clean up old directories and duplicate files"
 echo "4. Exit"
 read -p "Enter your choice (1-4): " choice
 
@@ -85,15 +86,31 @@ case $choice in
     fix_permissions
     ;;
   3)
-    echo "Cleaning up old directories..."
-    echo "This will not delete any files, just move them to backup folders."
+    echo "Cleaning up old directories and duplicate files..."
+    echo "This will move old files to backup folders, not delete them."
     read -p "Continue? (y/n): " confirm
     if [[ "$confirm" == "y" ]]; then
+      # Create backup directory with timestamp
+      BACKUP_DIR="$SCRIPT_DIR/backup/$(date +%Y%m%d_%H%M%S)"
+      mkdir -p "$BACKUP_DIR"
+      
+      # Backup and remove duplicate flake files
+      echo "Backing up redundant flake files..."
+      for dir in "home" "work"; do
+        if [ -f "$SCRIPT_DIR/$dir/flake.nix" ]; then
+          mkdir -p "$BACKUP_DIR/$dir"
+          cp "$SCRIPT_DIR/$dir/flake.nix" "$BACKUP_DIR/$dir/"
+          echo "Backed up $dir/flake.nix"
+        fi
+      done
+      
       # Backup old directories
-      mkdir -p "$SCRIPT_DIR/backup"
-      [ -d "$SCRIPT_DIR/home" ] && mv "$SCRIPT_DIR/home" "$SCRIPT_DIR/backup/home.$(date +%Y%m%d)"
-      [ -d "$SCRIPT_DIR/work" ] && mv "$SCRIPT_DIR/work" "$SCRIPT_DIR/backup/work.$(date +%Y%m%d)"
-      echo "Old directories moved to backup/"
+      echo "Moving old directories to backup..."
+      [ -d "$SCRIPT_DIR/home" ] && mv "$SCRIPT_DIR/home" "$BACKUP_DIR/home"
+      [ -d "$SCRIPT_DIR/work" ] && mv "$SCRIPT_DIR/work" "$BACKUP_DIR/work"
+      
+      echo "All redundant files backed up to $BACKUP_DIR"
+      echo "Cleanup completed successfully!"
     else
       echo "Cleanup canceled."
     fi
@@ -111,3 +128,9 @@ esac
 echo
 echo "Migration completed successfully!"
 echo "You can now use ./install.sh for future updates."
+echo
+echo "Note: The refactored structure eliminates duplication by:"
+echo "- Using a single flake.nix at the root"
+echo "- Sharing common configuration in base/"
+echo "- Using overlays for context-specific and architecture-specific settings"
+echo "- Keeping only minimal machine-specific settings in hosts/"
