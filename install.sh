@@ -1,6 +1,10 @@
 #!/bin/bash
 # Installation script for refactored dotfiles structure
 
+# Get the directory of this script
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+cd "$SCRIPT_DIR"
+
 # Determine the hostname and architecture
 HOSTNAME=$(hostname)
 ARCHITECTURE=$(uname -m)
@@ -9,9 +13,9 @@ ARCHITECTURE=$(uname -m)
 if [[ "$HOSTNAME" == "zthieme"* ]]; then
   CONFIG_NAME="zthieme34911"
 elif [[ "$ARCHITECTURE" == "arm64" ]]; then
-  CONFIG_NAME="cortex-m4"
+  CONFIG_NAME="cortex"
 else
-  CONFIG_NAME="cortex-intel"
+  CONFIG_NAME="malv2"
 fi
 
 # Export for nix detection
@@ -28,28 +32,17 @@ echo "  Configuration: $CONFIG_NAME"
 # Create screenshots directory if it doesn't exist
 mkdir -p ~/Pictures/screenshots/
 
-# Install nix if not already installed
-if ! command -v nix &>/dev/null; then
-  echo "Installing Nix..."
-  sh <(curl -L https://nixos.org/nix/install)
-  
-  # Source nix
-  if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-    . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-  fi
-fi
-
 # Install nix-darwin if not already installed
-if ! command -v darwin-rebuild &>/dev/null; then
-  echo "Installing nix-darwin..."
-  nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
-  ./result/bin/darwin-installer
-fi
+# if ! command -v darwin-rebuild &>/dev/null; then
+#   echo "Installing nix-darwin..."
+#   nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
+#   ./result/bin/darwin-installer
+# fi
 
 # Apply the configuration
 echo "Applying nix-darwin configuration..."
 echo "Running: darwin-rebuild switch --flake $SCRIPT_DIR#$CONFIG_NAME"
-darwin-rebuild switch --flake "$SCRIPT_DIR"#"$CONFIG_NAME"
+sudo darwin-rebuild switch --flake "$SCRIPT_DIR#$CONFIG_NAME"
 
 # Install doom-emacs if not already installed
 if ! command -v "$HOME/.config/emacs/bin/doom" &>/dev/null; then

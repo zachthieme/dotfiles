@@ -8,15 +8,15 @@ in
 {
   # Import the base configuration with our username and home directory
   imports = [
-    (import ./base.nix { 
-      inherit pkgs username homeDirectory; 
+    (import ./base.nix {
+      inherit pkgs username homeDirectory;
     })
   ];
 
   # Home-specific file symlinks
   home.file = {
     # Add home-specific symlinks here
-    ".config/sketchybar".source = ../config/sketchybar;
+    # ".config/sketchybar".source = ../config/sketchybar;
   };
 
   # Home-specific package overrides

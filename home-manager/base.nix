@@ -17,20 +17,20 @@
   # These paths are relative to the root dotfiles directory
   home.file = {
     # "./.ssh".source = ./config/ssh;
-    ".config/aerospace".source = ./config/aerospace;
-    ".config/bat".source = ./config/bat;
-    ".config/btop".source = ./config/btop;
+    ".config/aerospace".source = ../config/aerospace;
+    ".config/bat".source = ../config/bat;
+    ".config/btop".source = ../config/btop;
     # ".config/doom".source = ./config/doom;
     # ".config/emacs".source = ./config/emacs;
-    ".config/fzf".source = ./config/fzf;
-    ".config/ghostty".source = ./config/ghostty;
-    ".config/lazygit".source = ./config/lazygit;
-    ".config/nvim-notes".source = ./config/nvim-notes;
-    ".config/nvim-obsidian".source = ./config/nvim-obsidian;
-    ".config/nvim".source = ./config/nvim;
-    ".config/ohmyposh".source = ./config/ohmyposh;
-    ".config/wezterm".source = ./config/wezterm;
-    ".config/zsh".source = ./config/zsh;
+    ".config/fzf".source = ../config/fzf;
+    ".config/ghostty".source = ../config/ghostty;
+    ".config/lazygit".source = ../config/lazygit;
+    ".config/nvim-notes".source = ../config/nvim-notes;
+    ".config/nvim-obsidian".source = ../config/nvim-obsidian;
+    ".config/nvim".source = ../config/nvim;
+    ".config/ohmyposh".source = ../config/ohmyposh;
+    ".config/wezterm".source = ../config/wezterm;
+    ".config/zsh".source = ../config/zsh;
     # ".config/cheat".source = ./config/cheat;
     # ".config/direnv".source = ./config/direnv;
     # ".config/gh".source = ./config/gh;
@@ -94,8 +94,6 @@
     shellAliases = {
       c = "clear";
       cat = "bat";
-      ch = ''cheat -l | awk "{print \\$1}" | fzf --preview "cheat --colorize {1}" --preview-window=right,70%'';
-      cm = "chezmoi";
       emacs = "emacs -nw";
       ft = ''fzf-tmux --height 70% -- fzf --preview="cat --color=always {}" --preview-window=right:50% --border'';
       gs = "git status";
@@ -112,7 +110,7 @@
     };
 
     initContent = ''
-      #make sure brew is on the path for M1 
+      #make sure brew is on the path for M1
       if [[ $(uname -m) == 'arm64' ]]; then
          eval "$(/opt/homebrew/bin/brew shellenv)"
       fi

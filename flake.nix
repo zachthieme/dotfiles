@@ -30,31 +30,51 @@
           system = "aarch64-darwin";
           user = "zach";
           isWork = false;
+          packages = []; # Add any host-specific packages here
         };
         "malv2" = {
           system = "x86_64-darwin";
           user = "zach";
           isWork = false;
+          packages = []; # Add any host-specific packages here
         };
         "zthieme34911" = {
           system = "aarch64-darwin";
           user = "zthieme";
           isWork = true;
+          packages = []; # Add any host-specific packages here
         };
       };
 
       # Helper function to create Darwin configurations
-      mkDarwinConfig = hostname: { system, user, isWork, ... }:
+      mkDarwinConfig = hostname: { system, user, isWork, packages ? [], ... }: 
         let
           # Context-specific files
           contextModule = if isWork then ./home-manager/work.nix else ./home-manager/home.nix;
+          # Architecture-specific module
+          archModule = if system == "aarch64-darwin" then ./overlays/arch/aarch64.nix else ./overlays/arch/x86_64.nix;
+          # Context-specific module
+          contextSystemModule = if isWork then ./overlays/context/work.nix else ./overlays/context/home.nix;
         in
         nix-darwin.lib.darwinSystem {
           inherit system;
           modules = [
-            # System configuration
-            ./hosts/${if isWork then "work-m1" else if system == "aarch64-darwin" then "home-m4" else "home-intel"}/default.nix
-
+            # Base system configuration
+            ./base/default.nix
+            
+            # Architecture and context overlays
+            archModule
+            contextSystemModule
+            
+            # Host-specific configuration
+            {
+              # Set hostname
+              local.hostname = hostname;
+              
+              # Add any host-specific packages
+              environment.systemPackages = packages;
+            }
+            
             # Home Manager module
             home-manager.darwinModules.home-manager
             {

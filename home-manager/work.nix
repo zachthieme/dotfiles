@@ -8,8 +8,8 @@ in
 {
   # Import the base configuration with our username and home directory
   imports = [
-    (import ./base.nix { 
-      inherit pkgs username homeDirectory; 
+    (import ./base.nix {
+      inherit pkgs username homeDirectory;
       # Pass minimal-tmux if needed for work configuration
       # minimal-tmux = minimal-tmux;
     })
@@ -24,15 +24,15 @@ in
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
-      set fish_greeting # Disable greeting  
+      set fish_greeting # Disable greeting
     '';
   };
 
   # Work-specific file symlinks
   home.file = {
     # Work doesn't need sketchybar
-    ".config/sketchybar".source = null;
-    
+    # ".config/sketchybar".source = null;
+
     # Add any work-specific symlinks here
   };
 

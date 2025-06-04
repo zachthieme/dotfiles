@@ -10,13 +10,13 @@
         description = "The primary user's username";
         default = "zach";
       };
-      
+
       isWork = lib.mkOption {
         type = lib.types.bool;
         description = "Whether this is a work machine";
         default = false;
       };
-      
+
       hostname = lib.mkOption {
         type = lib.types.str;
         description = "The hostname of the machine";
@@ -31,6 +31,7 @@
       bat
       btop
       curl
+      emacs
       eza
       fd
       fzf
@@ -106,7 +107,7 @@
 
     # Set primary user based on configuration
     system.primaryUser = config.local.username;
-    
+
     # Define user based on configuration
     users.users.${config.local.username} = {
       home = "/Users/${config.local.username}";
