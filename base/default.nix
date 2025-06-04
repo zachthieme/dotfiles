@@ -72,9 +72,9 @@
         "dropbox"
         "ghostty"
         "homerow"
+        "logi-options+"
         "nikitabobko/tap/aerospace"
         "spotify"
-        "wezterm"
         "zed"
       ];
     };
