@@ -1,9 +1,10 @@
-# Dotfiles for Multiple MacBooks
+# Dotfiles for Multiple Machines
 
-This repository contains configurations for 3 different MacBooks:
+This repository contains configurations for various machines:
 - Home M4 MacBook
 - Home Intel MacBook
 - Work M1 MacBook
+- Home AMD Ryzen Linux (Pop!_OS)
 
 ## Structure
 
@@ -14,23 +15,29 @@ dotfiles/
 ├── base/                # Shared base configuration for all machines
 ├── home-manager/        # Shared Home Manager configurations
 │   ├── base.nix         # Base Home Manager config
-│   ├── home.nix         # Home-specific extensions
-│   └── work.nix         # Work-specific extensions
+│   ├── home.nix         # Home-specific extensions for macOS
+│   ├── work.nix         # Work-specific extensions for macOS
+│   └── linux.nix        # Linux-specific extensions
 ├── overlays/
 │   ├── arch/            # Architecture-specific settings
-│   │   ├── aarch64.nix  # M-series specific settings
-│   │   └── x86_64.nix   # Intel specific settings
+│   │   ├── aarch64.nix        # M-series specific settings
+│   │   ├── x86_64.nix         # Intel Mac specific settings
+│   │   └── x86_64-linux.nix   # Linux (AMD/Intel) specific settings
 │   └── context/         # Context-specific settings
-│       ├── home.nix     # Home-specific settings
-│       └── work.nix     # Work-specific settings
+│       ├── home.nix     # Home-specific settings for macOS
+│       ├── work.nix     # Work-specific settings for macOS
+│       └── linux.nix    # Linux-specific settings
 ├── config/              # Shared application configurations
 ├── flake.nix            # Main entry point with host definitions
-└── install.sh           # Installation script
+├── install.sh           # Installation script for macOS
+└── install-linux.sh     # Installation script for Linux
 ```
 
 ## Installation
 
-Run the installation script:
+### macOS Installation
+
+For macOS systems, run:
 
 ```bash
 ./install.sh
@@ -41,6 +48,20 @@ The script will:
 2. Install necessary dependencies (nix, nix-darwin, homebrew)
 3. Apply the appropriate configuration
 4. Automatically select the correct home-manager configuration based on machine context
+
+### Linux Installation
+
+For Linux systems (like Pop!_OS), run:
+
+```bash
+./install-linux.sh
+```
+
+The script will:
+1. Detect your machine type
+2. Install Nix if not already installed
+3. Apply the appropriate NixOS configuration (if on NixOS) or home-manager configuration (if on other Linux distributions)
+4. Set up necessary configurations for the AMD Ryzen system
 
 ## Customization
 
@@ -93,6 +114,7 @@ Where `[configuration-name]` is one of:
 - `cortex` (Home M4 MacBook)
 - `malv2` (Home Intel MacBook)
 - `zthieme34911` (Work M1 MacBook)
+- `ryzen-pop` (Home AMD Ryzen Linux)
 - `default` (Auto-detected based on hostname and architecture)
 
 ## Example: Adding a Configuration
@@ -104,7 +126,7 @@ To add a new configuration for another machine:
 hosts = {
   # Existing hosts...
   "new-machine" = {
-    system = "aarch64-darwin"; # or x86_64-darwin
+    system = "aarch64-darwin"; # or x86_64-darwin or x86_64-linux
     user = "username";
     isWork = true; # or false
     packages = with pkgs; [
@@ -115,3 +137,15 @@ hosts = {
 ```
 
 That's it! The architecture-specific and context-specific modules will be automatically selected based on the `system` and `isWork` properties, and the hostname will be set based on the key.
+
+## Linux-Specific Features
+
+The Linux configuration includes:
+
+- Window manager setup with i3
+- AMD Ryzen specific optimizations
+- Audio, networking, and hardware configuration
+- Linux-specific applications and utilities
+- X11 configuration with proper keybindings
+
+If you're using the configuration on a different Linux distribution, you might need to adjust the hardware-specific settings in `overlays/arch/x86_64-linux.nix`.
