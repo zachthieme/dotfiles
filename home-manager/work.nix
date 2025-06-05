@@ -17,16 +17,16 @@ in
 
   # Override cat alias to use standard cat at work
   programs.zsh.shellAliases = {
-    # cat = null; # Remove the bat alias from base config
+    cat = null; # Remove the bat alias from base config
   };
 
-  # # Enable fish shell at work
-  # programs.fish = {
-  #   enable = true;
-  #   interactiveShellInit = ''
-  #     set fish_greeting # Disable greeting
-  #   '';
-  # };
+  # Enable fish shell at work
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = ''
+      set fish_greeting # Disable greeting
+    '';
+  };
 
   # Work-specific file symlinks
   home.file = {
