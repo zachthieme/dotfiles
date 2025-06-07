@@ -128,7 +128,8 @@
 
     # Allow unfree packages
     nixpkgs.config.allowUnfree = false;
-    # remove todesk to make security happy
+
+    # make sure that todesk cannot be installed
     nixpkgs.overlays = [
       (self: super: {
         todesk = throw "Blocked package: todesk";
