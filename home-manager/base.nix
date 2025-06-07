@@ -11,6 +11,9 @@
   home.username = username;
   home.homeDirectory = homeDirectory;
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = false;
   home.sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";

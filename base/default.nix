@@ -2,6 +2,9 @@
 { pkgs, lib, config, ... }:
 
 {
+  # Import Nix configuration
+  imports = [ ./nix/config.nix ];
+  
   # Accept arguments for user-specific settings with defaults
   options = {
     local = {
@@ -124,6 +127,14 @@
 
     # Common system settings
     system.stateVersion = 6;
-    nix.enable = false;
+    nix = {
+      enable = false;
+      
+      # Global settings for all users
+      settings = {
+        experimental-features = [ "nix-command" "flakes" ];
+        warn-dirty = false;
+      };
+    };
   };
 }
