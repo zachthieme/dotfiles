@@ -1,5 +1,11 @@
 # Base Home Manager configuration shared across all users
-{ pkgs, username, homeDirectory, minimal-tmux ? null, ... }:
+{
+  pkgs,
+  username,
+  homeDirectory,
+  minimal-tmux ? null,
+  ...
+}:
 
 {
   home.username = username;
@@ -54,7 +60,8 @@
     plugins = with pkgs; [
       # minimal-tmux can be passed in from the user config
       tmuxPlugins.better-mouse-mode
-      tmuxPlugins.catppuccin
+      # tmuxPlugins.catppuccin
+      tmuxPlugins.nord
       # tmuxPlugins.rose-pine
       # tmuxPlugins.sensible
       tmuxPlugins.vim-tmux-navigator
@@ -80,7 +87,7 @@
       bind - split-window -v -c "#{pane_current_path}"
       bind c new-window -c "#{pane_current_path}"
 
-      set -g @catppuccin_flavour 'mocha'
+      # set -g "arcticicestudio/nord-tmux"
     '';
   };
 
@@ -104,7 +111,6 @@
       tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
       v = "/usr/bin/vi";
       vi = "nvim";
-
       notes = ''NVIM_APPNAME=$(basename nvim-notes) nvim'';
       norg = ''NVIM_APPNAME=$(basename nvim-norg) nvim'';
     };

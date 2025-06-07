@@ -14,7 +14,7 @@
 
   # Work-specific homebrew configuration
   homebrew.casks = [
-    "google-chrome"  # Use Chrome at work instead of Brave
+    "google-chrome" # Use Chrome at work instead of Brave
   ];
 
   # Work-specific macOS settings
