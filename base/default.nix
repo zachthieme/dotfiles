@@ -2,9 +2,6 @@
 { pkgs, lib, config, ... }:
 
 {
-  # Import Nix configuration
-  imports = [ ./nix/config.nix ];
-  
   # Accept arguments for user-specific settings with defaults
   options = {
     local = {
@@ -127,14 +124,15 @@
 
     # Common system settings
     system.stateVersion = 6;
-    nix = {
-      enable = false;
-      
-      # Global settings for all users
-      settings = {
-        experimental-features = [ "nix-command" "flakes" ];
-        warn-dirty = false;
-      };
-    };
+    nix.enable = false;
+
+    # Allow unfree packages
+    nixpkgs.config.allowUnfree = false;
+    # remove todesk to make security happy
+    nixpkgs.overlays = [
+      (self: super: {
+        todesk = throw "Blocked package: todesk";
+      })
+    ];
   };
 }
