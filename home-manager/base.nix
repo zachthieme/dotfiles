@@ -25,8 +25,9 @@
   home.file = {
     ".config/aerospace".source = ../config/aerospace;
     ".config/bat".source = ../config/bat;
+    ".config/borders".source = ../config/borders;
     ".config/btop".source = ../config/btop;
-    ".config/doom".source = ./config/doom;
+    ".config/doom".source = ../config/doom;
     ".config/fzf".source = ../config/fzf;
     ".config/ghostty".source = ../config/ghostty;
     ".config/lazygit".source = ../config/lazygit;
