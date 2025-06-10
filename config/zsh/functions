@@ -1,4 +1,6 @@
 #!/usr/bin/zsh
+echo " "
+
 # Interactive Git file history explorer
 # Displays the commit history for a specific file and allows previewing changes
 # Use this to see how a file evolved over time
@@ -20,8 +22,8 @@ function gff () {
   # Use fzf to interactively search and preview file history
   local selected_commit
   selected_commit=$(git log --oneline --follow -- "$rel_file" | \
-    fzf --preview "git show {1}:$rel_file | cat " \
-        --preview-window=right:70%:wrap --height=80% --border)
+    fzf --preview "git show {1}:$rel_file --color=always" \
+        --preview-window=right:70%:wrap --height=80% --border --ansi)
 
   if [ -z "$selected_commit" ]; then
     echo "\033[33mNo commit selected.\033[0m"
@@ -39,7 +41,7 @@ function gff () {
 # Lists all running processes and allows selecting one to kill
 # Automatically tries with sudo if regular kill fails
 function k() {
-  ps aux | 
+  ps aux |
   fzf --height 40% \
       --layout=reverse \
       --header-lines=1 \
@@ -153,10 +155,10 @@ function y() {
 vv() {
   # Assumes all configs exist in directories named ~/.config/nvim-*
   local config=$(fd --max-depth 1 --glob 'nvim-*' ~/.config | fzf --prompt="Neovim Configs > " --height=~50% --layout=reverse --border --exit-0)
-  
+
   # If I exit fzf without selecting a config, don't open Neovim
   [[ -z $config ]] && echo "No config selected" && return
- 
+
   # Open Neovim with the selected config
   NVIM_APPNAME=$(basename $config) nvim $@
 }
@@ -176,22 +178,22 @@ nix-cleanup() {
 fns() {
   echo "\033[1;34m=== Available Shell Functions ===\033[0m"
   echo ""
-  
+
   # Parse this functions file to extract function names and their comments
   local current_file="${ZDOTDIR:-$HOME}/.config/zsh/functions"
-  
+
   # Use grep and awk to extract function names and their preceding comments
-  grep -E "^[[:space:]]*#|^[[:space:]]*function [a-zA-Z0-9_-]+\(\)|^[a-zA-Z0-9_-]+\(\)" "$current_file" | 
+  grep -E "^[[:space:]]*#|^[[:space:]]*function [a-zA-Z0-9_-]+\(\)|^[a-zA-Z0-9_-]+\(\)" "$current_file" |
   awk '
   BEGIN { comment = ""; name = ""; }
-  /^[[:space:]]*#/ { 
+  /^[[:space:]]*#/ {
     if (comment == "") {
       comment = $0;
     } else {
       comment = comment "\\n" $0;
     }
   }
-  /^[[:space:]]*function [a-zA-Z0-9_-]+\(\)|^[a-zA-Z0-9_-]+\(\)/ { 
+  /^[[:space:]]*function [a-zA-Z0-9_-]+\(\)|^[a-zA-Z0-9_-]+\(\)/ {
     # Extract function name
     gsub(/[[:space:]]*function |\(\)/, "", $0);
     name = $0;

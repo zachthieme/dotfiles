@@ -4,6 +4,25 @@
 (setq doom-theme 'doom-one)
 (setq display-line-numbers-type `relative)
 
+(defun my/org-insert-shared-link ()
+  "Prompt for a URL and friendly name, add it to links.org with a :link: tag and timestamp, and insert a raw link in the current buffer."
+  (interactive)
+  (let* ((url (read-string "URL: "))
+         (desc (read-string "Friendly name: "))
+         (date (format-time-string "%Y-%m-%d"))
+         (links-file (expand-file-name "~/Library/Mobile Documents/com~apple~CloudDocs/org/links.org"))
+         (entry (format "* %s :link:\n%s\nAdded: %s\n\n"
+                        desc
+                        (format "[[%s][%s]]" url desc)
+                        date)))
+    ;; Append to links.org
+    (with-current-buffer (find-file-noselect links-file)
+      (goto-char (point-max))
+      (insert entry)
+      (save-buffer))
+    ;; Insert direct link into current buffer
+    (insert (format "[[%s][%s]]" url desc))))
+
 ; (setq doom-modeline-modal-icon nil)
 ; (setq evil-normal-state-tag   (propertize "[Normal]" 'face '((:background "green" :foreground "black")))
 ;       evil-emacs-state-tag    (propertize "[Emacs]" 'face '((:background "orange" :foreground "black")))
@@ -32,12 +51,21 @@
             (org-roam-dailies-goto-today)))
 
 ; Daily template
+; (setq org-roam-dailies-capture-templates
+;       '(("d" "default" entry
+;          "* %<A%A %B %d, %Y>\nShortcuts | Events\n\n** Meetings\n\n** Notes\n"
+;          :if-new (file+head "%<%Y-%m-%d>.org"
+;                             "#+title: %<%Y-%m-%d>\n")
+;          :unnarrowed t)))
+;
+; (setq org-roam-dailies-directory "daily/")  ;; relative to `org-roam-directory`
+
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
-         "* %<A%A %B %d, %Y>\nShortcuts | Events\n\n** Meetings\n\n** Notes\n"
-         :if-new (file+head "%<%Y-%m-%d>.org"
-                            "#+title: %<%Y-%m-%d>\n")
-         :unnarrowed t)))
+         "* %?"
+         :target (file+head "%<%Y-%m-%d>.org"
+                            ":PROPERTIES:\n#+title: %<%Y-%m-%d>\n* %<%A %B %e, %Y>\n** Meetings\n***\n** Notes\n***\n")
+         :empty-lines 1)))
 
 (setq org-directory "~/Library/Mobile Documents/com~apple~CloudDocs/org/")
 ; (setq org-directory "~/Dropbox/org/")

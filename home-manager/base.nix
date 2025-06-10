@@ -23,23 +23,24 @@
   # This will be imported by user-specific configurations
   # These paths are relative to the root dotfiles directory
   home.file = {
-    # "./.ssh".source = ./config/ssh;
     ".config/aerospace".source = ../config/aerospace;
     ".config/bat".source = ../config/bat;
     ".config/btop".source = ../config/btop;
-    # ".config/doom".source = ./config/doom;
-    # ".config/emacs".source = ./config/emacs;
+    ".config/doom".source = ./config/doom;
     ".config/fzf".source = ../config/fzf;
     ".config/ghostty".source = ../config/ghostty;
     ".config/lazygit".source = ../config/lazygit;
+    ".config/nvim-gpt".source = ../config/nvim-gpt;
     ".config/nvim-notes".source = ../config/nvim-notes;
     ".config/nvim-obsidian".source = ../config/nvim-obsidian;
     ".config/nvim".source = ../config/nvim;
     ".config/ohmyposh".source = ../config/ohmyposh;
     ".config/wezterm".source = ../config/wezterm;
     ".config/zsh".source = ../config/zsh;
+    # "./.ssh".source = ./config/ssh;
     # ".config/cheat".source = ./config/cheat;
     # ".config/direnv".source = ./config/direnv;
+    # ".config/emacs".source = ./config/emacs;
     # ".config/gh".source = ./config/gh;
     # ".config/helix".source = ./config/helix;
     # ".config/nvim-test".source = ./config/nvim-test;
