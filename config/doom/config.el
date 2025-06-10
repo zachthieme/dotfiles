@@ -49,7 +49,7 @@
       '(("d" "default" entry
          "* %?"
          :target (file+head "%<%Y-%m-%d>.org"
-                            ":PROPERTIES:\n#+title: %<%Y-%m-%d>\n* %<%A %B %e, %Y>\n** Meetings\n***\n** Notes\n***\n")
+                            "#+title: %<%Y-%m-%d>\n* %<%A %B %e, %Y>\n** Meetings\n***\n** Notes\n***\n")
          :empty-lines 1)))
 
 (setq org-directory "~/Library/Mobile Documents/com~apple~CloudDocs/org/")
