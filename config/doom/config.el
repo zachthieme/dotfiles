@@ -23,13 +23,6 @@
     ;; Insert direct link into current buffer
     (insert (format "[[%s][%s]]" url desc))))
 
-; (setq doom-modeline-modal-icon nil)
-; (setq evil-normal-state-tag   (propertize "[Normal]" 'face '((:background "green" :foreground "black")))
-;       evil-emacs-state-tag    (propertize "[Emacs]" 'face '((:background "orange" :foreground "black")))
-;       evil-insert-state-tag   (propertize "[Insert]" 'face '((:background "red") :foreground "white"))
-;       evil-motion-state-tag   (propertize "[Motion]" 'face '((:background "blue") :foreground "white"))
-;       evil-visual-state-tag   (propertize "[Visual]" 'face '((:background "grey80" :foreground "black")))
-;       evil-operator-state-tag (propertize "[Operator]" 'face '((:background "purple"))))
 
 ;; Enable visual-line-mode (soft wrap) in agenda views, including tag searches
 (add-hook! 'org-agenda-mode-hook
@@ -50,14 +43,6 @@
           (lambda ()
             (org-roam-dailies-goto-today)))
 
-; Daily template
-; (setq org-roam-dailies-capture-templates
-;       '(("d" "default" entry
-;          "* %<A%A %B %d, %Y>\nShortcuts | Events\n\n** Meetings\n\n** Notes\n"
-;          :if-new (file+head "%<%Y-%m-%d>.org"
-;                             "#+title: %<%Y-%m-%d>\n")
-;          :unnarrowed t)))
-;
 ; (setq org-roam-dailies-directory "daily/")  ;; relative to `org-roam-directory`
 
 (setq org-roam-dailies-capture-templates
@@ -68,13 +53,10 @@
          :empty-lines 1)))
 
 (setq org-directory "~/Library/Mobile Documents/com~apple~CloudDocs/org/")
-; (setq org-directory "~/Dropbox/org/")
-; (setq org-agenda-files (append org-agenda-files '("~/RoamNotes")))
 
 (setq org-agenda-files 
 
    (directory-files-recursively "~/Library/Mobile Documents/com~apple~CloudDocs/org" "\\.org$"))
-   ; (directory-files-recursively "~/Dropbox/org/RoamNotes" "\\.org$"))
 
 (use-package! org-roam
   :ensure t
