@@ -1,5 +1,10 @@
 # Base configuration shared across all machines
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   # Accept arguments for user-specific settings with defaults
@@ -30,6 +35,7 @@
     environment.systemPackages = with pkgs; [
       bat
       btop
+      browsh
       curl
       emacs
       eza
@@ -40,6 +46,7 @@
       go
       gotools
       jq
+      jujutsu
       mosh
       neovim
       nixfmt-rfc-style
@@ -119,7 +126,9 @@
 
     # System activation script
     system.activationScripts.postActivation.text = ''
-      echo "${if config.local.isWork then "Work" else "Home"} MacBook configuration for ${config.local.hostname} activated"
+      echo "${
+        if config.local.isWork then "Work" else "Home"
+      } MacBook configuration for ${config.local.hostname} activated"
     '';
 
     # Common system settings

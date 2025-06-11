@@ -60,14 +60,16 @@
     escapeTime = 0;
     clock24 = true;
 
-    plugins = with pkgs; [
+    plugins = with pkgs.tmuxPlugins; [
+      better-mouse-mode
+      continuum
+      nord
+      resurrect
+      vim-tmux-navigator
       # minimal-tmux can be passed in from the user config
-      tmuxPlugins.better-mouse-mode
       # tmuxPlugins.catppuccin
-      tmuxPlugins.nord
       # tmuxPlugins.rose-pine
       # tmuxPlugins.sensible
-      tmuxPlugins.vim-tmux-navigator
     ];
 
     extraConfig = ''
@@ -78,6 +80,13 @@
 
       set-option -g status-position top
       set-option -g renumber-windows on
+
+      set -g @plugin 'tmux-plugins/tmux-resurrect'
+      set -g @plugin 'tmux-plugins/tmux-continuum'
+      set -g @resurrect-capture-pane-contents 'on'
+      # Enable auto-save and auto-restore
+      set -g @continuum-restore 'on'
+      set -g @continuum-save-interval '15'
 
       set -g mouse on
       bind -n M-h select-pane -L
