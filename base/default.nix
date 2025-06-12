@@ -54,6 +54,7 @@
       pandoc
       python3
       ripgrep
+      rustup
       tmux
       tree
       vim
