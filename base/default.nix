@@ -35,7 +35,6 @@
     environment.systemPackages = with pkgs; [
       bat
       btop
-      browsh
       curl
       emacs
       eza
