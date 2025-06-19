@@ -21,9 +21,10 @@ in
 
   # Home-specific package overrides
   # Uncomment and modify as needed
-  # home.packages = with pkgs; [
-  #   # Add home-specific packages here
-  # ];
+  home.packages = with pkgs; [
+    # Home-specific packages
+    zoom-us
+  ];
 
   # Home-specific program configurations
   # These will be merged with the ones from base.nix
