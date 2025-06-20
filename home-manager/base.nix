@@ -81,18 +81,12 @@
       set-option -g status-position top
       set-option -g renumber-windows on
 
-      set -g @plugin 'tmux-plugins/tmux-resurrect'
-      set -g @plugin 'tmux-plugins/tmux-continuum'
       set -g @resurrect-capture-pane-contents 'on'
       # Enable auto-save and auto-restore
       set -g @continuum-restore 'on'
       set -g @continuum-save-interval '15'
 
       set -g mouse on
-      bind -n M-h select-pane -L
-      bind -n M-j select-pane -D
-      bind -n M-k select-pane -U
-      bind -n M-l select-pane -R
 
       # easy-to-remember split pane commands
       bind | split-window -h -c "#{pane_current_path}"
@@ -120,7 +114,7 @@
       ll = "eza -lah";
       mkdir = "mkdir -p";
       t = ''tldr --list | fzf --preview "tldr {1} --color=always" --preview-window=right,70% | xargs tldr'';
-      tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+      # tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
       v = "/usr/bin/vi";
       vi = "nvim";
       notes = ''NVIM_APPNAME=$(basename nvim-notes) nvim'';
