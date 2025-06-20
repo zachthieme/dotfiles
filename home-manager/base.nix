@@ -33,7 +33,6 @@
     ".config/lazygit".source = ../config/lazygit;
     ".config/nvim-gpt".source = ../config/nvim-gpt;
     ".config/nvim-notes".source = ../config/nvim-notes;
-    ".config/nvim-obsidian".source = ../config/nvim-obsidian;
     ".config/nvim".source = ../config/nvim;
     ".config/ohmyposh".source = ../config/ohmyposh;
     ".config/wezterm".source = ../config/wezterm;
@@ -44,6 +43,7 @@
     # ".config/emacs".source = ./config/emacs;
     # ".config/gh".source = ./config/gh;
     # ".config/helix".source = ./config/helix;
+    # ".config/nvim-obsidian".source = ../config/nvim-obsidian;
     # ".config/nvim-test".source = ./config/nvim-test;
     # ".config/raycast".source = ./config/raycast;
     # ".config/skhd".source = ./config/skhd;
