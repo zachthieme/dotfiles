@@ -23,7 +23,6 @@ in
   # Uncomment and modify as needed
   home.packages = with pkgs; [
     # Home-specific packages
-    zoom-us
   ];
 
   # Home-specific program configurations

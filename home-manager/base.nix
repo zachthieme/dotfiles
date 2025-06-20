@@ -31,7 +31,7 @@
     ".config/fzf".source = ../config/fzf;
     ".config/ghostty".source = ../config/ghostty;
     ".config/lazygit".source = ../config/lazygit;
-    # ".config/nvim-gpt".source = ../config/nvim-gpt;
+    ".config/nvim-gpt".source = ../config/nvim-gpt;
     ".config/nvim-notes".source = ../config/nvim-notes;
     ".config/nvim-obsidian".source = ../config/nvim-obsidian;
     ".config/nvim".source = ../config/nvim;
