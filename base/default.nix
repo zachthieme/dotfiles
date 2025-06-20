@@ -57,6 +57,7 @@
       rustup
       tmux
       tree
+      typst
       vim
       wget
       yazi
