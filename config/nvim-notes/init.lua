@@ -132,8 +132,8 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   {
-    "zachthieme/obsidian.nvim",
-    branch = "completed_todo",
+    "epwalsh/obsidian.nvim",
+    -- branch = "completed_todo",
     version = "*",
     lazy = false,
     ft = "markdown",
