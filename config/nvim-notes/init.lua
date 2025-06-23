@@ -114,7 +114,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 			return
 		end
 
-		vim.cmd("cd ~/Dropbox/vaults/work")
+		vim.cmd("cd ~/Library/Mobile Documents/com~apple~CloudDocs/Obsidian")
 		vim.cmd("ObsidianToday")
 		vim.cmd("MarkdownTodos")
 	end,
@@ -181,15 +181,17 @@ require("lazy").setup({
 			workspaces = {
 				{
 					name = "work",
-					path = "~/Dropbox/vaults/work",
+					-- path = "~/Dropbox/vaults/work",
+					path = "~/Library/Mobile Documents/com~apple~CloudDocs/Obsidian",
 				},
-				{
-					name = "personal",
-					path = "~/Dropbox/vaults/personal",
-				},
+				-- {
+				-- 	name = "personal",
+				-- 	path = "~/Dropbox/vaults/personal",
+				-- },
 			},
 			templates = {
-				folder = "~/Dropbox/vaults/work/templates",
+				-- folder = "~/Dropbox/vaults/work/templates",
+				folder = "~/Library/Mobile Documents/com~apple~CloudDocs/Obsidian/templates",
 				substitutions = {
 					fday = function()
 						local suffixes = { "st", "nd", "rd" }
@@ -205,7 +207,7 @@ require("lazy").setup({
 
 			daily_notes = {
 				folder = "daily",
-				template = "~/Dropbox/vaults/work/templates/daily.md",
+				template = "~/Library/Mobile Documents/com~apple~CloudDocs/Obsidian/templates/daily.md",
 			},
 		},
 		config = function(_, opts)
