@@ -52,6 +52,7 @@ outer.right = 10
 
 alt-e = 'balance-sizes'
 alt-f = 'layout floating tiling'
+alt-shift-a = 'flatten-workspace-tree'
 # alt-m = 'fullscreen'
 alt-r = 'reload-config'
 
