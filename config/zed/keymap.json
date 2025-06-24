@@ -10,6 +10,7 @@
     "context": "Workspace",
     "bindings": {
       // "shift shift": "file_finder::Toggle"
+      "g b": "file_finder::Toggle"
     }
   },
   // {
@@ -26,7 +27,6 @@
       "ctrl-l": "workspace::ActivatePaneRight",
       "ctrl-k": "workspace::ActivatePaneUp",
       "ctrl-j": "workspace::ActivatePaneDown"
-      // ... or other keybindings
     }
   },
   {
@@ -55,6 +55,21 @@
     "context": "Editor && vim_mode == insert && !menu",
     "bindings": {
       // "j k": "vim::SwitchToNormalMode"
+    }
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      // "j k": "vim::SwitchToNormalMode"
+      //    "space e": "project_panel::ToggleFocus",
+      "space e": "workspace::ToggleLeftDock",
+      "space g": "git_panel::ToggleFocus",
+      "space t": "terminal_panel::ToggleFocus",
+      "space x": "diagnostics::Deploy",
+      "space a": "agent::ToggleFocus",
+      "space d": "debug_panel::ToggleFocus",
+      "space r": "editor::RestartLanguageServer",
+      "space b": "editor::ToggleBreakpoint"
     }
   }
 ]
