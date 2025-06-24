@@ -36,6 +36,7 @@
     ".config/nvim".source = ../config/nvim;
     ".config/ohmyposh".source = ../config/ohmyposh;
     ".config/wezterm".source = ../config/wezterm;
+    ".config/zed".source = ./config/zed;
     ".config/zsh".source = ../config/zsh;
     # "./.ssh".source = ./config/ssh;
     # ".config/cheat".source = ./config/cheat;
@@ -49,7 +50,6 @@
     # ".config/skhd".source = ./config/skhd;
     # ".config/spotify-player".source = ./config/spotify-player;
     # ".config/yabai".source = ./config/yabai;
-    # ".config/zed".source = ./config/zed;
   };
 
   programs.tmux = {
