@@ -35,7 +35,6 @@
     environment.systemPackages = with pkgs; [
       bat
       btop
-      browsh
       curl
       emacs
       eza
@@ -53,6 +52,7 @@
       nodejs_24
       pandoc
       python3
+      python312Packages.pdf2docx
       ripgrep
       rustup
       tmux
