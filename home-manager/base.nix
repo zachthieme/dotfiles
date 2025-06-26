@@ -30,6 +30,7 @@
     ".config/doom".source = ../config/doom;
     ".config/fzf".source = ../config/fzf;
     ".config/ghostty".source = ../config/ghostty;
+    ".config/jj".source = ../config/jj;
     ".config/lazygit".source = ../config/lazygit;
     ".config/nvim-gpt".source = ../config/nvim-gpt;
     ".config/nvim-notes".source = ../config/nvim-notes;
