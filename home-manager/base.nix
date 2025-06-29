@@ -151,6 +151,11 @@
       bindkey -M vicmd '^R' fzf-history-widget
       bindkey -M vicmd '^T' fzf-file-widget
 
+      # used to load carapace
+      export CARAPACE_BRIDGES='zsh,bash,inshellisense' # optional
+      zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+      source <(carapace _carapace)
+
       # needed instead of fzf.enableZshIntegration = true so zsh-vi-mode and fzf do not conflict
       zvm_after_init_commands+=(eval "$(fzf --zsh)")
     '';

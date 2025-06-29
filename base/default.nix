@@ -35,6 +35,7 @@
     environment.systemPackages = with pkgs; [
       bat
       btop
+      carapace
       curl
       emacs
       eza
