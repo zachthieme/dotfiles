@@ -75,7 +75,7 @@ alt-1 = 'workspace 1_Code'  # terminal
 alt-2 = 'workspace 2_Mail'  # Mail
 alt-3 = 'workspace 3_IM'    # Slack/Messages
 alt-4 = 'workspace 4_Teams' # Browser
-alt-5 = 'workspace 5'       # Teams
+alt-5 = 'workspace 5_Web'   # Teams
 alt-6 = 'workspace 6'       # Docs
 alt-7 = 'workspace 7'       # misc
 
@@ -85,7 +85,7 @@ alt-shift-ctrl-1 = ['move-node-to-workspace 1_Code', 'workspace 1_Code']
 alt-shift-ctrl-2 = ['move-node-to-workspace 2_Mail', 'workspace 2_Mail']
 alt-shift-ctrl-3 = ['move-node-to-workspace 3_IM', 'workspace 3_IM']
 alt-shift-ctrl-4 = ['move-node-to-workspace 4_Teams', 'workspace 4_Teams']
-alt-shift-ctrl-5 = ['move-node-to-workspace 5', 'workspace 5']
+alt-shift-ctrl-5 = ['move-node-to-workspace 5_Web', 'workspace 5_Web']
 alt-shift-ctrl-6 = ['move-node-to-workspace 6', 'workspace 6']
 alt-shift-ctrl-7 = ['move-node-to-workspace 7', 'workspace 7']
 
@@ -95,7 +95,7 @@ alt-shift-1 = ['move-node-to-workspace 1_Code']
 alt-shift-2 = ['move-node-to-workspace 2_Mail']
 alt-shift-3 = ['move-node-to-workspace 3_IM']
 alt-shift-4 = ['move-node-to-workspace 4_Teams']
-alt-shift-5 = ['move-node-to-workspace 5']
+alt-shift-5 = ['move-node-to-workspace 5_Web']
 alt-shift-6 = ['move-node-to-workspace 6']
 alt-shift-7 = ['move-node-to-workspace 7']
 # alt-shift-5 = ['move-node-to-workspace 5_Teams']
@@ -145,11 +145,11 @@ run = "move-node-to-workspace 2_Mail"
 # [[on-window-detected]]
 # if.app-id = 'com.brave.Browser'
 # run = "move-node-to-workspace 4_Browser"
-#
-# [[on-window-detected]]
-# if.app-id = 'com.google.Chrome'
-# run = "move-node-to-workspace 4_Browser"
-#
+
+[[on-window-detected]]
+if.app-id = 'com.google.Chrome'
+run = "move-node-to-workspace 5_Web"
+
 [[on-window-detected]]
 if.app-id = 'com.tinyspeck.slackmacgap'
 run = "move-node-to-workspace 3_IM"

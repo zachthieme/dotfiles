@@ -76,6 +76,7 @@
     extraConfig = ''
       set -g default-terminal "tmux-256color"
       set -ga terminal-overrides "tmux-256color"
+      set-option -g focus-events on
       set -g mode-keys vi
       set -g default-command ${pkgs.zsh}/bin/zsh
 
