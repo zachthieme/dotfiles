@@ -40,6 +40,7 @@
       emacs
       eza
       fd
+      fish
       fzf
       gh
       git
