@@ -64,10 +64,10 @@ alt-k = 'focus up --boundaries-action wrap-around-the-workspace'
 alt-l = 'focus right --boundaries-action wrap-around-the-workspace'
 
 # setup for accordion
-# alt-shift-h = [ 'join-with left','layout v_accordion' ]
-# alt-shift-j = [ 'join-with down','layout h_accordion'  ]
-# alt-shift-k = [ 'join-with up','layout h_accordion' ]
-# alt-shift-l = [ 'join-with right','layout v_accordion']
+alt-shift-h = ['join-with left', 'layout v_accordion']
+alt-shift-j = ['join-with down', 'layout h_accordion']
+alt-shift-k = ['join-with up', 'layout h_accordion']
+alt-shift-l = ['join-with right', 'layout v_accordion']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 # Move to a particular workspace
