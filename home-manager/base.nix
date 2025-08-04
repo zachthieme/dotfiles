@@ -105,6 +105,13 @@
     syntaxHighlighting.enable = true;
     enableCompletion = true;
     oh-my-zsh.enable = false;
+    completionInit = ''
+      if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
+          compinit
+      else
+          compinit -C
+      fi
+    '';
 
     shellAliases = {
       c = "clear";
@@ -124,6 +131,7 @@
     };
 
     initContent = ''
+      zmodload zsh/zprof
       #make sure brew is on the path for M1
       if [[ $(uname -m) == 'arm64' ]]; then
          eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -159,6 +167,7 @@
 
       # needed instead of fzf.enableZshIntegration = true so zsh-vi-mode and fzf do not conflict
       zvm_after_init_commands+=(eval "$(fzf --zsh)")
+      zprof
     '';
   };
 

@@ -41,14 +41,14 @@ inner.horizontal = 10
 inner.vertical = 10
 outer.left = 10
 outer.bottom = 10
-outer.top = [{ monitor."built-in" = 15 }, 15]
+outer.top = [{ monitor."built-in" = 16 }, 15]
 outer.right = 10
 
 [mode.main.binding]
 
 # alt-period = 'layout tiles horizontal vertical'
-# alt-slash = 'layout tiles horizontal vertical'
-# alt-comma = 'layout accordion horizontal vertical'
+alt-slash = 'layout tiles horizontal vertical'
+alt-comma = 'layout accordion horizontal vertical'
 
 alt-e = 'balance-sizes'
 alt-f = 'layout floating tiling'
