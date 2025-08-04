@@ -93,6 +93,7 @@
     system.defaults = {
       dock.autohide = true;
       dock.expose-group-apps = true;
+      dock.expose-animation-duration = 0.1;
       dock.mru-spaces = false;
       finder.AppleShowAllExtensions = true;
       finder.FXPreferredViewStyle = "clmv";

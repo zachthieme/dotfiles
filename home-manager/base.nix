@@ -131,43 +131,61 @@
     };
 
     initContent = ''
-      zmodload zsh/zprof
       #make sure brew is on the path for M1
       if [[ $(uname -m) == 'arm64' ]]; then
          eval "$(/opt/homebrew/bin/brew shellenv)"
       fi
       source ~/.config/zsh/functions
 
-      eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/zen.toml)"
+       eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/zen.toml)"
 
-      source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
-      # Fish-like prompt
-      autoload -Uz promptinit; promptinit
+       # Fish-like prompt
+       autoload -Uz promptinit; promptinit
 
-      # fzf keybindings
-      [ -f ${pkgs.fzf}/share/fzf/key-bindings.zsh ] && source ${pkgs.fzf}/share/fzf/key-bindings.zsh
-      [ -f ${pkgs.fzf}/share/fzf/completion.zsh ] && source ${pkgs.fzf}/share/fzf/completion.zsh
+       # fzf keybindings
+       [ -f ${pkgs.fzf}/share/fzf/key-bindings.zsh ] && source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+       [ -f ${pkgs.fzf}/share/fzf/completion.zsh ] && source ${pkgs.fzf}/share/fzf/completion.zsh
 
-      # Ensure fzf widgets are loaded
-      autoload -Uz fzf-file-widget fzf-cd-widget fzf-history-widget
-      zle -N fzf-file-widget
-      zle -N fzf-history-widget
+       # Ensure fzf widgets are loaded
+       autoload -Uz fzf-file-widget fzf-cd-widget fzf-history-widget
+       zle -N fzf-file-widget
+       zle -N fzf-history-widget
 
-      # Manually bind if not already present
-      bindkey -M viins '^R' fzf-history-widget
-      bindkey -M viins '^T' fzf-file-widget
-      bindkey -M vicmd '^R' fzf-history-widget
-      bindkey -M vicmd '^T' fzf-file-widget
+       # Manually bind if not already present
+       bindkey -M viins '^R' fzf-history-widget
+       bindkey -M viins '^T' fzf-file-widget
+       bindkey -M vicmd '^R' fzf-history-widget
+       bindkey -M vicmd '^T' fzf-file-widget
 
-      # used to load carapace
-      export CARAPACE_BRIDGES='zsh,bash,inshellisense' # optional
-      zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-      source <(carapace _carapace)
+       # used to load carapace
+       export CARAPACE_BRIDGES='zsh,bash,inshellisense' # optional
+       zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+       source <(carapace _carapace)
 
-      # needed instead of fzf.enableZshIntegration = true so zsh-vi-mode and fzf do not conflict
-      zvm_after_init_commands+=(eval "$(fzf --zsh)")
-      zprof
+      # FZF location mode (Ctrl-L) -------------------------------------
+       function _fzf_loc_widget() {
+         local dest
+         dest=$(
+           zoxide query -ls |   
+             awk '{$1=""; sub(/^ +/,""); print}' |
+             fzf --tac                      \
+                 --prompt='dir> '           \
+                 --height=40% --reverse     \
+                 --preview 'exa -aT --level=2 {} 2>/dev/null | head -100'
+         ) || return
+
+         [[ -n $dest ]] && builtin cd "$dest"
+         zle reset-prompt      
+       }
+
+       zle -N fzf-loc _fzf_loc_widget
+       bindkey -M viins '^L' fzf-loc
+       bindkey -M vicmd '^L' fzf-loc
+
+       # needed instead of fzf.enableZshIntegration = true so zsh-vi-mode and fzf do not conflict
+       zvm_after_init_commands+=(eval "$(fzf --zsh)")
     '';
   };
 
