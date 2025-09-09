@@ -1,5 +1,5 @@
 {
-  description = "Nix-darwin + Home Manager setup for multiple MacBooks";
+  description = "Nix-darwin + Home Manager setup for Mac and Linux machines";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -44,10 +44,19 @@
           isWork = true;
           packages = []; # Add any host-specific packages here
         };
+        "srv722852" = {
+          system = "x86_64-linux";
+          user = "zach";
+          isWork = false;
+          packages = []; # Add any host-specific packages here
+        };
       };
 
+      darwinHosts = builtins.filterAttrs (_: host: builtins.match ".*-darwin" host.system != null) hosts;
+      linuxHosts = builtins.filterAttrs (_: host: builtins.match ".*-linux" host.system != null) hosts;
+
       # Helper function to create Darwin configurations
-      mkDarwinConfig = hostname: { system, user, isWork, packages ? [], ... }: 
+      mkDarwinConfig = hostname: { system, user, isWork, packages ? [], ... }:
         let
           # Context-specific files
           contextModule = if isWork then ./home-manager/work.nix else ./home-manager/home.nix;
@@ -102,10 +111,27 @@
             "cortex"
           else
             "malv2";
+      mkHomeConfig = hostname: { system, user, isWork, packages ? [], ... }:
+        let
+          contextModule = if isWork then ./home-manager/work.nix else ./home-manager/home.nix;
+        in
+        home-manager.lib.homeManagerConfiguration {
+          inherit system;
+          pkgs = nixpkgs.legacyPackages.${system};
+          modules = [
+            contextModule
+            { home.packages = packages; }
+          ];
+          extraSpecialArgs = { inherit minimal-tmux; };
+        };
+
+      darwinConfigs = builtins.mapAttrs mkDarwinConfig darwinHosts;
+      linuxConfigs = builtins.mapAttrs mkHomeConfig linuxHosts;
     in
     {
-      darwinConfigurations = builtins.mapAttrs mkDarwinConfig hosts // {
-        default = self.darwinConfigurations.${detectHost};
-      };
+      darwinConfigurations =
+        darwinConfigs //
+        (if builtins.hasAttr detectHost darwinConfigs then { default = darwinConfigs.${detectHost}; } else {});
+      homeConfigurations = linuxConfigs;
     };
 }
