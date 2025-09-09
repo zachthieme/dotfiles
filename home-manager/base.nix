@@ -7,6 +7,9 @@
   ...
 }:
 
+let
+  commonPackages = import ../packages/common.nix { inherit pkgs; };
+in
 {
   home.username = username;
   home.homeDirectory = homeDirectory;
@@ -210,10 +213,12 @@
     nix-direnv.enable = true;
   };
 
-  home.packages = with pkgs; [
-    oh-my-posh
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    zsh-vi-mode
-  ];
+  home.packages =
+    commonPackages
+    ++ (with pkgs; [
+      oh-my-posh
+      zsh-autosuggestions
+      zsh-syntax-highlighting
+      zsh-vi-mode
+    ]);
 }
