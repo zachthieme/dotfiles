@@ -1,0 +1,35 @@
+{ pkgs }:
+with pkgs; [
+  bat
+  btop
+  carapace
+  curl
+  emacs
+  eza
+  fd
+  fish
+  fzf
+  gh
+  git
+  go
+  gotools
+  jq
+  jujutsu
+  mosh
+  neovim
+  nixfmt-rfc-style
+  nodejs_24
+  pandoc
+  python3
+  python312Packages.pdf2docx
+  ripgrep
+  rustup
+  tmux
+  tree
+  typst
+  vim
+  wget
+  yazi
+  zoxide
+  zsh
+]

@@ -70,7 +70,10 @@
           modules = [
             # Base system configuration
             ./base/default.nix
-            
+
+            # OS-specific overrides
+            ./overlays/os/darwin.nix
+
             # Architecture and context overlays
             archModule
             contextSystemModule
