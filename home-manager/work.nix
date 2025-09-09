@@ -3,7 +3,7 @@
 
 let
   username = "zthieme";
-  homeDirectory = "/Users/${username}";
+  homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
 in
 {
   # Import the base configuration with our username and home directory

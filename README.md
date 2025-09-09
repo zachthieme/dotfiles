@@ -1,9 +1,10 @@
-# Dotfiles for Multiple MacBooks
+# Dotfiles for Multiple Machines
 
-This repository contains configurations for 3 different MacBooks:
+This repository contains configurations for several machines:
 - Home M4 MacBook
 - Home Intel MacBook
 - Work M1 MacBook
+- `srv722852` (Home x86_64 Linux)
 
 ## Structure
 
@@ -38,7 +39,7 @@ Run the installation script:
 
 The script will:
 1. Detect your machine type (hostname and architecture)
-2. Install necessary dependencies (nix, nix-darwin, homebrew)
+2. Install necessary dependencies (nix, plus nix-darwin and Homebrew on macOS or home-manager on Linux)
 3. Apply the appropriate configuration
 4. Automatically select the correct home-manager configuration based on machine context
 
@@ -86,10 +87,14 @@ This structure eliminates duplication in several ways:
 If automatic detection doesn't work, you can manually apply a configuration:
 
 ```bash
+# macOS
 darwin-rebuild switch --flake ~/dotfiles#[configuration-name]
+
+# Linux
+home-manager switch --flake ~/dotfiles#srv722852
 ```
 
-Where `[configuration-name]` is one of:
+Where `[configuration-name]` for macOS is one of:
 - `cortex` (Home M4 MacBook)
 - `malv2` (Home Intel MacBook)
 - `zthieme34911` (Work M1 MacBook)
