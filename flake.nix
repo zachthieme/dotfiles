@@ -22,46 +22,63 @@
   };
 
   outputs =
-    { self, nixpkgs, nix-darwin, home-manager, minimal-tmux, ... }:
+    {
+      self,
+      nixpkgs,
+      nix-darwin,
+      home-manager,
+      minimal-tmux,
+      ...
+    }:
     let
+      lib = nixpkgs.lib;
       # Host definitions
       hosts = {
         "cortex" = {
           system = "aarch64-darwin";
           user = "zach";
           isWork = false;
-          packages = []; # Add any host-specific packages here
+          packages = [ ]; # Add any host-specific packages here
         };
         "malv2" = {
           system = "x86_64-darwin";
           user = "zach";
           isWork = false;
-          packages = []; # Add any host-specific packages here
+          packages = [ ]; # Add any host-specific packages here
         };
         "zthieme34911" = {
           system = "aarch64-darwin";
           user = "zthieme";
           isWork = true;
-          packages = []; # Add any host-specific packages here
+          packages = [ ]; # Add any host-specific packages here
         };
         "srv722852" = {
           system = "x86_64-linux";
           user = "zach";
           isWork = false;
-          packages = []; # Add any host-specific packages here
+          packages = [ ]; # Add any host-specific packages here
         };
       };
 
-      darwinHosts = builtins.filterAttrs (_: host: builtins.match ".*-darwin" host.system != null) hosts;
-      linuxHosts = builtins.filterAttrs (_: host: builtins.match ".*-linux" host.system != null) hosts;
+      darwinHosts = lib.filterAttrs (_: host: builtins.match ".*-darwin" host.system != null) hosts;
+      linuxHosts = lib.filterAttrs (_: host: builtins.match ".*-linux" host.system != null) hosts;
 
       # Helper function to create Darwin configurations
-      mkDarwinConfig = hostname: { system, user, isWork, packages ? [], ... }:
+      mkDarwinConfig =
+        hostname:
+        {
+          system,
+          user,
+          isWork,
+          packages ? [ ],
+          ...
+        }:
         let
           # Context-specific files
           contextModule = if isWork then ./home-manager/work.nix else ./home-manager/home.nix;
           # Architecture-specific module
-          archModule = if system == "aarch64-darwin" then ./overlays/arch/aarch64.nix else ./overlays/arch/x86_64.nix;
+          archModule =
+            if system == "aarch64-darwin" then ./overlays/arch/aarch64.nix else ./overlays/arch/x86_64.nix;
           # Context-specific module
           contextSystemModule = if isWork then ./overlays/context/work.nix else ./overlays/context/home.nix;
         in
@@ -77,16 +94,16 @@
             # Architecture and context overlays
             archModule
             contextSystemModule
-            
+
             # Host-specific configuration
             {
               # Set hostname
               local.hostname = hostname;
-              
+
               # Add any host-specific packages
               environment.systemPackages = packages;
             }
-            
+
             # Home Manager module
             home-manager.darwinModules.home-manager
             {
@@ -106,15 +123,23 @@
           isAarch64 = builtins.match "aarch64-darwin" system != null;
           isWork = builtins.match "zthieme.*" hostname != null;
         in
-          if builtins.hasAttr hostname hosts then
-            hostname
-          else if isWork then
-            "zthieme34911"
-          else if isAarch64 then
-            "cortex"
-          else
-            "malv2";
-      mkHomeConfig = hostname: { system, user, isWork, packages ? [], ... }:
+        if builtins.hasAttr hostname hosts then
+          hostname
+        else if isWork then
+          "zthieme34911"
+        else if isAarch64 then
+          "cortex"
+        else
+          "malv2";
+      mkHomeConfig =
+        hostname:
+        {
+          system,
+          user,
+          isWork,
+          packages ? [ ],
+          ...
+        }:
         let
           contextModule = if isWork then ./home-manager/work.nix else ./home-manager/home.nix;
         in
@@ -133,8 +158,13 @@
     in
     {
       darwinConfigurations =
-        darwinConfigs //
-        (if builtins.hasAttr detectHost darwinConfigs then { default = darwinConfigs.${detectHost}; } else {});
+        darwinConfigs
+        // (
+          if builtins.hasAttr detectHost darwinConfigs then
+            { default = darwinConfigs.${detectHost}; }
+          else
+            { }
+        );
       homeConfigurations = linuxConfigs;
     };
 }
