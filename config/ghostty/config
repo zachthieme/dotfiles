@@ -1,1 +1,1 @@
-command = /run/current-system/sw/bin/fish --login --interactive
+#command = /run/current-system/sw/bin/fish --login --interactive
