@@ -121,7 +121,7 @@ in
       cat = "bat";
       emacs = "emacs -nw";
       ft = ''fzf-tmux --height 70% -- fzf --preview="cat --color=always {}" --preview-window=right:50% --border'';
-      gs = "git status";
+      # gs = "git status";
       j = "z";
       ll = "eza -lah";
       mkdir = "mkdir -p";

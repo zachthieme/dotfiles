@@ -1,5 +1,6 @@
 { pkgs }:
-with pkgs; [
+with pkgs;
+[
   bat
   btop
   carapace
@@ -13,6 +14,7 @@ with pkgs; [
   git
   go
   gotools
+  imagemagick
   jq
   jujutsu
   mosh
