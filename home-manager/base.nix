@@ -7,6 +7,9 @@
   ...
 }:
 
+let
+  commonPackages = import ../packages/common.nix { inherit pkgs; };
+in
 {
   home.username = username;
   home.homeDirectory = homeDirectory;
@@ -118,7 +121,7 @@
       cat = "bat";
       emacs = "emacs -nw";
       ft = ''fzf-tmux --height 70% -- fzf --preview="cat --color=always {}" --preview-window=right:50% --border'';
-      gs = "git status";
+      # gs = "git status";
       j = "z";
       ll = "eza -lah";
       mkdir = "mkdir -p";
@@ -210,10 +213,12 @@
     nix-direnv.enable = true;
   };
 
-  home.packages = with pkgs; [
-    oh-my-posh
-    zsh-autosuggestions
-    zsh-syntax-highlighting
-    zsh-vi-mode
-  ];
+  home.packages =
+    commonPackages
+    ++ (with pkgs; [
+      oh-my-posh
+      zsh-autosuggestions
+      zsh-syntax-highlighting
+      zsh-vi-mode
+    ]);
 }
