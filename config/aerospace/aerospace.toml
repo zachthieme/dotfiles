@@ -53,7 +53,7 @@ alt-comma = 'layout tiles horizontal vertical'
 alt-e = 'balance-sizes'
 alt-f = 'layout floating tiling'
 alt-a = 'flatten-workspace-tree'
-# alt-m = 'fullscreen'
+alt-m = 'macos-native-minimize'
 alt-r = 'reload-config'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
