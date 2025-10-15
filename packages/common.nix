@@ -6,6 +6,7 @@ with pkgs;
   carapace
   curl
   emacs
+  exiftool
   eza
   fd
   fish
@@ -22,6 +23,7 @@ with pkgs;
   nixfmt-rfc-style
   nodejs_24
   pandoc
+  pngcheck
   python3
   python312Packages.pdf2docx
   ripgrep
