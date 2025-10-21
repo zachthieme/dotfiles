@@ -24,6 +24,8 @@ with pkgs;
   nodejs_24
   pandoc
   pngcheck
+  pngquant
+  pngcrush
   python3
   python312Packages.pdf2docx
   ripgrep
