@@ -31,6 +31,7 @@ with pkgs;
   tmux
   tree
   typst
+  uv
   vim
   wget
   yazi
