@@ -23,6 +23,10 @@ in
     _ZO_FZF_OPTS = "--height 20% --reverse";
   };
 
+  home.sessionPath = [
+    "${homeDirectory}/.local/bin"
+  ];
+
   # This will be imported by user-specific configurations
   # These paths are relative to the root dotfiles directory
   home.file = {

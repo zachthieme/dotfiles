@@ -9,9 +9,12 @@
   environment.systemPackages = with pkgs; [
   ];
 
+  homebrew.brews = [
+    "codex"
+  ];
   # Home-specific homebrew configuration
   homebrew.casks = [
-    "brave-browser"  # Use Brave at home instead of Chrome
+    "brave-browser" # Use Brave at home instead of Chrome
   ];
 
   # Home-specific macOS settings
