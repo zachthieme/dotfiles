@@ -1,4 +1,4 @@
-# Home-specific configuration
+# Home-specific system configuration
 { pkgs, lib, ... }:
 
 {
@@ -9,12 +9,13 @@
   environment.systemPackages = with pkgs; [
   ];
 
-  # Home-specific homebrew configuration
-  homebrew.casks = [
-    "brave-browser"  # Use Brave at home instead of Chrome
+  homebrew.brews = [
   ];
 
-  # Home-specific macOS settings
+  homebrew.casks = [
+    "brave-browser"
+  ];
+
   system.defaults = {
     # Any home-specific macOS settings
   };

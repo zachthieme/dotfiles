@@ -1,18 +1,15 @@
 # Base Home Manager configuration shared across all users
 {
+  config,
   pkgs,
-  username,
-  homeDirectory,
   minimal-tmux ? null,
   ...
 }:
 
 let
-  commonPackages = import ../packages/common.nix { inherit pkgs; };
+  packageProfiles = import ../packages/common.nix { inherit pkgs; };
 in
 {
-  home.username = username;
-  home.homeDirectory = homeDirectory;
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
 
   home.sessionVariables = {
@@ -22,6 +19,10 @@ in
     FZF_CTRL_R_OPTS = "--height 20% --reverse";
     _ZO_FZF_OPTS = "--height 20% --reverse";
   };
+
+  home.sessionPath = [
+    "${config.home.homeDirectory}/.local/bin"
+  ];
 
   # This will be imported by user-specific configurations
   # These paths are relative to the root dotfiles directory
@@ -47,13 +48,14 @@ in
     # ".config/direnv".source = ../config/direnv;
     # ".config/emacs".source = ../config/emacs;
     # ".config/gh".source = ../config/gh;
-    # ".config/helix".source = ../config/helix;
+    ".config/helix".source = ../config/helix;
     # ".config/nvim-obsidian".source = .../config/nvim-obsidian;
     # ".config/nvim-test".source = ../config/nvim-test;
     # ".config/raycast".source = ../config/raycast;
     # ".config/skhd".source = ../config/skhd;
     # ".config/spotify-player".source = ../config/spotify-player;
     # ".config/yabai".source = ../config/yabai;
+    ".terminfo/x/ghostty-xterm".source = ../config/terminfo/x/ghostty-xterm;
   };
 
   programs.tmux = {
@@ -214,7 +216,7 @@ in
   };
 
   home.packages =
-    commonPackages
+    packageProfiles.profiles.basePackages
     ++ (with pkgs; [
       oh-my-posh
       zsh-autosuggestions
