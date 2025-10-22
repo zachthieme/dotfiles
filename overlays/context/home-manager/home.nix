@@ -10,7 +10,8 @@
     # Add home-specific symlinks here
   };
 
-  home.packages = with pkgs; [
-    # Home-specific packages
-  ];
+  home.packages = lib.mkAfter (with pkgs; [
+    nodePackages_latest.claude
+    nodePackages_latest.codex
+  ]);
 }

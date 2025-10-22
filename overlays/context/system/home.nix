@@ -10,7 +10,6 @@
   ];
 
   homebrew.brews = [
-    "codex"
   ];
 
   homebrew.casks = [
