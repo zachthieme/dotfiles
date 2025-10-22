@@ -1,18 +1,10 @@
 # Base Home Manager configuration shared across all users
-{
-  pkgs,
-  username,
-  homeDirectory,
-  minimal-tmux ? null,
-  ...
-}:
+{ config, pkgs, minimal-tmux ? null, ... }:
 
 let
   packageProfiles = import ../packages/common.nix { inherit pkgs; };
 in
 {
-  home.username = username;
-  home.homeDirectory = homeDirectory;
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
 
   home.sessionVariables = {
@@ -24,7 +16,7 @@ in
   };
 
   home.sessionPath = [
-    "${homeDirectory}/.local/bin"
+    "${config.home.homeDirectory}/.local/bin"
   ];
 
   # This will be imported by user-specific configurations

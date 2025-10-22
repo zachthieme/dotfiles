@@ -5,9 +5,6 @@
   # Mark as work context
   local.isWork = true;
 
-  # Set work username
-  local.username = "zthieme";
-
   # Work-specific packages
   environment.systemPackages = with pkgs; [
   ];

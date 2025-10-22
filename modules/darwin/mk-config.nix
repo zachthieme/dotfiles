@@ -36,7 +36,18 @@ nix-darwin.lib.darwinSystem {
     {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      home-manager.users.${user} = import contextHomeModule;
+      home-manager.extraSpecialArgs = {
+        inherit minimal-tmux;
+      };
+      home-manager.users.${user} = {
+        imports = [ contextHomeModule ];
+        home.username = user;
+        home.homeDirectory =
+          if builtins.match ".*-darwin" system != null then
+            "/Users/${user}"
+          else
+            "/home/${user}";
+      };
     }
   ];
   specialArgs = { inherit minimal-tmux; };

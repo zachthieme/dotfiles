@@ -26,7 +26,8 @@ install.sh           # Bootstrap script for new machines
 
 ## Rules of the Road
 - Treat `flake.nix` as the orchestration layer and keep host metadata in `modules/hosts/definitions.nix`.
-- Keep shared logic in `base/` and `home-manager/base.nix`; put context deltas under `overlays/context/system/` (system) and `overlays/context/home-manager/` (user).
+- Keep shared logic in `base/` and `home-manager/base.nix`; put context deltas under `overlays/context/system/` (system) and `overlays/context/home-manager/` (user). The Home Manager base is a module, so it picks up `home.username`/`home.homeDirectory` from the host wiring automatically.
+- Declare usernames (and other per-host facts) only in `modules/hosts/definitions.nix`. Downstream modules consume `config.local.username` or `config.home.username`; avoid re-stating literals in overlays.
 - Prefer host-specific packages via the `hosts.<name>.packages` list in `modules/hosts/definitions.nix` rather than sprinkling conditionals inside modules.
 - Run `nix flake check` before every commit; capture dry-run outputs (`darwin-rebuild switch --dry-run`, `home-manager switch --dry-run`) when opening a PR.
 - Document significant changes in `AGENTS.md` to help other contributors stay aligned.

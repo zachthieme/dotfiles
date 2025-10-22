@@ -13,7 +13,15 @@ home-manager.lib.homeManagerConfiguration {
   pkgs = nixpkgs.legacyPackages.${system};
   modules = [
     contextModule
-    { home.packages = packages; }
+    {
+      home.username = user;
+      home.homeDirectory =
+        if builtins.match ".*-darwin" system != null then
+          "/Users/${user}"
+        else
+          "/home/${user}";
+      home.packages = packages;
+    }
   ];
   extraSpecialArgs = { inherit minimal-tmux; };
 }

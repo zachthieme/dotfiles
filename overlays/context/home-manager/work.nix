@@ -1,15 +1,9 @@
 # Work-specific Home Manager configuration
 { pkgs, lib, ... }:
 
-let
-  username = "zthieme";
-  homeDirectory = if pkgs.stdenv.isDarwin then "/Users/${username}" else "/home/${username}";
-in
 {
   imports = [
-    (import ../../../home-manager/base.nix {
-      inherit pkgs username homeDirectory;
-    })
+    ../../../home-manager/base.nix
   ];
 
   programs.zsh.shellAliases = {
