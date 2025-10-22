@@ -10,8 +10,11 @@
     # Add home-specific symlinks here
   };
 
-  home.packages = lib.mkAfter (with pkgs; [
-    nodePackages_latest.claude
-    nodePackages_latest.codex
-  ]);
+  home.packages = lib.mkAfter (
+    let
+      claudePkg = lib.attrByPath [ "nodePackages_latest" "claude" ] pkgs null;
+    in
+    [ pkgs.nodePackages_latest.codex ]
+    ++ lib.optionals (claudePkg != null) [ claudePkg ]
+  );
 }
