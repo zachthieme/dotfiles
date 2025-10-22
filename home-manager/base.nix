@@ -55,7 +55,7 @@ in
     # ".config/skhd".source = ../config/skhd;
     # ".config/spotify-player".source = ../config/spotify-player;
     # ".config/yabai".source = ../config/yabai;
-    ".terminfo/x/ghostty-xterm".source = ../config/terminfo/x/ghostty-xterm;
+    ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
   };
 
   programs.tmux = {
