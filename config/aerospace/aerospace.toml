@@ -175,5 +175,9 @@ if.app-id = 'com.apple.finder'
 run = "layout floating"
 
 [[on-window-detected]]
+if.app-id = 'com.pqrs.Karabiner-Elements'
+run = "layout floating"
+
+[[on-window-detected]]
 if.app-id = "com.mitchellh.ghostty"
 run = ["layout tiling"]

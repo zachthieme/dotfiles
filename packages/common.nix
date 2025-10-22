@@ -15,6 +15,7 @@ with pkgs;
   git
   go
   gotools
+  helix
   imagemagick
   jq
   jujutsu
