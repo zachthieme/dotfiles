@@ -69,7 +69,12 @@ else
 
   if ! command -v home-manager &>/dev/null; then
     echo "home-manager not found; installing..."
-    nix profile install nixpkgs#home-manager
+    if ! nix --extra-experimental-features "nix-command flakes" \
+      profile install nixpkgs#home-manager; then
+      echo "Failed to install home-manager."
+      echo "Ensure that the nix-command and flakes experimental features are enabled."
+      exit 1
+    fi
   fi
 
   echo "Applying Home Manager configuration..."
