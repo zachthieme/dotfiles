@@ -1,4 +1,4 @@
-# Work-specific configuration
+# Work-specific system configuration
 { pkgs, lib, ... }:
 
 {
@@ -12,12 +12,10 @@
   environment.systemPackages = with pkgs; [
   ];
 
-  # Work-specific homebrew configuration
   homebrew.casks = [
-    "google-chrome" # Use Chrome at work instead of Brave
+    "google-chrome"
   ];
 
-  # Work-specific macOS settings
   system.defaults = {
     # Any work-specific macOS settings
   };

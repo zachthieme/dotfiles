@@ -8,7 +8,7 @@
 }:
 
 let
-  commonPackages = import ../packages/common.nix { inherit pkgs; };
+  packageProfiles = import ../packages/common.nix { inherit pkgs; };
 in
 {
   home.username = username;
@@ -218,7 +218,7 @@ in
   };
 
   home.packages =
-    commonPackages
+    packageProfiles.profiles.basePackages
     ++ (with pkgs; [
       oh-my-posh
       zsh-autosuggestions

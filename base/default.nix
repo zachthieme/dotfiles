@@ -7,7 +7,7 @@
 }:
 
 let
-  commonPackages = import ../packages/common.nix { inherit pkgs; };
+  packageProfiles = import ../packages/common.nix { inherit pkgs; };
 in
 {
   # Accept arguments for user-specific settings with defaults
@@ -35,7 +35,7 @@ in
 
   config = {
     # Common system packages for all machines
-    environment.systemPackages = commonPackages;
+    environment.systemPackages = packageProfiles.profiles.basePackages;
 
     
     # Set primary user based on configuration

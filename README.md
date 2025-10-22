@@ -1,122 +1,52 @@
 # Dotfiles for Multiple Machines
 
-This repository contains configurations for several machines:
-- Home M4 MacBook
-- Home Intel MacBook
-- Work M1 MacBook
-- `srv722852` (Home x86_64 Linux)
+Automated dotfiles for multiple macOS and Linux hosts, powered by Nix flakes. The repo layers system defaults, architecture tweaks, and context-specific overrides so each machine receives the right mix with minimal duplication. For contributor-specific details, see [Repository Guidelines](./AGENTS.md).
 
-## Structure
+## Why This Exists
+- Single source of truth for workstation setup across personal and work machines.
+- Repeatable, idempotent provisioning through `nix-darwin`, Home Manager, and overlays.
+- Separation of base, architecture, context, and host layers to keep overrides tight and auditable.
 
-The repository is organized to minimize duplication while allowing for machine-specific customizations:
-
+## Repository Layout
 ```
-dotfiles/
-├── base/                # Shared base configuration for all machines
-├── home-manager/        # Shared Home Manager configurations
-│   ├── base.nix         # Base Home Manager config
-│   ├── home.nix         # Home-specific extensions
-│   └── work.nix         # Work-specific extensions
-├── overlays/
-│   ├── arch/            # Architecture-specific settings
-│   │   ├── aarch64.nix  # M-series specific settings
-│   │   └── x86_64.nix   # Intel specific settings
-│   └── context/         # Context-specific settings
-│       ├── home.nix     # Home-specific settings
-│       └── work.nix     # Work-specific settings
-├── config/              # Shared application configurations
-├── flake.nix            # Main entry point with host definitions
-└── install.sh           # Installation script
+base/                # Shared nix-darwin modules
+config/              # Dotfiles grouped by application
+home-manager/        # Home Manager base modules
+modules/             # Host definitions and builders used by flake.nix
+overlays/            # System + user overlays
+  arch/              # Architecture-specific settings
+  context/
+    home-manager/    # Context-specific Home Manager modules
+    system/          # Context-specific system modules
+  os/                # OS-level tweaks (e.g., macOS defaults, Homebrew)
+packages/            # Named package profiles
+flake.nix            # Entry point wiring modules together
+install.sh           # Bootstrap script for new machines
 ```
 
-## Installation
+## Rules of the Road
+- Treat `flake.nix` as the orchestration layer and keep host metadata in `modules/hosts/definitions.nix`.
+- Keep shared logic in `base/` and `home-manager/base.nix`; put context deltas under `overlays/context/system/` (system) and `overlays/context/home-manager/` (user).
+- Prefer host-specific packages via the `hosts.<name>.packages` list in `modules/hosts/definitions.nix` rather than sprinkling conditionals inside modules.
+- Run `nix flake check` before every commit; capture dry-run outputs (`darwin-rebuild switch --dry-run`, `home-manager switch --dry-run`) when opening a PR.
+- Document significant changes in `AGENTS.md` to help other contributors stay aligned.
 
-Run the installation script:
+## Common Tasks
+- **Bootstrap a machine:** `./install.sh` (detects host, installs prerequisites, applies correct flake).
+- **Rebuild after edits:**  
+  macOS: `darwin-rebuild switch --flake .#<hostname>`  
+  Linux: `home-manager switch --flake .#srv722852`
+- **Add a new host:** Extend `modules/hosts/definitions.nix` with a new entry, setting `system`, `user`, `isWork`, and optional `packages`. Pick the host key to match the machine’s hostname.
+- **Add software for one machine:** Add a package to that host’s `packages` list in `modules/hosts/definitions.nix`. Use `pkgs.homebrewPackages.<formula>` when the app is a Homebrew formula.
+- **Share dotfiles or app configs:** Place files under `config/<tool>/`; wire them in via `home-manager/base.nix` (shared) or the context modules in `overlays/context/home-manager/`.
+- **Create new overlays:** Add a module under `overlays/<dimension>/` and wire it into the appropriate builder in `modules/darwin/mk-config.nix` or `modules/home-manager/mk-config.nix`.
 
-```bash
-./install.sh
-```
+## Validation & Troubleshooting
+- Use `nix flake check` to catch syntax and evaluation regressions.
+- If a rebuild fails, re-run with `--show-trace` for detailed Nix diagnostics.
+- When a module introduces side effects, wrap them in `lib.mkIf` guards so they only run on the intended systems.
 
-The script will:
-1. Detect your machine type (hostname and architecture)
-2. Install necessary dependencies (nix, plus nix-darwin and Homebrew on macOS or home-manager on Linux)
-3. Apply the appropriate configuration
-4. Automatically select the correct home-manager configuration based on machine context
-
-## Customization
-
-### Adding a new machine
-
-1. Add a new entry to the `hosts` attribute in `flake.nix`
-2. Specify the hostname, system architecture, username, and work/home context
-3. Add any machine-specific packages if needed
-
-### Modifying shared configurations
-
-- Edit `base/default.nix` for system settings that apply to all machines
-- Edit `home-manager/base.nix` for user settings that apply to all machines
-- Edit files in `overlays/arch/` for architecture-specific changes
-- Edit files in `overlays/context/` for context-specific changes (home vs. work)
-- Edit `home-manager/home.nix` or `home-manager/work.nix` for context-specific user settings
-
-## How Duplication is Minimized
-
-This structure eliminates duplication in several ways:
-
-1. **Shared System Configuration**:
-   - Common packages, homebrew settings, and macOS defaults are defined once in `base/default.nix`
-   - Host-specific settings extend this base rather than duplicating it
-
-2. **Shared Home Manager Configuration**:
-   - Common dotfiles, program settings, and shell configurations are defined once in `home-manager/base.nix`
-   - Context-specific overrides only specify differences
-   - No host-specific home.nix files are needed; configurations are selected automatically based on context
-
-3. **Functional Flake Design**:
-   - The main `flake.nix` uses a functional approach to generate configurations
-   - Machine properties are defined in a single place and used to derive configurations
-   - Imports the correct home-manager modules based on context (home vs. work)
-
-4. **Layered Approach**:
-   - Base → Architecture → Context → Host-specific settings in flake.nix
-   - Each layer only defines what's unique to that layer
-   - Host-specific settings defined directly in the flake.nix, eliminating an entire layer of files
-
-## Manual Configuration
-
-If automatic detection doesn't work, you can manually apply a configuration:
-
-```bash
-# macOS
-darwin-rebuild switch --flake ~/dotfiles#[configuration-name]
-
-# Linux
-home-manager switch --flake ~/dotfiles#srv722852
-```
-
-Where `[configuration-name]` for macOS is one of:
-- `cortex` (Home M4 MacBook)
-- `malv2` (Home Intel MacBook)
-- `zthieme34911` (Work M1 MacBook)
-- `default` (Auto-detected based on hostname and architecture)
-
-## Example: Adding a Configuration
-
-To add a new configuration for another machine:
-
-1. Add the host definition in `flake.nix`:
-```nix
-hosts = {
-  # Existing hosts...
-  "new-machine" = {
-    system = "aarch64-darwin"; # or x86_64-darwin
-    user = "username";
-    isWork = true; # or false
-    packages = with pkgs; [
-      # Add any host-specific packages here
-    ];
-  };
-};
-```
-
-That's it! The architecture-specific and context-specific modules will be automatically selected based on the `system` and `isWork` properties, and the hostname will be set based on the key.
+## Future Opportunities
+- **Add CI validation:** Wire `nix flake check` (and key dry-run commands) into GitHub Actions so regressions surface before merges.
+- **Harden host packages:** Export named package groups per context (e.g., `profiles/workstation`) and re-use them across system and Home Manager layers to avoid duplication.
+- **Track config ownership:** Augment the new `config/*/README.md` stubs with maintainer notes or audit cadence once you learn which tools churn most.
