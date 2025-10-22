@@ -1,5 +1,10 @@
 # Base Home Manager configuration shared across all users
-{ config, pkgs, minimal-tmux ? null, ... }:
+{
+  config,
+  pkgs,
+  minimal-tmux ? null,
+  ...
+}:
 
 let
   packageProfiles = import ../packages/common.nix { inherit pkgs; };
@@ -43,7 +48,7 @@ in
     # ".config/direnv".source = ../config/direnv;
     # ".config/emacs".source = ../config/emacs;
     # ".config/gh".source = ../config/gh;
-    # ".config/helix".source = ../config/helix;
+    ".config/helix".source = ../config/helix;
     # ".config/nvim-obsidian".source = .../config/nvim-obsidian;
     # ".config/nvim-test".source = ../config/nvim-test;
     # ".config/raycast".source = ../config/raycast;
