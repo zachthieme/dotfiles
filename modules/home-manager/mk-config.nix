@@ -9,7 +9,6 @@ let
       ../../overlays/context/home-manager/home.nix;
 in
 home-manager.lib.homeManagerConfiguration {
-  inherit system;
   pkgs = nixpkgs.legacyPackages.${system};
   modules = [
     contextModule
