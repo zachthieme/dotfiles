@@ -12,8 +12,8 @@
 
   home.packages = lib.mkAfter (
     let
-      codexPkg = lib.attrByPath [ "nodePackages_latest" "codex" ] pkgs null;
-      claudePkg = lib.attrByPath [ "nodePackages_latest" "claude" ] pkgs null;
+      codexPkg = pkgs.callPackage ../../../packages/node/codex.nix { };
+      claudePkg = pkgs.callPackage ../../../packages/node/claude.nix { };
       optionalPkgs = [ codexPkg claudePkg ];
     in
     lib.filter lib.isDerivation optionalPkgs
