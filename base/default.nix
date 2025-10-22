@@ -61,8 +61,11 @@ in
     system.stateVersion = 6;
     nix.enable = false;
 
-    # Allow unfree packages
-    nixpkgs.config.allowUnfree = false;
+    # Allow selective unfree packages
+    nixpkgs.config = {
+      allowUnfree = false;
+      allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "codex" ];
+    };
 
     # make sure that todesk cannot be installed
     nixpkgs.overlays = [
