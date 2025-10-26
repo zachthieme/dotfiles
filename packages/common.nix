@@ -19,6 +19,7 @@
       helix
       imagemagick
       jq
+      jrnl
       jujutsu
       mosh
       neovim
@@ -39,6 +40,7 @@
       vim
       wget
       yazi
+      zellij
       zoxide
       zsh
     ];
