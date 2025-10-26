@@ -48,56 +48,56 @@ outer.right = 10
 
 # alt-period = 'layout tiles horizontal vertical'
 # alt-slash = 'layout tiles horizontal vertical'
-alt-comma = 'layout tiles horizontal vertical'
+cmd-comma = 'layout tiles horizontal vertical'
 
-alt-e = 'balance-sizes'
-alt-f = 'layout floating tiling'
-alt-a = 'flatten-workspace-tree'
-alt-m = 'macos-native-minimize'
-alt-r = 'reload-config'
+cmd-e = 'balance-sizes'
+cmd-f = 'layout floating tiling'
+cmd-a = 'flatten-workspace-tree'
+cmd-m = 'macos-native-minimize'
+cmd-r = 'reload-config'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
 # same as pop_os
-alt-h = 'focus left --boundaries-action wrap-around-the-workspace'
-alt-j = 'focus down --boundaries-action wrap-around-the-workspace'
-alt-k = 'focus up --boundaries-action wrap-around-the-workspace'
-alt-l = 'focus right --boundaries-action wrap-around-the-workspace'
+cmd-h = 'focus left --boundaries-action wrap-around-the-workspace'
+cmd-j = 'focus down --boundaries-action wrap-around-the-workspace'
+cmd-k = 'focus up --boundaries-action wrap-around-the-workspace'
+cmd-l = 'focus right --boundaries-action wrap-around-the-workspace'
 
 # setup for accordion
-alt-shift-h = ['join-with left', 'layout v_accordion']
-alt-shift-j = ['join-with down', 'layout h_accordion']
-alt-shift-k = ['join-with up', 'layout h_accordion']
-alt-shift-l = ['join-with right', 'layout v_accordion']
+cmd-shift-h = ['join-with left', 'layout v_accordion']
+cmd-shift-j = ['join-with down', 'layout h_accordion']
+cmd-shift-k = ['join-with up', 'layout h_accordion']
+cmd-shift-l = ['join-with right', 'layout v_accordion']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 # Move to a particular workspace
-alt-1 = 'workspace 1_Code'  # terminal
-alt-2 = 'workspace 2_Mail'  # Mail
-alt-3 = 'workspace 3_IM'    # Slack/Messages
-alt-4 = 'workspace 4_Teams' # Browser
-alt-5 = 'workspace 5_Web'   # Teams
-alt-6 = 'workspace 6'       # Docs
-alt-7 = 'workspace 7'       # misc
+cmd-1 = 'workspace 1_Code'  # terminal
+cmd-2 = 'workspace 2_Mail'  # Mail
+cmd-3 = 'workspace 3_IM'    # Slack/Messages
+cmd-4 = 'workspace 4_Teams' # Browser
+cmd-5 = 'workspace 5_Web'   # Teams
+cmd-6 = 'workspace 6'       # Docs
+cmd-7 = 'workspace 7'       # misc
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 # Move window to a particlar workspace and follow to the workspace
-alt-shift-ctrl-1 = ['move-node-to-workspace 1_Code', 'workspace 1_Code']
-alt-shift-ctrl-2 = ['move-node-to-workspace 2_Mail', 'workspace 2_Mail']
-alt-shift-ctrl-3 = ['move-node-to-workspace 3_IM', 'workspace 3_IM']
-alt-shift-ctrl-4 = ['move-node-to-workspace 4_Teams', 'workspace 4_Teams']
-alt-shift-ctrl-5 = ['move-node-to-workspace 5_Web', 'workspace 5_Web']
-alt-shift-ctrl-6 = ['move-node-to-workspace 6', 'workspace 6']
-alt-shift-ctrl-7 = ['move-node-to-workspace 7', 'workspace 7']
+cmd-shift-ctrl-1 = ['move-node-to-workspace 1_Code', 'workspace 1_Code']
+cmd-shift-ctrl-2 = ['move-node-to-workspace 2_Mail', 'workspace 2_Mail']
+cmd-shift-ctrl-3 = ['move-node-to-workspace 3_IM', 'workspace 3_IM']
+cmd-shift-ctrl-4 = ['move-node-to-workspace 4_Teams', 'workspace 4_Teams']
+cmd-shift-ctrl-5 = ['move-node-to-workspace 5_Web', 'workspace 5_Web']
+cmd-shift-ctrl-6 = ['move-node-to-workspace 6', 'workspace 6']
+cmd-shift-ctrl-7 = ['move-node-to-workspace 7', 'workspace 7']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 # Move window to a particlar workspace
-alt-shift-1 = ['move-node-to-workspace 1_Code']
-alt-shift-2 = ['move-node-to-workspace 2_Mail']
-alt-shift-3 = ['move-node-to-workspace 3_IM']
-alt-shift-4 = ['move-node-to-workspace 4_Teams']
-alt-shift-5 = ['move-node-to-workspace 5_Web']
-alt-shift-6 = ['move-node-to-workspace 6']
-alt-shift-7 = ['move-node-to-workspace 7']
+cmd-shift-1 = ['move-node-to-workspace 1_Code']
+cmd-shift-2 = ['move-node-to-workspace 2_Mail']
+cmd-shift-3 = ['move-node-to-workspace 3_IM']
+cmd-shift-4 = ['move-node-to-workspace 4_Teams']
+cmd-shift-5 = ['move-node-to-workspace 5_Web']
+cmd-shift-6 = ['move-node-to-workspace 6']
+cmd-shift-7 = ['move-node-to-workspace 7']
 # alt-shift-5 = ['move-node-to-workspace 5_Teams']
 # alt-shift-6 = ['move-node-to-workspace 6_Docs']
 # alt-shift-7 = ['move-node-to-workspace 7_Misc']
