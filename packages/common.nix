@@ -19,7 +19,6 @@
       helix
       imagemagick
       jq
-      jrnl
       jujutsu
       mosh
       neovim
