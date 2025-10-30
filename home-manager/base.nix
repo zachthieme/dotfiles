@@ -34,8 +34,8 @@ in
     ".config/doom".source = ../config/doom;
     ".config/fzf".source = ../config/fzf;
     ".config/ghostty".source = ../config/ghostty;
+    ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
-    # ".config/jrnl".source = ../config/jrnl;
     ".config/lazygit".source = ../config/lazygit;
     ".config/nvim-gpt".source = ../config/nvim-gpt;
     ".config/nvim-notes".source = ../config/nvim-notes;
@@ -44,19 +44,19 @@ in
     ".config/wezterm".source = ../config/wezterm;
     ".config/zed".source = ../config/zed;
     ".config/zsh".source = ../config/zsh;
+    ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
     # "./.ssh".source = ../config/ssh;
     # ".config/cheat".source = ../config/cheat;
     # ".config/direnv".source = ../config/direnv;
     # ".config/emacs".source = ../config/emacs;
     # ".config/gh".source = ../config/gh;
-    ".config/helix".source = ../config/helix;
+    # ".config/jrnl".source = ../config/jrnl;
     # ".config/nvim-obsidian".source = .../config/nvim-obsidian;
     # ".config/nvim-test".source = ../config/nvim-test;
     # ".config/raycast".source = ../config/raycast;
     # ".config/skhd".source = ../config/skhd;
     # ".config/spotify-player".source = ../config/spotify-player;
     # ".config/yabai".source = ../config/yabai;
-    ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
   };
 
   programs.tmux = {
