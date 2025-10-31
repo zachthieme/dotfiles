@@ -40,7 +40,7 @@ in
     ".config/nvim-gpt".source = ../config/nvim-gpt;
     ".config/nvim-notes".source = ../config/nvim-notes;
     ".config/nvim".source = ../config/nvim;
-    ".config/ohmyposh".source = ../config/ohmyposh;
+    # ".config/ohmyposh".source = ../config/ohmyposh;
     ".config/wezterm".source = ../config/wezterm;
     ".config/zed".source = ../config/zed;
     ".config/zsh".source = ../config/zsh;
@@ -59,52 +59,52 @@ in
     # ".config/yabai".source = ../config/yabai;
   };
 
-  programs.tmux = {
-    enable = true;
-    baseIndex = 1;
-    shortcut = "a";
-    aggressiveResize = true;
-    escapeTime = 0;
-    clock24 = true;
-
-    plugins = with pkgs.tmuxPlugins; [
-      better-mouse-mode
-      continuum
-      nord
-      resurrect
-      vim-tmux-navigator
-      # minimal-tmux can be passed in from the user config
-      # tmuxPlugins.catppuccin
-      # tmuxPlugins.rose-pine
-      # tmuxPlugins.sensible
-    ];
-
-    extraConfig = ''
-      set -g default-terminal "tmux-256color"
-      set -ga terminal-overrides "tmux-256color"
-      set-option -g focus-events on
-      set -g mode-keys vi
-      set -g default-command ${pkgs.zsh}/bin/zsh
-
-      set-option -g status-position top
-      set-option -g renumber-windows on
-
-      set -g @resurrect-capture-pane-contents 'on'
-      # Enable auto-save and auto-restore
-      set -g @continuum-restore 'on'
-      set -g @continuum-save-interval '15'
-
-      set -g mouse on
-
-      # easy-to-remember split pane commands
-      bind | split-window -h -c "#{pane_current_path}"
-      bind - split-window -v -c "#{pane_current_path}"
-      bind c new-window -c "#{pane_current_path}"
-
-      # set -g "arcticicestudio/nord-tmux"
-    '';
-  };
-
+  # programs.tmux = {
+  #   enable = true;
+  #   baseIndex = 1;
+  #   shortcut = "a";
+  #   aggressiveResize = true;
+  #   escapeTime = 0;
+  #   clock24 = true;
+  #
+  #   plugins = with pkgs.tmuxPlugins; [
+  #     better-mouse-mode
+  #     continuum
+  #     nord
+  #     resurrect
+  #     vim-tmux-navigator
+  #     # minimal-tmux can be passed in from the user config
+  #     # tmuxPlugins.catppuccin
+  #     # tmuxPlugins.rose-pine
+  #     # tmuxPlugins.sensible
+  #   ];
+  #
+  #   extraConfig = ''
+  #     set -g default-terminal "tmux-256color"
+  #     set -ga terminal-overrides "tmux-256color"
+  #     set-option -g focus-events on
+  #     set -g mode-keys vi
+  #     set -g default-command ${pkgs.zsh}/bin/zsh
+  #
+  #     set-option -g status-position top
+  #     set-option -g renumber-windows on
+  #
+  #     set -g @resurrect-capture-pane-contents 'on'
+  #     # Enable auto-save and auto-restore
+  #     set -g @continuum-restore 'on'
+  #     set -g @continuum-save-interval '15'
+  #
+  #     set -g mouse on
+  #
+  #     # easy-to-remember split pane commands
+  #     bind | split-window -h -c "#{pane_current_path}"
+  #     bind - split-window -v -c "#{pane_current_path}"
+  #     bind c new-window -c "#{pane_current_path}"
+  #
+  #     # set -g "arcticicestudio/nord-tmux"
+  #   '';
+  # };
+  #
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
