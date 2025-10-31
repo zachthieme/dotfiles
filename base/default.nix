@@ -36,7 +36,7 @@ in
   config = {
     # Common system packages for all machines
     environment.systemPackages = packageProfiles.profiles.basePackages;
-
+    programs.fish.enable = true;
     
     # Set primary user based on configuration
     system.primaryUser = config.local.username;
