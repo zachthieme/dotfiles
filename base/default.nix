@@ -47,11 +47,24 @@ in
       shell = pkgs.fish;
     };
 
+# zoxide init fish | source
     home-manager.users.${config.local.username}.programs.fish = {
       enable = true;
       interactiveShellInit = ''
         set -g fish_greeting
         fish_add_path /opt/homebrew/bin
+	fish_vi_key_bindings
+	fish_add_path $HOME/.zig
+
+	# All made by Zach
+	abbr -a j jrnl
+	abbr -a jl jrnl --format short
+	abbr -a jf jrnl @fire
+	abbr -a hx helix
+	abbr -a vi nvim
+
+	set -g fish_term24bit 1
+	set -gx COLORTERM truecolor
       '';
       plugins = [
         {

@@ -27,6 +27,9 @@ in
   # This will be imported by user-specific configurations
   # These paths are relative to the root dotfiles directory
   home.file = {
+    ".config/ghostty/config".text = ''
+      command = ${pkgs.fish}/bin/fish
+    '';
     ".config/aerospace".source = ../config/aerospace;
  #   ".config/bat".source = ../config/bat;
     ".config/borders".source = ../config/borders;
@@ -42,6 +45,7 @@ in
     # ".config/ohmyposh".source = ../config/ohmyposh;
     ".config/wezterm".source = ../config/wezterm;
     ".config/zed".source = ../config/zed;
+    ".config/zellij".source = ../config/zellij;
     ".config/zsh".source = ../config/zsh;
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
     # "./.ssh".source = ../config/ssh;
