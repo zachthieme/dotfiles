@@ -6,6 +6,7 @@
       btop
       carapace
       curl
+      devbox
       emacs
       exiftool
       eza

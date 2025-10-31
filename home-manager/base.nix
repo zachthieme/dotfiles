@@ -26,18 +26,19 @@ in
   # This will be imported by user-specific configurations
   # These paths are relative to the root dotfiles directory
   home.file = {
-    ".config/ghostty/config".text = ''
-      command = ${pkgs.fish}/bin/fish
-    '';
     ".config/aerospace".source = ../config/aerospace;
     ".config/borders".source = ../config/borders;
+    ".config/btop".source = ../config/btop;
     ".config/fzf".source = ../config/fzf;
+    ".config/ghostty/config".text = ''
+      command = ${pkgs.fish}/bin/fish
+      keybind = global:ctrl+grave_accent=toggle_quick_terminal
+      quick-terminal-animation-duration = 0
+    '';
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
     ".config/lazygit".source = ../config/lazygit;
-    # ".config/nvim-gpt".source = ../config/nvim-gpt;
-    # ".config/nvim-notes".source = ../config/nvim-notes;
-    # ".config/nvim".source = ../config/nvim;
+    ".config/nvim".source = ../config/nvim;
     ".config/wezterm".source = ../config/wezterm;
     ".config/zed".source = ../config/zed;
     ".config/zellij".source = ../config/zellij;
@@ -45,13 +46,14 @@ in
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
     # "./.ssh".source = ../config/ssh;
     # ".config/bat".source = ../config/bat;
-    ".config/btop".source = ../config/btop;
     # ".config/cheat".source = ../config/cheat;
     # ".config/direnv".source = ../config/direnv;
     # ".config/doom".source = ../config/doom;
     # ".config/emacs".source = ../config/emacs;
     # ".config/gh".source = ../config/gh;
     # ".config/jrnl".source = ../config/jrnl;
+    # ".config/nvim-gpt".source = ../config/nvim-gpt;
+    # ".config/nvim-notes".source = ../config/nvim-notes;
     # ".config/nvim-obsidian".source = .../config/nvim-obsidian;
     # ".config/nvim-test".source = ../config/nvim-test;
     # ".config/ohmyposh".source = ../config/ohmyposh;
