@@ -14,6 +14,7 @@
 
   homebrew.casks = [
     "brave-browser"
+    "codex"
   ];
 
   system.defaults = {
