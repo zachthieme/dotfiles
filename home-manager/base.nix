@@ -35,9 +35,9 @@ in
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
     ".config/lazygit".source = ../config/lazygit;
-    ".config/nvim-gpt".source = ../config/nvim-gpt;
-    ".config/nvim-notes".source = ../config/nvim-notes;
-    ".config/nvim".source = ../config/nvim;
+    # ".config/nvim-gpt".source = ../config/nvim-gpt;
+    # ".config/nvim-notes".source = ../config/nvim-notes;
+    # ".config/nvim".source = ../config/nvim;
     ".config/wezterm".source = ../config/wezterm;
     ".config/zed".source = ../config/zed;
     ".config/zellij".source = ../config/zellij;
@@ -45,7 +45,7 @@ in
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
     # "./.ssh".source = ../config/ssh;
     # ".config/bat".source = ../config/bat;
-    # ".config/btop".source = ../config/btop;
+    ".config/btop".source = ../config/btop;
     # ".config/cheat".source = ../config/cheat;
     # ".config/direnv".source = ../config/direnv;
     # ".config/doom".source = ../config/doom;

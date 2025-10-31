@@ -1,4 +1,5 @@
-theme = "ayu_dark"
+# theme = "ayu_dark"
+theme = "everforest_dark"
 
 [editor]
 auto-format = true
@@ -29,7 +30,7 @@ display-messages = true
 [editor.soft-wrap]
 enable = true
 max-indent-retain = 40
-max-wrap = 10 # increase value to reduce forced mid-word wrapping
+max-wrap = 10          # increase value to reduce forced mid-word wrapping
 
 [editor.statusline]
 mode.insert = "INSERT"
@@ -55,7 +56,7 @@ L = ":buffer-next"
 [keys.normal.g]
 q = ":bc"
 Q = ":bc!"
-R = ":config-reload" 
+R = ":config-reload"
 
 [keys.normal.y]
-y = ["extend_to_line_bounds","yank"]
+y = ["extend_to_line_bounds", "yank"]

@@ -60,7 +60,6 @@ in
         abbr -a j jrnl
         abbr -a jl jrnl --format short
         abbr -a jf jrnl @fire
-        abbr -a hx helix
         abbr -a vi nvim
 
         set -g fish_term24bit 1
