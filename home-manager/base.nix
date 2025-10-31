@@ -28,10 +28,10 @@ in
   # These paths are relative to the root dotfiles directory
   home.file = {
     ".config/aerospace".source = ../config/aerospace;
-    ".config/bat".source = ../config/bat;
+ #   ".config/bat".source = ../config/bat;
     ".config/borders".source = ../config/borders;
     ".config/btop".source = ../config/btop;
-    ".config/doom".source = ../config/doom;
+#    ".config/doom".source = ../config/doom;
     ".config/fzf".source = ../config/fzf;
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
