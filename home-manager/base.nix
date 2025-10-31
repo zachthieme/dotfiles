@@ -33,7 +33,6 @@ in
     ".config/btop".source = ../config/btop;
     ".config/doom".source = ../config/doom;
     ".config/fzf".source = ../config/fzf;
-    ".config/ghostty".source = ../config/ghostty;
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
     ".config/lazygit".source = ../config/lazygit;
@@ -105,19 +104,6 @@ in
   #   '';
   # };
   #
-  programs.fish = {
-    enable = true;
-    interactiveShellInit = ''
-      set -g fish_greeting
-    '';
-    plugins = [
-      {
-        name = "pure";
-        src = pkgs.fishPlugins.pure.src;
-      }
-    ];
-  };
-
   # programs.zsh = {
   #   enable = true;
   #   autosuggestion.enable = true;

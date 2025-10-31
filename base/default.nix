@@ -44,7 +44,21 @@ in
     # Define user based on configuration
     users.users.${config.local.username} = {
       home = "/Users/${config.local.username}";
-      shell = pkgs.zsh;
+      shell = pkgs.fish;
+    };
+
+    home-manager.users.${config.local.username}.programs.fish = {
+      enable = true;
+      interactiveShellInit = ''
+        set -g fish_greeting
+        fish_add_path /opt/homebrew/bin
+      '';
+      plugins = [
+        {
+          name = "pure";
+          src = pkgs.fishPlugins.pure.src;
+        }
+      ];
     };
 
     # Set networking hostname
