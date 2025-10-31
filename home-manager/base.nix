@@ -105,6 +105,19 @@ in
     '';
   };
 
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = ''
+      set -g fish_greeting
+    '';
+    plugins = [
+      {
+        name = "pure";
+        src = pkgs.fishPlugins.pure.src;
+      }
+    ];
+  };
+
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
@@ -192,6 +205,11 @@ in
 
        # needed instead of fzf.enableZshIntegration = true so zsh-vi-mode and fzf do not conflict
        zvm_after_init_commands+=(eval "$(fzf --zsh)")
+
+       if [[ $- == *i* ]] && [[ -z "${ZSH_SHOULD_SKIP_FISH-}" ]] && command -v fish >/dev/null 2>&1; then
+         export ZSH_SHOULD_SKIP_FISH=1
+         exec fish
+       fi
     '';
   };
 
@@ -203,16 +221,19 @@ in
       "--height 40%"
       "--border"
     ];
+    enableFishIntegration = true;
   };
 
   programs.zoxide = {
     enable = true;
     enableZshIntegration = true;
+    enableFishIntegration = true;
   };
 
   programs.direnv = {
     enable = true;
     enableZshIntegration = true;
+    enableFishIntegration = true;
     nix-direnv.enable = true;
   };
 
