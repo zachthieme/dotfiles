@@ -1,0 +1,3 @@
+# Ensure Ghostty launches fish for all environments managed by Home Manager
+command = fish
+command-arg = --login
