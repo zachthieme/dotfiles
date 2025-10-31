@@ -118,101 +118,101 @@ in
     ];
   };
 
-  programs.zsh = {
-    enable = true;
-    autosuggestion.enable = true;
-    syntaxHighlighting.enable = true;
-    enableCompletion = true;
-    oh-my-zsh.enable = false;
-    completionInit = ''
-      if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
-          compinit
-      else
-          compinit -C
-      fi
-    '';
-
-    shellAliases = {
-      c = "clear";
-      cat = "bat";
-      emacs = "emacs -nw";
-      ft = ''fzf-tmux --height 70% -- fzf --preview="cat --color=always {}" --preview-window=right:50% --border'';
-      # gs = "git status";
-      j = "z";
-      ll = "eza -lah";
-      mkdir = "mkdir -p";
-      t = ''tldr --list | fzf --preview "tldr {1} --color=always" --preview-window=right,70% | xargs tldr'';
-      # tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
-      v = "/usr/bin/vi";
-      vi = "nvim";
-      notes = ''NVIM_APPNAME=$(basename nvim-notes) nvim'';
-      norg = ''NVIM_APPNAME=$(basename nvim-norg) nvim'';
-    };
-
-    initContent = ''
-      #make sure brew is on the path for M1
-      if [[ $(uname -m) == 'arm64' ]]; then
-         eval "$(/opt/homebrew/bin/brew shellenv)"
-      fi
-      source ~/.config/zsh/functions
-
-       eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/zen.toml)"
-
-       source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
-
-       # Fish-like prompt
-       autoload -Uz promptinit; promptinit
-
-       # fzf keybindings
-       [ -f ${pkgs.fzf}/share/fzf/key-bindings.zsh ] && source ${pkgs.fzf}/share/fzf/key-bindings.zsh
-       [ -f ${pkgs.fzf}/share/fzf/completion.zsh ] && source ${pkgs.fzf}/share/fzf/completion.zsh
-
-       # Ensure fzf widgets are loaded
-       autoload -Uz fzf-file-widget fzf-cd-widget fzf-history-widget
-       zle -N fzf-file-widget
-       zle -N fzf-history-widget
-
-       # Manually bind if not already present
-       bindkey -M viins '^R' fzf-history-widget
-       bindkey -M viins '^T' fzf-file-widget
-       bindkey -M vicmd '^R' fzf-history-widget
-       bindkey -M vicmd '^T' fzf-file-widget
-
-       # used to load carapace
-       export CARAPACE_BRIDGES='zsh,bash,inshellisense' # optional
-       zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
-       source <(carapace _carapace)
-
-      # FZF location mode (Ctrl-L) -------------------------------------
-       function _fzf_loc_widget() {
-         local dest
-         dest=$(
-           zoxide query -ls |   
-             awk '{$1=""; sub(/^ +/,""); print}' |
-             fzf --tac                      \
-                 --prompt='dir> '           \
-                 --height=40% --reverse     \
-                 --preview 'exa -aT --level=2 {} 2>/dev/null | head -100'
-         ) || return
-
-         [[ -n $dest ]] && builtin cd "$dest"
-         zle reset-prompt      
-       }
-
-       zle -N fzf-loc _fzf_loc_widget
-       bindkey -M viins '^L' fzf-loc
-       bindkey -M vicmd '^L' fzf-loc
-
-       # needed instead of fzf.enableZshIntegration = true so zsh-vi-mode and fzf do not conflict
-       zvm_after_init_commands+=(eval "$(fzf --zsh)")
-
-       if [[ $- == *i* ]] && [[ -z "${ZSH_SHOULD_SKIP_FISH-}" ]] && command -v fish >/dev/null 2>&1; then
-         export ZSH_SHOULD_SKIP_FISH=1
-         exec fish
-       fi
-    '';
-  };
-
+  # programs.zsh = {
+  #   enable = true;
+  #   autosuggestion.enable = true;
+  #   syntaxHighlighting.enable = true;
+  #   enableCompletion = true;
+  #   oh-my-zsh.enable = false;
+  #   completionInit = ''
+  #     if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
+  #         compinit
+  #     else
+  #         compinit -C
+  #     fi
+  #   '';
+  #
+  #   shellAliases = {
+  #     c = "clear";
+  #     cat = "bat";
+  #     emacs = "emacs -nw";
+  #     ft = ''fzf-tmux --height 70% -- fzf --preview="cat --color=always {}" --preview-window=right:50% --border'';
+  #     # gs = "git status";
+  #     j = "z";
+  #     ll = "eza -lah";
+  #     mkdir = "mkdir -p";
+  #     t = ''tldr --list | fzf --preview "tldr {1} --color=always" --preview-window=right,70% | xargs tldr'';
+  #     # tmux = "tmux -u -f ~/.config/tmux/tmux.conf";
+  #     v = "/usr/bin/vi";
+  #     vi = "nvim";
+  #     notes = ''NVIM_APPNAME=$(basename nvim-notes) nvim'';
+  #     norg = ''NVIM_APPNAME=$(basename nvim-norg) nvim'';
+  #   };
+  #
+  #   initContent = ''
+  #     #make sure brew is on the path for M1
+  #     if [[ $(uname -m) == 'arm64' ]]; then
+  #        eval "$(/opt/homebrew/bin/brew shellenv)"
+  #     fi
+  #     source ~/.config/zsh/functions
+  #
+  #      eval "$(oh-my-posh init zsh --config ~/.config/ohmyposh/zen.toml)"
+  #
+  #      source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+  #
+  #      # Fish-like prompt
+  #      autoload -Uz promptinit; promptinit
+  #
+  #      # fzf keybindings
+  #      [ -f ${pkgs.fzf}/share/fzf/key-bindings.zsh ] && source ${pkgs.fzf}/share/fzf/key-bindings.zsh
+  #      [ -f ${pkgs.fzf}/share/fzf/completion.zsh ] && source ${pkgs.fzf}/share/fzf/completion.zsh
+  #
+  #      # Ensure fzf widgets are loaded
+  #      autoload -Uz fzf-file-widget fzf-cd-widget fzf-history-widget
+  #      zle -N fzf-file-widget
+  #      zle -N fzf-history-widget
+  #
+  #      # Manually bind if not already present
+  #      bindkey -M viins '^R' fzf-history-widget
+  #      bindkey -M viins '^T' fzf-file-widget
+  #      bindkey -M vicmd '^R' fzf-history-widget
+  #      bindkey -M vicmd '^T' fzf-file-widget
+  #
+  #      # used to load carapace
+  #      export CARAPACE_BRIDGES='zsh,bash,inshellisense' # optional
+  #      zstyle ':completion:*' format $'\e[2;37mCompleting %d\e[m'
+  #      source <(carapace _carapace)
+  #
+  #     # FZF location mode (Ctrl-L) -------------------------------------
+  #      function _fzf_loc_widget() {
+  #        local dest
+  #        dest=$(
+  #          zoxide query -ls |
+  #            awk '{$1=""; sub(/^ +/,""); print}' |
+  #            fzf --tac                      \
+  #                --prompt='dir> '           \
+  #                --height=40% --reverse     \
+  #                --preview 'exa -aT --level=2 {} 2>/dev/null | head -100'
+  #        ) || return
+  #
+  #        [[ -n $dest ]] && builtin cd "$dest"
+  #        zle reset-prompt
+  #      }
+  #
+  #      zle -N fzf-loc _fzf_loc_widget
+  #      bindkey -M viins '^L' fzf-loc
+  #      bindkey -M vicmd '^L' fzf-loc
+  #
+  #      # needed instead of fzf.enableZshIntegration = true so zsh-vi-mode and fzf do not conflict
+  #      zvm_after_init_commands+=(eval "$(fzf --zsh)")
+  #
+  #      if [[ $- == *i* ]] && [[ -z "${ZSH_SHOULD_SKIP_FISH-}" ]] && command -v fish >/dev/null 2>&1; then
+  #        export ZSH_SHOULD_SKIP_FISH=1
+  #        exec fish
+  #      fi
+  #   '';
+  # };
+  #
   programs.fzf = {
     enable = true;
     # enableZshIntegration = true;
@@ -226,13 +226,13 @@ in
 
   programs.zoxide = {
     enable = true;
-    enableZshIntegration = true;
+    # enableZshIntegration = true;
     enableFishIntegration = true;
   };
 
   programs.direnv = {
     enable = true;
-    enableZshIntegration = true;
+    # enableZshIntegration = true;
     enableFishIntegration = true;
     nix-direnv.enable = true;
   };
@@ -240,9 +240,9 @@ in
   home.packages =
     packageProfiles.profiles.basePackages
     ++ (with pkgs; [
-      oh-my-posh
-      zsh-autosuggestions
-      zsh-syntax-highlighting
-      zsh-vi-mode
+      # oh-my-posh
+      # zsh-autosuggestions
+      # zsh-syntax-highlighting
+      # zsh-vi-mode
     ]);
 }
