@@ -25,6 +25,18 @@ let
       isWork = false;
       packages = [ ];
     };
+    "omarchy" = {
+      system = "x86_64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
+    "srv1089402" = {
+      system = "x86_64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
   };
 
   isDarwin = host: builtins.match ".*-darwin" host.system != null;
