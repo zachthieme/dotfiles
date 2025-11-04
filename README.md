@@ -9,15 +9,19 @@ Automated dotfiles for multiple macOS and Linux hosts, powered by Nix flakes. Th
 
 ## Repository Layout
 ```
-base/                # Shared nix-darwin modules
+base/                # Shared system configuration for nix-darwin/NixOS
 config/              # Dotfiles grouped by application
 home-manager/        # Home Manager base modules
-modules/             # Host definitions and builders used by flake.nix
+modules/             # Host definitions, builders, and shared helpers
+  lib.nix            # Shared helper functions (path resolution, OS detection)
+  hosts/             # Host definitions and detection
+  darwin/            # macOS configuration builder
+  home-manager/      # Linux Home Manager configuration builder
 overlays/            # System + user overlays
-  arch/              # Architecture-specific settings
+  arch/              # Architecture-specific settings (ARM64/x86_64)
   context/
-    home-manager/    # Context-specific Home Manager modules
-    system/          # Context-specific system modules
+    home-manager/    # Context-specific Home Manager modules (home/work)
+    system/          # Context-specific system modules (home/work)
   os/                # OS-level tweaks (e.g., macOS defaults, Homebrew)
 packages/            # Named package profiles
 flake.nix            # Entry point wiring modules together
@@ -38,7 +42,7 @@ install.sh           # Bootstrap script for new machines
   macOS: `darwin-rebuild switch --flake .#<hostname>`  
   Linux: `home-manager switch --flake .#srv722852`
 - **Add a new host:** Extend `modules/hosts/definitions.nix` with a new entry, setting `system`, `user`, `isWork`, and optional `packages`. Pick the host key to match the machine’s hostname.
-- **Add software for one machine:** Add a package to that host’s `packages` list in `modules/hosts/definitions.nix`. Use `pkgs.homebrewPackages.<formula>` when the app is a Homebrew formula.
+- **Add software for one machine:** Add a package to that host's `packages` list in `modules/hosts/definitions.nix`. For Homebrew casks/formulas on macOS, add them to the appropriate context module in `overlays/context/system/` or directly to `overlays/os/darwin.nix` for all macOS machines.
 - **Share dotfiles or app configs:** Place files under `config/<tool>/`; wire them in via `home-manager/base.nix` (shared) or the context modules in `overlays/context/home-manager/`.
 - **Create new overlays:** Add a module under `overlays/<dimension>/` and wire it into the appropriate builder in `modules/darwin/mk-config.nix` or `modules/home-manager/mk-config.nix`.
 

@@ -1,10 +1,8 @@
 # Home-specific system configuration
+# This module is loaded for non-work machines (isWork = false in definitions.nix)
 { pkgs, lib, ... }:
 
 {
-  # Mark as home context (not work)
-  local.isWork = false;
-
   # Home-specific packages
   environment.systemPackages = with pkgs; [
   ];

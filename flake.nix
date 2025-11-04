@@ -25,11 +25,14 @@
     }:
     let
       lib = nixpkgs.lib;
+      helpers = import ./modules/lib.nix { inherit lib; };
       hostData = import ./modules/hosts/definitions.nix { inherit lib; };
       detectHostData = import ./modules/hosts/detect.nix { inherit (hostData) hosts; };
-      mkDarwinConfig = import ./modules/darwin/mk-config.nix { inherit nix-darwin home-manager; };
+      mkDarwinConfig = import ./modules/darwin/mk-config.nix {
+        inherit nix-darwin home-manager helpers;
+      };
       mkHomeConfig = import ./modules/home-manager/mk-config.nix {
-        inherit home-manager nixpkgs;
+        inherit home-manager nixpkgs helpers;
       };
       inherit (hostData) hosts darwinHosts linuxHosts;
       defaultHost = detectHostData.defaultHost;

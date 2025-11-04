@@ -1,4 +1,5 @@
-# Base configuration shared across all machines
+# Base system configuration for nix-darwin and NixOS machines
+# Note: Linux Home Manager-only configs use home-manager/base.nix instead
 {
   pkgs,
   lib,
@@ -43,7 +44,11 @@ in
 
     # Define user based on configuration
     users.users.${config.local.username} = {
-      home = "/Users/${config.local.username}";
+      home =
+        if pkgs.stdenv.isDarwin then
+          "/Users/${config.local.username}"
+        else
+          "/home/${config.local.username}";
       shell = pkgs.fish;
     };
 
@@ -54,7 +59,7 @@ in
     system.activationScripts.postActivation.text = ''
       echo "${
         if config.local.isWork then "Work" else "Home"
-      } MacBook configuration for ${config.local.hostname} activated"
+      } system configuration for ${config.local.hostname} activated"
     '';
 
     # Common system settings

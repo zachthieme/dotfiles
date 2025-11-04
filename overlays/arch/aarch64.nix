@@ -1,15 +1,15 @@
-# M-series specific configuration
+# ARM64 architecture-specific configuration
+# Used for: M-series Macs (aarch64-darwin), Raspberry Pi (aarch64-linux)
+# The hostPlatform is set from the system attribute in definitions.nix
 { pkgs, lib, ... }:
 
 {
-  # Set platform for ARM (M-series) Mac
-  nixpkgs.hostPlatform = "aarch64-darwin";
-  
-  # M-series specific packages
+  # ARM-specific packages
+  # Example: packages that only make sense on ARM or have ARM-optimized versions
   environment.systemPackages = with pkgs; [
-    # ARM-specific packages would go here
+    # Add ARM-specific packages here when needed
   ];
 
-  # For ARM-specific homebrew casks, use:
+  # ARM-specific homebrew casks (Darwin only)
   # homebrew.casks = [ ... ];
 }

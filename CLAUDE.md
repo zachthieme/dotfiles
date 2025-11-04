@@ -45,10 +45,22 @@ alejandra .  # Alternative formatter
 ### Flake Structure
 
 The `flake.nix` orchestrates everything:
-1. Imports host metadata from `modules/hosts/definitions.nix`
-2. Splits hosts into `darwinHosts` and `linuxHosts` based on system attribute
-3. Applies appropriate builder: `mkDarwinConfig` (macOS) or `mkHomeConfig` (Linux)
-4. Exports `darwinConfigurations` and `homeConfigurations`
+1. Imports shared helper functions from `modules/lib.nix`
+2. Imports host metadata from `modules/hosts/definitions.nix`
+3. Splits hosts into `darwinHosts` and `linuxHosts` based on system attribute
+4. Applies appropriate builder: `mkDarwinConfig` (macOS) or `mkHomeConfig` (Linux)
+5. Passes `helpers` to both builders for shared utilities
+6. Exports `darwinConfigurations` and `homeConfigurations`
+
+### Shared Helper Functions
+
+`modules/lib.nix` provides utilities used across the configuration:
+- **`getHomeDirectory user system`**: Returns the appropriate home directory path (`/Users/` for Darwin, `/home/` for Linux)
+- **`selectContextModule isWork homeModule workModule`**: Selects the appropriate context module based on the `isWork` flag
+- **`isDarwin system`**: Boolean check if system is Darwin/macOS
+- **`isLinux system`**: Boolean check if system is Linux
+
+These helpers eliminate code duplication and provide a single source of truth for OS-specific logic.
 
 ### Layer Composition
 
@@ -66,11 +78,12 @@ The `flake.nix` orchestrates everything:
 
 ### Context Modules
 
-Context modules (`overlays/context/`) determine home vs work environments:
-- System context: `overlays/context/system/home.nix` and `work.nix`
-- User context: `overlays/context/home-manager/home.nix` and `work.nix`
+Context modules (`overlays/context/`) determine home vs work environments. The appropriate module is selected by the builder using `helpers.selectContextModule` based on the `isWork` flag from `definitions.nix`.
 
-Both home-manager context modules import `home-manager/base.nix`, which contains shared user settings (zsh, tmux, fzf, dotfile symlinks). This base module is a Home Manager module, so it receives `config.home.username` and `config.home.homeDirectory` from the host wiring.
+- **System context**: `overlays/context/system/home.nix` and `work.nix` - These modules do NOT set `local.isWork` (it's already set from definitions.nix). They only contain context-specific system packages and settings.
+- **User context**: `overlays/context/home-manager/home.nix` and `work.nix` - User-level context differences.
+
+Both home-manager context modules import `home-manager/base.nix`, which contains shared user settings (zsh, tmux, fzf, dotfile symlinks). This base module is a Home Manager module, so it receives `config.home.username` and `config.home.homeDirectory` from the host wiring (set via `helpers.getHomeDirectory`).
 
 ### Host Definitions
 
@@ -106,15 +119,19 @@ home.file = {
 
 ## Key Principles
 
-1. **Single Source of Truth**: Host facts (username, system, isWork) are declared only in `modules/hosts/definitions.nix`. Downstream modules consume them via `config.local.username` or `config.home.username`.
+1. **Single Source of Truth**: Host facts (username, system, isWork) are declared only in `modules/hosts/definitions.nix`. Downstream modules consume them via `config.local.username` or `config.home.username`. Never re-declare these values in overlay modules.
 
-2. **Layer Separation**: Keep shared logic in `base/` and deltas in `overlays/context/`. Avoid repeating base settings in context modules.
+2. **No Duplication**: Use shared helper functions from `modules/lib.nix` for any logic that appears in multiple places. OS detection, path resolution, and module selection should use helpers rather than inline logic.
 
-3. **Host-Specific Packages**: Prefer adding packages to a host's `packages` list in `definitions.nix` over adding conditionals inside modules.
+3. **Layer Separation**: Keep shared logic in `base/` and deltas in `overlays/context/`. Avoid repeating base settings in context modules.
 
-4. **Idempotent Modules**: Wrap side effects in `lib.mkIf` guards so they only activate on intended systems.
+4. **Host-Specific Packages**: Prefer adding packages to a host's `packages` list in `definitions.nix` over adding conditionals inside modules.
 
-5. **Home Manager Integration**: On macOS, Home Manager runs as a nix-darwin module. On Linux, it's standalone. Both paths converge on the same context modules.
+5. **Idempotent Modules**: Wrap side effects in `lib.mkIf` guards so they only activate on intended systems.
+
+6. **Home Manager Integration**: On macOS, Home Manager runs as a nix-darwin module. On Linux, it's standalone. Both paths converge on the same context modules.
+
+7. **OS-Agnostic Base**: The `base/default.nix` module uses `pkgs.stdenv.isDarwin` for any platform-specific logic, making it compatible with both Darwin and future NixOS/Linux system configurations.
 
 ## Adding New Hosts
 
@@ -136,7 +153,7 @@ home.file = {
 
 **For one host**: Add to that host's `packages` list in `definitions.nix`
 
-**Homebrew formulas** (macOS only): Use `pkgs.homebrewPackages.<formula>` in host packages, or add directly to `overlays/os/darwin.nix` for all macOS machines
+**Homebrew casks/formulas** (macOS only): Add to the appropriate context module in `overlays/context/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `overlays/os/darwin.nix` for all macOS machines
 
 ## Common Patterns
 
@@ -157,9 +174,51 @@ lib.mkIf config.local.isWork {
 }
 ```
 
+**Use helper functions in builders** (when creating new builders or modifying existing ones):
+```nix
+{ helpers, ... }:  # Accept helpers as parameter
+# ...
+let
+  homeDir = helpers.getHomeDirectory user system;
+  contextModule = helpers.selectContextModule isWork homeModule workModule;
+in
+# ...
+```
+
+**OS detection in modules** (use standard library functions):
+```nix
+lib.mkIf pkgs.stdenv.isDarwin {
+  # Darwin-specific settings
+}
+
+lib.mkIf pkgs.stdenv.isLinux {
+  # Linux-specific settings
+}
+```
+
 **Add dotfiles for a new tool**:
 1. Create `config/<tool>/` directory
 2. Add symlink in `home-manager/base.nix` or context module:
    ```nix
    home.file.".config/<tool>".source = ../config/<tool>;
    ```
+
+## Recent Refactorings
+
+### 2025-11-04: Code Deduplication and Helper Library
+
+**Motivation**: Eliminate duplication, establish single source of truth, prepare for multi-OS support (Ubuntu, Arch, Raspbian).
+
+**Changes**:
+1. **Created `modules/lib.nix`**: Shared helper functions for path resolution, OS detection, and module selection
+2. **Eliminated home directory path duplication**: Removed identical logic from both `darwin/mk-config.nix` and `home-manager/mk-config.nix`, replaced with `helpers.getHomeDirectory`
+3. **Standardized context module selection**: Replaced repeated if-then-else with `helpers.selectContextModule`
+4. **Removed redundant isWork assignments**: Context system modules no longer re-set `local.isWork` since it's already defined in `definitions.nix`
+5. **Made base module OS-agnostic**: Updated `base/default.nix` to use `pkgs.stdenv.isDarwin` for conditional paths, removed "MacBook" reference
+6. **Simplified architecture overlays**: Removed redundant `nixpkgs.hostPlatform` settings (already handled by system attribute), clarified purpose for future ARM-specific (Raspberry Pi) or x86-specific packages
+
+**Impact**:
+- Zero code duplication for OS detection and path resolution
+- Single source of truth for all host metadata
+- Easier to add support for new Linux distributions
+- More maintainable and consistent codebase

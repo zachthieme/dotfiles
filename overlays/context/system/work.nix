@@ -1,10 +1,8 @@
 # Work-specific system configuration
+# This module is loaded for work machines (isWork = true in definitions.nix)
 { pkgs, lib, ... }:
 
 {
-  # Mark as work context
-  local.isWork = true;
-
   # Work-specific packages
   environment.systemPackages = with pkgs; [
   ];
