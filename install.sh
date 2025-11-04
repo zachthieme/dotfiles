@@ -10,15 +10,36 @@ HOSTNAME=$(hostname)
 ARCHITECTURE=$(uname -m)
 OS=$(uname -s)
 
-if [[ "$OS" == "Darwin" ]]; then
-  # Determine configuration name for macOS
-  if [[ "$HOSTNAME" == "zthieme"* ]]; then
-    CONFIG_NAME="zthieme34911"
-  elif [[ "$ARCHITECTURE" == "arm64" ]]; then
-    CONFIG_NAME="cortex"
-  else
-    CONFIG_NAME="malv2"
+# Helper function to check if hostname exists in definitions.nix
+check_hostname_exists() {
+  local hostname=$1
+  if ! nix eval --raw --impure --expr "
+    let
+      flake = builtins.getFlake \"$SCRIPT_DIR\";
+      hosts = flake.outputs.hosts or {};
+    in
+      if builtins.hasAttr \"$hostname\" hosts
+      then \"true\"
+      else \"false\"
+  " 2>/dev/null | grep -q "true"; then
+    echo "Error: Hostname '$hostname' not found in modules/hosts/definitions.nix"
+    echo ""
+    echo "Available hosts:"
+    nix eval --json --impure --expr "
+      let
+        flake = builtins.getFlake \"$SCRIPT_DIR\";
+      in
+        builtins.attrNames (flake.outputs.hosts or {})
+    " 2>/dev/null | grep -oP '(?<=")[\w-]+(?=")' | sed 's/^/  - /'
+    echo ""
+    echo "Please add your hostname to modules/hosts/definitions.nix or use one of the above."
+    exit 1
   fi
+}
+
+if [[ "$OS" == "Darwin" ]]; then
+  # Use actual hostname as configuration name
+  CONFIG_NAME="$HOSTNAME"
 
   # Export for nix detection
   export HOSTNAME
@@ -30,6 +51,9 @@ if [[ "$OS" == "Darwin" ]]; then
   echo "  Architecture: $ARCHITECTURE"
   echo "  System: $NIX_SYSTEM"
   echo "  Configuration: $CONFIG_NAME"
+
+  # Check if hostname exists in definitions.nix
+  check_hostname_exists "$CONFIG_NAME"
 
   # Create screenshots directory if it doesn't exist
   mkdir -p ~/Pictures/screenshots/
@@ -47,9 +71,9 @@ if [[ "$OS" == "Darwin" ]]; then
 
 else
   # Linux setup using Home Manager
-  CONFIG_NAME="srv722852"
+  CONFIG_NAME="$HOSTNAME"
   export HOSTNAME
-  export NIX_SYSTEM="x86_64-linux"
+  export NIX_SYSTEM=$([ "$ARCHITECTURE" == "aarch64" ] && echo "aarch64-linux" || echo "x86_64-linux")
 
   echo "=== Dotfiles Installation ==="
   echo "Detected:"
@@ -57,6 +81,9 @@ else
   echo "  Architecture: $ARCHITECTURE"
   echo "  System: $NIX_SYSTEM"
   echo "  Configuration: $CONFIG_NAME"
+
+  # Check if hostname exists in definitions.nix
+  check_hostname_exists "$CONFIG_NAME"
 
   mkdir -p ~/Pictures/screenshots/
 

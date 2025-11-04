@@ -37,6 +37,9 @@
       linuxConfigs = builtins.mapAttrs mkHomeConfig linuxHosts;
     in
     {
+      # Expose hosts for validation in install.sh
+      inherit hosts;
+
       darwinConfigurations =
         darwinConfigs
         // (
