@@ -33,7 +33,6 @@
       python312Packages.pdf2docx
       ripgrep
       rustup
-      tmux
       tree
       typst
       uv

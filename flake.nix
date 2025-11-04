@@ -13,12 +13,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # Optional flake inputs
-    minimal-tmux = {
-      url = "github:niksingh710/minimal-tmux-status";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -27,16 +21,15 @@
       nixpkgs,
       nix-darwin,
       home-manager,
-      minimal-tmux,
       ...
     }:
     let
       lib = nixpkgs.lib;
       hostData = import ./modules/hosts/definitions.nix { inherit lib; };
       detectHostData = import ./modules/hosts/detect.nix { inherit (hostData) hosts; };
-      mkDarwinConfig = import ./modules/darwin/mk-config.nix { inherit nix-darwin home-manager minimal-tmux; };
+      mkDarwinConfig = import ./modules/darwin/mk-config.nix { inherit nix-darwin home-manager; };
       mkHomeConfig = import ./modules/home-manager/mk-config.nix {
-        inherit home-manager minimal-tmux nixpkgs;
+        inherit home-manager nixpkgs;
       };
       inherit (hostData) hosts darwinHosts linuxHosts;
       defaultHost = detectHostData.defaultHost;

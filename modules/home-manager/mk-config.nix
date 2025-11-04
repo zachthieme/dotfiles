@@ -1,4 +1,4 @@
-{ home-manager, minimal-tmux, nixpkgs }:
+{ home-manager, nixpkgs }:
 hostname:
 { system, user, isWork, packages ? [ ], ... }:
 let
@@ -22,5 +22,4 @@ home-manager.lib.homeManagerConfiguration {
       home.packages = packages;
     }
   ];
-  extraSpecialArgs = { inherit minimal-tmux; };
 }
