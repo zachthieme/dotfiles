@@ -12,9 +12,9 @@
 
   # Install Claude Code CLI on home machines only
   home.activation.installClaudeCode = config.lib.dag.entryAfter ["writeBoundary"] ''
-    if ! command -v claude &>/dev/null; then
+    if [ ! -f "${config.home.homeDirectory}/.local/bin/claude" ]; then
       echo "Installing Claude Code CLI..."
-      $DRY_RUN_CMD curl -fsSL https://raw.githubusercontent.com/anthropics/claude-code/main/install.sh | bash
+      $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://raw.githubusercontent.com/anthropics/claude-code/main/install.sh | ${pkgs.bash}/bin/bash
     fi
   '';
 
