@@ -39,13 +39,6 @@ if [[ "$OS" == "Darwin" ]]; then
   echo "Running: darwin-rebuild switch --flake $SCRIPT_DIR#$CONFIG_NAME"
   sudo darwin-rebuild switch --flake "$SCRIPT_DIR#$CONFIG_NAME"
 
-  # Install doom-emacs if not already installed
-  if ! command -v "$HOME/.config/emacs/bin/doom" &>/dev/null; then
-    echo "Installing Doom Emacs..."
-    git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
-    ~/.config/emacs/bin/doom install
-  fi
-
   # Install homebrew if not already installed
   if ! command -v brew &>/dev/null; then
     echo "Installing Homebrew..."
@@ -92,13 +85,6 @@ else
     echo "  chsh -s $FISH_PATH"
     echo ""
   fi
-
-  if ! command -v "$HOME/.config/emacs/bin/doom" &>/dev/null; then
-    echo "Installing Doom Emacs..."
-    git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
-    ~/.config/emacs/bin/doom install
-  fi
-fi
 
 echo "Installation complete!"
 echo "You may need to restart your terminal or computer for all changes to take effect."

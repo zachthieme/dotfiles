@@ -40,7 +40,7 @@ in
     ".config/lazygit".source = ../config/lazygit;
     ".config/nvim".source = ../config/nvim;
     ".config/wezterm".source = ../config/wezterm;
-    ".config/zed".source = ../config/zed;
+    # ".config/zed".source = ../config/zed;
     ".config/zellij".source = ../config/zellij;
     ".config/zsh".source = ../config/zsh;
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
