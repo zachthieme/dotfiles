@@ -85,6 +85,6 @@ else
     echo "  chsh -s $FISH_PATH"
     echo ""
   fi
-
+fi
 echo "Installation complete!"
 echo "You may need to restart your terminal or computer for all changes to take effect."
