@@ -78,7 +78,7 @@ else
   fi
 
   echo "Applying Home Manager configuration..."
-  home-manager switch --flake "$SCRIPT_DIR#$CONFIG_NAME"
+  home-manager switch --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"
 
   if ! command -v "$HOME/.config/emacs/bin/doom" &>/dev/null; then
     echo "Installing Doom Emacs..."
