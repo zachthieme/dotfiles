@@ -60,6 +60,18 @@ else
 
   mkdir -p ~/Pictures/screenshots/
 
+  # Source nix profile if not already in PATH
+  if ! command -v nix &>/dev/null; then
+    if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+      echo "Sourcing nix profile..."
+      . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+    else
+      echo "Error: nix is not installed or not in PATH."
+      echo "Please install nix from https://nixos.org/download.html"
+      exit 1
+    fi
+  fi
+
   if ! command -v home-manager &>/dev/null; then
     echo "home-manager not found; installing..."
     if ! nix --extra-experimental-features "nix-command flakes" \

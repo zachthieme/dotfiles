@@ -66,6 +66,13 @@ in
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
+      # Source nix profile (Linux only - macOS uses nix-darwin)
+      ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+        if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.fish
+          source /nix/var/nix/profiles/default/etc/profile.d/nix.fish
+        end
+      ''}
+
       set -g fish_greeting
       fish_vi_key_bindings
       fish_add_path $HOME/.zig
