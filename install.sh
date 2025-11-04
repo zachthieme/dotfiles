@@ -80,6 +80,19 @@ else
   echo "Applying Home Manager configuration..."
   home-manager switch --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"
 
+  # Check if default shell is fish and remind user to change if needed
+  CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
+  FISH_PATH="$HOME/.nix-profile/bin/fish"
+  if [ "$CURRENT_SHELL" != "$FISH_PATH" ] && command -v fish &>/dev/null; then
+    echo ""
+    echo "=== Shell Configuration Reminder ==="
+    echo "Your default shell is currently: $CURRENT_SHELL"
+    echo "To change your default shell to fish, run:"
+    echo "  echo \"$FISH_PATH\" | sudo tee -a /etc/shells"
+    echo "  chsh -s $FISH_PATH"
+    echo ""
+  fi
+
   if ! command -v "$HOME/.config/emacs/bin/doom" &>/dev/null; then
     echo "Installing Doom Emacs..."
     git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
