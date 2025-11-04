@@ -63,6 +63,32 @@ in
     # ".config/yabai".source = ../config/yabai;
   };
 
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = ''
+      set -g fish_greeting
+      fish_vi_key_bindings
+      fish_add_path $HOME/.zig
+      fish_add_path $HOME/.local/bin
+      ${pkgs.lib.optionalString pkgs.stdenv.isDarwin "fish_add_path /opt/homebrew/bin"}
+
+      # All made by Zach
+      abbr -a j jrnl
+      abbr -a jl jrnl --format short
+      abbr -a jf jrnl @fire
+      abbr -a vi nvim
+
+      set -g fish_term24bit 1
+      set -gx COLORTERM truecolor
+    '';
+    plugins = [
+      {
+        name = "pure";
+        src = pkgs.fishPlugins.pure.src;
+      }
+    ];
+  };
+
   programs.fzf = {
     enable = true;
     defaultCommand = "fd --type f";
