@@ -29,7 +29,6 @@ in
     ".config/aerospace".source = ../config/aerospace;
     ".config/borders".source = ../config/borders;
     ".config/btop".source = ../config/btop;
-    ".config/fzf".source = ../config/fzf;
     ".config/ghostty/config".text = ''
       command = ${pkgs.fish}/bin/fish
       keybind = global:ctrl+grave_accent=toggle_quick_terminal
