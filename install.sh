@@ -20,7 +20,7 @@ OS=$(uname -s)
 # Helper function to check if hostname exists in definitions.nix
 check_hostname_exists() {
   local hostname=$1
-  if ! nix eval --raw --impure --expr "
+  if ! nix eval --extra-experimental-features "nix-command flakes" --raw --impure --expr "
     let
       flake = builtins.getFlake \"$SCRIPT_DIR\";
       hosts = flake.outputs.hosts or {};
@@ -32,7 +32,7 @@ check_hostname_exists() {
     echo "Error: Hostname '$hostname' not found in modules/hosts/definitions.nix"
     echo ""
     echo "Available hosts:"
-    nix eval --json --impure --expr "
+    nix eval --extra-experimental-features "nix-command flakes" --json --impure --expr "
       let
         flake = builtins.getFlake \"$SCRIPT_DIR\";
       in
