@@ -6,7 +6,14 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$SCRIPT_DIR"
 
 # Determine the hostname, architecture, and operating system
-HOSTNAME=$(hostname)
+# Use multiple methods to get hostname, prioritizing portability
+if command -v hostname &>/dev/null; then
+  HOSTNAME=$(hostname)
+elif [ -f /etc/hostname ]; then
+  HOSTNAME=$(cat /etc/hostname)
+else
+  HOSTNAME=$(uname -n)
+fi
 ARCHITECTURE=$(uname -m)
 OS=$(uname -s)
 
