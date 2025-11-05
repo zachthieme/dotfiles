@@ -1,6 +1,9 @@
 # macOS-specific system configuration
 { pkgs, ... }:
 {
+  # Nix configuration
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   # Homebrew packages and casks
   homebrew = {
     enable = true;

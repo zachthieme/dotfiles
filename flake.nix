@@ -26,7 +26,7 @@
     let
       lib = nixpkgs.lib;
       helpers = import ./modules/lib.nix { inherit lib; };
-      hostData = import ./modules/hosts/definitions.nix { inherit lib; };
+      hostData = import ./modules/hosts/definitions.nix { inherit lib helpers; };
       detectHostData = import ./modules/hosts/detect.nix { inherit (hostData) hosts; };
       mkDarwinConfig = import ./modules/darwin/mk-config.nix {
         inherit nix-darwin home-manager helpers;

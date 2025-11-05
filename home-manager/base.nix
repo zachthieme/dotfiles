@@ -11,6 +11,14 @@ in
 {
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
 
+  # Enable experimental features for nix commands
+  nix = {
+    package = pkgs.nix;
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+    };
+  };
+
   home.sessionVariables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
@@ -29,11 +37,14 @@ in
     ".config/aerospace".source = ../config/aerospace;
     ".config/borders".source = ../config/borders;
     ".config/btop".source = ../config/btop;
-    ".config/ghostty/config".text = ''
-      command = ${pkgs.fish}/bin/fish
-      keybind = global:ctrl+grave_accent=toggle_quick_terminal
-      quick-terminal-animation-duration = 0
-    '';
+    ".config/ghostty/config" = {
+      force = true;
+      text = ''
+        command = ${pkgs.fish}/bin/fish
+        keybind = global:ctrl+grave_accent=toggle_quick_terminal
+        quick-terminal-animation-duration = 0
+      '';
+    };
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
     ".config/lazygit".source = ../config/lazygit;
