@@ -2,7 +2,7 @@
 hostname:
 { system, user, isWork, packages ? [ ], ... }:
 let
-  baseModule = ../../base/default.nix;
+  baseModule = ../../base/darwin.nix;
   osModule = ../../overlays/os/darwin.nix;
   archModule =
     if system == "aarch64-darwin" then

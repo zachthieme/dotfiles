@@ -64,7 +64,7 @@ in
 
     # Common system settings
     system.stateVersion = 6;
-    nix.enable = false;
+    nix.enable = true;
 
     # Allow selective unfree packages
     nixpkgs.config = {
