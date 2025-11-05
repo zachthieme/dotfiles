@@ -7,36 +7,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1748979197,
-        "narHash": "sha256-mKYwYcO9RmA2AcAFIXGDBOw5iv/fbjw6adWvMbnfIuk=",
+        "lastModified": 1762204486,
+        "narHash": "sha256-W7Db8gIAxMsaogJWqFBNSpYSFER8hJLGanEyl8PhC+k=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "34a13086148cbb3ae65a79f753eb451ce5cac3d3",
+        "rev": "95d65dddae7ae6300b22cf1d61cb5e71dca8da5b",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "repo": "home-manager",
-        "type": "github"
-      }
-    },
-    "minimal-tmux": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1748977843,
-        "narHash": "sha256-0gXtFVan+Urb79AjFOjHdjl3Q73m8M3wFSo3ZhjxcBA=",
-        "owner": "niksingh710",
-        "repo": "minimal-tmux-status",
-        "rev": "de2bb049a743e0f05c08531a0461f7f81da0fc72",
-        "type": "github"
-      },
-      "original": {
-        "owner": "niksingh710",
-        "repo": "minimal-tmux-status",
         "type": "github"
       }
     },
@@ -79,7 +59,6 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
-        "minimal-tmux": "minimal-tmux",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs"
       }

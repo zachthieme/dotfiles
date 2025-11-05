@@ -1,18 +1,20 @@
 { hosts }:
 let
-  hostname = builtins.getEnv "HOSTNAME";
-  system = builtins.getEnv "NIX_SYSTEM";
-  isAarch64Darwin = builtins.match "aarch64-darwin" system != null;
-  defaults =
-    if builtins.hasAttr hostname hosts then
+  # Try HOSTNAME first (Linux), then HOST (macOS)
+  hostname =
+    let h = builtins.getEnv "HOSTNAME";
+    in if h != "" then h else builtins.getEnv "HOST";
+
+  # Use actual hostname if it exists in definitions.nix
+  defaultHost =
+    if hostname != "" && builtins.hasAttr hostname hosts then
       hostname
-    else if builtins.match "zthieme.*" hostname != null then
-      "zthieme34911"
-    else if isAarch64Darwin then
-      "cortex"
     else
-      "malv2";
+      # Provide helpful error message if hostname not found
+      builtins.trace
+        "Warning: Hostname '${hostname}' not found in modules/hosts/definitions.nix. Available hosts: ${builtins.toString (builtins.attrNames hosts)}"
+        "";
 in
 {
-  defaultHost = defaults;
+  inherit defaultHost;
 }

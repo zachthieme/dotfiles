@@ -1,4 +1,5 @@
-# Base configuration shared across all machines
+# Base system configuration for nix-darwin and NixOS machines
+# Note: Linux Home Manager-only configs use home-manager/base.nix instead
 {
   pkgs,
   lib,
@@ -43,34 +44,12 @@ in
 
     # Define user based on configuration
     users.users.${config.local.username} = {
-      home = "/Users/${config.local.username}";
+      home =
+        if pkgs.stdenv.isDarwin then
+          "/Users/${config.local.username}"
+        else
+          "/home/${config.local.username}";
       shell = pkgs.fish;
-    };
-
-    # zoxide init fish | source
-    home-manager.users.${config.local.username}.programs.fish = {
-      enable = true;
-      interactiveShellInit = ''
-        set -g fish_greeting
-        fish_add_path /opt/homebrew/bin
-        fish_vi_key_bindings
-        fish_add_path $HOME/.zig
-
-        # All made by Zach
-        abbr -a j jrnl
-        abbr -a jl jrnl --format short
-        abbr -a jf jrnl @fire
-        abbr -a vi nvim
-
-        set -g fish_term24bit 1
-        set -gx COLORTERM truecolor
-      '';
-      plugins = [
-        {
-          name = "pure";
-          src = pkgs.fishPlugins.pure.src;
-        }
-      ];
     };
 
     # Set networking hostname
@@ -80,11 +59,12 @@ in
     system.activationScripts.postActivation.text = ''
       echo "${
         if config.local.isWork then "Work" else "Home"
-      } MacBook configuration for ${config.local.hostname} activated"
+      } system configuration for ${config.local.hostname} activated"
     '';
 
     # Common system settings
     system.stateVersion = 6;
+    # Disable nix-darwin's Nix management when using Determinate Nix
     nix.enable = false;
 
     # Allow selective unfree packages

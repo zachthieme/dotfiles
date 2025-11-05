@@ -1,4 +1,4 @@
-{ lib }:
+{ lib, helpers }:
 let
   hosts = {
     "cortex" = {
@@ -25,10 +25,23 @@ let
       isWork = false;
       packages = [ ];
     };
+    "omarchy" = {
+      system = "x86_64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
+    "srv1089402" = {
+      system = "x86_64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
   };
 
-  isDarwin = host: builtins.match ".*-darwin" host.system != null;
-  isLinux = host: builtins.match ".*-linux" host.system != null;
+  # Use shared helper functions to avoid duplication
+  isDarwin = host: helpers.isDarwin host.system;
+  isLinux = host: helpers.isLinux host.system;
 in
 {
   inherit hosts;

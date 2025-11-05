@@ -2,6 +2,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }:
 
@@ -10,6 +11,19 @@ let
 in
 {
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
+
+  # Enable experimental features for nix commands
+  # Note: On macOS, nix-darwin manages nix.package at system level
+  nix = lib.mkMerge [
+    {
+      settings = {
+        experimental-features = [ "nix-command" "flakes" ];
+      };
+    }
+    (lib.mkIf pkgs.stdenv.isLinux {
+      package = pkgs.nix;
+    })
+  ];
 
   home.sessionVariables = {
     EDITOR = "nvim";
@@ -29,18 +43,20 @@ in
     ".config/aerospace".source = ../config/aerospace;
     ".config/borders".source = ../config/borders;
     ".config/btop".source = ../config/btop;
-    ".config/fzf".source = ../config/fzf;
-    ".config/ghostty/config".text = ''
-      command = ${pkgs.fish}/bin/fish
-      keybind = global:ctrl+grave_accent=toggle_quick_terminal
-      quick-terminal-animation-duration = 0
-    '';
+    ".config/ghostty/config" = {
+      force = true;
+      text = ''
+        command = ${pkgs.fish}/bin/fish
+        keybind = global:ctrl+grave_accent=toggle_quick_terminal
+        quick-terminal-animation-duration = 0
+      '';
+    };
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
     ".config/lazygit".source = ../config/lazygit;
     ".config/nvim".source = ../config/nvim;
     ".config/wezterm".source = ../config/wezterm;
-    ".config/zed".source = ../config/zed;
+    # ".config/zed".source = ../config/zed;
     ".config/zellij".source = ../config/zellij;
     ".config/zsh".source = ../config/zsh;
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
@@ -61,6 +77,39 @@ in
     # ".config/skhd".source = ../config/skhd;
     # ".config/spotify-player".source = ../config/spotify-player;
     # ".config/yabai".source = ../config/yabai;
+  };
+
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = ''
+      # Source nix profile (Linux only - macOS uses nix-darwin)
+      ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+        if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.fish
+          source /nix/var/nix/profiles/default/etc/profile.d/nix.fish
+        end
+      ''}
+
+      set -g fish_greeting
+      fish_vi_key_bindings
+      fish_add_path $HOME/.zig
+      fish_add_path $HOME/.local/bin
+      ${pkgs.lib.optionalString pkgs.stdenv.isDarwin "fish_add_path /opt/homebrew/bin"}
+
+      # All made by Zach
+      abbr -a j jrnl
+      abbr -a jl jrnl --format short
+      abbr -a jf jrnl @fire
+      abbr -a vi nvim
+
+      set -g fish_term24bit 1
+      set -gx COLORTERM truecolor
+    '';
+    plugins = [
+      {
+        name = "pure";
+        src = pkgs.fishPlugins.pure.src;
+      }
+    ];
   };
 
   programs.fzf = {

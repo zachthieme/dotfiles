@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/main/.schema/devbox.schema.json",
+  "packages": [
+    "fish@latest",
+    "bat@latest",
+    "btop@latest",
+    "carapace@latest",
+    "curl@latest",
+    "eza@latest",
+    "fd@latest",
+    "fzf@latest",
+    "gh@latest",
+    "git@latest",
+    "helix@latest",
+    "jq@latest",
+    "neovim@latest",
+    "ripgrep@latest",
+    "tmux@latest",
+    "tree@latest",
+    "wget@latest",
+    "yazi@latest",
+    "zellij@latest",
+    "zoxide@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "echo 'Devbox environment loaded'",
+      "export EDITOR=nvim",
+      "export VISUAL=nvim",
+      "export FZF_CTRL_T_OPTS='--height 20%'",
+      "export FZF_CTRL_R_OPTS='--height 20% --reverse'",
+      "export _ZO_FZF_OPTS='--height 20% --reverse'"
+    ],
+    "scripts": {
+      "fish-setup": [
+        "fish -c 'set -U fish_greeting'",
+        "fish -c 'fish_vi_key_bindings'",
+        "fish -c 'set -U fish_term24bit 1'",
+        "fish -c 'set -Ux COLORTERM truecolor'",
+        "fish -c 'abbr -a vi nvim'",
+        "fish -c 'abbr -a j jrnl'",
+        "fish -c 'abbr -a jl \"jrnl --format short\"'",
+        "fish -c 'abbr -a jf \"jrnl @fire\"'",
+        "echo 'Fish shell configured with vi keybindings and abbreviations'"
+      ]
+    }
+  },
+  "env": {
+    "EDITOR": "nvim",
+    "VISUAL": "nvim",
+    "FZF_CTRL_T_OPTS": "--height 20%",
+    "FZF_CTRL_R_OPTS": "--height 20% --reverse",
+    "_ZO_FZF_OPTS": "--height 20% --reverse",
+    "COLORTERM": "truecolor"
+  }
+}

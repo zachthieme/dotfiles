@@ -1,12 +1,11 @@
-{ home-manager, minimal-tmux, nixpkgs }:
+{ home-manager, nixpkgs, helpers }:
 hostname:
 { system, user, isWork, packages ? [ ], ... }:
 let
-  contextModule =
-    if isWork then
-      ../../overlays/context/home-manager/work.nix
-    else
-      ../../overlays/context/home-manager/home.nix;
+  contextModule = helpers.selectContextModule
+    isWork
+    ../../overlays/context/home-manager/home.nix
+    ../../overlays/context/home-manager/work.nix;
 in
 home-manager.lib.homeManagerConfiguration {
   pkgs = nixpkgs.legacyPackages.${system};
@@ -14,13 +13,8 @@ home-manager.lib.homeManagerConfiguration {
     contextModule
     {
       home.username = user;
-      home.homeDirectory =
-        if builtins.match ".*-darwin" system != null then
-          "/Users/${user}"
-        else
-          "/home/${user}";
+      home.homeDirectory = helpers.getHomeDirectory user system;
       home.packages = packages;
     }
   ];
-  extraSpecialArgs = { inherit minimal-tmux; };
 }
