@@ -50,9 +50,11 @@ outer.right = 10
 # alt-slash = 'layout tiles horizontal vertical'
 cmd-comma = 'layout tiles horizontal vertical'
 
+alt-tab = 'focus right --boundaries-action wrap-around-the-workspace'
+alt-shift-tab = 'focus left --boundaries-action wrap-around-the-workspace'
+
 cmd-e = 'balance-sizes'
 cmd-f = 'layout floating tiling'
-cmd-a = 'flatten-workspace-tree'
 cmd-m = 'macos-native-minimize'
 cmd-r = 'reload-config'
 

@@ -21,6 +21,8 @@
       imagemagick
       jq
       jujutsu
+      lazygit
+      lazydocker
       mosh
       neovim
       nixfmt-rfc-style
