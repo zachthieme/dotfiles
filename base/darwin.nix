@@ -64,7 +64,8 @@ in
 
     # Common system settings
     system.stateVersion = 6;
-    nix.enable = true;
+    # Disable nix-darwin's Nix management when using Determinate Nix
+    nix.enable = false;
 
     # Allow selective unfree packages
     nixpkgs.config = {

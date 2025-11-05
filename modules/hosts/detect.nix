@@ -1,6 +1,9 @@
 { hosts }:
 let
-  hostname = builtins.getEnv "HOSTNAME";
+  # Try HOSTNAME first (Linux), then HOST (macOS)
+  hostname =
+    let h = builtins.getEnv "HOSTNAME";
+    in if h != "" then h else builtins.getEnv "HOST";
 
   # Use actual hostname if it exists in definitions.nix
   defaultHost =

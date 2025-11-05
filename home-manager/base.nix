@@ -2,6 +2,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }:
 
@@ -12,12 +13,17 @@ in
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
 
   # Enable experimental features for nix commands
-  nix = {
-    package = pkgs.nix;
-    settings = {
-      experimental-features = [ "nix-command" "flakes" ];
-    };
-  };
+  # Note: On macOS, nix-darwin manages nix.package at system level
+  nix = lib.mkMerge [
+    {
+      settings = {
+        experimental-features = [ "nix-command" "flakes" ];
+      };
+    }
+    (lib.mkIf pkgs.stdenv.isLinux {
+      package = pkgs.nix;
+    })
+  ];
 
   home.sessionVariables = {
     EDITOR = "nvim";
