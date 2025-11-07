@@ -13,7 +13,7 @@ journals:
   default:
     journal: ~/CloudDocs/journal.txt
 linewrap: 79
-tagsymbols: "#@"
+tagsymbols: "#@%"
 template: false
 timeformat: "%F %r"
 version: v4.2.1
