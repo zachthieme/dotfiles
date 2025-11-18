@@ -22,6 +22,7 @@
       jq
       jujutsu
       lazygit
+      lazyjj
       lazydocker
       mosh
       neovim
