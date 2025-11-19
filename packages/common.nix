@@ -21,17 +21,19 @@
       imagemagick
       jq
       jujutsu
+      lazydocker
       lazygit
       lazyjj
-      lazydocker
+      less
+      marksman
       mosh
       neovim
       nixfmt-rfc-style
       nodejs_24
       pandoc
       pngcheck
-      pngquant
       pngcrush
+      pngquant
       python3
       python312Packages.pdf2docx
       ripgrep
