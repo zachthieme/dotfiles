@@ -2,6 +2,7 @@
 
 Automated dotfiles for multiple macOS and Linux hosts, powered by Nix flakes. The repo layers system defaults, architecture tweaks, and context-specific overrides so each machine receives the right mix with minimal duplication. For contributor-specific details, see [Repository Guidelines](./AGENTS.md).
 
+
 ## Why This Exists
 - Single source of truth for workstation setup across personal and work machines.
 - Repeatable, idempotent provisioning through `nix-darwin`, Home Manager, and overlays.

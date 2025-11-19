@@ -20,6 +20,7 @@
       "dropbox"
       "ghostty"
       "homerow"
+      "keycastr"
       "logi-options+"
       "nikitabobko/tap/aerospace"
       "spotify"

@@ -48,8 +48,3 @@ L = ":buffer-next"
 q = ":bc"
 Q = ":bc!"
 R = ":config-reload"
-
-[keys.normal.y]
-y = ["extend_to_line_bounds", "yank"]
-
-

@@ -60,10 +60,10 @@ cmd-r = 'reload-config'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
 # same as pop_os
-# cmd-h = 'focus left --boundaries-action wrap-around-the-workspace'
-# cmd-j = 'focus down --boundaries-action wrap-around-the-workspace'
-# cmd-k = 'focus up --boundaries-action wrap-around-the-workspace'
-# cmd-l = 'focus right --boundaries-action wrap-around-the-workspace'
+cmd-h = 'focus left --boundaries-action wrap-around-the-workspace'
+cmd-j = 'focus down --boundaries-action wrap-around-the-workspace'
+cmd-k = 'focus up --boundaries-action wrap-around-the-workspace'
+cmd-l = 'focus right --boundaries-action wrap-around-the-workspace'
 
 # setup for accordion
 cmd-shift-h = ['join-with left', 'layout v_accordion']
