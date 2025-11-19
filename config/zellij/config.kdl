@@ -1,15 +1,6 @@
 default_shell "fish"
-theme "everforest-dark"
 pane_frames false
+simplified_ui true
+default_layout "compact"
 
-keybinds {
-    shared_except "locked" {
-        bind "Ctrl y" {
-            LaunchOrFocusPlugin "file:~/.config/zellij/plugins/room.wasm" {
-                floating true
-                ignore_case true
-                quick_jump true
-            }
-        }
-    }
-}
+
