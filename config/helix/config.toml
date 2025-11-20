@@ -33,18 +33,13 @@ max-indent-retain = 40
 max-wrap = 10          # increase value to reduce forced mid-word wrapping
 
 [editor.statusline]
-mode.insert = "INSERT"
-mode.normal = "NORMAL"
-mode.select = "SELECT"
+mode.insert = "I"
+mode.normal = "N"
+mode.select = "S"
 
 [keys.normal]
 a = ["append_mode", "collapse_selection"]
 i = ["insert_mode", "collapse_selection"]
-
+esc = ["collapse_selection", "keep_primary_selection"]
 H = ":buffer-previous"
 L = ":buffer-next"
-
-[keys.normal.g]
-q = ":bc"
-Q = ":bc!"
-R = ":config-reload"
