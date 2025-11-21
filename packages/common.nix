@@ -28,6 +28,7 @@
       lazygit
       lazyjj
       less
+      lldb_20
       marksman
       mosh
       neovim
