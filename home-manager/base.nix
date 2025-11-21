@@ -49,6 +49,10 @@ in
         command = ${pkgs.fish}/bin/fish
         keybind = global:ctrl+grave_accent=toggle_quick_terminal
         quick-terminal-animation-duration = 0
+        # trying to make fish partial completion working
+        macos-option-as-alt = true
+        keybind = alt+left=unbind
+        keybind = alt+right=unbind
       '';
     };
     ".config/helix".source = ../config/helix;

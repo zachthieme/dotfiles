@@ -1,9 +1,14 @@
+theme "nord"
 default_shell "fish"
 pane_frames false
 simplified_ui true
-default_layout "compact"
+default_layout "compact-top"
 
 keybinds {
+    shared {
+        unbind "Alt Right"
+        unbind "Alt F"
+    }
     normal {
         bind "Alt h" { MoveFocus "Left"; }
         bind "Alt j" { MoveFocus "Down"; }
@@ -12,3 +17,7 @@ keybinds {
     }
 }
 
+plugins {
+    tab-bar location="zellij:tab-bar"
+    status-bar location="zellij:status-bar"
+}
