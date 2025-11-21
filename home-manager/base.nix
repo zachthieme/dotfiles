@@ -83,6 +83,9 @@ in
       abbr -a jl jrnl --format short
       abbr -a jf jrnl @fire
       abbr -a vi hx
+      function ft
+        rg --line-number -P '(?=.*\[ \])(?=.*#MUST).*' ~/CloudDocs/Obsidian | fzf --bind 'enter:execute(hx {1}:+{2})' --delimiter ':'
+      end
 
       set -g fish_term24bit 1
       set -gx COLORTERM truecolor
