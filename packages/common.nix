@@ -29,6 +29,7 @@
       lazyjj
       less
       lldb_20
+      markdown-oxide
       marksman
       mosh
       neovim
