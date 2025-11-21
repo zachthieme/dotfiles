@@ -26,8 +26,8 @@ in
   ];
 
   home.sessionVariables = {
-    EDITOR = "nvim";
-    VISUAL = "nvim";
+    EDITOR = "hx";
+    VISUAL = "hx";
     FZF_CTRL_T_OPTS = "--height 20%";
     FZF_CTRL_R_OPTS = "--height 20% --reverse";
     _ZO_FZF_OPTS = "--height 20% --reverse";
@@ -54,7 +54,7 @@ in
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
     ".config/lazygit".source = ../config/lazygit;
-    ".config/nvim".source = ../config/nvim;
+    # ".config/nvim".source = ../config/nvim;
     ".config/wezterm".source = ../config/wezterm;
     # ".config/zed".source = ../config/zed;
     ".config/zellij".source = ../config/zellij;
@@ -108,6 +108,15 @@ in
       {
         name = "pure";
         src = pkgs.fishPlugins.pure.src;
+      }
+      {
+        name = "fish-helix";
+        src = pkgs.fetchFromGitHub {
+          owner = "sshilovsky";
+          repo = "fish-helix";
+          rev = "main";
+          sha256 = "sha256-04cL9/m5v0/5dkqz0tEqurOY+5sDjCB5mMKvqgpV4vM=";  # Nix will provide the correct hash on first build
+        };
       }
     ];
   };
