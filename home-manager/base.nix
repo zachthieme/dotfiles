@@ -91,7 +91,6 @@ in
 
       set -g fish_greeting
       fish_vi_key_bindings
-      fish_add_path $HOME/.zig
       fish_add_path $HOME/.local/bin
       ${pkgs.lib.optionalString pkgs.stdenv.isDarwin "fish_add_path /opt/homebrew/bin"}
 
@@ -109,15 +108,15 @@ in
         name = "pure";
         src = pkgs.fishPlugins.pure.src;
       }
-      {
-        name = "fish-helix";
-        src = pkgs.fetchFromGitHub {
-          owner = "sshilovsky";
-          repo = "fish-helix";
-          rev = "main";
-          sha256 = "sha256-04cL9/m5v0/5dkqz0tEqurOY+5sDjCB5mMKvqgpV4vM=";  # Nix will provide the correct hash on first build
-        };
-      }
+      # {
+      #   name = "fish-helix";
+      #   src = pkgs.fetchFromGitHub {
+      #     owner = "sshilovsky";
+      #     repo = "fish-helix";
+      #     rev = "main";
+      #     sha256 = "sha256-04cL9/m5v0/5dkqz0tEqurOY+5sDjCB5mMKvqgpV4vM=";  # Nix will provide the correct hash on first build
+      #   };
+      # }
     ];
   };
 
