@@ -6,6 +6,7 @@
       btop
       carapace
       curl
+      delve
       devbox
       emacs
       exiftool
@@ -16,6 +17,8 @@
       gh
       git
       go
+      golangci-lint-langserver
+      gopls
       gotools
       helix
       imagemagick
@@ -28,6 +31,7 @@
       marksman
       mosh
       neovim
+      nixd
       nixfmt-rfc-style
       nodejs_24
       pandoc
@@ -45,6 +49,8 @@
       wget
       yazi
       zellij
+      zig
+      zls
       zoxide
       zsh
     ];
