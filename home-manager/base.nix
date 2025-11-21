@@ -54,29 +54,9 @@ in
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
     ".config/lazygit".source = ../config/lazygit;
-    # ".config/nvim".source = ../config/nvim;
-    ".config/wezterm".source = ../config/wezterm;
-    # ".config/zed".source = ../config/zed;
     ".config/zellij".source = ../config/zellij;
     ".config/zsh".source = ../config/zsh;
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
-    # "./.ssh".source = ../config/ssh;
-    # ".config/bat".source = ../config/bat;
-    # ".config/cheat".source = ../config/cheat;
-    # ".config/direnv".source = ../config/direnv;
-    # ".config/doom".source = ../config/doom;
-    # ".config/emacs".source = ../config/emacs;
-    # ".config/gh".source = ../config/gh;
-    # ".config/jrnl".source = ../config/jrnl;
-    # ".config/nvim-gpt".source = ../config/nvim-gpt;
-    # ".config/nvim-notes".source = ../config/nvim-notes;
-    # ".config/nvim-obsidian".source = .../config/nvim-obsidian;
-    # ".config/nvim-test".source = ../config/nvim-test;
-    # ".config/ohmyposh".source = ../config/ohmyposh;
-    # ".config/raycast".source = ../config/raycast;
-    # ".config/skhd".source = ../config/skhd;
-    # ".config/spotify-player".source = ../config/spotify-player;
-    # ".config/yabai".source = ../config/yabai;
   };
 
   programs.fish = {
