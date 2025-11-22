@@ -83,27 +83,21 @@ in
       abbr -a jl jrnl --format short
       abbr -a jf jrnl @fire
       abbr -a vi hx
-      function ft
-        rg --line-number -P '(?=.*\[ \])(?=.*#MUST).*' ~/CloudDocs/Obsidian | fzf --bind 'enter:execute(hx {1}:+{2})' --delimiter ':'
+
+     # created a function to find tasks in my notes
+     function ft
+      rg --vimgrep -o -P '(?=.*\[ \])(?=.*#weekly).*' ~/CloudDocs/Obsidian | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" --height 7
       end
 
       set -g fish_term24bit 1
       set -gx COLORTERM truecolor
+      carapace _carapace fish | source
     '';
     plugins = [
       {
         name = "pure";
         src = pkgs.fishPlugins.pure.src;
       }
-      # {
-      #   name = "fish-helix";
-      #   src = pkgs.fetchFromGitHub {
-      #     owner = "sshilovsky";
-      #     repo = "fish-helix";
-      #     rev = "main";
-      #     sha256 = "sha256-04cL9/m5v0/5dkqz0tEqurOY+5sDjCB5mMKvqgpV4vM=";  # Nix will provide the correct hash on first build
-      #   };
-      # }
     ];
   };
 
