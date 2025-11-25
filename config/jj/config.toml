@@ -4,5 +4,10 @@
 name = "Zach Thieme"
 email = "zach@techsage.org"
 
+# [templates]
+# log = "builtin_log_oneline"
+
 [ui]
 paginate = "never"
+default-command = "log"
+
