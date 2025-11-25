@@ -5,13 +5,13 @@ colors:
   title: cyan
 default_hour: 9
 default_minute: 0
-editor: "nvim"
+editor: "hx"
 encrypt: false
 highlight: true
 indent_character: "|"
 journals:
   default:
-    journal: ~/CloudDocs/journal.txt
+    journal: ~/CloudDocs/Obsidian/journal.txt
 linewrap: 79
 tagsymbols: "#@%"
 template: false
