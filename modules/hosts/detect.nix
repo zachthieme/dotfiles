@@ -9,11 +9,14 @@ let
   defaultHost =
     if hostname != "" && builtins.hasAttr hostname hosts then
       hostname
-    else
-      # Provide helpful error message if hostname not found
+    else if hostname != "" then
+      # Only show warning if hostname is set but not found
       builtins.trace
         "Warning: Hostname '${hostname}' not found in modules/hosts/definitions.nix. Available hosts: ${builtins.toString (builtins.attrNames hosts)}"
-        "";
+        ""
+    else
+      # Hostname not set - silently return empty (user is likely specifying host explicitly)
+      "";
 in
 {
   inherit defaultHost;
