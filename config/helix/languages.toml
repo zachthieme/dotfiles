@@ -9,3 +9,7 @@ language-servers = ["nixd"]
 name = "go"
 auto-format = true
 formatter = { command = "goimports"}
+language-servers = ["gopls"]
+
+[language-server.gopls.config]
+"ui.diagnostic.analyses" = { "nilness" = true, "unusedparams" = true, "unusedwrite" = true }

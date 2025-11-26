@@ -17,6 +17,7 @@
       gh
       git
       go
+      golangci-lint
       golangci-lint-langserver
       gopls
       gotools
