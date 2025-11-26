@@ -54,7 +54,7 @@ alt-tab = 'focus right --boundaries-action wrap-around-the-workspace'
 alt-shift-tab = 'focus left --boundaries-action wrap-around-the-workspace'
 
 cmd-e = 'balance-sizes'
-cmd-f = 'layout floating tiling'
+# cmd-f = 'layout floating tiling'
 cmd-m = 'macos-native-minimize'
 cmd-r = 'reload-config'
 
