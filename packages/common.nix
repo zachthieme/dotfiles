@@ -41,6 +41,7 @@
       pngcheck
       pngcrush
       pngquant
+      prettier
       python3
       python312Packages.pdf2docx
       ripgrep
@@ -53,6 +54,7 @@
       yazi
       zellij
       zig
+      zk
       zls
       zoxide
       zsh
