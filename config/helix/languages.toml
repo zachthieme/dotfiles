@@ -4,3 +4,8 @@ command = "nixd"
 [[language]]
 name = "nix"
 language-servers = ["nixd"]
+
+[[language]]
+name = "go"
+auto-format = true
+formatter = { command = "goimports"}
