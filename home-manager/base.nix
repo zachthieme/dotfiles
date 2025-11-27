@@ -29,8 +29,6 @@ in
     EDITOR = "hx";
     VISUAL = "hx";
     COLORTERM = "truecolor";
-    FZF_CTRL_T_OPTS = "--height 20%";
-    FZF_CTRL_R_OPTS = "--height 20% --reverse";
     _ZO_FZF_OPTS = "--height 20% --reverse";
   };
 
@@ -43,10 +41,7 @@ in
   home.file = {
     ".config/aerospace".source = ../config/aerospace;
     ".config/borders".source = ../config/borders;
-    ".config/helix".source = ../config/helix;
-    ".config/jj".source = ../config/jj;
     ".config/jrnl".source = ../config/jrnl;
-    ".config/lazygit".source = ../config/lazygit;
     ".config/zellij".source = ../config/zellij;
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
   };
@@ -216,18 +211,6 @@ in
         '';
       };
 
-      y = {
-        description = "Run yazi file manager with directory tracking";
-        body = ''
-          set -l tmp (mktemp -t "yazi-cwd.XXXXXX")
-          yazi $argv --cwd-file="$tmp"
-          if set -l cwd (cat -- "$tmp"); and test -n "$cwd"; and test "$cwd" != "$PWD"
-            cd -- "$cwd"
-          end
-          rm -f -- "$tmp"
-        '';
-      };
-
       nix-cleanup = {
         description = "Clean up the Nix store by removing unused packages";
         body = ''
@@ -253,6 +236,128 @@ in
       "--height 40%"
       "--border"
     ];
+    fileWidgetOptions = [ "--height 20%" ];
+    historyWidgetOptions = [ "--height 20%" "--reverse" ];
+    enableFishIntegration = true;
+  };
+
+  programs.jujutsu = {
+    enable = true;
+    settings = {
+      aliases = {
+        s = [ "show" "--name-only" ];
+        l = [ "log" "-r" "::" "--limit" "20" ];
+      };
+      user = {
+        name = "Zach Thieme";
+        email = "zach@techsage.org";
+      };
+      ui = {
+        paginate = "never";
+        default-command = "log";
+      };
+    };
+  };
+
+  programs.helix = {
+    enable = true;
+    settings = {
+      theme = "everforest_dark";
+      editor = {
+        auto-format = true;
+        auto-save = true;
+        color-modes = true;
+        completion-replace = true;
+        cursorline = true;
+        end-of-line-diagnostics = "hint";
+        idle-timeout = 0;
+        line-number = "relative";
+        mouse = false;
+        true-color = true;
+        inline-diagnostics.cursor-line = "warning";
+        cursor-shape.insert = "bar";
+        file-picker = {
+          git-ignore = false;
+          hidden = false;
+        };
+        indent-guides = {
+          character = "┊";
+          render = true;
+          skip-levels = 0;
+        };
+        lsp.display-messages = true;
+        soft-wrap = {
+          enable = true;
+          max-indent-retain = 40;
+          max-wrap = 10;
+        };
+        statusline = {
+          mode.insert = "I";
+          mode.normal = "N";
+          mode.select = "S";
+        };
+      };
+      keys.normal = {
+        a = [ "append_mode" "collapse_selection" ];
+        i = [ "insert_mode" "collapse_selection" ];
+        esc = [ "collapse_selection" "keep_primary_selection" ];
+        X = "extend_line_above";
+        H = ":buffer-previous";
+        L = ":buffer-next";
+        ret = "goto_word";
+      };
+    };
+    languages = {
+      language = [
+        {
+          name = "nix";
+          language-servers = [ "nixd" ];
+        }
+        {
+          name = "go";
+          auto-format = true;
+          formatter.command = "goimports";
+          language-servers = [ "gopls" ];
+        }
+        {
+          name = "markdown";
+          auto-format = true;
+          formatter = {
+            command = "prettier";
+            args = [ "--parser" "markdown" "--prose-wrap" "never" ];
+          };
+        }
+      ];
+      language-server.nixd.command = "nixd";
+      language-server.gopls.config = {
+        "ui.diagnostic.analyses" = {
+          nilness = true;
+          unusedparams = true;
+          unusedwrite = true;
+        };
+      };
+    };
+  };
+
+  programs.lazygit = {
+    enable = true;
+    settings = {
+      gui.theme = {
+        activeBorderColor = [ "#82aaff" "bold" ];
+        inactiveBorderColor = [ "#637777" ];
+        optionsTextColor = [ "#acb4c2" ];
+        selectedLineBgColor = [ "#82aaff" ];
+        selectedRangeBgColor = [ "#82aaff" ];
+        cherryPickedCommitBgColor = [ "#82aaff" ];
+        cherryPickedCommitFgColor = [ "#011627" ];
+        unstagedChangesColor = [ "#ef5350" ];
+        defaultFgColor = [ "#acb4c2" ];
+      };
+    };
+  };
+
+  programs.yazi = {
+    enable = true;
     enableFishIntegration = true;
   };
 
@@ -279,11 +384,11 @@ in
       quick-terminal-animation-duration = 0;
       # Enable option-as-alt for fish partial completion
       macos-option-as-alt = true;
-      keybind = {
-        "global:ctrl+grave_accent" = "toggle_quick_terminal";
-        "alt+left" = "unbind";
-        "alt+right" = "unbind";
-      };
+      keybind = [
+        "global:ctrl+grave_accent=toggle_quick_terminal"
+        "alt+left=unbind"
+        "alt+right=unbind"
+      ];
     };
   };
 
