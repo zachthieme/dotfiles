@@ -175,6 +175,42 @@
           echo "Garbage collection complete!"
         '';
       };
+
+      note = {
+        description = "Search Obsidian vault or create new note";
+        body = ''
+          set -l selected (fd --type f --extension md . "$OBSIDIAN_VAULT" | \
+            fzf --print-query \
+                --preview "head -50 {}" \
+                --preview-window=right:50%:wrap \
+                --height=80% \
+                --bind "ctrl-n:print-query+abort")
+
+          set -l search_query $selected[1]
+          set -l chosen_file $selected[2]
+
+          # If file was selected, open it
+          if test -n "$chosen_file" -a -e "$chosen_file"
+            $EDITOR "$chosen_file"
+            return 0
+          end
+
+          # If we have a query (from typing or ctrl-n), create new note
+          if test -n "$search_query"
+            set -l filename (string lower -- "$search_query" | string replace -a " " "-")".md"
+            set -l filepath "$OBSIDIAN_VAULT/$filename"
+
+            if test -e "$filepath"
+              echo "File already exists: $filepath"
+              $EDITOR "$filepath"
+            else
+              echo "# $search_query" > "$filepath"
+              echo "Created: $filepath"
+              $EDITOR "$filepath"
+            end
+          end
+        '';
+      };
     };
 
     plugins = [

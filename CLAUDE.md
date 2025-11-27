@@ -47,10 +47,19 @@ alejandra .  # Alternative formatter
 The `flake.nix` orchestrates everything:
 1. Imports shared helper functions from `modules/lib.nix`
 2. Imports host metadata from `modules/hosts/definitions.nix`
-3. Splits hosts into `darwinHosts` and `linuxHosts` based on system attribute
-4. Applies appropriate builder: `mkDarwinConfig` (macOS) or `mkHomeConfig` (Linux)
-5. Passes `helpers` to both builders for shared utilities
-6. Exports `darwinConfigurations` and `homeConfigurations`
+3. Imports hostname detection from `modules/hosts/detect.nix`
+4. Splits hosts into `darwinHosts` and `linuxHosts` based on system attribute
+5. Applies appropriate builder: `mkDarwinConfig` (macOS) or `mkHomeConfig` (Linux)
+6. Passes `helpers` to both builders for shared utilities
+7. Exports `darwinConfigurations` (with `default` alias for detected host) and `homeConfigurations`
+
+### Hostname Detection
+
+`modules/hosts/detect.nix` provides automatic hostname detection:
+- Reads `HOSTNAME` (Linux) or `HOST` (macOS) environment variables
+- If hostname exists in `definitions.nix`, sets it as `defaultHost`
+- Enables `darwin-rebuild switch --flake .` without specifying hostname
+- Falls back gracefully if hostname not found or not set
 
 ### Shared Helper Functions
 
@@ -83,7 +92,7 @@ Context modules (`overlays/context/`) determine home vs work environments. The a
 - **System context**: `overlays/context/system/home.nix` and `work.nix` - These modules do NOT set `local.isWork` (it's already set from definitions.nix). They only contain context-specific system packages and settings.
 - **User context**: `overlays/context/home-manager/home.nix` and `work.nix` - User-level context differences.
 
-Both home-manager context modules import `home-manager/base.nix`, which contains shared user settings (zsh, tmux, fzf, dotfile symlinks). This base module is a Home Manager module, so it receives `config.home.username` and `config.home.homeDirectory` from the host wiring (set via `helpers.getHomeDirectory`).
+Both home-manager context modules import `home-manager/base.nix`, which contains shared user settings (fish, fzf, program imports, dotfile symlinks). This base module is a Home Manager module, so it receives `config.home.username` and `config.home.homeDirectory` from the host wiring (set via `helpers.getHomeDirectory`).
 
 ### Host Definitions
 
@@ -106,16 +115,39 @@ The `isWork` flag selects which context modules to load. Add packages here rathe
 
 `packages/common.nix` exports `profiles.basePackages` - a shared list consumed by both `base/darwin.nix` (system) and `home-manager/base.nix` (user). This ensures consistent tooling across layers.
 
+### Program Configurations
+
+Program-specific Home Manager configurations live in `home-manager/programs/`:
+- `bat.nix`, `btop.nix` - Terminal utilities
+- `fish.nix` - Shell configuration with functions and abbreviations
+- `git.nix` - Git settings and delta pager
+- `ghostty.nix`, `helix.nix` - Terminal and editor
+- `jujutsu.nix`, `lazygit.nix` - VCS tools
+- `ssh.nix` - SSH configuration
+
+These are imported by `home-manager/base.nix` and apply to all hosts.
+
 ### Application Configs
 
-Dotfiles are organized under `config/<tool>/` and symlinked via `home.file` in `home-manager/base.nix`:
+Static dotfiles are organized under `config/<tool>/` and symlinked via `home.file` in `home-manager/base.nix`:
 ```nix
 home.file = {
-  ".config/nvim".source = ../config/nvim;
-  ".config/zsh".source = ../config/zsh;
+  ".config/aerospace".source = ../config/aerospace;
+  ".config/borders".source = ../config/borders;
+  ".config/jrnl".source = ../config/jrnl;
+  ".config/zellij".source = ../config/zellij;
   # ...
 };
 ```
+
+## Code Style
+
+- **Indentation**: Two spaces in Nix files
+- **Attribute ordering**: Alphabetize attribute sets where practical
+- **Module naming**: Follow existing patterns (`modules/<domain>/*.nix`, `overlays/<dimension>/<detail>.nix`)
+- **Host keys**: Use short lowercase names in `definitions.nix`
+- **Formatting**: Run `nix fmt` or `alejandra .` before committing
+- **Commit messages**: Concise, lowercase subject lines describing the change (e.g., `adding uv`, `fix fish path on linux`)
 
 ## Key Principles
 
@@ -197,10 +229,19 @@ lib.mkIf pkgs.stdenv.isLinux {
 ```
 
 **Add dotfiles for a new tool**:
-1. Create `config/<tool>/` directory
+1. Create `config/<tool>/` directory for static configs
 2. Add symlink in `home-manager/base.nix` or context module:
    ```nix
    home.file.".config/<tool>".source = ../config/<tool>;
+   ```
+
+**Add a new program module** (for tools with Home Manager options):
+1. Create `home-manager/programs/<tool>.nix`
+2. Import it in `home-manager/base.nix`:
+   ```nix
+   imports = [
+     ./programs/<tool>.nix
+   ];
    ```
 
 **Configure Fish shell** (prefer declarative Home Manager options over shell scripts):
@@ -298,7 +339,7 @@ Some Home Manager options have been renamed. Use the new names:
 **Motivation**: Migrate from zsh to fish, convert shell functions properly, and use declarative Home Manager options instead of imperative shell scripts.
 
 **Changes**:
-1. **Converted all zsh functions to fish**: Migrated 12 functions from `config/zsh/functions` to fish syntax (gff, k, logg, mkdd, fif, fifs, fifc, y, vv, nix-cleanup, fns, _fif_common)
+1. **Converted zsh functions to fish**: Migrated core functions to fish syntax (gff, k, logg, mkdd, fif, fifs, fifc, nix-cleanup, ft, _fif_common)
 2. **Adopted `programs.fish.functions`**: Moved all function definitions from `interactiveShellInit` string blocks to structured `programs.fish.functions` attributes with descriptions
 3. **Migrated to `programs.fish.shellAbbrs`**: Converted inline `abbr -a` commands to declarative `shellAbbrs` attribute set
 4. **Standardized environment variables**: Moved `COLORTERM` from fish config to `home.sessionVariables` for global availability

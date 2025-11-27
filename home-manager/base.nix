@@ -41,7 +41,7 @@ in
     EDITOR = "hx";
     VISUAL = "hx";
     COLORTERM = "truecolor";
-    OBSIDIAN_VAULT = "~/CloudDocs/Obsidian";
+    OBSIDIAN_VAULT = "${config.home.homeDirectory}/CloudDocs/Obsidian";
     _ZO_FZF_OPTS = "--height 20% --reverse";
   };
 
