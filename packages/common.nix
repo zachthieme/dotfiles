@@ -54,7 +54,6 @@
       yazi
       zellij
       zig
-      zk
       zls
       zoxide
       zsh
