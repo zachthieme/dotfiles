@@ -7,6 +7,7 @@
     settings = {
       aliases = {
         s = [ "show" "--name-only" ];
+        b = [ "bookmark" "move" "main" "--to" "@-" ];
         l = [ "log" "-r" "::" "--limit" "20" ];
       };
       user = {
