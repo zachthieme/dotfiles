@@ -1,17 +1,18 @@
 # Work-specific Home Manager configuration
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
     ../../../home-manager/base.nix
   ];
 
-  programs.zsh.shellAliases = {
-    # Override aliases for work machines here
+  # Work-specific shell abbreviations
+  programs.fish.shellAbbrs = {
+    # Override abbreviations for work machines here
   };
 
   home.file = {
-    # Work-specific adjustments
+    # Work-specific dotfiles
   };
 
   home.packages = with pkgs; [

@@ -11,14 +11,15 @@
         auto-save = true;
         color-modes = true;
         completion-replace = true;
+        cursor-shape.insert = "bar";
         cursorline = true;
         end-of-line-diagnostics = "hint";
         idle-timeout = 0;
+        inline-diagnostics.cursor-line = "warning";
         line-number = "relative";
+        lsp.display-messages = true;
         mouse = false;
         true-color = true;
-        inline-diagnostics.cursor-line = "warning";
-        cursor-shape.insert = "bar";
         file-picker = {
           git-ignore = false;
           hidden = false;
@@ -28,7 +29,6 @@
           render = true;
           skip-levels = 0;
         };
-        lsp.display-messages = true;
         soft-wrap = {
           enable = true;
           max-indent-retain = 40;
