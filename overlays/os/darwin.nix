@@ -51,7 +51,4 @@
 
   # Enable Touch ID for sudo
   security.pam.services.sudo_local.touchIdAuth = true;
-
-  # Enable zsh as a system shell
-  programs.zsh.enable = true;
 }
