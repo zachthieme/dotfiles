@@ -122,17 +122,40 @@ else
   echo "Applying Home Manager configuration..."
   home-manager switch -b backup --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"
 
+  # Home Manager package paths
+  HM_PROFILE="$HOME/.local/state/nix/profiles/home-manager/home-path"
+  FISH_PATH="$HM_PROFILE/bin/fish"
+
+  # Set up bash with Home Manager paths if not already configured
+  BASHRC="$HOME/.bashrc"
+  HM_MARKER="# Home Manager PATH setup"
+  if ! grep -q "$HM_MARKER" "$BASHRC" 2>/dev/null; then
+    echo ""
+    echo "=== Configuring Bash for Home Manager ==="
+    cat >> "$BASHRC" << 'EOF'
+
+# Home Manager PATH setup
+if [ -d "$HOME/.local/state/nix/profiles/home-manager/home-path/bin" ]; then
+  export PATH="$HOME/.local/state/nix/profiles/home-manager/home-path/bin:$PATH"
+fi
+if [ -f "$HOME/.local/state/nix/profiles/home-manager/home-path/etc/profile.d/hm-session-vars.sh" ]; then
+  . "$HOME/.local/state/nix/profiles/home-manager/home-path/etc/profile.d/hm-session-vars.sh"
+fi
+EOF
+    echo "Added Home Manager paths to $BASHRC"
+  fi
+
   # Check if default shell is fish and remind user to change if needed
   CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
-  FISH_PATH="$HOME/.nix-profile/bin/fish"
-  if [ "$CURRENT_SHELL" != "$FISH_PATH" ] && command -v fish &>/dev/null; then
+  if [ -f "$FISH_PATH" ] && [ "$CURRENT_SHELL" != "$FISH_PATH" ]; then
     echo ""
     echo "=== Shell Configuration Reminder ==="
     echo "Your default shell is currently: $CURRENT_SHELL"
     echo "To change your default shell to fish, run:"
     echo "  echo \"$FISH_PATH\" | sudo tee -a /etc/shells"
-    echo "  chsh -s $FISH_PATH"
+    echo "  chsh -s \"$FISH_PATH\""
     echo ""
+    echo "Then log out and back in for the change to take effect."
   fi
 fi
 echo "Installation complete!"
