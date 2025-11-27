@@ -34,6 +34,7 @@ nix-darwin.lib.darwinSystem {
     {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
+      home-manager.backupFileExtension = "backup";
       home-manager.users.${user} = {
         imports = [ contextHomeModule ];
         home.username = user;

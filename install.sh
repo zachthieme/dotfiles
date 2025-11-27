@@ -120,7 +120,7 @@ else
   fi
 
   echo "Applying Home Manager configuration..."
-  home-manager switch --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"
+  home-manager switch -b backup --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"
 
   # Check if default shell is fish and remind user to change if needed
   CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
