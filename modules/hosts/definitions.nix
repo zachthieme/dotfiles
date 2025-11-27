@@ -37,6 +37,12 @@ let
       isWork = false;
       packages = [ ];
     };
+    "pi-5ai" = {
+      system = "aarch64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
   };
 
   # Use shared helper functions to avoid duplication
