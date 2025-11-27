@@ -47,7 +47,8 @@ in
 
   home.sessionPath =
     [ "${config.home.homeDirectory}/.local/bin" ]
-    ++ lib.optionals pkgs.stdenv.isDarwin [ "/opt/homebrew/bin" ];
+    ++ lib.optionals pkgs.stdenv.isDarwin [ "/opt/homebrew/bin" ]
+    ++ lib.optionals pkgs.stdenv.isLinux [ "${config.home.homeDirectory}/.local/state/nix/profiles/home-manager/home-path/bin" ];
 
   # This will be imported by user-specific configurations
   # These paths are relative to the root dotfiles directory

@@ -11,11 +11,13 @@
     '';
 
     interactiveShellInit = ''
-      # Source nix profile (Linux only - macOS uses nix-darwin)
+      # Source nix and home-manager profiles (Linux only - macOS uses nix-darwin)
       ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
         if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.fish
           source /nix/var/nix/profiles/default/etc/profile.d/nix.fish
         end
+        # Add Home Manager profile to PATH
+        fish_add_path --prepend "$HOME/.local/state/nix/profiles/home-manager/home-path/bin"
       ''}
 
       # Enable vi key bindings
