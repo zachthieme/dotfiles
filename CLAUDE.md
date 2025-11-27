@@ -244,6 +244,35 @@ programs.fzf.enableFishIntegration = true;
 programs.zoxide.enableFishIntegration = true;
 ```
 
+## Platform Differences
+
+### Home Manager Backup File Extension
+
+When Home Manager encounters existing files that would be clobbered, the backup mechanism differs by platform:
+
+**macOS (nix-darwin module)**: Use `home-manager.backupFileExtension` in the darwin module config:
+```nix
+# In modules/darwin/mk-config.nix
+home-manager.backupFileExtension = "backup";
+```
+
+**Linux (standalone Home Manager)**: The `home.backupFileExtension` option does NOT exist. Instead, use the `-b` flag in the command line:
+```bash
+home-manager switch -b backup --flake .#hostname
+```
+
+This is handled automatically in `install.sh` for Linux hosts.
+
+### Home Manager Option Naming (as of 2025)
+
+Some Home Manager options have been renamed. Use the new names:
+- `programs.git.userName` → `programs.git.settings.user.name`
+- `programs.git.userEmail` → `programs.git.settings.user.email`
+- `programs.git.extraConfig` → merge into `programs.git.settings`
+- `programs.git.delta.enable` → `programs.delta.enable`
+- `programs.git.delta.options` → `programs.delta.options`
+- `programs.ssh` requires `enableDefaultConfig = false` to suppress deprecation warnings
+
 ## Recent Refactorings
 
 ### 2025-11-04: Code Deduplication and Helper Library
