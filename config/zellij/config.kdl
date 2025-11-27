@@ -1,9 +1,9 @@
-theme "one-half-dark"
-show_startup_tips false
+default_layout "compact-top"
 default_shell "fish"
 pane_frames false
+show_startup_tips false
 simplified_ui true
-default_layout "compact-top"
+theme "one-half-dark"
 
 keybinds {
     shared {
@@ -18,7 +18,3 @@ keybinds {
     }
 }
 
-// plugins {
-//     tab-bar location="zellij:tab-bar"
-//     status-bar location="zellij:status-bar"
-// }
