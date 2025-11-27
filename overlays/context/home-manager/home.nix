@@ -21,10 +21,12 @@
 
   # Install Claude Code CLI on home machines only
   # Note: Uses official installer since claude-code isn't in nixpkgs yet
+  # The installer script needs curl in PATH for its own downloads
   home.activation.installClaudeCode = config.lib.dag.entryAfter [ "writeBoundary" ] ''
     if [ ! -f "${config.home.homeDirectory}/.local/bin/claude" ]; then
       echo "Installing Claude Code CLI..."
-      $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://claude.ai/install.sh | ${pkgs.bash}/bin/bash
+      PATH="${pkgs.curl}/bin:${pkgs.gzip}/bin:${pkgs.gnutar}/bin:$PATH" \
+        $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://claude.ai/install.sh | ${pkgs.bash}/bin/bash
     fi
   '';
 }

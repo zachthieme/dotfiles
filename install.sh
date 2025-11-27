@@ -145,13 +145,15 @@ EOF
     echo "Added Home Manager paths to $BASHRC"
   fi
 
-  # Check if default shell is fish and remind user to change if needed
+  # Remind user to change shell to fish manually
+  # (requires sudo to add to /etc/shells and user password for chsh)
   CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
   if [ -f "$FISH_PATH" ] && [ "$CURRENT_SHELL" != "$FISH_PATH" ]; then
     echo ""
-    echo "=== Shell Configuration Reminder ==="
+    echo "=== ACTION REQUIRED: Change Default Shell ==="
     echo "Your default shell is currently: $CURRENT_SHELL"
-    echo "To change your default shell to fish, run:"
+    echo ""
+    echo "To change your default shell to fish, run these commands:"
     echo "  echo \"$FISH_PATH\" | sudo tee -a /etc/shells"
     echo "  chsh -s \"$FISH_PATH\""
     echo ""

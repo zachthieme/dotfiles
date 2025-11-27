@@ -45,6 +45,10 @@ in
     _ZO_FZF_OPTS = "--height 20% --reverse";
   };
 
+  # PATH additions
+  # - Linux: Home Manager standalone puts packages in ~/.local/state/nix/profiles/home-manager/home-path/bin
+  #   (unlike macOS where nix-darwin manages paths system-wide)
+  # - macOS: Homebrew is at /opt/homebrew/bin on Apple Silicon
   home.sessionPath =
     [ "${config.home.homeDirectory}/.local/bin" ]
     ++ lib.optionals pkgs.stdenv.isDarwin [ "/opt/homebrew/bin" ]

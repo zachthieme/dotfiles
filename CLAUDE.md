@@ -304,6 +304,34 @@ home-manager switch -b backup --flake .#hostname
 
 This is handled automatically in `install.sh` for Linux hosts.
 
+### Linux Home Manager PATH
+
+On standalone Home Manager (Linux), packages are installed to a different location than macOS:
+
+**Linux**: `~/.local/state/nix/profiles/home-manager/home-path/bin`
+**macOS**: Managed by nix-darwin, packages available system-wide
+
+The `install.sh` script automatically:
+1. Configures `~/.bashrc` with the Home Manager PATH
+2. Sources `hm-session-vars.sh` for environment variables
+
+Fish shell has this path added via `fish_add_path` in `home-manager/programs/fish.nix`.
+
+### Default Shell Change (Linux)
+
+On Linux, changing the default shell to fish requires manual steps after installation:
+
+```bash
+echo "$HOME/.local/state/nix/profiles/home-manager/home-path/bin/fish" | sudo tee -a /etc/shells
+chsh -s "$HOME/.local/state/nix/profiles/home-manager/home-path/bin/fish"
+```
+
+Then log out and back in. This cannot be automated because:
+- Adding to `/etc/shells` requires sudo
+- `chsh` requires the user's password interactively
+
+The `install.sh` script prints a reminder with the exact commands to run.
+
 ### Home Manager Option Naming (as of 2025)
 
 Some Home Manager options have been renamed. Use the new names:
