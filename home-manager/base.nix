@@ -43,18 +43,6 @@ in
   home.file = {
     ".config/aerospace".source = ../config/aerospace;
     ".config/borders".source = ../config/borders;
-    ".config/ghostty/config" = {
-      force = true;
-      text = ''
-        command = ${pkgs.fish}/bin/fish
-        keybind = global:ctrl+grave_accent=toggle_quick_terminal
-        quick-terminal-animation-duration = 0
-        # trying to make fish partial completion working
-        macos-option-as-alt = true
-        keybind = alt+left=unbind
-        keybind = alt+right=unbind
-      '';
-    };
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
     ".config/jrnl".source = ../config/jrnl;
@@ -281,6 +269,22 @@ in
   programs.carapace = {
     enable = true;
     enableFishIntegration = true;
+  };
+
+  programs.ghostty = {
+    enable = true;
+    enableFishIntegration = true;
+    settings = {
+      command = "${pkgs.fish}/bin/fish";
+      quick-terminal-animation-duration = 0;
+      # Enable option-as-alt for fish partial completion
+      macos-option-as-alt = true;
+      keybind = {
+        "global:ctrl+grave_accent" = "toggle_quick_terminal";
+        "alt+left" = "unbind";
+        "alt+right" = "unbind";
+      };
+    };
   };
 
   home.packages =
