@@ -16,7 +16,7 @@
   };
 
   home.packages = with pkgs; [
-    # Home-specific packages
+    opencode
   ];
 
   # Install Claude Code CLI on home machines only
