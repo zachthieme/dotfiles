@@ -28,21 +28,21 @@ in
   home.sessionVariables = {
     EDITOR = "hx";
     VISUAL = "hx";
+    COLORTERM = "truecolor";
     FZF_CTRL_T_OPTS = "--height 20%";
     FZF_CTRL_R_OPTS = "--height 20% --reverse";
     _ZO_FZF_OPTS = "--height 20% --reverse";
   };
 
-  home.sessionPath = [
-    "${config.home.homeDirectory}/.local/bin"
-  ];
+  home.sessionPath =
+    [ "${config.home.homeDirectory}/.local/bin" ]
+    ++ lib.optionals pkgs.stdenv.isDarwin [ "/opt/homebrew/bin" ];
 
   # This will be imported by user-specific configurations
   # These paths are relative to the root dotfiles directory
   home.file = {
     ".config/aerospace".source = ../config/aerospace;
     ".config/borders".source = ../config/borders;
-    ".config/btop".source = ../config/btop;
     ".config/ghostty/config" = {
       force = true;
       text = ''
@@ -57,14 +57,20 @@ in
     };
     ".config/helix".source = ../config/helix;
     ".config/jj".source = ../config/jj;
+    ".config/jrnl".source = ../config/jrnl;
     ".config/lazygit".source = ../config/lazygit;
     ".config/zellij".source = ../config/zellij;
-    ".config/zsh".source = ../config/zsh;
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
   };
 
   programs.fish = {
     enable = true;
+
+    shellInit = ''
+      # Disable greeting
+      set -g fish_greeting
+    '';
+
     interactiveShellInit = ''
       # Source nix profile (Linux only - macOS uses nix-darwin)
       ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
@@ -73,26 +79,177 @@ in
         end
       ''}
 
-      set -g fish_greeting
+      # Enable vi key bindings
       fish_vi_key_bindings
-      fish_add_path $HOME/.local/bin
-      ${pkgs.lib.optionalString pkgs.stdenv.isDarwin "fish_add_path /opt/homebrew/bin"}
 
-      # All made by Zach
-      abbr -a j jrnl
-      abbr -a jl jrnl --format short
-      abbr -a jf jrnl @fire
-      abbr -a vi hx
-
-     # created a function to find tasks in my notes
-     function ft
-      rg --vimgrep -o -P '(?=.*\[ \])(?=.*#weekly).*' ~/CloudDocs/Obsidian | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" --height 7
-      end
-
+      # Enable 24-bit color support
       set -g fish_term24bit 1
-      set -gx COLORTERM truecolor
-      carapace _carapace fish | source
     '';
+
+    shellAbbrs = {
+      j = "jrnl";
+      jl = "jrnl --format short";
+      jf = "jrnl @fire";
+      vi = "hx";
+    };
+
+    functions = {
+      ft = {
+        description = "Find tasks in notes";
+        body = ''
+          rg --vimgrep -o -P '(?=.*\[ \])(?=.*#weekly).*' ~/CloudDocs/Obsidian | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" --height 7
+        '';
+      };
+
+      gff = {
+        description = "Interactive Git file history explorer";
+        body = ''
+          if test -z "$argv[1]"
+            echo -e "\033[31mError:\033[0m Please provide a file path."
+            echo "Usage: gff <file>"
+            return 1
+          end
+
+          set -l file $argv[1]
+          set -l repo_root (git rev-parse --show-toplevel)
+          set -l rel_file (string replace "$repo_root/" "" "$file")
+
+          echo -e "\033[34mSearching Git history for:\033[0m $rel_file"
+
+          set -l selected_commit (git log --oneline --follow -- "$rel_file" | \
+            fzf --preview "git show {1}:$rel_file --color=always" \
+                --preview-window=right:70%:wrap --height=80% --border --ansi)
+
+          if test -z "$selected_commit"
+            echo -e "\033[33mNo commit selected.\033[0m"
+            return 0
+          end
+
+          set -l commit_hash (echo "$selected_commit" | awk '{print $1}')
+          echo -e "\033[34mSelected Commit:\033[0m $commit_hash"
+          echo -e "\033[34mFile Content Previewed Above.\033[0m"
+        '';
+      };
+
+      k = {
+        description = "Interactive process killer using fzf";
+        body = ''
+          ps aux | \
+          fzf --height 40% \
+              --layout=reverse \
+              --header-lines=1 \
+              --prompt="Select process to kill: " \
+              --preview 'echo {}' \
+              --preview-window up:3:hidden:wrap \
+              --bind 'F2:toggle-preview' | \
+          awk '{print $2}' | \
+          xargs -r bash -c 'if ! kill "$1" 2>/dev/null; then echo "Regular kill failed. Attempting with sudo..."; sudo kill "$1" || echo "Failed to kill process $1" >&2; fi' --
+        '';
+      };
+
+      logg = {
+        description = "Interactive Git log explorer with previews";
+        body = ''
+          git log | fzf --ansi --no-sort \
+            --preview 'echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % git show % --color=always' \
+            --preview-window=right:50%:wrap --height 100% \
+            --bind 'enter:execute(echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % sh -c "git show % | $EDITOR -")' \
+            --bind 'ctrl-e:execute(echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % sh -c "gh browse %")'
+        '';
+      };
+
+      mkdd = {
+        description = "Create a directory with today's date";
+        body = ''
+          set -l prefix ""
+          if test (count $argv) -gt 0
+            set prefix "$argv[1]"
+          end
+          mkdir -p "$prefix"(date +%F)
+        '';
+      };
+
+      _fif_common = {
+        description = "Internal helper for file searching functions";
+        body = ''
+          set -l ignore_case_flag $argv[1]
+          set -l search_term $argv[2]
+          set -l chezmoi_flag ""
+          if test (count $argv) -ge 3
+            set chezmoi_flag $argv[3]
+          end
+
+          if test -z "$search_term"
+            echo "Usage: _fif_common <ignore_case_flag> <search_term> [--chezmoi]"
+            return 1
+          end
+
+          set -l preview_cmd "rg $ignore_case_flag --pretty --context 10 '$search_term' {}"
+
+          set -l files (rg --files-with-matches $ignore_case_flag --no-messages "$search_term" | \
+            fzf-tmux +m --preview="$preview_cmd" --multi --select-1 --exit-0)
+
+          if test (count $files) -eq 0
+            echo "No files selected."
+            return 0
+          end
+
+          set -l resolved_files
+          for file in $files
+            set -a resolved_files (realpath "$file")
+          end
+
+          if test "$chezmoi_flag" = "--chezmoi"
+            cm edit $resolved_files
+          else
+            $EDITOR $resolved_files
+          end
+        '';
+      };
+
+      fifs = {
+        description = "Case-sensitive search for text in files";
+        body = ''
+          _fif_common "" $argv
+        '';
+      };
+
+      fifc = {
+        description = "Case-sensitive search in chezmoi-managed files";
+        body = ''
+          _fif_common "" $argv "--chezmoi"
+        '';
+      };
+
+      fif = {
+        description = "Case-insensitive search for text in files";
+        body = ''
+          _fif_common "--ignore-case" $argv
+        '';
+      };
+
+      y = {
+        description = "Run yazi file manager with directory tracking";
+        body = ''
+          set -l tmp (mktemp -t "yazi-cwd.XXXXXX")
+          yazi $argv --cwd-file="$tmp"
+          if set -l cwd (cat -- "$tmp"); and test -n "$cwd"; and test "$cwd" != "$PWD"
+            cd -- "$cwd"
+          end
+          rm -f -- "$tmp"
+        '';
+      };
+
+      nix-cleanup = {
+        description = "Clean up the Nix store by removing unused packages";
+        body = ''
+          echo "Collecting garbage from the Nix store..."
+          sudo nix-collect-garbage -d
+          echo "Garbage collection complete!"
+        '';
+      };
+    };
+
     plugins = [
       {
         name = "pure";
@@ -119,6 +276,11 @@ in
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
+  };
+
+  programs.carapace = {
+    enable = true;
+    enableFishIntegration = true;
   };
 
   home.packages =

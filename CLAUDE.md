@@ -203,6 +203,47 @@ lib.mkIf pkgs.stdenv.isLinux {
    home.file.".config/<tool>".source = ../config/<tool>;
    ```
 
+**Configure Fish shell** (prefer declarative Home Manager options over shell scripts):
+```nix
+programs.fish = {
+  enable = true;
+
+  # Shell-level initialization (runs in all fish shells)
+  shellInit = ''
+    set -g fish_greeting
+  '';
+
+  # Interactive shell initialization only
+  interactiveShellInit = ''
+    fish_vi_key_bindings
+    set -g fish_term24bit 1
+  '';
+
+  # Abbreviations (preferred over inline abbr commands)
+  shellAbbrs = {
+    vi = "hx";
+    gs = "git status";
+  };
+
+  # Functions (preferred over inline function definitions)
+  functions = {
+    my_function = {
+      description = "Brief description shown by 'functions -D'";
+      body = ''
+        # Function implementation
+        echo "Hello $argv"
+      '';
+    };
+  };
+};
+
+# Use native integrations for tools
+programs.carapace.enable = true;
+programs.carapace.enableFishIntegration = true;
+programs.fzf.enableFishIntegration = true;
+programs.zoxide.enableFishIntegration = true;
+```
+
 ## Recent Refactorings
 
 ### 2025-11-04: Code Deduplication and Helper Library
@@ -222,3 +263,24 @@ lib.mkIf pkgs.stdenv.isLinux {
 - Single source of truth for all host metadata
 - Easier to add support for new Linux distributions
 - More maintainable and consistent codebase
+
+### 2025-11-26: Fish Shell Configuration Modernization
+
+**Motivation**: Migrate from zsh to fish, convert shell functions properly, and use declarative Home Manager options instead of imperative shell scripts.
+
+**Changes**:
+1. **Converted all zsh functions to fish**: Migrated 12 functions from `config/zsh/functions` to fish syntax (gff, k, logg, mkdd, fif, fifs, fifc, y, vv, nix-cleanup, fns, _fif_common)
+2. **Adopted `programs.fish.functions`**: Moved all function definitions from `interactiveShellInit` string blocks to structured `programs.fish.functions` attributes with descriptions
+3. **Migrated to `programs.fish.shellAbbrs`**: Converted inline `abbr -a` commands to declarative `shellAbbrs` attribute set
+4. **Standardized environment variables**: Moved `COLORTERM` from fish config to `home.sessionVariables` for global availability
+5. **Consolidated PATH management**: Eliminated redundant `fish_add_path` calls by using `home.sessionPath` with conditional Darwin paths via `lib.optionals`
+6. **Native tool integrations**: Replaced manual carapace sourcing with `programs.carapace.enableFishIntegration`
+7. **Separated shell initialization**: Distinguished between `shellInit` (all shells) and `interactiveShellInit` (interactive only)
+
+**Impact**:
+- Cleaner, more maintainable fish configuration following Home Manager best practices
+- Functions are properly structured with descriptions and metadata
+- Better separation between declarative config and imperative shell code
+- Easier to selectively enable/disable functions or abbreviations
+- Reduced code in string blocks, more native Nix attributes
+- Tool integrations managed by Home Manager instead of manual sourcing
