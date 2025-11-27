@@ -36,7 +36,7 @@
       ft = {
         description = "Find tasks in notes";
         body = ''
-          rg --vimgrep -o -P '(?=.*\[ \])(?=.*#weekly).*' ~/CloudDocs/Obsidian | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" --height 7
+          rg --vimgrep -o -P '(?=.*\[ \])(?=.*#weekly).*' $OBSIDIAN_VAULT | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" --height 7
         '';
       };
 

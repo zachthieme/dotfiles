@@ -11,11 +11,15 @@ let
 in
 {
   imports = [
+    ./programs/bat.nix
+    ./programs/btop.nix
     ./programs/fish.nix
     ./programs/ghostty.nix
+    ./programs/git.nix
     ./programs/helix.nix
     ./programs/jujutsu.nix
     ./programs/lazygit.nix
+    ./programs/ssh.nix
   ];
 
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
@@ -37,6 +41,7 @@ in
     EDITOR = "hx";
     VISUAL = "hx";
     COLORTERM = "truecolor";
+    OBSIDIAN_VAULT = "~/CloudDocs/Obsidian";
     _ZO_FZF_OPTS = "--height 20% --reverse";
   };
 
