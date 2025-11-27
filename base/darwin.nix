@@ -44,11 +44,7 @@ in
 
     # Define user based on configuration
     users.users.${config.local.username} = {
-      home =
-        if pkgs.stdenv.isDarwin then
-          "/Users/${config.local.username}"
-        else
-          "/home/${config.local.username}";
+      home = "/Users/${config.local.username}";
       shell = pkgs.fish;
     };
 
