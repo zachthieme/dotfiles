@@ -4,6 +4,7 @@
 {
   programs.ghostty = {
     enable = true;
+    package = null;
     enableFishIntegration = true;
     settings = {
       command = "${pkgs.fish}/bin/fish";

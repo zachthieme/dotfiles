@@ -35,6 +35,280 @@
     };
 
     functions = {
+      person = {
+        description = "Populate an md file for a person.";
+        body = ''
+          set -l name $argv
+          set -l id (string lower -- $name | string replace -a ' ' '-')
+    
+          echo "---"
+          echo "id:$id"
+          echo "aliases:"
+          echo "  - $name"
+          echo "tags: []"
+          echo "---"
+          echo ""
+          echo "# $name"
+          '';
+      };
+
+      project = {
+        description = "Populate an md file for a project.";
+        body = ''
+          set -l name $argv
+          set -l id (string lower -- $name | string replace -a ' ' '-')
+    
+          echo "---"
+          echo "id: $id"
+          echo "aliases:"
+          echo "  - $name"
+          echo "tags: [project]"
+          echo "---"
+          echo ""
+          echo "# $name"
+          echo ""
+          echo "## Overview"
+          echo ""
+          echo "## Goals"
+          echo ""
+          echo "## Stakeholders"
+          echo ""
+          echo "## Key Decisions"
+          echo ""
+          echo "## Risks"
+          echo ""
+          echo "## Status Updates"
+        '';
+      };
+
+      adr = {
+        description = "Populate an md file for an architecture decision record.";
+        body = ''
+          set -l name $argv
+          set -l id (string lower -- $name | string replace -a ' ' '-')
+          set -l today (date +%Y-%m-%d)
+    
+          echo "---"
+          echo "id: adr-$id"
+          echo "aliases:"
+          echo "  - $name"
+          echo "tags: [adr]"
+          echo "date: $today"
+          echo "status: proposed"
+          echo "---"
+          echo ""
+          echo "# $name"
+          echo ""
+          echo "## Status"
+          echo ""
+          echo "Proposed"
+          echo ""
+          echo "## Context"
+          echo ""
+          echo "## Options Considered"
+          echo ""
+          echo "### Option 1"
+          echo ""
+          echo "### Option 2"
+          echo ""
+          echo "## Decision"
+          echo ""
+          echo "## Consequences"
+        '';
+      };
+
+      weekly = {
+        description = "Populate an md file for a weekly review.";
+        body = ''
+          set -l today (date +%Y-%m-%d)
+          set -l formatted (date +"%B %-d, %Y")
+    
+          echo "---"
+          echo "id: weekly-$today"
+          echo "aliases:"
+          echo "  - Week of $formatted"
+          echo "tags: [weekly-review]"
+          echo "---"
+          echo ""
+          echo "# Week of $formatted"
+          echo ""
+          echo "## Wins"
+          echo ""
+          echo "## Challenges"
+          echo ""
+          echo "## Next Week Priorities"
+          echo ""
+          echo "## Notes"
+        '';
+      };
+
+      quarterly = {
+        description = "Populate an md file for a quarterly review. Usage: quarterly Q4 [year]";
+        body = ''
+          set -l quarter $argv[1]
+          set -l year (date +%Y)
+          if test (count $argv) -gt 1
+              set year $argv[2]
+          end
+    
+          echo "---"
+          echo "id: $year-$quarter-review"
+          echo "aliases:"
+          echo "  - $quarter $year Review"
+          echo "tags: [quarterly-review]"
+          echo "---"
+          echo ""
+          echo "# $quarter $year Review"
+          echo ""
+          echo "## Goals"
+          echo ""
+          echo "## Accomplishments"
+          echo ""
+          echo "## What Worked"
+          echo ""
+          echo "## What Didn't"
+          echo ""
+          echo "## Key Learnings"
+          echo ""
+          echo "## Next Quarter Priorities"
+        '';
+      };
+
+      decision = {
+        description = "Populate an md file for a decision document.";
+        body = ''
+          set -l name $argv
+          set -l id (string lower -- $name | string replace -a ' ' '-')
+          set -l today (date +%Y-%m-%d)
+    
+          echo "---"
+          echo "id: decision-$id"
+          echo "aliases:"
+          echo "  - $name"
+          echo "tags: [decision]"
+          echo "date: $today"
+          echo "status: draft"
+          echo "---"
+          echo ""
+          echo "# $name"
+          echo ""
+          echo "## Problem Statement"
+          echo ""
+          echo "## Options"
+          echo ""
+          echo "### Option 1"
+          echo ""
+          echo "**Pros:**"
+          echo ""
+          echo "**Cons:**"
+          echo ""
+          echo "### Option 2"
+          echo ""
+          echo "**Pros:**"
+          echo ""
+          echo "**Cons:**"
+          echo ""
+          echo "## Recommendation"
+          echo ""
+          echo "## Tradeoffs"
+          echo ""
+          echo "## Decision"
+        '';
+      };
+
+      incident = {
+        description = "Populate an md file for an incident report.";
+        body = ''
+          set -l name $argv
+          set -l id (string lower -- $name | string replace -a ' ' '-')
+          set -l today (date +%Y-%m-%d)
+          set -l now (date +%H:%M)
+    
+          echo "---"
+          echo "id: incident-$today-$id"
+          echo "aliases:"
+          echo "  - $name"
+          echo "tags: [incident]"
+          echo "date: $today"
+          echo "severity: "
+          echo "status: investigating"
+          echo "---"
+          echo ""
+          echo "# $name"
+          echo ""
+          echo "## Timeline"
+          echo ""
+          echo "- $now - Incident identified"
+          echo ""
+          echo "## Impact"
+          echo ""
+          echo "## Root Cause"
+          echo ""
+          echo "## Resolution"
+          echo ""
+          echo "## Action Items"
+          echo ""
+          echo "## Prevention"
+        '';
+      };
+
+      company = {
+        description = "Populate an md file for company research.";
+        body = ''
+          set -l name $argv
+          set -l id (string lower -- $name | string replace -a ' ' '-')
+          set -l today (date +%Y-%m-%d)
+    
+          echo "---"
+          echo "id: company-$id"
+          echo "aliases:"
+          echo "  - $name"
+          echo "tags: [company-research]"
+          echo "date: $today"
+          echo "---"
+          echo ""
+          echo "# $name"
+          echo ""
+          echo "## Overview"
+          echo ""
+          echo "## Leadership"
+          echo ""
+          echo "## Culture Signals"
+          echo ""
+          echo "## Tech Stack & Challenges"
+          echo ""
+          echo "## Role Details"
+          echo ""
+          echo "## Compensation"
+          echo ""
+          echo "## Concerns"
+          echo ""
+          echo "## Questions to Ask"
+          echo ""
+          echo "## Verdict"
+        '';
+      };
+
+      daily = {
+        description = "Populate an md file for a daily note.";
+        body = ''
+          set -l today (date +%Y-%m-%d)
+          set -l formatted (date +"%A %B %-d, %Y")
+    
+          echo "---"
+          echo "id: $today"
+          echo "aliases:"
+          echo "  - $today"
+          echo "tags: []"
+          echo "---"
+          echo ""
+          echo "# $formatted"
+          echo ""
+          echo "## Meetings"
+          echo ""
+          echo "## Notes"
+        '';
+      };
       ft = {
         description = "Find tasks in notes";
         body = ''

@@ -44,10 +44,10 @@
         a = [ "append_mode" "collapse_selection" ];
         i = [ "insert_mode" "collapse_selection" ];
         esc = [ "collapse_selection" "keep_primary_selection" ];
-        X = "extend_line_above";
-        H = ":buffer-previous";
-        L = ":buffer-next";
-        ret = "goto_word";
+        X = ["extend_line_above"];
+        H = [":buffer-previous"];
+        L = [":buffer-next"];
+        ret = ["goto_word"];
       };
     };
     languages = {
