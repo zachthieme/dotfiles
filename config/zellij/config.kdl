@@ -2,7 +2,6 @@ default_layout "compact-top"
 default_shell "fish"
 pane_frames false
 show_startup_tips false
-simplified_ui true
 theme "one-half-dark"
 
 keybinds {
