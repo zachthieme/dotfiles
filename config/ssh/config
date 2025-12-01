@@ -1,3 +1,0 @@
-Host pi*
-  RemoteCommand tmux attach-session -t default || tmux new-session -s default
-  RequestTTY yes
