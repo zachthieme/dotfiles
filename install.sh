@@ -120,7 +120,7 @@ else
   fi
 
   echo "Applying Home Manager configuration..."
-  home-manager switch --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"
+   home-manager switch --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"
 
   # Home Manager package paths
   HM_PROFILE="$HOME/.local/state/nix/profiles/home-manager/home-path"
