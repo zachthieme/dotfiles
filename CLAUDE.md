@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a Nix flake-based dotfiles repository that manages macOS (via nix-darwin) and Linux (via Home Manager) configurations across multiple machines. The architecture uses a layered approach: base system defaults, architecture overlays (aarch64/x86_64), OS-specific settings (Darwin), and context overlays (home/work) that compose together to produce machine-specific configurations.
+This is a Nix flake-based dotfiles repository that manages macOS (via nix-darwin) and Linux (via Home Manager) configurations across multiple machines. The architecture uses a layered approach: base system defaults, OS-specific settings (Darwin), and context overlays (home/work) that compose together to produce machine-specific configurations.
 
 ## Commands
 
@@ -76,10 +76,9 @@ These helpers eliminate code duplication and provide a single source of truth fo
 **macOS hosts** (`modules/darwin/mk-config.nix`) stack these modules:
 1. `base/darwin.nix` - Shared system settings (packages, users, hostname)
 2. `overlays/os/darwin.nix` - macOS-only settings (Homebrew, system defaults, keyboard)
-3. `overlays/arch/{aarch64,x86_64}.nix` - Architecture-specific tweaks
-4. `overlays/context/system/{home,work}.nix` - Context system overrides
-5. Inline module with host-specific `local.hostname`, `local.username`, packages
-6. Home Manager as Darwin module, importing `overlays/context/home-manager/{home,work}.nix`
+3. `overlays/context/system/{home,work}.nix` - Context system overrides
+4. Inline module with host-specific `local.hostname`, `local.username`, packages
+5. Home Manager as Darwin module, importing `overlays/context/home-manager/{home,work}.nix`
 
 **Linux hosts** (`modules/home-manager/mk-config.nix`) load:
 1. `overlays/context/home-manager/{home,work}.nix` (which imports `home-manager/base.nix`)
@@ -354,7 +353,6 @@ Some Home Manager options have been renamed. Use the new names:
 3. **Standardized context module selection**: Replaced repeated if-then-else with `helpers.selectContextModule`
 4. **Removed redundant isWork assignments**: Context system modules no longer re-set `local.isWork` since it's already defined in `definitions.nix`
 5. **Made base module OS-agnostic**: Updated `base/darwin.nix` (formerly `base/default.nix`) to use `pkgs.stdenv.isDarwin` for conditional paths, removed "MacBook" reference. Later renamed to `base/darwin.nix` to clarify it's macOS-specific.
-6. **Simplified architecture overlays**: Removed redundant `nixpkgs.hostPlatform` settings (already handled by system attribute), clarified purpose for future ARM-specific (Raspberry Pi) or x86-specific packages
 
 **Impact**:
 - Zero code duplication for OS detection and path resolution

@@ -4,11 +4,6 @@ hostname:
 let
   baseModule = ../../base/darwin.nix;
   osModule = ../../overlays/os/darwin.nix;
-  archModule =
-    if system == "aarch64-darwin" then
-      ../../overlays/arch/aarch64.nix
-    else
-      ../../overlays/arch/x86_64.nix;
   contextSystemModule = helpers.selectContextModule
     isWork
     ../../overlays/context/system/home.nix
@@ -23,7 +18,6 @@ nix-darwin.lib.darwinSystem {
   modules = [
     baseModule
     osModule
-    archModule
     contextSystemModule
     {
       local.hostname = hostname;
