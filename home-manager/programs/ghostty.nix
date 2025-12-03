@@ -4,6 +4,7 @@
 {
   programs.ghostty = {
     enable = true;
+    # I install ghostty from brew so package set to null
     package = null;
     enableFishIntegration = true;
     settings = {
@@ -12,6 +13,7 @@
       # Enable option-as-alt for fish partial completion
       macos-option-as-alt = true;
       keybind = [
+        # These ensure that alt+) and alt+( work in zellij
         ''alt+shift+0=text:\x1b)''
         ''alt+shift+9=text:\x1b(''
         "global:ctrl+grave_accent=toggle_quick_terminal"

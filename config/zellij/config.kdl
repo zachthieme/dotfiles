@@ -8,6 +8,7 @@ keybinds {
     shared {
         unbind "Alt Right"
         unbind "Alt F"
+        // remove bindings just in case so they don't conflict with helix
         unbind "Alt Shift 0"
         unbind "Alt Shift 1"
     }
