@@ -18,6 +18,7 @@
         end
         # Add Home Manager profile to PATH
         fish_add_path --prepend "$HOME/.local/state/nix/profiles/home-manager/home-path/bin"
+        fish_add_path "$HOME/.opencode/bin"
       ''}
 
       # Enable vi key bindings
