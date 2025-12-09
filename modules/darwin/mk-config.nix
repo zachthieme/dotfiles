@@ -1,4 +1,4 @@
-{ nix-darwin, home-manager, helpers }:
+{ nix-darwin, home-manager, catppuccin, helpers }:
 hostname:
 { system, user, isWork, packages ? [ ], ... }:
 let
@@ -30,7 +30,10 @@ nix-darwin.lib.darwinSystem {
       home-manager.useUserPackages = true;
       home-manager.backupFileExtension = "backup";
       home-manager.users.${user} = {
-        imports = [ contextHomeModule ];
+        imports = [
+          catppuccin.homeManagerModules.catppuccin
+          contextHomeModule
+        ];
         home.username = user;
         home.homeDirectory = helpers.getHomeDirectory user system;
       };

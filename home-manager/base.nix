@@ -22,6 +22,13 @@ in
     ./programs/ssh.nix
   ];
 
+  # Catppuccin theming (global enable applies to all supported programs)
+  catppuccin = {
+    enable = true;
+    flavor = "mocha";
+    accent = "mauve";
+  };
+
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
 
   # Enable experimental features for nix commands

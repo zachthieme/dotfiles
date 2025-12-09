@@ -1,4 +1,4 @@
-{ home-manager, nixpkgs, helpers }:
+{ home-manager, nixpkgs, catppuccin, helpers }:
 hostname:
 { system, user, isWork, packages ? [ ], ... }:
 let
@@ -10,6 +10,7 @@ in
 home-manager.lib.homeManagerConfiguration {
   pkgs = nixpkgs.legacyPackages.${system};
   modules = [
+    catppuccin.homeManagerModules.catppuccin
     contextModule
     {
       home.username = user;

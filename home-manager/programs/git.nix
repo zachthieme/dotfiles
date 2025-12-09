@@ -21,7 +21,6 @@
     options = {
       navigate = true;
       line-numbers = true;
-      syntax-theme = "base16";
     };
   };
 }

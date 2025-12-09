@@ -13,6 +13,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Pin to stable release - main branch has vicinae module that requires
+    # programs.vicinae which doesn't exist in home-manager yet
+    catppuccin.url = "github:catppuccin/nix/v1.1.0";
   };
 
   outputs =
@@ -21,6 +25,7 @@
       nixpkgs,
       nix-darwin,
       home-manager,
+      catppuccin,
       ...
     }:
     let
@@ -29,10 +34,10 @@
       hostData = import ./modules/hosts/definitions.nix { inherit lib helpers; };
       detectHostData = import ./modules/hosts/detect.nix { inherit (hostData) hosts; };
       mkDarwinConfig = import ./modules/darwin/mk-config.nix {
-        inherit nix-darwin home-manager helpers;
+        inherit nix-darwin home-manager catppuccin helpers;
       };
       mkHomeConfig = import ./modules/home-manager/mk-config.nix {
-        inherit home-manager nixpkgs helpers;
+        inherit home-manager nixpkgs catppuccin helpers;
       };
       inherit (hostData) hosts darwinHosts linuxHosts;
       defaultHost = detectHostData.defaultHost;

@@ -13,7 +13,6 @@
       };
     };
     settings = {
-      theme = "catppuccin_mocha";
       editor = {
         auto-format = true;
         auto-save = true;
