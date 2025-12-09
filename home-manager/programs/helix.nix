@@ -13,7 +13,7 @@
       };
     };
     settings = {
-      theme = "everforest_dark_multiselect";
+      theme = "catppuccin_mocha";
       editor = {
         auto-format = true;
         auto-save = true;

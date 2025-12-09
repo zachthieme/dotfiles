@@ -11,6 +11,9 @@
     '';
 
     interactiveShellInit = ''
+      # Set catppuccin flavor
+      set -g catppuccin_flavor mocha
+
       # Source nix and home-manager profiles (Linux only - macOS uses nix-darwin)
       ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
         if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.fish
@@ -491,6 +494,15 @@
     };
 
     plugins = [
+      {
+        name = "catppuccin";
+        src = pkgs.fetchFromGitHub {
+          owner = "catppuccin";
+          repo = "fish";
+          rev = "af622a6e247806f6260c00c6d261aa22680e5201";
+          hash = "sha256-KD/sWXSXYVlV+n7ft4vKFYpIMBB3PSn6a6jz+ZIMZvQ=";
+        };
+      }
       {
         name = "pure";
         src = pkgs.fishPlugins.pure.src;
