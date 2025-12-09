@@ -11,6 +11,7 @@ keybinds {
         // remove bindings just in case so they don't conflict with helix
         unbind "Alt Shift 0"
         unbind "Alt Shift 1"
+        unbind "Alt Shift 9"
     }
     normal {
         bind "Alt h" { MoveFocus "Left"; }

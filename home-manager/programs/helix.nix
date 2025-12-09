@@ -4,8 +4,16 @@
 {
   programs.helix = {
     enable = true;
+    themes = {
+      everforest_dark_multiselect = {
+        inherits = "everforest_dark";
+        "ui.selection.primary" = { bg = "#3d5a5e"; };
+        "ui.selection" = { bg = "#4a3f55"; };
+        "ui.cursor.primary" = { fg = "#2d353b"; bg = "#83c092"; modifiers = ["bold"]; };
+      };
+    };
     settings = {
-      theme = "everforest_dark";
+      theme = "everforest_dark_multiselect";
       editor = {
         auto-format = true;
         auto-save = true;
