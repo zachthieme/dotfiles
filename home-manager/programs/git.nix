@@ -24,6 +24,7 @@
     options = {
       navigate = true;
       line-numbers = true;
+      side-by-side = true;
     };
   };
 }

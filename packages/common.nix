@@ -50,6 +50,7 @@
       typst
       uv
       vim
+      vivid
       wget
       yazi
       zellij

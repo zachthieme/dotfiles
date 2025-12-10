@@ -28,6 +28,9 @@
 
       # Enable 24-bit color support
       set -g fish_term24bit 1
+
+      # Set LS_COLORS using vivid with catppuccin theme
+      set -gx LS_COLORS (vivid generate catppuccin-mocha)
     '';
 
     shellAbbrs = {
@@ -35,6 +38,9 @@
       jl = "jrnl --format short";
       jf = "jrnl @fire";
       vi = "hx";
+      ls = "eza";
+      ll = "eza -la --git";
+      lt = "eza -T --level=2";
     };
 
     functions = {

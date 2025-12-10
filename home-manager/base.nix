@@ -51,6 +51,9 @@ in
     COLORTERM = "truecolor";
     OBSIDIAN_VAULT = "${config.home.homeDirectory}/CloudDocs/Obsidian";
     _ZO_FZF_OPTS = "--height 20% --reverse";
+    RIPGREP_CONFIG_PATH = "${config.home.homeDirectory}/.config/ripgrep/config";
+    MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+    MANROFFOPT = "-c";
   };
 
   # PATH additions
@@ -68,6 +71,7 @@ in
     ".config/aerospace".source = ../config/aerospace;
     ".config/borders".source = ../config/borders;
     ".config/jrnl".source = ../config/jrnl;
+    ".config/ripgrep".source = ../config/ripgrep;
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
   };
 

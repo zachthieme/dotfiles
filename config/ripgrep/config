@@ -1,0 +1,6 @@
+--smart-case
+--hidden
+--glob=!.git/*
+--glob=!.jj/*
+--glob=!node_modules/*
+--glob=!.direnv/*
