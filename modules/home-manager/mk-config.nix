@@ -10,7 +10,7 @@ in
 home-manager.lib.homeManagerConfiguration {
   pkgs = nixpkgs.legacyPackages.${system};
   modules = [
-    catppuccin.homeManagerModules.catppuccin
+    catppuccin.homeModules.catppuccin
     contextModule
     {
       home.username = user;

@@ -1,17 +1,20 @@
 {
   "nodes": {
     "catppuccin": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
       "locked": {
-        "lastModified": 1731087391,
-        "narHash": "sha256-O4GA8GMA9bGJwBW1U6rahT4wJWC6YweLZeGo0i1TS7U=",
+        "lastModified": 1754093089,
+        "narHash": "sha256-Je8Wg+6Lrlc5oPg7JsUR3ASbqeE+lPXA7bEUEmitFK8=",
         "owner": "catppuccin",
         "repo": "nix",
-        "rev": "7c57f5c0a39a4b1557eaade06ba8507cd0ad7537",
+        "rev": "ea7a3a665b8b64ca624932bf210a214372f6af38",
         "type": "github"
       },
       "original": {
         "owner": "catppuccin",
-        "ref": "v1.1.0",
+        "ref": "v25.05",
         "repo": "nix",
         "type": "github"
       }
@@ -58,6 +61,22 @@
     },
     "nixpkgs": {
       "locked": {
+        "lastModified": 1753749649,
+        "narHash": "sha256-+jkEZxs7bfOKfBIk430K+tK9IvXlwzqQQnppC2ZKFj4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "1f08a4df998e21f4e8be8fb6fbf61d11a1a5076a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-25.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
         "lastModified": 1748856973,
         "narHash": "sha256-RlTsJUvvr8ErjPBsiwrGbbHYW8XbB/oek0Gi78XdWKg=",
         "owner": "NixOS",
@@ -77,7 +96,7 @@
         "catppuccin": "catppuccin",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs_2"
       }
     }
   },

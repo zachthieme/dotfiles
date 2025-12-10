@@ -2,11 +2,11 @@
 { config, ... }:
 
 {
+  # Enable catppuccin theme for zellij (inherits flavor from global catppuccin.flavor)
+  catppuccin.zellij.enable = true;
+
   programs.zellij = {
     enable = true;
-
-    # Enable catppuccin theme (inherits flavor from global catppuccin.flavor)
-    catppuccin.enable = true;
 
     settings = {
       default_layout = "compact-top";

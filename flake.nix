@@ -14,9 +14,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Pin to stable release - main branch has vicinae module that requires
-    # programs.vicinae which doesn't exist in home-manager yet
-    catppuccin.url = "github:catppuccin/nix/v1.1.0";
+    # Pin to stable release for reproducibility
+    catppuccin.url = "github:catppuccin/nix/v25.05";
   };
 
   outputs =

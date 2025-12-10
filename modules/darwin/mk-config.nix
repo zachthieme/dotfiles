@@ -31,7 +31,7 @@ nix-darwin.lib.darwinSystem {
       home-manager.backupFileExtension = "backup";
       home-manager.users.${user} = {
         imports = [
-          catppuccin.homeManagerModules.catppuccin
+          catppuccin.homeModules.catppuccin
           contextHomeModule
         ];
         home.username = user;
