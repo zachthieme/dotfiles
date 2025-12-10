@@ -56,7 +56,7 @@
     
     # Download the installer script
     echo "Downloading OpenCode installer..."
-    $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://opencode.ai/install.sh -o $INSTALL_SCRIPT
+    $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://opencode.ai/install -o $INSTALL_SCRIPT
     
     # Make script executable and extract version info
     $DRY_RUN_CMD chmod +x $INSTALL_SCRIPT
