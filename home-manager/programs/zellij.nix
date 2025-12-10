@@ -16,6 +16,7 @@
 
       keybinds = {
         shared = {
+          # removed to not conflict with alt right in fish
           "unbind \"Alt Right\"" = { };
           "unbind \"Alt F\"" = { };
           # Remove bindings so they don't conflict with helix
@@ -24,12 +25,12 @@
           "unbind \"Alt Shift 9\"" = { };
         };
         normal = {
-          "bind \"Alt h\"" = { MoveFocus = "Left"; };
-          "bind \"Alt j\"" = { MoveFocus = "Down"; };
-          "bind \"Alt k\"" = { MoveFocus = "Up"; };
-          "bind \"Alt l\"" = { MoveFocus = "Right"; };
-          "bind \"Alt H\"" = { GoToPreviousTab = { }; };
-          "bind \"Alt L\"" = { GoToNextTab = { }; };
+          "bind \"Alt H\"" = { MoveFocus = "Left"; };
+          "bind \"Alt J\"" = { MoveFocus = "Down"; };
+          "bind \"Alt K\"" = { MoveFocus = "Up"; };
+          "bind \"Alt L\"" = { MoveFocus = "Right"; };
+          "bind \"Alt h\"" = { GoToPreviousTab = { }; };
+          "bind \"Alt l\"" = { GoToNextTab = { }; };
         };
       };
     };
