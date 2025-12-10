@@ -20,13 +20,14 @@ in
     ./programs/jujutsu.nix
     ./programs/lazygit.nix
     ./programs/ssh.nix
+    ./programs/zellij.nix
   ];
 
   # Catppuccin theming (global enable applies to all supported programs)
   catppuccin = {
     enable = true;
     flavor = "mocha";
-    accent = "mauve";
+    accent = "sky";
   };
 
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
@@ -67,7 +68,6 @@ in
     ".config/aerospace".source = ../config/aerospace;
     ".config/borders".source = ../config/borders;
     ".config/jrnl".source = ../config/jrnl;
-    ".config/zellij".source = ../config/zellij;
     ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
   };
 
