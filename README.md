@@ -19,7 +19,6 @@ modules/             # Host definitions, builders, and shared helpers
   darwin/            # macOS configuration builder
   home-manager/      # Linux Home Manager configuration builder
 overlays/            # System + user overlays
-  arch/              # Architecture-specific settings (ARM64/x86_64)
   context/
     home-manager/    # Context-specific Home Manager modules (home/work)
     system/          # Context-specific system modules (home/work)

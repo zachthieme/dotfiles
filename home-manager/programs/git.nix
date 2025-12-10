@@ -1,4 +1,7 @@
 # Git configuration
+#
+# Note: Email is intentionally hardcoded to personal address for all machines.
+# Work commits should use personal identity (open source contributor model).
 { ... }:
 
 {

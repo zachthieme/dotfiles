@@ -71,7 +71,10 @@ if [[ "$OS" == "Darwin" ]]; then
   # Apply the configuration
   echo "Applying nix-darwin configuration..."
   echo "Running: darwin-rebuild switch --flake $SCRIPT_DIR#$CONFIG_NAME"
-  sudo darwin-rebuild switch --flake "$SCRIPT_DIR#$CONFIG_NAME"
+  if ! sudo darwin-rebuild switch --flake "$SCRIPT_DIR#$CONFIG_NAME"; then
+    echo "Error: darwin-rebuild switch failed"
+    exit 1
+  fi
 
   # Install homebrew if not already installed
   if ! command -v brew &>/dev/null; then
@@ -120,7 +123,10 @@ else
   fi
 
   echo "Applying Home Manager configuration..."
-   home-manager switch --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"
+  if ! home-manager switch --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"; then
+    echo "Error: home-manager switch failed"
+    exit 1
+  fi
 
   # Home Manager package paths
   HM_PROFILE="$HOME/.local/state/nix/profiles/home-manager/home-path"

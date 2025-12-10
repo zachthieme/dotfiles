@@ -19,8 +19,7 @@
         if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.fish
           source /nix/var/nix/profiles/default/etc/profile.d/nix.fish
         end
-        # Add Home Manager profile to PATH
-        fish_add_path --prepend "$HOME/.local/state/nix/profiles/home-manager/home-path/bin"
+        # Home Manager PATH is set via home.sessionPath in base.nix
         fish_add_path "$HOME/.opencode/bin"
       ''}
 
