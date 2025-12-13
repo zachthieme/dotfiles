@@ -51,8 +51,20 @@
       INSTALL_SCRIPT="/tmp/opencode-install.sh"
       $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://opencode.ai/install -o $INSTALL_SCRIPT
       $DRY_RUN_CMD chmod +x $INSTALL_SCRIPT
-      PATH="${pkgs.curl}/bin:${pkgs.gzip}/bin:${pkgs.gnutar}/bin:$PATH" \
+      # Create a temp .zshrc so installer doesn't fail (it needs a shell config to modify)
+      # We manage PATH via fish.nix, so this is just to satisfy the installer
+      TEMP_ZSHRC="${config.home.homeDirectory}/.zshrc"
+      CREATED_ZSHRC=""
+      if [ ! -f "$TEMP_ZSHRC" ]; then
+        $DRY_RUN_CMD touch "$TEMP_ZSHRC"
+        CREATED_ZSHRC="1"
+      fi
+      SHELL=/bin/zsh PATH="${pkgs.curl}/bin:${pkgs.gzip}/bin:${pkgs.gnutar}/bin:${pkgs.unzip}/bin:$PATH" \
         $DRY_RUN_CMD ${pkgs.bash}/bin/bash $INSTALL_SCRIPT
+      # Clean up temp .zshrc if we created it (and it only has opencode PATH added)
+      if [ -n "$CREATED_ZSHRC" ] && [ -f "$TEMP_ZSHRC" ]; then
+        $DRY_RUN_CMD rm -f "$TEMP_ZSHRC"
+      fi
       $DRY_RUN_CMD rm -f $INSTALL_SCRIPT
     fi
   '';

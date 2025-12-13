@@ -7,7 +7,7 @@
     # I install ghostty from brew so package set to null
     package = null;
     enableFishIntegration = true;
-    systemd.enable = false;
+    # systemd.enable = false;
     settings = {
       command = "${pkgs.fish}/bin/fish";
       quick-terminal-animation-duration = 0;

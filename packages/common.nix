@@ -48,6 +48,7 @@
       rustup
       tree
       typst
+      unzip
       uv
       vim
       vivid
