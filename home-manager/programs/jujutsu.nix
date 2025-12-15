@@ -9,10 +9,13 @@
     enable = true;
     settings = {
       aliases = {
-        s = [ "show" "--name-only" ];
-        c = [ "commit" "-m" ];
         b = [ "bookmark" "move" "main" "--to" "@-" ];
+        c = [ "commit" "-m" ];
         l = [ "log" "-r" "::" "--limit" "10" ];
+        ll = [ "log" "-r" "::" "--limit" "25" ];
+        lll = [ "log" "-r" "::" "--limit" "50" ];
+        r = ["rebase" "-d" "{0}" "-"];
+        s = [ "show" "--name-only" ];
       };
       user = {
         name = "Zach Thieme";
