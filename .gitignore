@@ -1,1 +1,27 @@
+# Nix build artifacts
 result
+result-*
+
+# Home Manager backups
+*.backup
+
+# Secrets and local overrides
+secrets.nix
+local.nix
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+*.tmp

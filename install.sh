@@ -1,171 +1,176 @@
 #!/bin/bash
 # Installation script for refactored dotfiles structure
 
-# Enable experimental features for all nix commands
-export NIX_CONFIG="experimental-features = nix-command flakes"
+set -e  # Exit on error
 
-# Get the directory of this script
+export NIX_CONFIG="experimental-features = nix-command flakes"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$SCRIPT_DIR"
 
-# Helper function to install Determinate Nix
-install_nix() {
-  echo "=== Installing Determinate Nix ==="
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+# --- Parse Arguments ---
 
-  # Source nix profile after installation
-  if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+UPGRADE_TOOLS=false
+for arg in "$@"; do
+  case $arg in
+    --upgrade|-u) UPGRADE_TOOLS=true ;;
+    --help|-h)
+      echo "Usage: $0 [OPTIONS]"
+      echo ""
+      echo "Options:"
+      echo "  --upgrade, -u    Upgrade claude and opencode CLI tools (home machines only)"
+      echo "  --help, -h       Show this help message"
+      exit 0
+      ;;
+  esac
+done
+
+# --- Helper Functions ---
+
+log() { echo "=== $1 ==="; }
+die() { echo "Error: $1" >&2; exit 1; }
+
+upgrade_tools() {
+  log "Upgrading CLI tools"
+  echo "Upgrading Claude Code..."
+  curl -fsSL https://claude.ai/install.sh | bash
+  echo "Upgrading OpenCode..."
+  curl -fsSL https://opencode.ai/install | bash
+}
+
+source_nix_profile() {
+  [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ] && \
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-  fi
+}
 
-  # Verify installation
-  if ! command -v nix &>/dev/null; then
-    echo "Error: Nix installation failed or not in PATH."
-    echo "Please restart your shell and run this script again."
-    exit 1
-  fi
+install_nix() {
+  log "Installing Determinate Nix"
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+  source_nix_profile
+  command -v nix &>/dev/null || die "Nix installation failed. Restart shell and retry."
   echo "Nix installed successfully."
 }
 
-# Check if nix is installed, install if not
-if ! command -v nix &>/dev/null; then
-  # Try sourcing the profile first in case it's installed but not in PATH
-  if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-    . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-  fi
+# Fetch host info from definitions.nix (sets HOST_EXISTS and IS_WORK)
+fetch_host_info() {
+  local hostname=$1
+  local info
+  info=$(nix eval --raw --impure --expr "
+    let
+      flake = builtins.getFlake \"$SCRIPT_DIR\";
+      hosts = flake.outputs.hosts or {};
+      exists = builtins.hasAttr \"$hostname\" hosts;
+      host = hosts.\"$hostname\" or {};
+    in
+      if exists then \"exists:\" + (if host.isWork or false then \"work\" else \"home\")
+      else \"missing\"
+  " 2>/dev/null) || info="missing"
 
-  # Check again after sourcing
+  if [ "$info" = "missing" ]; then
+    HOST_EXISTS=false
+    IS_WORK=false
+  else
+    HOST_EXISTS=true
+    IS_WORK=$( [ "$info" = "exists:work" ] && echo true || echo false )
+  fi
+}
+
+show_available_hosts() {
+  echo "Available hosts:"
+  nix eval --json --impure --expr "builtins.attrNames ((builtins.getFlake \"$SCRIPT_DIR\").outputs.hosts or {})" \
+    2>/dev/null | grep -oP '(?<=")[\w-]+(?=")' | sed 's/^/  - /'
+}
+
+get_nix_system() {
+  local arch=$1 os=$2
+  case "$os-$arch" in
+    Darwin-arm64)   echo "aarch64-darwin" ;;
+    Darwin-x86_64)  echo "x86_64-darwin" ;;
+    Linux-aarch64)  echo "aarch64-linux" ;;
+    *)              echo "x86_64-linux" ;;
+  esac
+}
+
+# --- Nix Installation Check ---
+
+if ! command -v nix &>/dev/null; then
+  source_nix_profile
   if ! command -v nix &>/dev/null; then
     echo "Nix is not installed."
-    read -p "Would you like to install Determinate Nix? [Y/n] " -n 1 -r
+    read -p "Install Determinate Nix? [Y/n] " -n 1 -r
     echo
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
-      echo "Nix is required to continue. Exiting."
-      exit 1
-    fi
+    [[ $REPLY =~ ^[Nn]$ ]] && die "Nix is required"
     install_nix
   fi
 fi
 
-# Determine the hostname, architecture, and operating system
-# Use multiple methods to get hostname, prioritizing portability
-if command -v hostname &>/dev/null; then
-  HOSTNAME=$(hostname)
-elif [ -f /etc/hostname ]; then
-  HOSTNAME=$(cat /etc/hostname)
-else
-  HOSTNAME=$(uname -n)
-fi
+# --- Detection ---
+
+HOSTNAME=$(hostname 2>/dev/null || cat /etc/hostname 2>/dev/null || uname -n)
+[ -z "$HOSTNAME" ] && die "Failed to detect hostname. Set HOSTNAME environment variable."
 ARCHITECTURE=$(uname -m)
 OS=$(uname -s)
+NIX_SYSTEM=$(get_nix_system "$ARCHITECTURE" "$OS")
 
-# Helper function to check if hostname exists in definitions.nix
-check_hostname_exists() {
-  local hostname=$1
-  if ! nix eval --extra-experimental-features "nix-command flakes" --raw --impure --expr "
-    let
-      flake = builtins.getFlake \"$SCRIPT_DIR\";
-      hosts = flake.outputs.hosts or {};
-    in
-      if builtins.hasAttr \"$hostname\" hosts
-      then \"true\"
-      else \"false\"
-  " 2>/dev/null | grep -q "true"; then
-    echo "Error: Hostname '$hostname' not found in modules/hosts/definitions.nix"
-    echo ""
-    echo "Available hosts:"
-    nix eval --extra-experimental-features "nix-command flakes" --json --impure --expr "
-      let
-        flake = builtins.getFlake \"$SCRIPT_DIR\";
-      in
-        builtins.attrNames (flake.outputs.hosts or {})
-    " 2>/dev/null | grep -oP '(?<=")[\w-]+(?=")' | sed 's/^/  - /'
-    echo ""
-    echo "Please add your hostname to modules/hosts/definitions.nix or use one of the above."
-    exit 1
-  fi
-}
+export HOSTNAME NIX_SYSTEM
+
+log "Dotfiles Installation"
+echo "Detected:"
+echo "  Host: $HOSTNAME"
+echo "  Architecture: $ARCHITECTURE"
+echo "  System: $NIX_SYSTEM"
+
+fetch_host_info "$HOSTNAME"
+if [ "$HOST_EXISTS" = false ]; then
+  echo "Error: Hostname '$HOSTNAME' not found in modules/hosts/definitions.nix"
+  echo ""
+  show_available_hosts
+  echo ""
+  die "Add your hostname to modules/hosts/definitions.nix"
+fi
+mkdir -p ~/Pictures/screenshots/
+
+# --- OS-Specific Setup ---
 
 if [[ "$OS" == "Darwin" ]]; then
-  # Use actual hostname as configuration name
-  CONFIG_NAME="$HOSTNAME"
-
-  # Export for nix detection
-  export HOSTNAME
-  export NIX_SYSTEM=$([ "$ARCHITECTURE" == "arm64" ] && echo "aarch64-darwin" || echo "x86_64-darwin")
-
-  echo "=== Dotfiles Installation ==="
-  echo "Detected:"
-  echo "  Host: $HOSTNAME"
-  echo "  Architecture: $ARCHITECTURE"
-  echo "  System: $NIX_SYSTEM"
-  echo "  Configuration: $CONFIG_NAME"
-
-  # Check if hostname exists in definitions.nix
-  check_hostname_exists "$CONFIG_NAME"
-
-  # Create screenshots directory if it doesn't exist
-  mkdir -p ~/Pictures/screenshots/
-
-  # Apply the configuration
-  echo "Applying nix-darwin configuration..."
-  echo "Running: darwin-rebuild switch --flake $SCRIPT_DIR#$CONFIG_NAME"
-  if ! sudo darwin-rebuild switch --flake "$SCRIPT_DIR#$CONFIG_NAME"; then
-    echo "Error: darwin-rebuild switch failed"
-    exit 1
-  fi
-
-  # Install homebrew if not already installed
+  # Install Homebrew first (needed by darwin config)
   if ! command -v brew &>/dev/null; then
-    echo "Installing Homebrew..."
+    log "Installing Homebrew"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  fi
-
-else
-  # Linux setup using Home Manager
-  CONFIG_NAME="$HOSTNAME"
-  export HOSTNAME
-  export NIX_SYSTEM=$([ "$ARCHITECTURE" == "aarch64" ] && echo "aarch64-linux" || echo "x86_64-linux")
-
-  echo "=== Dotfiles Installation ==="
-  echo "Detected:"
-  echo "  Host: $HOSTNAME"
-  echo "  Architecture: $ARCHITECTURE"
-  echo "  System: $NIX_SYSTEM"
-  echo "  Configuration: $CONFIG_NAME"
-
-  # Check if hostname exists in definitions.nix
-  check_hostname_exists "$CONFIG_NAME"
-
-  mkdir -p ~/Pictures/screenshots/
-
-  if ! command -v home-manager &>/dev/null; then
-    echo "home-manager not found; installing..."
-    if ! nix --extra-experimental-features "nix-command flakes" \
-      profile add nixpkgs#home-manager; then
-      echo "Failed to install home-manager."
-      echo "Ensure that the nix-command and flakes experimental features are enabled."
-      exit 1
+    # Add Homebrew to PATH for this session
+    if [[ "$ARCHITECTURE" == "arm64" ]]; then
+      eval "$(/opt/homebrew/bin/brew shellenv)"
+    else
+      eval "$(/usr/local/bin/brew shellenv)"
     fi
   fi
 
-  echo "Applying Home Manager configuration..."
-  if ! home-manager switch --extra-experimental-features "nix-command flakes" --flake "$SCRIPT_DIR#$CONFIG_NAME"; then
-    echo "Error: home-manager switch failed"
-    exit 1
+  echo "Applying nix-darwin configuration..."
+  if ! sudo darwin-rebuild switch --flake "$SCRIPT_DIR#$HOSTNAME"; then
+    echo ""
+    echo "To rollback to previous generation:"
+    echo "  sudo darwin-rebuild switch --rollback"
+    die "darwin-rebuild failed"
+  fi
+else
+  if ! command -v home-manager &>/dev/null; then
+    echo "Installing home-manager..."
+    nix profile add nixpkgs#home-manager || die "Failed to install home-manager"
   fi
 
-  # Home Manager package paths
-  HM_PROFILE="$HOME/.local/state/nix/profiles/home-manager/home-path"
-  FISH_PATH="$HM_PROFILE/bin/fish"
-
-  # Set up bash with Home Manager paths if not already configured
-  BASHRC="$HOME/.bashrc"
-  HM_MARKER="# Home Manager PATH setup"
-  if ! grep -q "$HM_MARKER" "$BASHRC" 2>/dev/null; then
+  echo "Applying Home Manager configuration..."
+  if ! home-manager switch -b backup --flake "$SCRIPT_DIR#$HOSTNAME"; then
     echo ""
-    echo "=== Configuring Bash for Home Manager ==="
-    cat >> "$BASHRC" << 'EOF'
+    echo "To rollback to previous generation:"
+    echo "  home-manager generations"
+    echo "  home-manager activate <path-to-generation>"
+    die "home-manager failed"
+  fi
+
+  # Configure bash PATH
+  HM_MARKER="# Home Manager PATH setup"
+  if ! grep -q "$HM_MARKER" "$HOME/.bashrc" 2>/dev/null; then
+    log "Configuring Bash for Home Manager"
+    cat >> "$HOME/.bashrc" << 'EOF'
 
 # Home Manager PATH setup
 if [ -d "$HOME/.local/state/nix/profiles/home-manager/home-path/bin" ]; then
@@ -175,23 +180,35 @@ if [ -f "$HOME/.local/state/nix/profiles/home-manager/home-path/etc/profile.d/hm
   . "$HOME/.local/state/nix/profiles/home-manager/home-path/etc/profile.d/hm-session-vars.sh"
 fi
 EOF
-    echo "Added Home Manager paths to $BASHRC"
   fi
 
-  # Remind user to change shell to fish manually
-  # (requires sudo to add to /etc/shells and user password for chsh)
-  CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
+  # Shell change reminder (portable: getent on Linux, dscl on macOS, fallback to $SHELL)
+  FISH_PATH="$HOME/.local/state/nix/profiles/home-manager/home-path/bin/fish"
+  if command -v getent &>/dev/null; then
+    CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
+  elif command -v dscl &>/dev/null; then
+    CURRENT_SHELL=$(dscl . -read /Users/"$USER" UserShell | awk '{print $2}')
+  else
+    CURRENT_SHELL="$SHELL"
+  fi
   if [ -f "$FISH_PATH" ] && [ "$CURRENT_SHELL" != "$FISH_PATH" ]; then
-    echo ""
-    echo "=== ACTION REQUIRED: Change Default Shell ==="
-    echo "Your default shell is currently: $CURRENT_SHELL"
-    echo ""
-    echo "To change your default shell to fish, run these commands:"
+    log "ACTION REQUIRED: Change Default Shell"
+    echo "Current shell: $CURRENT_SHELL"
+    echo "Run:"
     echo "  echo \"$FISH_PATH\" | sudo tee -a /etc/shells"
     echo "  chsh -s \"$FISH_PATH\""
-    echo ""
-    echo "Then log out and back in for the change to take effect."
   fi
 fi
-echo "Installation complete!"
-echo "You may need to restart your terminal or computer for all changes to take effect."
+
+# --- Upgrade Tools (if requested, home machines only) ---
+
+if [ "$UPGRADE_TOOLS" = true ]; then
+  if [ "$IS_WORK" = true ]; then
+    echo "Skipping tool upgrades on work machine"
+  else
+    upgrade_tools
+  fi
+fi
+
+log "Installation complete"
+echo "Restart your terminal for changes to take effect."

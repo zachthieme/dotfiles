@@ -80,12 +80,14 @@
         {
           name = "markdown";
           auto-format = true;
+          language-servers = [ "markdown-oxide" ];
           formatter = {
             command = "prettier";
             args = [ "--parser" "markdown" "--prose-wrap" "never" ];
           };
         }
       ];
+      language-server.markdown-oxide.command = "markdown-oxide";
       language-server.nixd.command = "nixd";
       language-server.gopls.config = {
         "ui.diagnostic.analyses" = {

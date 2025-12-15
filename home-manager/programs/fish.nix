@@ -47,9 +47,14 @@
       person = {
         description = "Populate an md file for a person.";
         body = ''
+          if test (count $argv) -eq 0
+            echo "Usage: person <name>"
+            return 1
+          end
+
           set -l name $argv
           set -l id (string lower -- $name | string replace -a ' ' '-')
-    
+
           echo "---"
           echo "id:$id"
           echo "aliases:"
@@ -64,9 +69,14 @@
       project = {
         description = "Populate an md file for a project.";
         body = ''
+          if test (count $argv) -eq 0
+            echo "Usage: project <name>"
+            return 1
+          end
+
           set -l name $argv
           set -l id (string lower -- $name | string replace -a ' ' '-')
-    
+
           echo "---"
           echo "id: $id"
           echo "aliases:"
@@ -93,10 +103,15 @@
       adr = {
         description = "Populate an md file for an architecture decision record.";
         body = ''
+          if test (count $argv) -eq 0
+            echo "Usage: adr <name>"
+            return 1
+          end
+
           set -l name $argv
           set -l id (string lower -- $name | string replace -a ' ' '-')
           set -l today (date +%Y-%m-%d)
-    
+
           echo "---"
           echo "id: adr-$id"
           echo "aliases:"
@@ -154,12 +169,18 @@
       quarterly = {
         description = "Populate an md file for a quarterly review. Usage: quarterly Q4 [year]";
         body = ''
+          if test (count $argv) -eq 0
+            echo "Usage: quarterly <quarter> [year]"
+            echo "Example: quarterly Q4 2024"
+            return 1
+          end
+
           set -l quarter $argv[1]
           set -l year (date +%Y)
           if test (count $argv) -gt 1
               set year $argv[2]
           end
-    
+
           echo "---"
           echo "id: $year-$quarter-review"
           echo "aliases:"
@@ -186,10 +207,15 @@
       decision = {
         description = "Populate an md file for a decision document.";
         body = ''
+          if test (count $argv) -eq 0
+            echo "Usage: decision <name>"
+            return 1
+          end
+
           set -l name $argv
           set -l id (string lower -- $name | string replace -a ' ' '-')
           set -l today (date +%Y-%m-%d)
-    
+
           echo "---"
           echo "id: decision-$id"
           echo "aliases:"
@@ -228,11 +254,16 @@
       incident = {
         description = "Populate an md file for an incident report.";
         body = ''
+          if test (count $argv) -eq 0
+            echo "Usage: incident <name>"
+            return 1
+          end
+
           set -l name $argv
           set -l id (string lower -- $name | string replace -a ' ' '-')
           set -l today (date +%Y-%m-%d)
           set -l now (date +%H:%M)
-    
+
           echo "---"
           echo "id: incident-$today-$id"
           echo "aliases:"
@@ -264,10 +295,15 @@
       company = {
         description = "Populate an md file for company research.";
         body = ''
+          if test (count $argv) -eq 0
+            echo "Usage: company <name>"
+            return 1
+          end
+
           set -l name $argv
           set -l id (string lower -- $name | string replace -a ' ' '-')
           set -l today (date +%Y-%m-%d)
-    
+
           echo "---"
           echo "id: company-$id"
           echo "aliases:"
@@ -321,6 +357,15 @@
       ft = {
         description = "Find tasks in notes";
         body = ''
+          if not set -q OBSIDIAN_VAULT; or test -z "$OBSIDIAN_VAULT"
+            echo -e "\033[31mError:\033[0m OBSIDIAN_VAULT environment variable not set"
+            return 1
+          end
+          if not test -d "$OBSIDIAN_VAULT"
+            echo -e "\033[31mError:\033[0m OBSIDIAN_VAULT directory does not exist: $OBSIDIAN_VAULT"
+            return 1
+          end
+
           rg --vimgrep -o -P '(?=.*\[ \])(?=.*#weekly).*' $OBSIDIAN_VAULT | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" --height 7
         '';
       };
@@ -374,6 +419,11 @@
       logg = {
         description = "Interactive Git log explorer with previews";
         body = ''
+          if not git rev-parse --git-dir &>/dev/null
+            echo -e "\033[31mError:\033[0m Not a git repository"
+            return 1
+          end
+
           git log | fzf --ansi --no-sort \
             --preview 'echo {} | grep -o "[a-f0-9]\{7\}" | head -1 | xargs -I % git show % --color=always' \
             --preview-window=right:50%:wrap --height 100% \
@@ -464,6 +514,15 @@
       note = {
         description = "Search Obsidian vault or create new note";
         body = ''
+          if not set -q OBSIDIAN_VAULT; or test -z "$OBSIDIAN_VAULT"
+            echo -e "\033[31mError:\033[0m OBSIDIAN_VAULT environment variable not set"
+            return 1
+          end
+          if not test -d "$OBSIDIAN_VAULT"
+            echo -e "\033[31mError:\033[0m OBSIDIAN_VAULT directory does not exist: $OBSIDIAN_VAULT"
+            return 1
+          end
+
           set -l selected (fd --type f --extension md . "$OBSIDIAN_VAULT" | \
             fzf --print-query \
                 --preview "head -50 {}" \

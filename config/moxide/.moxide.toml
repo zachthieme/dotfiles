@@ -1,0 +1,25 @@
+# Markdown-oxide configuration
+# See: https://github.com/Feel-ix-343/markdown-oxide
+
+dailynote = "daily/%Y-%m-%d.md"
+
+[dailynote_format]
+template = """---
+id: {{date}}
+aliases:
+  - {{date}}
+tags: []
+---
+
+# {{day}} {{month}} {{day_number}}, {{year}}
+
+## Meetings
+
+## Notes
+
+"""
+date = "%Y-%m-%d"
+day = "%A"
+month = "%B"
+day_number = "%d"
+year = "%Y"
