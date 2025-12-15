@@ -8,6 +8,45 @@ export NIX_CONFIG="experimental-features = nix-command flakes"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$SCRIPT_DIR"
 
+# Helper function to install Determinate Nix
+install_nix() {
+  echo "=== Installing Determinate Nix ==="
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+
+  # Source nix profile after installation
+  if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+    . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+  fi
+
+  # Verify installation
+  if ! command -v nix &>/dev/null; then
+    echo "Error: Nix installation failed or not in PATH."
+    echo "Please restart your shell and run this script again."
+    exit 1
+  fi
+  echo "Nix installed successfully."
+}
+
+# Check if nix is installed, install if not
+if ! command -v nix &>/dev/null; then
+  # Try sourcing the profile first in case it's installed but not in PATH
+  if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+    . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+  fi
+
+  # Check again after sourcing
+  if ! command -v nix &>/dev/null; then
+    echo "Nix is not installed."
+    read -p "Would you like to install Determinate Nix? [Y/n] " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+      echo "Nix is required to continue. Exiting."
+      exit 1
+    fi
+    install_nix
+  fi
+fi
+
 # Determine the hostname, architecture, and operating system
 # Use multiple methods to get hostname, prioritizing portability
 if command -v hostname &>/dev/null; then
@@ -99,18 +138,6 @@ else
   check_hostname_exists "$CONFIG_NAME"
 
   mkdir -p ~/Pictures/screenshots/
-
-  # Source nix profile if not already in PATH
-  if ! command -v nix &>/dev/null; then
-    if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-      echo "Sourcing nix profile..."
-      . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-    else
-      echo "Error: nix is not installed or not in PATH."
-      echo "Please install nix from https://nixos.org/download.html"
-      exit 1
-    fi
-  fi
 
   if ! command -v home-manager &>/dev/null; then
     echo "home-manager not found; installing..."
