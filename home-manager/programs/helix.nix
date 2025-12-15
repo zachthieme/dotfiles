@@ -14,6 +14,7 @@
     };
     settings = {
       editor = {
+        shell = ["fish" "-lc"];
         auto-format = true;
         auto-save = true;
         color-modes = true;
