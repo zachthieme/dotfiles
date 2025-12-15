@@ -43,6 +43,24 @@ let
       isWork = false;
       packages = [ ];
     };
+    "pi-nomad1" = {
+      system = "aarch64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
+    "pi-nomad2" = {
+      system = "aarch64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
+    "pi-nomad3" = {
+      system = "aarch64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
   };
 
   # Use shared helper functions to avoid duplication
