@@ -182,7 +182,7 @@ fi
 EOF
   fi
 
-  # Shell change reminder (portable: getent on Linux, dscl on macOS, fallback to $SHELL)
+  # Shell change reminder (only if not already using fish)
   FISH_PATH="$HOME/.local/state/nix/profiles/home-manager/home-path/bin/fish"
   if command -v getent &>/dev/null; then
     CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
@@ -191,7 +191,8 @@ EOF
   else
     CURRENT_SHELL="$SHELL"
   fi
-  if [ -f "$FISH_PATH" ] && [ "$CURRENT_SHELL" != "$FISH_PATH" ]; then
+  # Only show if fish exists and current shell isn't already fish (any location)
+  if [ -f "$FISH_PATH" ] && [[ "$(basename "$CURRENT_SHELL")" != "fish" ]]; then
     log "ACTION REQUIRED: Change Default Shell"
     echo "Current shell: $CURRENT_SHELL"
     echo "Run:"

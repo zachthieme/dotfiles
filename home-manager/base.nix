@@ -32,6 +32,9 @@ in
 
   home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
 
+  # Disable news notifications
+  news.display = "silent";
+
   # Enable experimental features for nix commands
   # Note: On macOS, nix-darwin manages nix.package at system level
   nix = lib.mkMerge [

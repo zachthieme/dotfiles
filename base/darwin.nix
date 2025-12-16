@@ -7,9 +7,6 @@
   ...
 }:
 
-let
-  packageProfiles = import ../packages/common.nix { inherit pkgs; };
-in
 {
   # Accept arguments for user-specific settings with defaults
   options = {
@@ -36,8 +33,9 @@ in
 
   config = {
 
-    # Common system packages for all machines
-    environment.systemPackages = packageProfiles.profiles.basePackages;
+    # System-level packages (most packages go in home-manager/base.nix to avoid duplication)
+    # Only include packages that must be system-level (e.g., login shell)
+    environment.systemPackages = with pkgs; [ ];
     programs.fish.enable = true;
 
     # Set primary user based on configuration
