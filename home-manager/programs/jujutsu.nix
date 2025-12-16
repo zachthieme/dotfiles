@@ -22,8 +22,9 @@
         email = "zach@techsage.org";
       };
       ui = {
-        paginate = "never";
         default-command = "log";
+        pager = "delta";
+        diff.tool = [ "delta" "--color-only" ];
       };
     };
   };
