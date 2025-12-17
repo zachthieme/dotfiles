@@ -37,7 +37,7 @@ let
       isWork = false;
       packages = [ ];
     };
-    "pi-5ai" = {
+    "pi5" = {
       system = "aarch64-linux";
       user = "zach";
       isWork = false;

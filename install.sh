@@ -38,8 +38,9 @@ upgrade_tools() {
 }
 
 source_nix_profile() {
-  [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ] && \
+  if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+  fi
 }
 
 install_nix() {
