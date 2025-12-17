@@ -27,6 +27,7 @@
 
     if [ -f "$CLAUDE_BIN" ]; then
       echo "Claude Code CLI already installed (version: $($CLAUDE_BIN --version 2>/dev/null || echo 'unknown'))"
+      echo "Claude Code CLI already installed, skipping. Run 'install.sh --upgrade' to upgrade."
     else
       echo "Installing Claude Code CLI..."
       INSTALL_SCRIPT="/tmp/claude-install-$$.sh"
@@ -69,6 +70,7 @@
 
     if [ -f "$OPENCODE_BIN" ]; then
       echo "OpenCode CLI already installed (version: $($OPENCODE_BIN --version 2>/dev/null || echo 'unknown'))"
+      echo "OpenCode CLI already installed, skipping. Run 'install.sh --upgrade' to upgrade."
     else
       echo "Installing OpenCode CLI..."
       INSTALL_SCRIPT="/tmp/opencode-install-$$.sh"
