@@ -123,6 +123,7 @@ Program-specific Home Manager configurations live in `home-manager/programs/`:
 - `ghostty.nix`, `helix.nix` - Terminal and editor
 - `jujutsu.nix`, `lazygit.nix` - VCS tools
 - `ssh.nix` - SSH configuration
+- `zellij.nix` - Terminal multiplexer
 
 These are imported by `home-manager/base.nix` and apply to all hosts.
 
@@ -134,7 +135,7 @@ home.file = {
   ".config/aerospace".source = ../config/aerospace;
   ".config/borders".source = ../config/borders;
   ".config/jrnl".source = ../config/jrnl;
-  ".config/zellij".source = ../config/zellij;
+  ".config/ripgrep".source = ../config/ripgrep;
   # ...
 };
 ```

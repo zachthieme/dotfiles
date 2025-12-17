@@ -75,7 +75,7 @@ in
     ".config/borders".source = ../config/borders;
     ".config/jrnl".source = ../config/jrnl;
     ".config/ripgrep".source = ../config/ripgrep;
-    ".terminfo/x/xterm-ghostty".source = ../config/terminfo/x/xterm-ghostty;
+    ".terminfo".source = ../config/terminfo;
     # markdown-oxide config goes in the Obsidian vault root
     "CloudDocs/Obsidian/.moxide.toml".source = ../config/moxide/.moxide.toml;
   };

@@ -1,57 +1,155 @@
 # Dotfiles for Multiple Machines
 
-Automated dotfiles for multiple macOS and Linux hosts, powered by Nix flakes. The repo layers system defaults, architecture tweaks, and context-specific overrides so each machine receives the right mix with minimal duplication. For contributor-specific details, see [Repository Guidelines](./AGENTS.md).
+Automated dotfiles for macOS and Linux hosts (including Raspberry Pi), powered by Nix flakes. The repo layers system defaults, OS-specific settings, and context overlays (home/work) so each machine receives the right configuration with minimal duplication.
 
+For contributor-specific technical details, see [Repository Guidelines](./AGENTS.md).
 
-## Why This Exists
-- Single source of truth for workstation setup across personal and work machines.
-- Repeatable, idempotent provisioning through `nix-darwin`, Home Manager, and overlays.
-- Separation of base, architecture, context, and host layers to keep overrides tight and auditable.
+## Features
+
+- **Cross-platform**: macOS via nix-darwin, Linux via standalone Home Manager
+- **Fish shell**: Primary shell with vi keybindings, custom functions, and abbreviations
+- **Catppuccin theming**: Consistent mocha theme across terminal, editor, and tools
+- **Obsidian workflow**: Fish functions for notes, ADRs, weekly/quarterly reviews, and more
+- **Helix editor**: Modal editor with LSP support for Go, Rust, Nix, TypeScript, and more
+- **Modern CLI tools**: eza, bat, fzf, zoxide, ripgrep, fd, jujutsu, lazygit
+
+## Quick Start
+
+```bash
+# Clone and run install script (auto-detects host)
+./install.sh
+```
+
+The script will:
+1. Install Nix (via Determinate Systems installer) if needed
+2. Install Homebrew on macOS if needed
+3. Apply the appropriate flake configuration
+4. Configure shell PATH for Home Manager on Linux
 
 ## Repository Layout
+
 ```
 base/                # Platform-specific system configs (darwin.nix for macOS)
-config/              # Dotfiles grouped by application
-home-manager/        # Home Manager base modules
-modules/             # Host definitions, builders, and shared helpers
-  lib.nix            # Shared helper functions (path resolution, OS detection)
+config/              # Static dotfiles symlinked to ~/.config
+  aerospace/         # macOS tiling window manager
+  borders/           # Window border styling
+  jrnl/              # Journal CLI config
+  moxide/            # Markdown-oxide LSP config (for Obsidian)
+  ripgrep/           # Ripgrep config
+  terminfo/          # Terminal capabilities (ghostty)
+home-manager/        # Home Manager modules
+  base.nix           # Shared user config (programs, dotfiles, env vars)
+  programs/          # Per-program configs (fish, git, helix, etc.)
+modules/             # Infrastructure
+  lib.nix            # Shared helper functions
   hosts/             # Host definitions and detection
   darwin/            # macOS configuration builder
-  home-manager/      # Linux Home Manager configuration builder
-overlays/            # System + user overlays
-  context/
-    home-manager/    # Context-specific Home Manager modules (home/work)
-    system/          # Context-specific system modules (home/work)
-  os/                # OS-level tweaks (e.g., macOS defaults, Homebrew)
-packages/            # Named package profiles
-flake.nix            # Entry point wiring modules together
-install.sh           # Bootstrap script for new machines
+  home-manager/      # Linux configuration builder
+overlays/            # Context-specific overrides
+  context/           # home vs work differences
+  os/                # OS-level settings (Homebrew, macOS defaults)
+packages/            # Shared package profiles
+flake.nix            # Entry point
+install.sh           # Bootstrap script
 ```
 
-## Rules of the Road
-- Treat `flake.nix` as the orchestration layer and keep host metadata in `modules/hosts/definitions.nix`.
-- Keep platform system config in `base/darwin.nix` (macOS) and shared user config in `home-manager/base.nix`; put context deltas under `overlays/context/system/` (system) and `overlays/context/home-manager/` (user). The Home Manager base is a module, so it picks up `home.username`/`home.homeDirectory` from the host wiring automatically.
-- Declare usernames (and other per-host facts) only in `modules/hosts/definitions.nix`. Downstream modules consume `config.local.username` or `config.home.username`; avoid re-stating literals in overlays.
-- Prefer host-specific packages via the `hosts.<name>.packages` list in `modules/hosts/definitions.nix` rather than sprinkling conditionals inside modules.
-- Run `nix flake check` before every commit; capture dry-run outputs (`darwin-rebuild switch --dry-run`, `home-manager switch --dry-run`) when opening a PR.
-- Document significant changes in `AGENTS.md` to help other contributors stay aligned.
+## Supported Hosts
+
+Hosts are defined in `modules/hosts/definitions.nix`. Current hosts include:
+
+| Host | System | Context |
+|------|--------|---------|
+| cortex | aarch64-darwin | home |
+| malv2 | x86_64-darwin | home |
+| zthieme34911 | aarch64-darwin | work |
+| srv722852 | x86_64-linux | home |
+| omarchy | x86_64-linux | home |
+| pi5 | aarch64-linux | home |
+| pi-nomad1/2/3 | aarch64-linux | home |
 
 ## Common Tasks
-- **Bootstrap a machine:** `./install.sh` (detects host, installs prerequisites, applies correct flake).
-- **Rebuild after edits:**  
-  macOS: `darwin-rebuild switch --flake .#<hostname>`  
-  Linux: `home-manager switch --flake .#srv722852`
-- **Add a new host:** Extend `modules/hosts/definitions.nix` with a new entry, setting `system`, `user`, `isWork`, and optional `packages`. Pick the host key to match the machine’s hostname.
-- **Add software for one machine:** Add a package to that host's `packages` list in `modules/hosts/definitions.nix`. For Homebrew casks/formulas on macOS, add them to the appropriate context module in `overlays/context/system/` or directly to `overlays/os/darwin.nix` for all macOS machines.
-- **Share dotfiles or app configs:** Place files under `config/<tool>/`; wire them in via `home-manager/base.nix` (shared) or the context modules in `overlays/context/home-manager/`.
-- **Create new overlays:** Add a module under `overlays/<dimension>/` and wire it into the appropriate builder in `modules/darwin/mk-config.nix` or `modules/home-manager/mk-config.nix`.
 
-## Validation & Troubleshooting
-- Use `nix flake check` to catch syntax and evaluation regressions.
-- If a rebuild fails, re-run with `--show-trace` for detailed Nix diagnostics.
-- When a module introduces side effects, wrap them in `lib.mkIf` guards so they only run on the intended systems.
+### Rebuild after edits
 
-## Future Opportunities
-- **Add CI validation:** Wire `nix flake check` (and key dry-run commands) into GitHub Actions so regressions surface before merges.
-- **Harden host packages:** Export named package groups per context (e.g., `profiles/workstation`) and re-use them across system and Home Manager layers to avoid duplication.
-- **Track config ownership:** Augment the new `config/*/README.md` stubs with maintainer notes or audit cadence once you learn which tools churn most.
+**macOS:**
+```bash
+darwin-rebuild switch --flake .#<hostname>
+darwin-rebuild switch --flake .          # Uses detected hostname
+```
+
+**Linux:**
+```bash
+home-manager switch -b backup --flake .#<hostname>
+```
+
+### Add a new host
+
+1. Add entry to `modules/hosts/definitions.nix`:
+   ```nix
+   "myhostname" = {
+     system = "aarch64-darwin";  # or x86_64-darwin, aarch64-linux, x86_64-linux
+     user = "myuser";
+     isWork = false;
+     packages = [ ];
+   };
+   ```
+2. Ensure hostname matches the machine's actual hostname
+3. Run `./install.sh`
+
+### Add software
+
+- **All machines**: Add to `profiles.basePackages` in `packages/common.nix`
+- **One host**: Add to that host's `packages` list in `definitions.nix`
+- **macOS Homebrew**: Add to `overlays/os/darwin.nix` or context modules in `overlays/context/system/`
+
+### Add dotfiles for a tool
+
+1. Create `config/<tool>/` with your config files
+2. Add symlink in `home-manager/base.nix`:
+   ```nix
+   home.file.".config/<tool>".source = ../config/<tool>;
+   ```
+
+### Add a program module
+
+For tools with Home Manager options:
+1. Create `home-manager/programs/<tool>.nix`
+2. Import in `home-manager/base.nix`
+
+## Fish Shell Functions
+
+The fish config includes productivity functions:
+
+| Function | Description |
+|----------|-------------|
+| `note` | Search/create Obsidian notes |
+| `daily`, `weekly`, `quarterly` | Generate dated review templates |
+| `adr`, `decision` | Architecture decision records |
+| `project`, `person`, `company` | Entity templates |
+| `incident` | Incident report template |
+| `logg` | Interactive git log explorer |
+| `gff <file>` | Git file history browser |
+| `fif`, `fifs`, `fifc` | Find-in-files with fzf |
+| `k` | Interactive process killer |
+| `ft` | Find tasks in Obsidian |
+
+## Validation
+
+```bash
+nix flake check                                    # Syntax and evaluation
+darwin-rebuild switch --dry-run --flake .#host    # Preview macOS changes
+home-manager switch --dry-run --flake .#host      # Preview Linux changes
+```
+
+## Troubleshooting
+
+- **Rebuild fails**: Re-run with `--show-trace` for detailed errors
+- **Fresh Linux install silent exit**: Ensure install.sh has the `set -e` fix (use explicit `if` in `source_nix_profile`)
+- **Shell not fish after install**: Run the commands printed by install.sh to change default shell
+
+## Key Design Principles
+
+1. **Single source of truth**: Host metadata only in `definitions.nix`
+2. **Layer separation**: Base settings in `base/`, deltas in `overlays/`
+3. **No duplication**: Shared logic in `modules/lib.nix`
+4. **Declarative config**: Prefer Home Manager options over shell scripts

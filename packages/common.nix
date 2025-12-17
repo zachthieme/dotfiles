@@ -2,6 +2,7 @@
 {
   profiles = {
     basePackages = with pkgs; [
+      bash-language-server
       bat
       btop
       carapace
