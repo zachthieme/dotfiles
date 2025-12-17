@@ -36,17 +36,13 @@ in
   news.display = "silent";
 
   # Enable experimental features for nix commands
-  # Note: On macOS, nix-darwin manages nix.package at system level
-  nix = lib.mkMerge [
-    {
-      settings = {
-        experimental-features = [ "nix-command" "flakes" ];
-      };
-    }
-    (lib.mkIf pkgs.stdenv.isLinux {
-      package = pkgs.nix;
-    })
-  ];
+  # Note: On macOS, nix-darwin manages nix at system level, so only configure for Linux
+  nix = lib.mkIf pkgs.stdenv.isLinux {
+    package = pkgs.nix;
+    settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+    };
+  };
 
   home.sessionVariables = {
     EDITOR = "hx";

@@ -24,7 +24,7 @@
       ui = {
         default-command = "log";
         pager = "delta";
-        diff.tool = [ "delta" "--color-only" ];
+        diff-formatter = [ "delta" "--color-only" ];
       };
     };
   };

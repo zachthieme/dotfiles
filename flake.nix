@@ -14,8 +14,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Pin to stable release for reproducibility
-    catppuccin.url = "github:catppuccin/nix/v25.05";
+    catppuccin.url = "github:catppuccin/nix";
   };
 
   outputs =

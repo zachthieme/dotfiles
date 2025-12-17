@@ -183,22 +183,25 @@ fi
 EOF
   fi
 
-  # Shell change reminder (only if not already using fish)
+  # Change default shell to fish (if not already)
   FISH_PATH="$HOME/.local/state/nix/profiles/home-manager/home-path/bin/fish"
   if command -v getent &>/dev/null; then
     CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
-  elif command -v dscl &>/dev/null; then
-    CURRENT_SHELL=$(dscl . -read /Users/"$USER" UserShell | awk '{print $2}')
   else
     CURRENT_SHELL="$SHELL"
   fi
-  # Only show if fish exists and current shell isn't already fish (any location)
+
   if [ -f "$FISH_PATH" ] && [[ "$(basename "$CURRENT_SHELL")" != "fish" ]]; then
-    log "ACTION REQUIRED: Change Default Shell"
-    echo "Current shell: $CURRENT_SHELL"
-    echo "Run:"
-    echo "  echo \"$FISH_PATH\" | sudo tee -a /etc/shells"
-    echo "  chsh -s \"$FISH_PATH\""
+    log "Changing default shell to fish"
+    # Add fish to /etc/shells if not already present
+    if ! grep -qxF "$FISH_PATH" /etc/shells 2>/dev/null; then
+      echo "Adding fish to /etc/shells..."
+      echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null
+    fi
+    # Change default shell
+    echo "Setting fish as default shell..."
+    sudo chsh -s "$FISH_PATH" "$USER"
+    echo "Default shell changed to fish. Log out and back in to use it."
   fi
 fi
 
