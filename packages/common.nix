@@ -15,6 +15,7 @@
       fd
       fish
       fzf
+      gcc
       gh
       git
       go
@@ -30,7 +31,9 @@
       lazygit
       lazyjj
       less
+      libgcc
       lldb_20
+      gnumake
       markdown-oxide
       marksman
       mosh
@@ -38,6 +41,9 @@
       nixd
       nixfmt-rfc-style
       nodejs_24
+      openssl
+      openssl.dev
+      pkg-config
       pandoc
       pngcheck
       pngcrush
