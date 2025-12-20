@@ -332,6 +332,19 @@ Then log out and back in. This cannot be automated because:
 
 The `install.sh` script prints a reminder with the exact commands to run.
 
+### Nix Experimental Features
+
+The `install.sh` script uses explicit `--extra-experimental-features` flags rather than the `NIX_CONFIG` environment variable because:
+- Standard Nix installations (non-Determinate) don't enable flakes/nix-command by default
+- The `NIX_CONFIG` env var isn't reliably respected across all Nix versions (discovered on Raspberry Pi with Nix 2.25.3)
+- Explicit flags work consistently across Nix 2.4+ and Determinate Nix
+
+The script defines `NIX_FLAGS` and uses it for all `nix` commands:
+```bash
+NIX_FLAGS="--extra-experimental-features nix-command --extra-experimental-features flakes"
+nix $NIX_FLAGS profile add nixpkgs#home-manager
+```
+
 ### Home Manager Option Naming (as of 2025)
 
 Some Home Manager options have been renamed. Use the new names:

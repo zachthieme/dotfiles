@@ -3,9 +3,10 @@
 
 set -e  # Exit on error
 
-export NIX_CONFIG="experimental-features = nix-command flakes"
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$SCRIPT_DIR"
+
+NIX_FLAGS="--extra-experimental-features nix-command --extra-experimental-features flakes"
 
 # --- Parse Arguments ---
 
@@ -55,7 +56,7 @@ install_nix() {
 fetch_host_info() {
   local hostname=$1
   local info
-  info=$(nix eval --raw --impure --expr "
+  info=$(nix $NIX_FLAGS eval --raw --impure --expr "
     let
       flake = builtins.getFlake \"$SCRIPT_DIR\";
       hosts = flake.outputs.hosts or {};
@@ -77,7 +78,7 @@ fetch_host_info() {
 
 show_available_hosts() {
   echo "Available hosts:"
-  nix eval --json --impure --expr "builtins.attrNames ((builtins.getFlake \"$SCRIPT_DIR\").outputs.hosts or {})" \
+  nix $NIX_FLAGS eval --json --impure --expr "builtins.attrNames ((builtins.getFlake \"$SCRIPT_DIR\").outputs.hosts or {})" \
     2>/dev/null | grep -oP '(?<=")[\w-]+(?=")' | sed 's/^/  - /'
 }
 
@@ -155,7 +156,7 @@ if [[ "$OS" == "Darwin" ]]; then
 else
   if ! command -v home-manager &>/dev/null; then
     echo "Installing home-manager..."
-    nix profile add nixpkgs#home-manager || die "Failed to install home-manager"
+    nix $NIX_FLAGS profile add nixpkgs#home-manager || die "Failed to install home-manager"
   fi
 
   echo "Applying Home Manager configuration..."
