@@ -6,6 +6,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Nix flake-based dotfiles repository that manages macOS (via nix-darwin) and Linux (via Home Manager) configurations across multiple machines. The architecture uses a layered approach: base system defaults, OS-specific settings (Darwin), and context overlays (home/work) that compose together to produce machine-specific configurations.
 
+## Version Control
+
+This repository uses **jujutsu (jj)** for version control, not git. All VCS commands should use jj:
+
+```bash
+jj status          # Show working copy status
+jj diff            # Show changes
+jj log             # Show commit history
+jj commit -m "msg" # Create a commit
+jj new             # Start new change
+jj squash          # Squash into parent
+```
+
+Note: jj is git-compatible and maintains a `.git` directory, so git commands will technically work, but jj is the preferred interface.
+
 ## Commands
 
 ### Initial Setup
@@ -103,7 +118,7 @@ All host metadata lives in `modules/hosts/definitions.nix`:
     user = "zach";
     isWork = false;
     packages = [ ];  # Host-specific packages
-    # git = { name = "..."; email = "..."; };  # Optional: override default identity
+    # vcs = { name = "..."; email = "..."; };  # Optional: override default identity
   };
   # ... more hosts
 }
@@ -111,7 +126,7 @@ All host metadata lives in `modules/hosts/definitions.nix`:
 
 **Required fields**: `system`, `user`, `isWork` (validated at eval time - missing fields cause build failure)
 
-**Default git identity**: Applied automatically from `defaultGit` unless overridden per-host.
+**Default VCS identity**: Applied automatically from `defaultVcs` unless overridden per-host.
 
 The `isWork` flag selects which context modules to load. Add packages here rather than scattering conditionals throughout modules.
 
@@ -467,7 +482,7 @@ Some Home Manager options have been renamed. Use the new names:
 1. **Renamed `base/` to `system/`**: The name "base" implied a shared foundation, but `darwin.nix` was macOS-specific. "system" accurately describes its role as system-level (nix-darwin) configuration.
 2. **Fixed isWork bug in Darwin builder**: The `local.isWork` option was never set in the inline module, causing `config.local.isWork` to always be `false` even for work machines. Now explicitly passed from host definition.
 3. **Added host validation**: `definitions.nix` now validates required fields (`system`, `user`, `isWork`) at eval time, failing fast with helpful error messages for misconfigured hosts.
-4. **Centralized git identity**: User identity (name/email) moved from hardcoded values in `git.nix`/`jujutsu.nix` to `definitions.nix`. Default identity applied automatically; can be overridden per-host.
+4. **Centralized VCS identity**: User identity (name/email) moved from hardcoded values in `git.nix`/`jujutsu.nix` to `definitions.nix`. Default identity applied automatically; can be overridden per-host.
 5. **Added `--flake-update` flag**: `install.sh` now supports `-f`/`--flake-update` to update `flake.lock` before rebuilding, with diff review and confirmation prompt.
 6. **Documented Determinate Nix**: Added explanation of why Determinate Nix is used and its impact on the `nix.enable = false` setting.
 

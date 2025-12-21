@@ -1,6 +1,6 @@
 { nix-darwin, home-manager, catppuccin, helpers }:
 hostname:
-{ system, user, isWork, git, packages ? [ ], ... }:
+{ system, user, isWork, vcs, packages ? [ ], ... }:
 let
   systemModule = ../../system/darwin.nix;
   osModule = ../../overlays/os/darwin.nix;
@@ -37,7 +37,7 @@ nix-darwin.lib.darwinSystem {
         ];
         home.username = user;
         home.homeDirectory = helpers.getHomeDirectory user system;
-        dotfiles.git = git;
+        dotfiles.vcs = vcs;
       };
     }
   ];

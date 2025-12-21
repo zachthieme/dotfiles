@@ -12,14 +12,14 @@ in
 {
   # Custom options for dotfiles-specific settings
   options.dotfiles = {
-    git = {
+    vcs = {
       name = lib.mkOption {
         type = lib.types.str;
-        description = "Git user name for commits";
+        description = "VCS user name for commits (git, jj)";
       };
       email = lib.mkOption {
         type = lib.types.str;
-        description = "Git user email for commits";
+        description = "VCS user email for commits (git, jj)";
       };
     };
   };

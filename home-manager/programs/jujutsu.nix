@@ -18,8 +18,8 @@
         s = [ "show" "--name-only" ];
       };
       user = {
-        name = config.dotfiles.git.name;
-        email = config.dotfiles.git.email;
+        name = config.dotfiles.vcs.name;
+        email = config.dotfiles.vcs.email;
       };
       ui = {
         default-command = "log";

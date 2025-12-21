@@ -3,8 +3,8 @@ let
   # Required fields for each host definition
   requiredFields = [ "system" "user" "isWork" ];
 
-  # Default git identity (can be overridden per-host)
-  defaultGit = {
+  # Default VCS identity for git/jj (can be overridden per-host)
+  defaultVcs = {
     name = "Zach Thieme";
     email = "zach@techsage.org";
   };
@@ -19,8 +19,8 @@ let
       throw "Host '${name}' is missing required fields: ${builtins.concatStringsSep ", " missingFields}"
     else
       host // {
-        # Apply default git identity if not specified
-        git = host.git or defaultGit;
+        # Apply default VCS identity if not specified
+        vcs = host.vcs or defaultVcs;
       };
 
   # Raw host definitions (validated below)
