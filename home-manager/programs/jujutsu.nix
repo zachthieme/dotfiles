@@ -1,8 +1,8 @@
 # Jujutsu (jj) VCS configuration
 #
-# Note: Email is intentionally hardcoded to personal address for all machines.
-# Work commits should use personal identity (open source contributor model).
-{ ... }:
+# User identity is configured in modules/hosts/definitions.nix per host.
+# Most hosts use the default identity; override per-host if needed.
+{ config, ... }:
 
 {
   programs.jujutsu = {
@@ -18,8 +18,8 @@
         s = [ "show" "--name-only" ];
       };
       user = {
-        name = "Zach Thieme";
-        email = "zach@techsage.org";
+        name = config.dotfiles.git.name;
+        email = config.dotfiles.git.email;
       };
       ui = {
         default-command = "log";

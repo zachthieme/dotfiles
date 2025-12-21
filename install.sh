@@ -11,15 +11,18 @@ NIX_FLAGS="--extra-experimental-features nix-command --extra-experimental-featur
 # --- Parse Arguments ---
 
 UPGRADE_TOOLS=false
+FLAKE_UPDATE=false
 for arg in "$@"; do
   case $arg in
     --upgrade|-u) UPGRADE_TOOLS=true ;;
+    --flake-update|-f) FLAKE_UPDATE=true ;;
     --help|-h)
       echo "Usage: $0 [OPTIONS]"
       echo ""
       echo "Options:"
-      echo "  --upgrade, -u    Upgrade claude and opencode CLI tools (home machines only)"
-      echo "  --help, -h       Show this help message"
+      echo "  --flake-update, -f  Update flake.lock before rebuilding"
+      echo "  --upgrade, -u       Upgrade claude and opencode CLI tools (home machines only)"
+      echo "  --help, -h          Show this help message"
       exit 0
       ;;
   esac
@@ -46,7 +49,7 @@ source_nix_profile() {
 
 install_nix() {
   log "Installing Determinate Nix"
-  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+  curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- add
   source_nix_profile
   command -v nix &>/dev/null || die "Nix installation failed. Restart shell and retry."
   echo "Nix installed successfully."
@@ -130,6 +133,27 @@ if [ "$HOST_EXISTS" = false ]; then
   die "Add your hostname to modules/hosts/definitions.nix"
 fi
 mkdir -p ~/Pictures/screenshots/
+
+# --- Flake Update (if requested) ---
+
+if [ "$FLAKE_UPDATE" = true ]; then
+  log "Updating flake.lock"
+  if nix $NIX_FLAGS flake update "$SCRIPT_DIR"; then
+    echo "Flake inputs updated successfully"
+    echo ""
+    echo "Changed inputs (review before continuing):"
+    git -C "$SCRIPT_DIR" diff --stat flake.lock 2>/dev/null || true
+    echo ""
+    read -p "Continue with rebuild? [Y/n] " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+      echo "Aborting. Run 'git checkout flake.lock' to revert."
+      exit 0
+    fi
+  else
+    echo "Warning: flake update failed, continuing with existing lock file"
+  fi
+fi
 
 # --- OS-Specific Setup ---
 

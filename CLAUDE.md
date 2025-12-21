@@ -74,7 +74,7 @@ These helpers eliminate code duplication and provide a single source of truth fo
 ### Layer Composition
 
 **macOS hosts** (`modules/darwin/mk-config.nix`) stack these modules:
-1. `base/darwin.nix` - Shared system settings (packages, users, hostname)
+1. `system/darwin.nix` - System settings (packages, users, hostname)
 2. `overlays/os/darwin.nix` - macOS-only settings (Homebrew, system defaults, keyboard)
 3. `overlays/context/system/{home,work}.nix` - Context system overrides
 4. Inline module with host-specific `local.hostname`, `local.username`, packages
@@ -88,7 +88,7 @@ These helpers eliminate code duplication and provide a single source of truth fo
 
 Context modules (`overlays/context/`) determine home vs work environments. The appropriate module is selected by the builder using `helpers.selectContextModule` based on the `isWork` flag from `definitions.nix`.
 
-- **System context**: `overlays/context/system/home.nix` and `work.nix` - These modules do NOT set `local.isWork` (it's already set from definitions.nix). They only contain context-specific system packages and settings.
+- **System context**: `overlays/context/system/home.nix` and `work.nix` - Context-specific system packages and settings. The `local.isWork` value is set by the builder from `definitions.nix`.
 - **User context**: `overlays/context/home-manager/home.nix` and `work.nix` - User-level context differences.
 
 Both home-manager context modules import `home-manager/base.nix`, which contains shared user settings (fish, fzf, program imports, dotfile symlinks). This base module is a Home Manager module, so it receives `config.home.username` and `config.home.homeDirectory` from the host wiring (set via `helpers.getHomeDirectory`).
@@ -103,16 +103,21 @@ All host metadata lives in `modules/hosts/definitions.nix`:
     user = "zach";
     isWork = false;
     packages = [ ];  # Host-specific packages
+    # git = { name = "..."; email = "..."; };  # Optional: override default identity
   };
   # ... more hosts
 }
 ```
 
+**Required fields**: `system`, `user`, `isWork` (validated at eval time - missing fields cause build failure)
+
+**Default git identity**: Applied automatically from `defaultGit` unless overridden per-host.
+
 The `isWork` flag selects which context modules to load. Add packages here rather than scattering conditionals throughout modules.
 
 ### Package Profiles
 
-`packages/common.nix` exports `profiles.basePackages` - a shared list consumed by both `base/darwin.nix` (system) and `home-manager/base.nix` (user). This ensures consistent tooling across layers.
+`packages/common.nix` exports `profiles.basePackages` - a shared list consumed by `home-manager/base.nix` (user). This ensures consistent tooling across all hosts.
 
 ### Program Configurations
 
@@ -155,7 +160,7 @@ home.file = {
 
 2. **No Duplication**: Use shared helper functions from `modules/lib.nix` for any logic that appears in multiple places. OS detection, path resolution, and module selection should use helpers rather than inline logic.
 
-3. **Layer Separation**: Keep shared logic in `base/` and deltas in `overlays/context/`. Avoid repeating base settings in context modules.
+3. **Layer Separation**: Keep system-level logic in `system/`, shared user config in `home-manager/base.nix`, and deltas in `overlays/context/`. Avoid repeating base settings in context modules.
 
 4. **Host-Specific Packages**: Prefer adding packages to a host's `packages` list in `definitions.nix` over adding conditionals inside modules.
 
@@ -163,7 +168,7 @@ home.file = {
 
 6. **Home Manager Integration**: On macOS, Home Manager runs as a nix-darwin module. On Linux, it's standalone. Both paths converge on the same context modules.
 
-7. **Platform-Specific System Configs**: The `base/darwin.nix` module contains macOS system configuration. Future NixOS machines would use a separate `base/nixos.nix` module with similar structure but NixOS-specific settings.
+7. **Platform-Specific System Configs**: The `system/darwin.nix` module contains macOS system configuration (nix-darwin options). Linux hosts use standalone Home Manager without a system module.
 
 ## Adding New Hosts
 
@@ -332,6 +337,28 @@ Then log out and back in. This cannot be automated because:
 
 The `install.sh` script prints a reminder with the exact commands to run.
 
+### Determinate Nix
+
+This repository uses [Determinate Nix](https://determinate.systems/nix-installer) instead of the official Nix installer:
+
+**Why Determinate Nix?**
+- Better defaults: Flakes and nix-command enabled out of the box
+- Improved error messages and user experience
+- Automatic garbage collection configuration
+- Reliable uninstall process
+- Commercial support available
+
+**Impact on Configuration:**
+The `system/darwin.nix` module sets `nix.enable = false` to prevent nix-darwin from managing Nix itself:
+```nix
+# Disable nix-darwin's Nix management when using Determinate Nix
+nix.enable = false;
+# Required even with nix.enable = false for nix.conf generation
+nix.package = pkgs.nix;
+```
+
+This avoids conflicts between nix-darwin's Nix management and Determinate's own management.
+
 ### Nix Experimental Features
 
 The `install.sh` script uses explicit `--extra-experimental-features` flags rather than the `NIX_CONFIG` environment variable because:
@@ -344,6 +371,43 @@ The script defines `NIX_FLAGS` and uses it for all `nix` commands:
 NIX_FLAGS="--extra-experimental-features nix-command --extra-experimental-features flakes"
 nix $NIX_FLAGS profile add nixpkgs#home-manager
 ```
+
+### Updating Dependencies (flake.lock)
+
+**Update all inputs and rebuild:**
+```bash
+./install.sh --flake-update  # or -f
+```
+
+This will:
+1. Run `nix flake update` to update all inputs in `flake.lock`
+2. Show a diff of changes for review
+3. Prompt for confirmation before rebuilding
+4. If you decline, the lock file changes remain (use `git checkout flake.lock` to revert)
+
+**Manual update workflow:**
+```bash
+# Update all inputs
+nix flake update
+
+# Preview changes before applying
+darwin-rebuild switch --dry-run --flake .#<hostname>  # macOS
+home-manager switch --dry-run --flake .#<hostname>    # Linux
+
+# Apply if satisfied
+darwin-rebuild switch --flake .#<hostname>
+
+# Rollback if something breaks
+darwin-rebuild switch --rollback  # macOS
+home-manager generations           # Linux: list generations
+# Then activate a previous generation
+```
+
+**Update strategy:**
+- Run `./install.sh -f` periodically (weekly/monthly) to get security updates
+- Always review the diff before confirming
+- Test on a non-critical machine first if possible
+- Commit `flake.lock` changes after successful rebuild
 
 ### Home Manager Option Naming (as of 2025)
 
@@ -366,7 +430,7 @@ Some Home Manager options have been renamed. Use the new names:
 2. **Eliminated home directory path duplication**: Removed identical logic from both `darwin/mk-config.nix` and `home-manager/mk-config.nix`, replaced with `helpers.getHomeDirectory`
 3. **Standardized context module selection**: Replaced repeated if-then-else with `helpers.selectContextModule`
 4. **Removed redundant isWork assignments**: Context system modules no longer re-set `local.isWork` since it's already defined in `definitions.nix`
-5. **Made base module OS-agnostic**: Updated `base/darwin.nix` (formerly `base/default.nix`) to use `pkgs.stdenv.isDarwin` for conditional paths, removed "MacBook" reference. Later renamed to `base/darwin.nix` to clarify it's macOS-specific.
+5. **Made base module OS-agnostic**: Updated darwin system module to use `pkgs.stdenv.isDarwin` for conditional paths, removed "MacBook" reference.
 
 **Impact**:
 - Zero code duplication for OS detection and path resolution
@@ -394,3 +458,23 @@ Some Home Manager options have been renamed. Use the new names:
 - Easier to selectively enable/disable functions or abbreviations
 - Reduced code in string blocks, more native Nix attributes
 - Tool integrations managed by Home Manager instead of manual sourcing
+
+### 2025-12-21: Architecture Improvements
+
+**Motivation**: Address issues identified in architectural review - fix bugs, improve validation, centralize identity, and clarify naming.
+
+**Changes**:
+1. **Renamed `base/` to `system/`**: The name "base" implied a shared foundation, but `darwin.nix` was macOS-specific. "system" accurately describes its role as system-level (nix-darwin) configuration.
+2. **Fixed isWork bug in Darwin builder**: The `local.isWork` option was never set in the inline module, causing `config.local.isWork` to always be `false` even for work machines. Now explicitly passed from host definition.
+3. **Added host validation**: `definitions.nix` now validates required fields (`system`, `user`, `isWork`) at eval time, failing fast with helpful error messages for misconfigured hosts.
+4. **Centralized git identity**: User identity (name/email) moved from hardcoded values in `git.nix`/`jujutsu.nix` to `definitions.nix`. Default identity applied automatically; can be overridden per-host.
+5. **Added `--flake-update` flag**: `install.sh` now supports `-f`/`--flake-update` to update `flake.lock` before rebuilding, with diff review and confirmation prompt.
+6. **Documented Determinate Nix**: Added explanation of why Determinate Nix is used and its impact on the `nix.enable = false` setting.
+
+**Impact**:
+- Clearer module naming that reflects actual purpose
+- Work machines now correctly report "Work system configuration" in activation
+- Invalid host definitions fail immediately with actionable errors
+- Git identity configurable per-host from single source of truth
+- Simplified dependency update workflow
+- Better documentation for contributors

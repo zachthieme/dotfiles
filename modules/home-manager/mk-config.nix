@@ -1,6 +1,6 @@
 { home-manager, nixpkgs, catppuccin, helpers }:
 hostname:
-{ system, user, isWork, packages ? [ ], ... }:
+{ system, user, isWork, git, packages ? [ ], ... }:
 let
   contextModule = helpers.selectContextModule
     isWork
@@ -16,6 +16,7 @@ home-manager.lib.homeManagerConfiguration {
       home.username = user;
       home.homeDirectory = helpers.getHomeDirectory user system;
       home.packages = packages;
+      dotfiles.git = git;
     }
   ];
 }

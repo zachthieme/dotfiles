@@ -1,16 +1,16 @@
 # Git configuration
 #
-# Note: Email is intentionally hardcoded to personal address for all machines.
-# Work commits should use personal identity (open source contributor model).
-{ ... }:
+# User identity is configured in modules/hosts/definitions.nix per host.
+# Most hosts use the default identity; override per-host if needed.
+{ config, ... }:
 
 {
   programs.git = {
     enable = true;
     settings = {
       user = {
-        name = "Zach Thieme";
-        email = "zach@techsage.org";
+        name = config.dotfiles.git.name;
+        email = config.dotfiles.git.email;
       };
       init.defaultBranch = "main";
       push.autoSetupRemote = true;

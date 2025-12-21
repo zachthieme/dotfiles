@@ -1,6 +1,30 @@
 { lib, helpers }:
 let
-  hosts = {
+  # Required fields for each host definition
+  requiredFields = [ "system" "user" "isWork" ];
+
+  # Default git identity (can be overridden per-host)
+  defaultGit = {
+    name = "Zach Thieme";
+    email = "zach@techsage.org";
+  };
+
+  # Validate and apply defaults to a host definition
+  validateHost = name: host:
+    let
+      missingFields = builtins.filter (f: !(host ? ${f})) requiredFields;
+      hasMissing = builtins.length missingFields > 0;
+    in
+    if hasMissing then
+      throw "Host '${name}' is missing required fields: ${builtins.concatStringsSep ", " missingFields}"
+    else
+      host // {
+        # Apply default git identity if not specified
+        git = host.git or defaultGit;
+      };
+
+  # Raw host definitions (validated below)
+  rawHosts = {
     "cortex" = {
       system = "aarch64-darwin";
       user = "zach";
@@ -62,6 +86,9 @@ let
       packages = [ ];
     };
   };
+
+  # Apply validation to all hosts
+  hosts = lib.mapAttrs validateHost rawHosts;
 
   # Use shared helper functions to avoid duplication
   isDarwin = host: helpers.isDarwin host.system;

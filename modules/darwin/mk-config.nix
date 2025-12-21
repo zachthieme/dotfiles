@@ -1,8 +1,8 @@
 { nix-darwin, home-manager, catppuccin, helpers }:
 hostname:
-{ system, user, isWork, packages ? [ ], ... }:
+{ system, user, isWork, git, packages ? [ ], ... }:
 let
-  baseModule = ../../base/darwin.nix;
+  systemModule = ../../system/darwin.nix;
   osModule = ../../overlays/os/darwin.nix;
   contextSystemModule = helpers.selectContextModule
     isWork
@@ -16,12 +16,13 @@ in
 nix-darwin.lib.darwinSystem {
   inherit system;
   modules = [
-    baseModule
+    systemModule
     osModule
     contextSystemModule
     {
       local.hostname = hostname;
       local.username = user;
+      local.isWork = isWork;
       environment.systemPackages = packages;
     }
     home-manager.darwinModules.home-manager
@@ -36,6 +37,7 @@ nix-darwin.lib.darwinSystem {
         ];
         home.username = user;
         home.homeDirectory = helpers.getHomeDirectory user system;
+        dotfiles.git = git;
       };
     }
   ];
