@@ -25,12 +25,10 @@
           "unbind \"Alt Shift 9\"" = { };
         };
         normal = {
-          "bind \"Alt H\"" = { MoveFocus = "Left"; };
-          "bind \"Alt J\"" = { MoveFocus = "Down"; };
-          "bind \"Alt K\"" = { MoveFocus = "Up"; };
-          "bind \"Alt L\"" = { MoveFocus = "Right"; };
-          "bind \"Alt h\"" = { GoToPreviousTab = { }; };
-          "bind \"Alt l\"" = { GoToNextTab = { }; };
+          "bind \"Alt h\"" = { MoveFocus = "Left"; };
+          "bind \"Alt j\"" = { MoveFocus = "Down"; };
+          "bind \"Alt k\"" = { MoveFocus = "Up"; };
+          "bind \"Alt l\"" = { MoveFocus = "Right"; };
         };
       };
     };
