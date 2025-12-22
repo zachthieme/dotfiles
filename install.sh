@@ -97,6 +97,7 @@ get_nix_system() {
 
 configure_trusted_users() {
   local nix_conf="/etc/nix/nix.conf"
+  local nix_custom_conf="/etc/nix/nix.custom.conf"
   local current_user=$(whoami)
 
   # Ensure /etc/nix exists (should exist after Nix install, but be safe)
@@ -105,8 +106,9 @@ configure_trusted_users() {
     return 0
   fi
 
-  # Check if user is already trusted
-  if grep -qE "^trusted-users\s*=.*\b${current_user}\b" "$nix_conf" 2>/dev/null; then
+  # Check if user is already trusted (check both files)
+  if grep -qE "^trusted-users\s*=.*\b${current_user}\b" "$nix_conf" 2>/dev/null || \
+     grep -qE "^trusted-users\s*=.*\b${current_user}\b" "$nix_custom_conf" 2>/dev/null; then
     echo "User '$current_user' already in trusted-users"
     return 0
   fi
@@ -114,15 +116,27 @@ configure_trusted_users() {
   log "Configuring Nix trusted-users"
   echo "Adding '$current_user' to trusted-users for binary cache access..."
 
-  if [ ! -f "$nix_conf" ]; then
-    # Create nix.conf if it doesn't exist (rare, but possible)
-    echo "trusted-users = root ${current_user}" | sudo tee "$nix_conf" >/dev/null
-  elif grep -qE "^trusted-users\s*=" "$nix_conf" 2>/dev/null; then
-    # Append to existing trusted-users line
-    sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${current_user}/" "$nix_conf"
+  # Prefer nix.custom.conf if nix.conf includes it (Determinate Nix pattern)
+  # This file persists across nix.conf rewrites
+  if grep -qE "^!include\s+.*nix\.custom\.conf" "$nix_conf" 2>/dev/null || \
+     grep -qE "^include\s+.*nix\.custom\.conf" "$nix_conf" 2>/dev/null; then
+    # Use nix.custom.conf (Determinate Nix)
+    if [ ! -f "$nix_custom_conf" ]; then
+      echo "trusted-users = root ${current_user}" | sudo tee "$nix_custom_conf" >/dev/null
+    elif grep -qE "^trusted-users\s*=" "$nix_custom_conf" 2>/dev/null; then
+      sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${current_user}/" "$nix_custom_conf"
+    else
+      echo "trusted-users = root ${current_user}" | sudo tee -a "$nix_custom_conf" >/dev/null
+    fi
   else
-    # Add new trusted-users line
-    echo "trusted-users = root ${current_user}" | sudo tee -a "$nix_conf" >/dev/null
+    # Use nix.conf directly (standard Nix)
+    if [ ! -f "$nix_conf" ]; then
+      echo "trusted-users = root ${current_user}" | sudo tee "$nix_conf" >/dev/null
+    elif grep -qE "^trusted-users\s*=" "$nix_conf" 2>/dev/null; then
+      sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${current_user}/" "$nix_conf"
+    else
+      echo "trusted-users = root ${current_user}" | sudo tee -a "$nix_conf" >/dev/null
+    fi
   fi
 
   # Restart nix-daemon to apply changes
