@@ -201,6 +201,10 @@ if [ "$FLAKE_UPDATE" = true ]; then
   fi
 fi
 
+# --- Configure Nix trusted-users (before rebuild to avoid warnings) ---
+
+configure_trusted_users
+
 # --- OS-Specific Setup ---
 
 if [[ "$OS" == "Darwin" ]]; then
@@ -275,10 +279,6 @@ EOF
     echo "Default shell changed to fish. Log out and back in to use it."
   fi
 fi
-
-# --- Configure Nix trusted-users ---
-
-configure_trusted_users
 
 # --- Upgrade Tools (if requested, home machines only) ---
 
