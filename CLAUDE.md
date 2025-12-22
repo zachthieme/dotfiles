@@ -433,7 +433,7 @@ This will:
 1. Run `nix flake update` to update all inputs in `flake.lock`
 2. Show a diff of changes for review
 3. Prompt for confirmation before rebuilding
-4. If you decline, the lock file changes remain (use `git checkout flake.lock` to revert)
+4. If you decline, the lock file changes remain (use `jj restore flake.lock` to revert)
 
 **Manual update workflow:**
 ```bash

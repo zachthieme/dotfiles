@@ -2,7 +2,7 @@
 
 Automated dotfiles for macOS and Linux hosts (including Raspberry Pi), powered by Nix flakes. The repo layers system defaults, OS-specific settings, and context overlays (home/work) so each machine receives the right configuration with minimal duplication.
 
-For contributor-specific technical details, see [Repository Guidelines](./AGENTS.md).
+For contributor-specific technical details, see [Repository Guidelines](./CLAUDE.md).
 
 ## Features
 
@@ -29,7 +29,7 @@ The script will:
 ## Repository Layout
 
 ```
-base/                # Platform-specific system configs (darwin.nix for macOS)
+system/              # Platform-specific system configs (darwin.nix for macOS)
 config/              # Static dotfiles symlinked to ~/.config
   aerospace/         # macOS tiling window manager
   borders/           # Window border styling
@@ -150,6 +150,6 @@ home-manager switch --dry-run --flake .#host      # Preview Linux changes
 ## Key Design Principles
 
 1. **Single source of truth**: Host metadata only in `definitions.nix`
-2. **Layer separation**: Base settings in `base/`, deltas in `overlays/`
+2. **Layer separation**: System settings in `system/`, deltas in `overlays/`
 3. **No duplication**: Shared logic in `modules/lib.nix`
 4. **Declarative config**: Prefer Home Manager options over shell scripts
