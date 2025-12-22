@@ -76,6 +76,8 @@ in
           max-jobs = "auto";
           # Deduplicate store files via hard links
           auto-optimise-store = true;
+          # Increase download buffer to avoid warnings during large fetches
+          download-buffer-size = 256 * 1024 * 1024; # 256 MiB
           # Add community binary caches for faster installs
           extra-substituters = [
             "https://nix-community.cachix.org"
@@ -91,6 +93,8 @@ in
         settings = {
           # Use all available cores for parallel builds
           max-jobs = "auto";
+          # Increase download buffer to avoid warnings during large fetches
+          download-buffer-size = 256 * 1024 * 1024; # 256 MiB
           # Add community binary caches for faster installs
           extra-substituters = [
             "https://nix-community.cachix.org"
