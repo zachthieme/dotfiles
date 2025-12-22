@@ -3,6 +3,7 @@ let
   # Required fields for each host definition
   requiredFields = [ "system" "user" "isWork" ];
 
+
   # Default VCS identity for git/jj (can be overridden per-host)
   defaultVcs = {
     name = "Zach Thieme";
@@ -14,14 +15,23 @@ let
     let
       missingFields = builtins.filter (f: !(host ? ${f})) requiredFields;
       hasMissing = builtins.length missingFields > 0;
+      profile = host.packageProfile or "full";
+      validProfile = builtins.elem profile validProfiles;
     in
     if hasMissing then
       throw "Host '${name}' is missing required fields: ${builtins.concatStringsSep ", " missingFields}"
+    else if !validProfile then
+      throw "Host '${name}' has invalid packageProfile '${profile}'. Valid values: ${builtins.concatStringsSep ", " validProfiles}"
     else
       host // {
         # Apply default VCS identity if not specified
         vcs = host.vcs or defaultVcs;
+        # Apply default package profile if not specified
+        packageProfile = profile;
       };
+
+  # Valid package profiles
+  validProfiles = [ "core" "core+dev" "full" ];
 
   # Raw host definitions (validated below)
   rawHosts = {
@@ -65,24 +75,28 @@ let
       system = "aarch64-linux";
       user = "zach";
       isWork = false;
+      packageProfile = "core";
       packages = [ ];
     };
     "pi-nomad1" = {
       system = "aarch64-linux";
       user = "zach";
       isWork = false;
+      packageProfile = "core";
       packages = [ ];
     };
     "pi-nomad2" = {
       system = "aarch64-linux";
       user = "zach";
       isWork = false;
+      packageProfile = "core";
       packages = [ ];
     };
     "pi-nomad3" = {
       system = "aarch64-linux";
       user = "zach";
       isWork = false;
+      packageProfile = "core";
       packages = [ ];
     };
   };

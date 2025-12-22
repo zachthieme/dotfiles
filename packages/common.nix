@@ -1,71 +1,83 @@
 { pkgs }:
 {
   profiles = {
-    basePackages = with pkgs; [
-      bash-language-server
+    # Essential CLI tools - always installed on all machines including Pi
+    corePackages = with pkgs; [
       bat
       btop
       carapace
       curl
-      delve
-      devbox
-      emacs
-      exiftool
       eza
       fd
       fish
       fzf
-      gcc
       gh
       git
+      helix
+      jq
+      jujutsu
+      lazygit
+      lazyjj
+      less
+      markdown-oxide
+      marksman
+      mosh
+      nixd
+      nixfmt-rfc-style
+      pandoc
+      prettier
+      ripgrep
+      tree
+      typst
+      unzip
+      vivid
+      wget
+      which
+      yazi
+      zellij
+      zoxide
+      zsh
+    ];
+
+    # Development tools - compilers, LSPs, formatters
+    devPackages = with pkgs; [
+      bash-language-server
+      delve
+      devbox
+      gcc
       go
       golangci-lint
       golangci-lint-langserver
       gopls
       gotools
-      helix
-      imagemagick
-      jq
-      jujutsu
-      lazydocker
-      lazygit
-      lazyjj
-      less
       libgcc
       lldb_20
       gnumake
-      markdown-oxide
-      marksman
-      mosh
-      neovim
-      nixd
-      nixfmt-rfc-style
       nodejs_24
       openssl
       openssl.dev
       pkg-config
-      pandoc
+      python3
+      python312Packages.pdf2docx
+      rustup
+      uv
+      zig
+      zls
+    ];
+
+    # Heavy/specialized - resource-intensive packages
+    heavyPackages = with pkgs; [
+      exiftool
+      imagemagick
       pngcheck
       pngcrush
       pngquant
-      prettier
-      python3
-      python312Packages.pdf2docx
-      ripgrep
-      rustup
-      tree
-      typst
-      unzip
-      uv
-      vim
-      vivid
-      wget
-      yazi
-      zellij
-      zig
-      zls
-      zoxide
-      zsh
     ];
+
+    # Convenience: full = everything (default behavior for workstations)
+    basePackages =
+      corePackages
+      ++ devPackages
+      ++ heavyPackages;
   };
 }

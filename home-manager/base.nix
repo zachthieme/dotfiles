@@ -8,6 +8,14 @@
 
 let
   packageProfiles = import ../packages/common.nix { inherit pkgs; };
+  p = packageProfiles.profiles;
+
+  # Map profile names to package lists
+  profilePackages = {
+    "core" = p.corePackages;
+    "core+dev" = p.corePackages ++ p.devPackages;
+    "full" = p.basePackages;
+  };
 in
 {
   # Custom options for dotfiles-specific settings
@@ -21,6 +29,11 @@ in
         type = lib.types.str;
         description = "VCS user email for commits (git, jj)";
       };
+    };
+    packageProfile = lib.mkOption {
+      type = lib.types.enum [ "core" "core+dev" "full" ];
+      default = "full";
+      description = "Package profile tier: core (minimal), core+dev (with dev tools), full (everything)";
     };
   };
 
@@ -126,9 +139,7 @@ in
       enableFishIntegration = true;
     };
 
-    home.packages =
-      packageProfiles.profiles.basePackages
-      ++ (with pkgs; [
-      ]);
+    # Select packages based on profile
+    home.packages = profilePackages.${config.dotfiles.packageProfile};
   };
 }

@@ -118,6 +118,7 @@ All host metadata lives in `modules/hosts/definitions.nix`:
     user = "zach";
     isWork = false;
     packages = [ ];  # Host-specific packages
+    # packageProfile = "full";  # Optional: "core", "core+dev", or "full" (default)
     # vcs = { name = "..."; email = "..."; };  # Optional: override default identity
   };
   # ... more hosts
@@ -126,13 +127,24 @@ All host metadata lives in `modules/hosts/definitions.nix`:
 
 **Required fields**: `system`, `user`, `isWork` (validated at eval time - missing fields cause build failure)
 
-**Default VCS identity**: Applied automatically from `defaultVcs` unless overridden per-host.
+**Optional fields**:
+- `packageProfile`: Controls which package tier to install (default: `"full"`)
+- `vcs`: Override default VCS identity for git/jj
+- `packages`: Host-specific additional packages
 
 The `isWork` flag selects which context modules to load. Add packages here rather than scattering conditionals throughout modules.
 
 ### Package Profiles
 
-`packages/common.nix` exports `profiles.basePackages` - a shared list consumed by `home-manager/base.nix` (user). This ensures consistent tooling across all hosts.
+`packages/common.nix` exports tiered package profiles for different use cases:
+
+| Profile | Contents | Use Case |
+|---------|----------|----------|
+| `core` | Essential CLI tools (bat, fish, helix, git, jj, etc.) | Raspberry Pi, minimal servers |
+| `core+dev` | Core + development tools (LSPs, compilers, formatters) | Development without heavy packages |
+| `full` | Everything (core + dev + heavy packages like pandoc) | Workstations (default) |
+
+Profiles are selected per-host via `packageProfile` in `definitions.nix`. The `home-manager/base.nix` module reads this option and installs the appropriate package set.
 
 ### Program Configurations
 
@@ -190,9 +202,10 @@ home.file = {
 1. Add entry to `modules/hosts/definitions.nix`:
    ```nix
    "newhostname" = {
-     system = "aarch64-darwin";  # or x86_64-darwin, x86_64-linux
+     system = "aarch64-darwin";  # or x86_64-darwin, x86_64-linux, aarch64-linux
      user = "username";
      isWork = true;
+     packageProfile = "full";  # or "core" for Pi/minimal, "core+dev" for dev without heavy
      packages = [ ];
    };
    ```
@@ -201,9 +214,14 @@ home.file = {
 
 ## Adding Software
 
-**For all machines**: Add to `profiles.basePackages` in `packages/common.nix`
+**For all machines (full profile)**: Add to appropriate tier in `packages/common.nix`:
+- `corePackages`: Essential CLI tools (installed on all hosts including Pi)
+- `devPackages`: Development tools (LSPs, compilers, formatters)
+- `heavyPackages`: Resource-intensive packages (pandoc, imagemagick, etc.)
 
 **For one host**: Add to that host's `packages` list in `definitions.nix`
+
+**For resource-constrained hosts**: Set `packageProfile = "core"` in `definitions.nix` to skip dev and heavy packages
 
 **Homebrew casks/formulas** (macOS only): Add to the appropriate context module in `overlays/context/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `overlays/os/darwin.nix` for all macOS machines
 
