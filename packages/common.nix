@@ -59,6 +59,7 @@ in
       openssl
       openssl.dev
       pkg-config
+      podman
       python3
       python312Packages.pdf2docx
       rustup
