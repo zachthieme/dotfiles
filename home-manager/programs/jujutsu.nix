@@ -14,7 +14,7 @@
         l = [ "log" "-r" "::" "--limit" "10" ];
         ll = [ "log" "-r" "::" "--limit" "25" ];
         lll = [ "log" "-r" "::" "--limit" "50" ];
-        r = ["rebase" "-d" "{0}" "-"];
+        r = ["rebase" "-d" "{0}"];
         s = [ "show" "--name-only" ];
       };
       user = {
