@@ -63,14 +63,43 @@ in
     # Disable news notifications
     news.display = "silent";
 
-    # Enable experimental features for nix commands
-    # Note: On macOS, nix-darwin manages nix at system level, so only configure for Linux
-    nix = lib.mkIf pkgs.stdenv.isLinux {
-      package = pkgs.nix;
-      settings = {
-        experimental-features = [ "nix-command" "flakes" ];
-      };
-    };
+    # Nix settings for optimal performance and caching
+    # Linux: Full nix management via Home Manager
+    # macOS: User-level settings only (Determinate Nix manages system config)
+    nix = lib.mkMerge [
+      # Linux-specific: Home Manager manages nix
+      (lib.mkIf pkgs.stdenv.isLinux {
+        package = pkgs.nix;
+        settings = {
+          experimental-features = [ "nix-command" "flakes" ];
+          # Use all available cores for parallel builds
+          max-jobs = "auto";
+          # Deduplicate store files via hard links
+          auto-optimise-store = true;
+          # Add community binary caches for faster installs
+          extra-substituters = [
+            "https://nix-community.cachix.org"
+          ];
+          extra-trusted-public-keys = [
+            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+          ];
+        };
+      })
+      # macOS: Only user-level settings (system managed by Determinate Nix)
+      (lib.mkIf pkgs.stdenv.isDarwin {
+        settings = {
+          # Use all available cores for parallel builds
+          max-jobs = "auto";
+          # Add community binary caches for faster installs
+          extra-substituters = [
+            "https://nix-community.cachix.org"
+          ];
+          extra-trusted-public-keys = [
+            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+          ];
+        };
+      })
+    ];
 
     home.sessionVariables = {
       EDITOR = "hx";

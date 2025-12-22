@@ -392,6 +392,30 @@ nix.package = pkgs.nix;
 
 This avoids conflicts between nix-darwin's Nix management and Determinate's own management.
 
+### Nix Performance Optimization
+
+The `home-manager/base.nix` configures optimal Nix settings for both platforms:
+
+**Automatic settings** (applied via Home Manager):
+- `max-jobs = "auto"` - Use all CPU cores for parallel builds
+- `auto-optimise-store = true` - Deduplicate files via hard links (Linux only)
+- `extra-substituters` - nix-community binary cache for faster installs
+- `extra-trusted-public-keys` - Keys for the community cache
+
+**Manual setup required** (system-level `/etc/nix/nix.conf`):
+
+To use extra substituters without warnings, add yourself to trusted-users:
+
+```bash
+# macOS (requires restart of nix-daemon)
+echo "trusted-users = root $(whoami)" | sudo tee -a /etc/nix/nix.conf
+sudo launchctl kickstart -k system/org.nixos.nix-daemon
+
+# Linux (if using system Nix daemon)
+echo "trusted-users = root $(whoami)" | sudo tee -a /etc/nix/nix.conf
+sudo systemctl restart nix-daemon
+```
+
 ### Nix Experimental Features
 
 The `install.sh` script uses explicit `--extra-experimental-features` flags rather than the `NIX_CONFIG` environment variable because:
