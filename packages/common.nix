@@ -1,6 +1,6 @@
 { pkgs }:
 {
-  profiles = {
+  profiles = rec {
     # Essential CLI tools - always installed on all machines including Pi
     corePackages = with pkgs; [
       bat
