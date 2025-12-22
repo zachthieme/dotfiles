@@ -95,6 +95,43 @@ get_nix_system() {
   esac
 }
 
+configure_trusted_users() {
+  local nix_conf="/etc/nix/nix.conf"
+  local current_user=$(whoami)
+
+  # Check if user is already trusted
+  if grep -qE "^trusted-users\s*=.*\b${current_user}\b" "$nix_conf" 2>/dev/null; then
+    echo "User '$current_user' already in trusted-users"
+    return 0
+  fi
+
+  log "Configuring Nix trusted-users"
+  echo "Adding '$current_user' to trusted-users for binary cache access..."
+
+  if grep -qE "^trusted-users\s*=" "$nix_conf" 2>/dev/null; then
+    # Append to existing trusted-users line
+    sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${current_user}/" "$nix_conf"
+  else
+    # Add new trusted-users line
+    echo "trusted-users = root ${current_user}" | sudo tee -a "$nix_conf" >/dev/null
+  fi
+
+  # Restart nix-daemon to apply changes
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    echo "Restarting nix-daemon..."
+    sudo launchctl kickstart -k system/org.nixos.nix-daemon 2>/dev/null || \
+      sudo launchctl kickstart -k system/systems.determinate.nix-daemon 2>/dev/null || \
+      echo "Warning: Could not restart nix-daemon. Restart manually or reboot."
+  else
+    if command -v systemctl &>/dev/null && systemctl is-active --quiet nix-daemon 2>/dev/null; then
+      echo "Restarting nix-daemon..."
+      sudo systemctl restart nix-daemon
+    fi
+  fi
+
+  echo "trusted-users configured successfully"
+}
+
 # --- Nix Installation Check ---
 
 if ! command -v nix &>/dev/null; then
@@ -229,6 +266,10 @@ EOF
     echo "Default shell changed to fish. Log out and back in to use it."
   fi
 fi
+
+# --- Configure Nix trusted-users ---
+
+configure_trusted_users
 
 # --- Upgrade Tools (if requested, home machines only) ---
 

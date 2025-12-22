@@ -402,19 +402,9 @@ The `home-manager/base.nix` configures optimal Nix settings for both platforms:
 - `extra-substituters` - nix-community binary cache for faster installs
 - `extra-trusted-public-keys` - Keys for the community cache
 
-**Manual setup required** (system-level `/etc/nix/nix.conf`):
+**Automatic trusted-users setup** (handled by `install.sh`):
 
-To use extra substituters without warnings, add yourself to trusted-users:
-
-```bash
-# macOS (requires restart of nix-daemon)
-echo "trusted-users = root $(whoami)" | sudo tee -a /etc/nix/nix.conf
-sudo launchctl kickstart -k system/org.nixos.nix-daemon
-
-# Linux (if using system Nix daemon)
-echo "trusted-users = root $(whoami)" | sudo tee -a /etc/nix/nix.conf
-sudo systemctl restart nix-daemon
-```
+The install script automatically adds the current user to `trusted-users` in `/etc/nix/nix.conf` and restarts the nix-daemon. This allows using extra substituters without warnings.
 
 ### Nix Experimental Features
 
