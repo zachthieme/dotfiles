@@ -404,7 +404,10 @@ The `home-manager/base.nix` configures optimal Nix settings for both platforms:
 
 **Automatic trusted-users setup** (handled by `install.sh`):
 
-The install script automatically adds the current user to `trusted-users` in `/etc/nix/nix.conf` and restarts the nix-daemon. This allows using extra substituters without warnings.
+The install script automatically adds the current user to `trusted-users` and restarts the nix-daemon. This allows using extra substituters without warnings.
+
+- **Determinate Nix**: Writes to `/etc/nix/nix.custom.conf` (detected via include directive in `nix.conf`). This file persists across `nix.conf` rewrites.
+- **Standard Nix**: Writes directly to `/etc/nix/nix.conf`.
 
 ### Nix Experimental Features
 
