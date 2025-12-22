@@ -1,4 +1,7 @@
 { pkgs }:
+let
+  inherit (pkgs.stdenv) isLinux;
+in
 {
   profiles = rec {
     # Essential CLI tools - always installed on all machines including Pi
@@ -50,7 +53,6 @@
       golangci-lint-langserver
       gopls
       gotools
-      libgcc
       lldb_20
       gnumake
       nodejs_24
@@ -63,6 +65,8 @@
       uv
       zig
       zls
+    ] ++ pkgs.lib.optionals isLinux [
+      pkgs.libgcc # Linux only
     ];
 
     # Heavy/specialized - resource-intensive packages
