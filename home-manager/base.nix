@@ -87,6 +87,7 @@ in
       })
       # macOS: Only user-level settings (system managed by Determinate Nix)
       (lib.mkIf pkgs.stdenv.isDarwin {
+        package = pkgs.nix; # Required for nix.settings configuration
         settings = {
           # Use all available cores for parallel builds
           max-jobs = "auto";
