@@ -99,6 +99,12 @@ configure_trusted_users() {
   local nix_conf="/etc/nix/nix.conf"
   local current_user=$(whoami)
 
+  # Ensure /etc/nix exists (should exist after Nix install, but be safe)
+  if [ ! -d "/etc/nix" ]; then
+    echo "Warning: /etc/nix directory not found, skipping trusted-users config"
+    return 0
+  fi
+
   # Check if user is already trusted
   if grep -qE "^trusted-users\s*=.*\b${current_user}\b" "$nix_conf" 2>/dev/null; then
     echo "User '$current_user' already in trusted-users"
@@ -108,7 +114,10 @@ configure_trusted_users() {
   log "Configuring Nix trusted-users"
   echo "Adding '$current_user' to trusted-users for binary cache access..."
 
-  if grep -qE "^trusted-users\s*=" "$nix_conf" 2>/dev/null; then
+  if [ ! -f "$nix_conf" ]; then
+    # Create nix.conf if it doesn't exist (rare, but possible)
+    echo "trusted-users = root ${current_user}" | sudo tee "$nix_conf" >/dev/null
+  elif grep -qE "^trusted-users\s*=" "$nix_conf" 2>/dev/null; then
     # Append to existing trusted-users line
     sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${current_user}/" "$nix_conf"
   else
