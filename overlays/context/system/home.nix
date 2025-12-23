@@ -13,6 +13,7 @@
   homebrew.casks = [
     "brave-browser"
     "codex"
+    "docker-desktop"
   ];
 
   system.defaults = {

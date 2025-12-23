@@ -59,7 +59,6 @@ in
       openssl
       openssl.dev
       pkg-config
-      podman
       python3
       python312Packages.pdf2docx
       rustup
@@ -68,6 +67,8 @@ in
       zls
     ] ++ pkgs.lib.optionals isLinux [
       pkgs.libgcc # Linux only
+      docker
+      docker-compose
     ];
 
     # Heavy/specialized - resource-intensive packages
