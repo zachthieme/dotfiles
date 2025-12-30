@@ -28,6 +28,7 @@
         end
 
         fish_add_path "$HOME/.opencode/bin"
+        fish_add_path "$HOME/.jjforge/bin"
       ''}
 
       # Enable vi key bindings
