@@ -26,10 +26,11 @@
         if test -e /nix/var/nix/profiles/default/etc/profile.d/nix.fish
           source /nix/var/nix/profiles/default/etc/profile.d/nix.fish
         end
-
-        fish_add_path "$HOME/.opencode/bin"
-        fish_add_path "$HOME/.jjforge/bin"
       ''}
+
+      # Add tool-specific paths
+      fish_add_path "$HOME/.opencode/bin"
+      fish_add_path "$HOME/.jjforge/bin"
 
       # Enable vi key bindings
       fish_vi_key_bindings
