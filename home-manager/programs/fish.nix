@@ -35,6 +35,9 @@
       # Enable vi key bindings
       fish_vi_key_bindings
 
+      # source secrets file
+      source ~/.config/fish/secrets.fish
+
       # Enable 24-bit color support
       set -g fish_term24bit 1
 

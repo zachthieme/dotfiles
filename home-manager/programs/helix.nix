@@ -56,6 +56,8 @@
         H = [":buffer-previous"];
         L = [":buffer-next"];
         ret = ["goto_word"];
+        A-j = ["move_line_down"];
+        A-k = ["move_line_up"];
         C-y = [
           ":sh rm -f /tmp/unique-file"
           ":insert-output yazi %{buffer_name} --chooser-file=/tmp/unique-file"

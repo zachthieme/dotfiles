@@ -124,7 +124,10 @@ in
     #   (unlike macOS where nix-darwin manages paths system-wide)
     # - macOS: Homebrew is at /opt/homebrew/bin on Apple Silicon
     home.sessionPath =
-      [ "${config.home.homeDirectory}/.local/bin" ]
+      [
+        "${config.home.homeDirectory}/.local/bin"
+        "${config.home.homeDirectory}/.opencode/bin"
+      ]
       ++ lib.optionals pkgs.stdenv.isDarwin [ "/opt/homebrew/bin" ]
       ++ lib.optionals pkgs.stdenv.isLinux [ "${config.home.homeDirectory}/.local/state/nix/profiles/home-manager/home-path/bin" ];
 
