@@ -28,14 +28,11 @@
           "unbind \"Alt Shift 9\"" = { };
         };
         normal = {
-          # Pane focus
-          "bind \"Alt h\"" = { MoveFocus = "Left"; };
-          "bind \"Alt j\"" = { MoveFocus = "Down"; };
-          "bind \"Alt k\"" = { MoveFocus = "Up"; };
-          "bind \"Alt l\"" = { MoveFocus = "Right"; };
-          # Tab navigation
-          "bind \"Alt ,\"" = { GoToPreviousTab = { }; };
-          "bind \"Alt .\"" = { GoToNextTab = { }; };
+          # Pane focus with tab fallback (moves to adjacent pane, or switches tab if none)
+          "bind \"Alt h\"" = { MoveFocusOrTab = "Left"; };
+          "bind \"Alt j\"" = { MoveFocusOrTab = "Down"; };
+          "bind \"Alt k\"" = { MoveFocusOrTab = "Up"; };
+          "bind \"Alt l\"" = { MoveFocusOrTab = "Right"; };
           # Tab switching by number
           "bind \"Alt 1\"" = { GoToTab = 1; };
           "bind \"Alt 2\"" = { GoToTab = 2; };
