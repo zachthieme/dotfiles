@@ -53,19 +53,31 @@ let
       isWork = true;
       packages = [ ];
     };
-    "srv722852" = {
+    "prod" = {
+      system = "x86_64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
+    "dev" = {
+      system = "x86_64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
+    "util" = {
+      system = "x86_64-linux";
+      user = "zach";
+      isWork = false;
+      packages = [ ];
+    };
+    "claude" = {
       system = "x86_64-linux";
       user = "zach";
       isWork = false;
       packages = [ ];
     };
     "omarchy" = {
-      system = "x86_64-linux";
-      user = "zach";
-      isWork = false;
-      packages = [ ];
-    };
-    "srv1089402" = {
       system = "x86_64-linux";
       user = "zach";
       isWork = false;
