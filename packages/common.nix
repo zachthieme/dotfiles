@@ -16,7 +16,6 @@ in
       fzf
       gh
       git
-      helix
       jq
       jujutsu
       lazygit
@@ -40,6 +39,9 @@ in
       zellij
       zoxide
       zsh
+    ] ++ pkgs.lib.optionals isLinux [
+      helix # Darwin installs at system level
+      vault # Darwin installs at system level
     ];
 
     # Development tools - compilers, LSPs, formatters

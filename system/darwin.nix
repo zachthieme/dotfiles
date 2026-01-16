@@ -35,7 +35,10 @@
 
     # System-level packages (most packages go in home-manager/base.nix to avoid duplication)
     # Only include packages that must be system-level (e.g., login shell)
-    environment.systemPackages = with pkgs; [ ];
+    environment.systemPackages = with pkgs; [
+      helix
+      vault
+    ];
     programs.fish.enable = true;
 
     # Set primary user based on configuration
