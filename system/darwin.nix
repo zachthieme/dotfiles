@@ -69,7 +69,7 @@
 
     # Allow selective unfree packages
     nixpkgs.config = {
-      allowUnfree = false;
+      allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "vault" ];
     };
 
     # make sure that todesk cannot be installed

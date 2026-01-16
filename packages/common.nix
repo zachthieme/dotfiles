@@ -29,6 +29,7 @@ in
       pandoc
       prettier
       ripgrep
+      slides
       tree
       typst
       unzip
