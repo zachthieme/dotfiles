@@ -41,6 +41,9 @@
       # Enable 24-bit color support
       set -g fish_term24bit 1
 
+      set -x VAULT_ADDR "https://vault.jjforge.cloud:8200"
+      set -x VAULT_SKIP_VERIFY true
+
       # Set LS_COLORS using vivid with catppuccin theme
       set -gx LS_COLORS (vivid generate catppuccin-mocha)
     '';
