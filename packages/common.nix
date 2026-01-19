@@ -10,6 +10,7 @@ in
       btop
       carapace
       curl
+      devenv
       eza
       fd
       fish
@@ -34,6 +35,7 @@ in
       typst
       unzip
       vivid
+      bazelisk
       wget
       which
       yazi
@@ -48,6 +50,7 @@ in
     # Development tools - compilers, LSPs, formatters
     devPackages = with pkgs; [
       bash-language-server
+      clang-tools
       delve
       devbox
       gcc
