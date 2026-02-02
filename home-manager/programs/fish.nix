@@ -60,6 +60,59 @@
     };
 
     functions = {
+      aliases = {
+        description = "Show all custom abbreviations and functions";
+        body = ''
+          echo ""
+          set_color --bold cyan
+          echo "═══ Abbreviations ═══"
+          set_color normal
+          echo ""
+          printf "  %-8s %s\n" "j"    "Open jrnl"
+          printf "  %-8s %s\n" "jl"   "List jrnl entries (short format)"
+          printf "  %-8s %s\n" "jf"   "Open jrnl with @fire tag"
+          printf "  %-8s %s\n" "vi"   "Open helix editor"
+          printf "  %-8s %s\n" "ls"   "List files with eza"
+          printf "  %-8s %s\n" "ll"   "List files (long format with git)"
+          printf "  %-8s %s\n" "lt"   "List files as tree (2 levels)"
+          echo ""
+          set_color --bold cyan
+          echo "═══ Note Templates ═══"
+          set_color normal
+          echo ""
+          printf "  %-12s %s\n" "daily"     "Create daily note template"
+          printf "  %-12s %s\n" "weekly"    "Create weekly review template"
+          printf "  %-12s %s\n" "quarterly" "Create quarterly review (usage: quarterly Q4 [year])"
+          printf "  %-12s %s\n" "person"    "Create person profile template"
+          printf "  %-12s %s\n" "project"   "Create project template"
+          printf "  %-12s %s\n" "company"   "Create company research template"
+          printf "  %-12s %s\n" "adr"       "Create architecture decision record"
+          printf "  %-12s %s\n" "decision"  "Create decision document"
+          printf "  %-12s %s\n" "incident"  "Create incident report template"
+          echo ""
+          set_color --bold cyan
+          echo "═══ Search & Navigation ═══"
+          set_color normal
+          echo ""
+          printf "  %-12s %s\n" "notes"     "Search notes or create new note"
+          printf "  %-12s %s\n" "ft"        "Find tasks in notes (usage: ft [tag])"
+          printf "  %-12s %s\n" "fif"       "Case-insensitive search in files"
+          printf "  %-12s %s\n" "fifs"      "Case-sensitive search in files"
+          printf "  %-12s %s\n" "fifc"      "Search in chezmoi-managed files"
+          echo ""
+          set_color --bold cyan
+          echo "═══ Git & System ═══"
+          set_color normal
+          echo ""
+          printf "  %-12s %s\n" "gff"       "Interactive git file history explorer"
+          printf "  %-12s %s\n" "logg"      "Interactive git log explorer"
+          printf "  %-12s %s\n" "k"         "Interactive process killer"
+          printf "  %-12s %s\n" "mkdd"      "Create directory with today's date"
+          printf "  %-12s %s\n" "nix-cleanup" "Clean up Nix store"
+          echo ""
+        '';
+      };
+
       person = {
         description = "Populate an md file for a person.";
         body = ''
