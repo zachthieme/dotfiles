@@ -143,12 +143,20 @@ in
     home.file = {
       ".config/aerospace".source = ../config/aerospace;
       ".config/borders".source = ../config/borders;
-      ".config/jrnl".source = ../config/jrnl;
       ".config/ripgrep".source = ../config/ripgrep;
       ".terminfo".source = ../config/terminfo;
       # markdown-oxide config goes in the Obsidian vault root
       "CloudDocs/Obsidian/.moxide.toml".source = ../config/moxide/.moxide.toml;
     };
+
+    # Copy jrnl config only if it doesn't exist (jrnl needs to write to its config)
+    home.activation.jrnlConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [ ! -f ~/.config/jrnl/jrnl.yaml ]; then
+        mkdir -p ~/.config/jrnl
+        cp ${../config/jrnl/jrnl.yaml} ~/.config/jrnl/jrnl.yaml
+        chmod 644 ~/.config/jrnl/jrnl.yaml
+      fi
+    '';
 
     # Simple program configs kept inline
     programs.fzf = {

@@ -14,6 +14,7 @@ in
       gh
       git
       jq
+      jrnl
       jujutsu
       lazyjj
       less

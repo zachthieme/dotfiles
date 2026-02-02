@@ -11,7 +11,7 @@ highlight: true
 indent_character: "|"
 journals:
   default:
-    journal: ~/CloudDocs/Obsidian/journal.txt
+    journal: ~/CloudDocs/Notes/journal.txt
 linewrap: 79
 tagsymbols: "#@%"
 template: false
