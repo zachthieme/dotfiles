@@ -43,6 +43,7 @@
 
       set -x VAULT_ADDR "https://vault.jjforge.cloud:8200"
       set -x VAULT_SKIP_VERIFY true
+      set -gx NOTES "$HOME/CloudDocs/Notes"
 
       # Set LS_COLORS using vivid with catppuccin theme
       set -gx LS_COLORS (vivid generate catppuccin-mocha)
@@ -369,22 +370,43 @@
           echo "## Notes"
         '';
       };
-      ft = {
-        description = "Find tasks in notes";
-        body = ''
-          if not set -q OBSIDIAN_VAULT; or test -z "$OBSIDIAN_VAULT"
-            echo -e "\033[31mError:\033[0m OBSIDIAN_VAULT environment variable not set"
-            return 1
-          end
-          if not test -d "$OBSIDIAN_VAULT"
-            echo -e "\033[31mError:\033[0m OBSIDIAN_VAULT directory does not exist: $OBSIDIAN_VAULT"
-            return 1
-          end
+      # ft = {
+      #   description = "Find tasks in notes";
+      #   body = ''
+      #     if not set -q NOTES; or test -z "$NOTES"
+      #       echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+      #       return 1
+      #     end
+      #     if not test -d "$NOTES"
+      #       echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+      #       return 1
+      #     end
 
-          rg --vimgrep -o -P '(?=.*\[ \])(?=.*#weekly).*' $OBSIDIAN_VAULT | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" --height 7
-        '';
-      };
+      #     rg --vimgrep -o -P '(?=.*\[ \])(?=.*#weekly).*' $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" --height 7
+      #   '';
+      # };
 
+ft = {
+  description = "Find tasks in notes";
+  body = ''
+    if not set -q NOTES; or test -z "$NOTES"
+      echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+      return 1
+    end
+    if not test -d "$NOTES"
+      echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+      return 1
+    end
+    
+    set -l pattern '\[ \].*'
+    if test (count $argv) -gt 0
+      set pattern "(?=.*\[ \])(?=.*$argv[1]).*"
+    end
+    
+    rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" 
+  '';
+};
+      
       gff = {
         description = "Interactive Git file history explorer";
         body = ''
@@ -526,19 +548,19 @@
         '';
       };
 
-      note = {
-        description = "Search Obsidian vault or create new note";
+      notes = {
+        description = "Search notes or create new note";
         body = ''
-          if not set -q OBSIDIAN_VAULT; or test -z "$OBSIDIAN_VAULT"
-            echo -e "\033[31mError:\033[0m OBSIDIAN_VAULT environment variable not set"
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
             return 1
           end
-          if not test -d "$OBSIDIAN_VAULT"
-            echo -e "\033[31mError:\033[0m OBSIDIAN_VAULT directory does not exist: $OBSIDIAN_VAULT"
+          if not test -d "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
             return 1
           end
 
-          set -l selected (fd --type f --extension md . "$OBSIDIAN_VAULT" | \
+          set -l selected (fd --type f --extension md . "$NOTES" | \
             fzf --print-query \
                 --preview "head -50 {}" \
                 --preview-window=right:50%:wrap \
@@ -557,7 +579,7 @@
           # If we have a query (from typing or ctrl-n), create new note
           if test -n "$search_query"
             set -l filename (string lower -- "$search_query" | string replace -a " " "-")".md"
-            set -l filepath "$OBSIDIAN_VAULT/$filename"
+            set -l filepath "$NOTES/$filename"
 
             if test -e "$filepath"
               echo "File already exists: $filepath"
