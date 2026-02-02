@@ -8,39 +8,23 @@ in
     corePackages = with pkgs; [
       bat
       btop
-      carapace
       curl
-      devenv
       eza
       fd
-      fish
-      fzf
       gh
       git
       jq
       jujutsu
-      lazygit
       lazyjj
       less
-      markdown-oxide
-      marksman
-      mosh
-      nixd
-      nixfmt-rfc-style
-      pandoc
-      prettier
+      markdown-oxide # LSP for notes
+      marksman # LSP for notes
       ripgrep
-      slides
       tree
-      typst
       unzip
       vivid
-      bazelisk
       wget
       which
-      yazi
-      zellij
-      zoxide
       zsh
     ] ++ pkgs.lib.optionals isLinux [
       helix # Darwin installs at system level
@@ -49,10 +33,14 @@ in
 
     # Development tools - compilers, LSPs, formatters
     devPackages = with pkgs; [
+      bazelisk
       bash-language-server
+      mosh
+      nixd
       clang-tools
       delve
       devbox
+      devenv
       gcc
       go
       golangci-lint
@@ -61,13 +49,18 @@ in
       gotools
       lldb_20
       gnumake
+      nixfmt
       nodejs_24
       openssl
       openssl.dev
+      pandoc
       pkg-config
+      prettier
       python3
       python312Packages.pdf2docx
       rustup
+      slides
+      typst
       uv
       zig
       zls
