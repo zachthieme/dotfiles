@@ -6,7 +6,7 @@ after-login-command = []
 # so it won't be run twice on AeroSpace restart
 after-startup-command = [
   # 'exec-and-forget sketchybar',
-  'exec-and-forget borders',
+  # 'exec-and-forget borders',
 ]
 
 # Notify Sketchybar about workspace change
@@ -54,7 +54,7 @@ alt-tab = 'focus right --boundaries-action wrap-around-the-workspace'
 alt-shift-tab = 'focus left --boundaries-action wrap-around-the-workspace'
 
 cmd-e = 'balance-sizes'
-# cmd-f = 'layout floating tiling'
+cmd-i = 'layout floating tiling'
 cmd-m = 'macos-native-minimize'
 cmd-r = 'reload-config'
 
