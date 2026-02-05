@@ -66,10 +66,10 @@ cmd-up = 'focus up --boundaries-action wrap-around-the-workspace'
 cmd-right = 'focus right --boundaries-action wrap-around-the-workspace'
 
 # setup for accordion
-cmd-shift-h = ['join-with left', 'layout v_accordion']
-cmd-shift-j = ['join-with down', 'layout h_accordion']
-cmd-shift-k = ['join-with up', 'layout h_accordion']
-cmd-shift-l = ['join-with right', 'layout v_accordion']
+# cmd-shift-h = ['join-with left', 'layout v_accordion']
+# cmd-shift-j = ['join-with down', 'layout h_accordion']
+# cmd-shift-k = ['join-with up', 'layout h_accordion']
+# cmd-shift-l = ['join-with right', 'layout v_accordion']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 # Move to a particular workspace
