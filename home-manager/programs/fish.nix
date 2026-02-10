@@ -35,11 +35,8 @@
       # Enable vi key bindings
       fish_vi_key_bindings
 
-      # source secrets file
-      source ~/.config/fish/secrets.fish
-
-      # Enable 24-bit color support
-      set -g fish_term24bit 1
+      # source secrets file if it exists
+      test -f ~/.config/fish/secrets.fish && source ~/.config/fish/secrets.fish
 
       set -x VAULT_ADDR "https://vault.jjforge.cloud:8200"
       set -x VAULT_SKIP_VERIFY true
