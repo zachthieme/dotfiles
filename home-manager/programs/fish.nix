@@ -80,6 +80,7 @@
           echo "═══ Note Templates ═══"
           set_color normal
           echo ""
+          printf "  %-12s %s\n" "today"     "Open or create today's daily note"
           printf "  %-12s %s\n" "daily"     "Create daily note template"
           printf "  %-12s %s\n" "weekly"    "Create weekly review template"
           printf "  %-12s %s\n" "quarterly" "Create quarterly review (usage: quarterly Q4 [year])"
@@ -423,6 +424,30 @@
           echo "## Notes"
         '';
       };
+
+      today = {
+        description = "Open or create today's daily note";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+          if not test -d "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+            return 1
+          end
+
+          set -l filepath "$NOTES/"(date +%Y-%m-%d)".md"
+
+          if not test -e "$filepath"
+            daily > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          $EDITOR "$filepath"
+        '';
+      };
+
       # ft = {
       #   description = "Find tasks in notes";
       #   body = ''
