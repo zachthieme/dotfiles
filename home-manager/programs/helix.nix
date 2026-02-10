@@ -53,6 +53,7 @@
         i = [ "insert_mode" "collapse_selection" ];
         esc = [ "collapse_selection" "keep_primary_selection" ];
         X = ["extend_line_above"];
+        space.t = [":pipe sed '/^- \\[ \\] /{s/^- \\[ \\] //;b}; s/^/- [ ] /'"];
         H = [":buffer-previous"];
         L = [":buffer-next"];
         ret = ["goto_word"];
