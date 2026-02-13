@@ -50,6 +50,7 @@
       j = "jrnl";
       jl = "jrnl --format short";
       jf = "jrnl @fire";
+      n = "notes";
       vi = "hx";
       ls = "eza";
       ll = "eza -la --git";
@@ -664,6 +665,34 @@ ft = {
               echo "Created: $filepath"
               $EDITOR "$filepath"
             end
+          end
+        '';
+      };
+
+      sn = {
+        description = "Search inside notes by content";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+          if not test -d "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+            return 1
+          end
+
+          set -l query (string join " " -- $argv)
+          set -l selection (rg --color=always --line-number --no-heading --smart-case -- "$query" "$NOTES" | \
+            fzf --ansi \
+                --delimiter : \
+                --preview "bat --color=always --highlight-line {2} {1}" \
+                --preview-window=right:50%:wrap \
+                --height=80%)
+
+          if test -n "$selection"
+            set -l file (echo "$selection" | string split -f1 :)
+            set -l line (echo "$selection" | string split -f2 :)
+            $EDITOR "+$line" "$file"
           end
         '';
       };
