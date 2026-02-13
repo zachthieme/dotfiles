@@ -442,8 +442,10 @@
             echo "Created: $filepath"
           end
 
+          set -l prev_dir $PWD
           cd $NOTES
           $EDITOR "$filepath"
+          cd $prev_dir
         '';
       };
 
@@ -480,8 +482,10 @@ ft = {
       set pattern "(?=.*\[ \])(?=.*$argv[1]).*"
     end
 
+    set -l prev_dir $PWD
     cd $NOTES
     rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
+    cd $prev_dir
   '';
 };
       
@@ -638,6 +642,7 @@ ft = {
             return 1
           end
 
+          set -l prev_dir $PWD
           cd $NOTES
 
           set -l selected (fd --type f --extension md . "$NOTES" | \
@@ -653,6 +658,7 @@ ft = {
           # If file was selected, open it
           if test -n "$chosen_file" -a -e "$chosen_file"
             $EDITOR "$chosen_file"
+            cd $prev_dir
             return 0
           end
 
@@ -670,6 +676,7 @@ ft = {
               $EDITOR "$filepath"
             end
           end
+          cd $prev_dir
         '';
       };
 
@@ -685,6 +692,7 @@ ft = {
             return 1
           end
 
+          set -l prev_dir $PWD
           cd $NOTES
 
           set -l query (string join " " -- $argv)
@@ -700,6 +708,7 @@ ft = {
             set -l line (echo "$selection" | string split -f2 :)
             $EDITOR "+$line" "$file"
           end
+          cd $prev_dir
         '';
       };
     };
