@@ -442,6 +442,7 @@
             echo "Created: $filepath"
           end
 
+          cd $NOTES
           $EDITOR "$filepath"
         '';
       };
@@ -473,13 +474,14 @@ ft = {
       echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
       return 1
     end
-    
+
     set -l pattern '\[ \].*'
     if test (count $argv) -gt 0
       set pattern "(?=.*\[ \])(?=.*$argv[1]).*"
     end
-    
-    rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" 
+
+    cd $NOTES
+    rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
   '';
 };
       
@@ -636,6 +638,8 @@ ft = {
             return 1
           end
 
+          cd $NOTES
+
           set -l selected (fd --type f --extension md . "$NOTES" | \
             fzf --print-query \
                 --preview "head -50 {}" \
@@ -680,6 +684,8 @@ ft = {
             echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
             return 1
           end
+
+          cd $NOTES
 
           set -l query (string join " " -- $argv)
           set -l selection (rg --color=always --line-number --no-heading --smart-case -- "$query" "$NOTES" | \
