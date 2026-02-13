@@ -51,6 +51,7 @@
       jl = "jrnl --format short";
       jf = "jrnl @fire";
       n = "notes";
+      nw = "zellij --layout notes";
       vi = "hx";
       ls = "eza";
       ll = "eza -la --git";

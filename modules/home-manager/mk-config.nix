@@ -8,7 +8,12 @@ let
     ../../overlays/context/home-manager/work.nix;
 in
 home-manager.lib.homeManagerConfiguration {
-  pkgs = nixpkgs.legacyPackages.${system};
+  pkgs = import nixpkgs {
+    inherit system;
+    # Allow specific unfree packages (vault has BSL license)
+    # On Darwin, this is handled at the system level in system/darwin.nix
+    config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "vault" ];
+  };
   modules = [
     catppuccin.homeModules.catppuccin
     contextModule

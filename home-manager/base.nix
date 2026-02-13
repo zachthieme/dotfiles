@@ -51,13 +51,6 @@ in
   ];
 
   config = {
-    # Allow specific unfree packages (vault has BSL license)
-    # On Darwin with useGlobalPkgs, this is handled at the system level in system/darwin.nix
-    # On Linux standalone, this setting applies.
-    nixpkgs = lib.mkIf pkgs.stdenv.isLinux {
-      config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "vault" ];
-    };
-
     # Catppuccin theming (global enable applies to all supported programs)
     catppuccin = {
       enable = true;

@@ -21,7 +21,7 @@
           "unbind \"Alt Left\"" = { };
           "unbind \"Alt Up\"" = { };
           "unbind \"Alt Down\"" = { };
-          "unbind \"Alt F\"" = { };
+          # Alt F re-enabled for ToggleFloatingPanes (notes layout)
           # Remove bindings so they don't conflict with helix
           "unbind \"Alt Shift 0\"" = { };
           "unbind \"Alt Shift 1\"" = { };
@@ -48,7 +48,30 @@
     };
   };
 
-  # Custom layout file - Home Manager doesn't have structured layout options
+  # Custom layout files - Home Manager doesn't have structured layout options
+  xdg.configFile."zellij/layouts/notes.kdl".text = ''
+    layout {
+        cwd "~/CloudDocs/Notes"
+        tab name="notes" hide_floating_panes=true {
+            pane size=8 name="tasks" command="fish" {
+                args "-c" "rg -P -o '(?=.*\\[ \\])(?=.*#weekly).*' ; exec fish"
+            }
+            pane name="editor" focus=true command="fish" {
+                args "-c" "set -l fp (date +%Y-%m-%d).md; test -e $fp || daily > $fp; exec hx $fp"
+            }
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+            floating_panes {
+                pane name="search" {
+                    width "80%"
+                    height "80%"
+                }
+            }
+        }
+    }
+  '';
+
   xdg.configFile."zellij/layouts/compact-top.kdl".text = ''
     layout {
         pane size=1 borderless=true {
