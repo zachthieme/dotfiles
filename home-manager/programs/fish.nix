@@ -699,7 +699,7 @@ ft = {
           set -l selection (rg --color=always --line-number --no-heading --smart-case -- "$query" "$NOTES" | \
             fzf --ansi \
                 --delimiter : \
-                --preview "bat --color=always --highlight-line {2} {1}" \
+                --preview "bat --force-colorization --highlight-line {2} {1}" \
                 --preview-window=right:50%:wrap \
                 --height=80%)
 
