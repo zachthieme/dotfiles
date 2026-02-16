@@ -53,6 +53,7 @@
       n = "notes";
       nw = "zellij --layout notes";
       fw = "ft '#weekly'";
+      fo = "overdue";
       vi = "hx";
       ls = "eza";
       ll = "eza -la --git";
@@ -98,6 +99,8 @@
           printf "  %-12s %s\n" "notes"     "Search notes or create new note"
           printf "  %-12s %s\n" "ft"        "Find tasks in notes (usage: ft [tag])"
           printf "  %-12s %s\n" "fw"        "Find weekly tasks (ft #weekly)"
+          printf "  %-12s %s\n" "overdue"   "Find overdue tasks (unchecked with past due dates)"
+          printf "  %-12s %s\n" "fo"        "Find overdue tasks (overdue)"
           printf "  %-12s %s\n" "nw"        "Open notes workspace (zellij layout)"
           printf "  %-12s %s\n" "fif"       "Case-insensitive search in files"
           printf "  %-12s %s\n" "fifs"      "Case-sensitive search in files"
@@ -492,7 +495,36 @@ ft = {
     cd $prev_dir
   '';
 };
-      
+
+      overdue = {
+        description = "Find overdue tasks in notes (unchecked tasks with past ISO 8601 due dates)";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+          if not test -d "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+            return 1
+          end
+
+          set -l today (date +%Y-%m-%d)
+          set -l prev_dir $PWD
+          cd $NOTES
+          rg --vimgrep -o -P '(?=.*\[ \])(?=.*\d{4}-\d{2}-\d{2}).*' $NOTES | \
+            awk -F: -v today="$today" '{
+              if (match($4, /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/)) {
+                d = substr($4, RSTART, RLENGTH)
+                if (d < today) {
+                  print $4 ":" $1 ":" $2
+                }
+              }
+            }' | \
+            fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
+          cd $prev_dir
+        '';
+      };
+
       gff = {
         description = "Interactive Git file history explorer";
         body = ''
