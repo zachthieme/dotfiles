@@ -52,6 +52,7 @@
       jf = "jrnl @fire";
       n = "notes";
       nw = "zellij --layout notes";
+      fw = "ft '#weekly'";
       vi = "hx";
       ls = "eza";
       ll = "eza -la --git";
@@ -96,6 +97,8 @@
           echo ""
           printf "  %-12s %s\n" "notes"     "Search notes or create new note"
           printf "  %-12s %s\n" "ft"        "Find tasks in notes (usage: ft [tag])"
+          printf "  %-12s %s\n" "fw"        "Find weekly tasks (ft #weekly)"
+          printf "  %-12s %s\n" "nw"        "Open notes workspace (zellij layout)"
           printf "  %-12s %s\n" "fif"       "Case-insensitive search in files"
           printf "  %-12s %s\n" "fifs"      "Case-sensitive search in files"
           printf "  %-12s %s\n" "fifc"      "Search in chezmoi-managed files"

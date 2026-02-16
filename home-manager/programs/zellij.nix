@@ -52,22 +52,17 @@
   xdg.configFile."zellij/layouts/notes.kdl".text = ''
     layout {
         cwd "~/CloudDocs/Notes"
-        tab name="notes" hide_floating_panes=true {
+        tab name="notes" {
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
             pane size=8 name="tasks" command="fish" {
-                args "-c" "rg -P -o '(?=.*\\[ \\])(?=.*#weekly).*' ; exec fish"
+                args "-c" "fw; exec fish"
             }
             pane name="editor" focus=true command="fish" {
                 args "-c" "set -l fp (date +%Y-%m-%d).md; test -e $fp || daily > $fp; exec hx $fp"
             }
-            pane size=1 borderless=true {
-                plugin location="zellij:compact-bar"
-            }
-            floating_panes {
-                pane name="search" {
-                    width "80%"
-                    height "80%"
-                }
-            }
+            pane size="40%" name="search"
         }
     }
   '';
