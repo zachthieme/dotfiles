@@ -25,6 +25,7 @@ in
       unzip
       vivid
       wget
+      watch
       which
       zsh
     ] ++ pkgs.lib.optionals isLinux [

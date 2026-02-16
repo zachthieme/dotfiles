@@ -25,6 +25,13 @@
           # Remove bindings so they don't conflict with helix
           "unbind \"Alt Shift 0\"" = { };
           "unbind \"Alt Shift 1\"" = { };
+          "unbind \"Alt Shift 2\"" = { };
+          "unbind \"Alt Shift 3\"" = { };
+          "unbind \"Alt Shift 4\"" = { };
+          "unbind \"Alt Shift 5\"" = { };
+          "unbind \"Alt Shift 6\"" = { };
+          "unbind \"Alt Shift 7\"" = { };
+          "unbind \"Alt Shift 8\"" = { };
           "unbind \"Alt Shift 9\"" = { };
         };
         normal = {
