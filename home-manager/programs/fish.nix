@@ -81,16 +81,15 @@
           echo "═══ Note Templates ═══"
           set_color normal
           echo ""
-          printf "  %-12s %s\n" "today"     "Open or create today's daily note"
-          printf "  %-12s %s\n" "daily"     "Create daily note template"
-          printf "  %-12s %s\n" "weekly"    "Create weekly review template"
-          printf "  %-12s %s\n" "quarterly" "Create quarterly review (usage: quarterly Q4 [year])"
-          printf "  %-12s %s\n" "person"    "Create person profile template"
-          printf "  %-12s %s\n" "project"   "Create project template"
-          printf "  %-12s %s\n" "company"   "Create company research template"
-          printf "  %-12s %s\n" "adr"       "Create architecture decision record"
-          printf "  %-12s %s\n" "decision"  "Create decision document"
-          printf "  %-12s %s\n" "incident"  "Create incident report template"
+          printf "  %-12s %s\n" "daily"     "Create/open today's daily note (daily/)"
+          printf "  %-12s %s\n" "weekly"    "Create/open weekly review (weekly/)"
+          printf "  %-12s %s\n" "quarterly" "Create quarterly review (quarterly/)"
+          printf "  %-12s %s\n" "person"    "Create person profile (people/)"
+          printf "  %-12s %s\n" "project"   "Create project note (projects/)"
+          printf "  %-12s %s\n" "company"   "Create company research (companies/)"
+          printf "  %-12s %s\n" "adr"       "Create architecture decision record (adrs/)"
+          printf "  %-12s %s\n" "decision"  "Create decision document (decisions/)"
+          printf "  %-12s %s\n" "incident"  "Create incident report (incidents/)"
           echo ""
           set_color --bold cyan
           echo "═══ Search & Navigation ═══"
@@ -115,337 +114,456 @@
           printf "  %-12s %s\n" "k"         "Interactive process killer"
           printf "  %-12s %s\n" "mkdd"      "Create directory with today's date"
           printf "  %-12s %s\n" "nix-cleanup" "Clean up Nix store"
+          printf "  %-12s %s\n" "migrate-ids" "Replace non-GUID note ids with UUIDs"
           echo ""
         '';
       };
 
       person = {
-        description = "Populate an md file for a person.";
+        description = "Create a person profile note in people/";
         body = ''
           if test (count $argv) -eq 0
             echo "Usage: person <name>"
             return 1
           end
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
 
           set -l name $argv
-          set -l id (string lower -- $name | string replace -a ' ' '-')
+          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l dir "$NOTES/people"
+          set -l filepath "$dir/$slug.md"
+          mkdir -p "$dir"
 
-          echo "---"
-          echo "id:$id"
-          echo "aliases:"
-          echo "  - $name"
-          echo "tags: []"
-          echo "---"
-          echo ""
-          echo "# $name"
-          '';
+          if not test -e "$filepath"
+            set -l id (uuidgen)
+            echo "---
+id: $id
+aliases:
+  - $name
+tags: []
+---
+
+# $name" > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
+          cd $prev_dir
+        '';
       };
 
       project = {
-        description = "Populate an md file for a project.";
+        description = "Create a project note in projects/";
         body = ''
           if test (count $argv) -eq 0
             echo "Usage: project <name>"
             return 1
           end
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
 
           set -l name $argv
-          set -l id (string lower -- $name | string replace -a ' ' '-')
+          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l dir "$NOTES/projects"
+          set -l filepath "$dir/$slug.md"
+          mkdir -p "$dir"
 
-          echo "---"
-          echo "id: $id"
-          echo "aliases:"
-          echo "  - $name"
-          echo "tags: [project]"
-          echo "---"
-          echo ""
-          echo "# $name"
-          echo ""
-          echo "## Overview"
-          echo ""
-          echo "## Goals"
-          echo ""
-          echo "## Stakeholders"
-          echo ""
-          echo "## Key Decisions"
-          echo ""
-          echo "## Risks"
-          echo ""
-          echo "## Status Updates"
+          if not test -e "$filepath"
+            set -l id (uuidgen)
+            echo "---
+id: $id
+aliases:
+  - $name
+tags: [project]
+---
+
+# $name
+
+## Overview
+
+## Goals
+
+## Stakeholders
+
+## Key Decisions
+
+## Risks
+
+## Status Updates" > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
+          cd $prev_dir
         '';
       };
 
       adr = {
-        description = "Populate an md file for an architecture decision record.";
+        description = "Create an architecture decision record in adrs/";
         body = ''
           if test (count $argv) -eq 0
             echo "Usage: adr <name>"
             return 1
           end
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
 
           set -l name $argv
-          set -l id (string lower -- $name | string replace -a ' ' '-')
-          set -l today (date +%Y-%m-%d)
+          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l dir "$NOTES/adrs"
+          set -l filepath "$dir/$slug.md"
+          mkdir -p "$dir"
 
-          echo "---"
-          echo "id: adr-$id"
-          echo "aliases:"
-          echo "  - $name"
-          echo "tags: [adr]"
-          echo "date: $today"
-          echo "status: proposed"
-          echo "---"
-          echo ""
-          echo "# $name"
-          echo ""
-          echo "## Status"
-          echo ""
-          echo "Proposed"
-          echo ""
-          echo "## Context"
-          echo ""
-          echo "## Options Considered"
-          echo ""
-          echo "### Option 1"
-          echo ""
-          echo "### Option 2"
-          echo ""
-          echo "## Decision"
-          echo ""
-          echo "## Consequences"
+          if not test -e "$filepath"
+            set -l id (uuidgen)
+            set -l today (date +%Y-%m-%d)
+            echo "---
+id: $id
+aliases:
+  - $name
+tags: [adr]
+date: $today
+status: proposed
+---
+
+# $name
+
+## Status
+
+Proposed
+
+## Context
+
+## Options Considered
+
+### Option 1
+
+### Option 2
+
+## Decision
+
+## Consequences" > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
+          cd $prev_dir
         '';
       };
 
       weekly = {
-        description = "Populate an md file for a weekly review.";
+        description = "Create a weekly review note in weekly/";
         body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+
           set -l today (date +%Y-%m-%d)
           set -l formatted (date +"%B %-d, %Y")
-    
-          echo "---"
-          echo "id: weekly-$today"
-          echo "aliases:"
-          echo "  - Week of $formatted"
-          echo "tags: [weekly-review]"
-          echo "---"
-          echo ""
-          echo "# Week of $formatted"
-          echo ""
-          echo "## Wins"
-          echo ""
-          echo "## Challenges"
-          echo ""
-          echo "## Next Week Priorities"
-          echo ""
-          echo "## Notes"
+          set -l dir "$NOTES/weekly"
+          set -l filepath "$dir/$today.md"
+          mkdir -p "$dir"
+
+          if not test -e "$filepath"
+            echo "---
+id: weekly-$today
+aliases:
+  - Week of $formatted
+tags: [weekly-review]
+---
+
+# Week of $formatted
+
+## Wins
+
+## Challenges
+
+## Next Week Priorities
+
+## Notes" > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
+          cd $prev_dir
         '';
       };
 
       quarterly = {
-        description = "Populate an md file for a quarterly review. Usage: quarterly Q4 [year]";
+        description = "Create a quarterly review note in quarterly/. Usage: quarterly Q4 [year]";
         body = ''
           if test (count $argv) -eq 0
             echo "Usage: quarterly <quarter> [year]"
             echo "Example: quarterly Q4 2024"
             return 1
           end
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
 
           set -l quarter $argv[1]
           set -l year (date +%Y)
           if test (count $argv) -gt 1
-              set year $argv[2]
+            set year $argv[2]
           end
 
-          echo "---"
-          echo "id: $year-$quarter-review"
-          echo "aliases:"
-          echo "  - $quarter $year Review"
-          echo "tags: [quarterly-review]"
-          echo "---"
-          echo ""
-          echo "# $quarter $year Review"
-          echo ""
-          echo "## Goals"
-          echo ""
-          echo "## Accomplishments"
-          echo ""
-          echo "## What Worked"
-          echo ""
-          echo "## What Didn't"
-          echo ""
-          echo "## Key Learnings"
-          echo ""
-          echo "## Next Quarter Priorities"
+          set -l dir "$NOTES/quarterly"
+          set -l filepath "$dir/$year-$quarter.md"
+          mkdir -p "$dir"
+
+          if not test -e "$filepath"
+            echo "---
+id: $year-$quarter-review
+aliases:
+  - $quarter $year Review
+tags: [quarterly-review]
+---
+
+# $quarter $year Review
+
+## Goals
+
+## Accomplishments
+
+## What Worked
+
+## What Didn't
+
+## Key Learnings
+
+## Next Quarter Priorities" > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
+          cd $prev_dir
         '';
       };
 
       decision = {
-        description = "Populate an md file for a decision document.";
+        description = "Create a decision document in decisions/";
         body = ''
           if test (count $argv) -eq 0
             echo "Usage: decision <name>"
             return 1
           end
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
 
           set -l name $argv
-          set -l id (string lower -- $name | string replace -a ' ' '-')
-          set -l today (date +%Y-%m-%d)
+          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l dir "$NOTES/decisions"
+          set -l filepath "$dir/$slug.md"
+          mkdir -p "$dir"
 
-          echo "---"
-          echo "id: decision-$id"
-          echo "aliases:"
-          echo "  - $name"
-          echo "tags: [decision]"
-          echo "date: $today"
-          echo "status: draft"
-          echo "---"
-          echo ""
-          echo "# $name"
-          echo ""
-          echo "## Problem Statement"
-          echo ""
-          echo "## Options"
-          echo ""
-          echo "### Option 1"
-          echo ""
-          echo "**Pros:**"
-          echo ""
-          echo "**Cons:**"
-          echo ""
-          echo "### Option 2"
-          echo ""
-          echo "**Pros:**"
-          echo ""
-          echo "**Cons:**"
-          echo ""
-          echo "## Recommendation"
-          echo ""
-          echo "## Tradeoffs"
-          echo ""
-          echo "## Decision"
+          if not test -e "$filepath"
+            set -l id (uuidgen)
+            set -l today (date +%Y-%m-%d)
+            echo "---
+id: $id
+aliases:
+  - $name
+tags: [decision]
+date: $today
+status: draft
+---
+
+# $name
+
+## Problem Statement
+
+## Options
+
+### Option 1
+
+**Pros:**
+
+**Cons:**
+
+### Option 2
+
+**Pros:**
+
+**Cons:**
+
+## Recommendation
+
+## Tradeoffs
+
+## Decision" > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
+          cd $prev_dir
         '';
       };
 
       incident = {
-        description = "Populate an md file for an incident report.";
+        description = "Create an incident report in incidents/";
         body = ''
           if test (count $argv) -eq 0
             echo "Usage: incident <name>"
             return 1
           end
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
 
           set -l name $argv
-          set -l id (string lower -- $name | string replace -a ' ' '-')
-          set -l today (date +%Y-%m-%d)
-          set -l now (date +%H:%M)
+          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l dir "$NOTES/incidents"
+          set -l filepath "$dir/$slug.md"
+          mkdir -p "$dir"
 
-          echo "---"
-          echo "id: incident-$today-$id"
-          echo "aliases:"
-          echo "  - $name"
-          echo "tags: [incident]"
-          echo "date: $today"
-          echo "severity: "
-          echo "status: investigating"
-          echo "---"
-          echo ""
-          echo "# $name"
-          echo ""
-          echo "## Timeline"
-          echo ""
-          echo "- $now - Incident identified"
-          echo ""
-          echo "## Impact"
-          echo ""
-          echo "## Root Cause"
-          echo ""
-          echo "## Resolution"
-          echo ""
-          echo "## Action Items"
-          echo ""
-          echo "## Prevention"
+          if not test -e "$filepath"
+            set -l id (uuidgen)
+            set -l today (date +%Y-%m-%d)
+            set -l now (date +%H:%M)
+            echo "---
+id: $id
+aliases:
+  - $name
+tags: [incident]
+date: $today
+severity:
+status: investigating
+---
+
+# $name
+
+## Timeline
+
+- $now - Incident identified
+
+## Impact
+
+## Root Cause
+
+## Resolution
+
+## Action Items
+
+## Prevention" > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
+          cd $prev_dir
         '';
       };
 
       company = {
-        description = "Populate an md file for company research.";
+        description = "Create a company research note in companies/";
         body = ''
           if test (count $argv) -eq 0
             echo "Usage: company <name>"
             return 1
           end
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
 
           set -l name $argv
-          set -l id (string lower -- $name | string replace -a ' ' '-')
-          set -l today (date +%Y-%m-%d)
+          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l dir "$NOTES/companies"
+          set -l filepath "$dir/$slug.md"
+          mkdir -p "$dir"
 
-          echo "---"
-          echo "id: company-$id"
-          echo "aliases:"
-          echo "  - $name"
-          echo "tags: [company-research]"
-          echo "date: $today"
-          echo "---"
-          echo ""
-          echo "# $name"
-          echo ""
-          echo "## Overview"
-          echo ""
-          echo "## Leadership"
-          echo ""
-          echo "## Culture Signals"
-          echo ""
-          echo "## Tech Stack & Challenges"
-          echo ""
-          echo "## Role Details"
-          echo ""
-          echo "## Compensation"
-          echo ""
-          echo "## Concerns"
-          echo ""
-          echo "## Questions to Ask"
-          echo ""
-          echo "## Verdict"
+          if not test -e "$filepath"
+            set -l id (uuidgen)
+            set -l today (date +%Y-%m-%d)
+            echo "---
+id: $id
+aliases:
+  - $name
+tags: [company-research]
+date: $today
+---
+
+# $name
+
+## Overview
+
+## Leadership
+
+## Culture Signals
+
+## Tech Stack & Challenges
+
+## Role Details
+
+## Compensation
+
+## Concerns
+
+## Questions to Ask
+
+## Verdict" > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
+          cd $prev_dir
         '';
       };
 
       daily = {
-        description = "Populate an md file for a daily note.";
-        body = ''
-          set -l today (date +%Y-%m-%d)
-          set -l formatted (date +"%A %B %-d, %Y")
-    
-          echo "---"
-          echo "id: $today"
-          echo "aliases:"
-          echo "  - $today"
-          echo "tags: []"
-          echo "---"
-          echo ""
-          echo "# $formatted"
-          echo ""
-          echo "## Meetings"
-          echo ""
-          echo "## Notes"
-        '';
-      };
-
-      today = {
-        description = "Open or create today's daily note";
+        description = "Create or open today's daily note in daily/";
         body = ''
           if not set -q NOTES; or test -z "$NOTES"
             echo -e "\033[31mError:\033[0m NOTES environment variable not set"
             return 1
           end
-          if not test -d "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-            return 1
-          end
 
-          set -l filepath "$NOTES/"(date +%Y-%m-%d)".md"
+          set -l today (date +%Y-%m-%d)
+          set -l formatted (date +"%A %B %-d, %Y")
+          set -l dir "$NOTES/daily"
+          set -l filepath "$dir/$today.md"
+          mkdir -p "$dir"
 
           if not test -e "$filepath"
-            daily > "$filepath"
+            echo "---
+id: $today
+aliases:
+  - $today
+tags: []
+---
+
+# $formatted
+
+## Meetings
+
+## Notes" > "$filepath"
             echo "Created: $filepath"
           end
 
@@ -654,6 +772,43 @@ ft = {
         description = "Case-insensitive search for text in files";
         body = ''
           _fif_common "--ignore-case" $argv
+        '';
+      };
+
+      migrate-ids = {
+        description = "Replace non-GUID ids in note frontmatter with UUIDs";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+
+          set -l uuid_pattern '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+          set -l count 0
+
+          for file in (fd --type f --extension md . "$NOTES")
+            # extract id value from frontmatter (between first two --- markers)
+            set -l id_value (sed -n '/^---$/,/^---$/{s/^id:\s*//p}' "$file")
+            if test -z "$id_value"
+              continue
+            end
+
+            # skip if already a UUID
+            if string match -rq $uuid_pattern "$id_value"
+              continue
+            end
+
+            set -l new_id (uuidgen)
+            sed -i "0,/^id:.*/s/^id:.*/id: $new_id/" "$file"
+            echo "  $file: $id_value → $new_id"
+            set count (math $count + 1)
+          end
+
+          if test $count -eq 0
+            echo "All notes already have GUID ids."
+          else
+            echo "Updated $count note(s)."
+          end
         '';
       };
 

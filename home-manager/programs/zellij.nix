@@ -33,9 +33,7 @@
           "unbind \"Alt Shift 7\"" = { };
           "unbind \"Alt Shift 8\"" = { };
           "unbind \"Alt Shift 9\"" = { };
-        };
-        normal = {
-          # Pane focus with tab fallback (moves to adjacent pane, or switches tab if none)
+          # Pane focus with tab fallback (works in all modes)
           "bind \"Alt h\"" = { MoveFocusOrTab = "Left"; };
           "bind \"Alt j\"" = { MoveFocusOrTab = "Down"; };
           "bind \"Alt k\"" = { MoveFocusOrTab = "Up"; };
@@ -67,7 +65,7 @@
                 args "-c" "fw; exec fish"
             }
             pane name="editor" focus=true command="fish" {
-                args "-c" "set -l fp (date +%Y-%m-%d).md; test -e $fp || daily > $fp; exec hx $fp"
+                args "-c" "daily"
             }
             pane size="40%" name="search"
         }
