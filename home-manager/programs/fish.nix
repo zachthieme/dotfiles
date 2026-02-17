@@ -788,7 +788,7 @@ ft = {
 
           for file in (fd --type f --extension md . "$NOTES")
             # extract id value from frontmatter (between first two --- markers)
-            set -l id_value (sed -n '/^---$/,/^---$/{s/^id:\s*//p}' "$file")
+            set -l id_value (awk '/^---$/{n++; next} n==1 && /^id:/{sub(/^id: */, ""); print; exit}' "$file")
             if test -z "$id_value"
               continue
             end
@@ -799,7 +799,7 @@ ft = {
             end
 
             set -l new_id (uuidgen)
-            sed -i "0,/^id:.*/s/^id:.*/id: $new_id/" "$file"
+            awk -v new_id="$new_id" '/^id:/ && !done {print "id: " new_id; done=1; next} {print}' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
             echo "  $file: $id_value → $new_id"
             set count (math $count + 1)
           end
