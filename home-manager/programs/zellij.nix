@@ -110,7 +110,7 @@ in
                 plugin location="zellij:compact-bar"
             }
             pane size=8 name="tasks" command="fish" {
-                args "-c" "fw"
+                args "-c" "ft"
             }
             pane name="editor" focus=true command="fish" {
                 args "-c" "daily"
