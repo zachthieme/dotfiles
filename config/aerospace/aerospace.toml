@@ -1,6 +1,6 @@
 after-login-command = []
 # after-startup-command = ['exec-and-forget borders']
-
+# adding a minor change to test 
 # Run Sketchybar together with AeroSpace
 # sketchbar has a built-in detection of already running process,
 # so it won't be run twice on AeroSpace restart
