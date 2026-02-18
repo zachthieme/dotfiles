@@ -49,12 +49,12 @@ outer.right = 10
 # alt-period = 'layout tiles horizontal vertical'
 # alt-slash = 'layout tiles horizontal vertical'
 cmd-g = 'layout tiles horizontal vertical'
+cmd-h = 'layout floating tiling'
 
 alt-tab = 'focus right --boundaries-action wrap-around-the-workspace'
 alt-shift-tab = 'focus left --boundaries-action wrap-around-the-workspace'
 
 cmd-e = 'balance-sizes'
-cmd-minus = 'layout floating tiling'
 cmd-m = 'macos-native-minimize'
 cmd-r = 'reload-config'
 
