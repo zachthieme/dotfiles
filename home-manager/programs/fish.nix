@@ -11,6 +11,7 @@
 
       # Add Home Manager and Nix paths early (Linux only - must happen before interactiveShellInit)
       ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+        fish_add_path --prepend $HOME/.cargo/bin
         fish_add_path --prepend ~/.local/state/nix/profiles/home-manager/home-path/bin
         fish_add_path --prepend ~/.nix-profile/bin
         fish_add_path --prepend /nix/var/nix/profiles/default/bin
