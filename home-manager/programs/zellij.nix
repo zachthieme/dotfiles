@@ -110,12 +110,11 @@ in
                 plugin location="zellij:compact-bar"
             }
             pane size=8 name="tasks" command="fish" {
-                args "-c" "fw; exec fish"
+                args "-c" "fw"
             }
             pane name="editor" focus=true command="fish" {
                 args "-c" "daily"
             }
-            pane size="40%" name="search"
         }
     }
   '';
