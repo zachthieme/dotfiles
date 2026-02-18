@@ -53,7 +53,7 @@ in
     enable = true;
 
     settings = {
-      default_layout = "compact";
+      default_layout = "compact-top";
       default_shell = "fish";
       pane_frames = false;
       show_startup_tips = false;
