@@ -2,16 +2,26 @@
 { config, ... }:
 
 let
-  # Shared keybinds KDL block - used in both config and layout files.
+  # Shared keybinds KDL block embedded in layout files.
   # Layouts launched via --layout may not inherit config.kdl keybinds
   # (https://github.com/zellij-org/zellij/issues/4256), so we embed them directly.
+  # Pane navigation goes in shared_except "locked" to match the default scope and
+  # cleanly replace the defaults. Putting them in "shared" creates a cross-scope
+  # collision with the defaults' shared_except "locked" bindings for Alt j/k
+  # (which use MoveFocus, not MoveFocusOrTab), causing those keys to silently fail.
   sharedKeybinds = ''
     keybinds {
-        shared {
+        shared_except "locked" {
             unbind "Alt Right"
             unbind "Alt Left"
             unbind "Alt Up"
             unbind "Alt Down"
+            bind "Alt h" { MoveFocusOrTab "Left"; }
+            bind "Alt j" { MoveFocus "Down"; }
+            bind "Alt k" { MoveFocus "Up"; }
+            bind "Alt l" { MoveFocusOrTab "Right"; }
+        }
+        shared {
             unbind "Alt Shift 0"
             unbind "Alt Shift 1"
             unbind "Alt Shift 2"
@@ -22,10 +32,6 @@ let
             unbind "Alt Shift 7"
             unbind "Alt Shift 8"
             unbind "Alt Shift 9"
-            bind "Alt h" { MoveFocusOrTab "Left"; }
-            bind "Alt j" { MoveFocusOrTab "Down"; }
-            bind "Alt k" { MoveFocusOrTab "Up"; }
-            bind "Alt l" { MoveFocusOrTab "Right"; }
             bind "Alt 1" { GoToTab 1; }
             bind "Alt 2" { GoToTab 2; }
             bind "Alt 3" { GoToTab 3; }
@@ -53,13 +59,20 @@ in
       show_startup_tips = false;
 
       keybinds = {
-        shared = {
-          # removed to not conflict with alt right in fish
+        # Pane navigation in shared_except "locked" to match and replace the default
+        # scope. Using "shared" creates a cross-scope collision for Alt j/k where the
+        # defaults bind MoveFocus but we want MoveFocusOrTab.
+        "shared_except \"locked\"" = {
           "unbind \"Alt Right\"" = { };
           "unbind \"Alt Left\"" = { };
           "unbind \"Alt Up\"" = { };
           "unbind \"Alt Down\"" = { };
-          # Alt F re-enabled for ToggleFloatingPanes (notes layout)
+          "bind \"Alt h\"" = { MoveFocusOrTab = "Left"; };
+          "bind \"Alt j\"" = { MoveFocus = "Down"; };
+          "bind \"Alt k\"" = { MoveFocus = "Up"; };
+          "bind \"Alt l\"" = { MoveFocusOrTab = "Right"; };
+        };
+        shared = {
           # Remove bindings so they don't conflict with helix
           "unbind \"Alt Shift 0\"" = { };
           "unbind \"Alt Shift 1\"" = { };
@@ -71,11 +84,6 @@ in
           "unbind \"Alt Shift 7\"" = { };
           "unbind \"Alt Shift 8\"" = { };
           "unbind \"Alt Shift 9\"" = { };
-          # Pane focus with tab fallback (works in all modes)
-          "bind \"Alt h\"" = { MoveFocusOrTab = "Left"; };
-          "bind \"Alt j\"" = { MoveFocusOrTab = "Down"; };
-          "bind \"Alt k\"" = { MoveFocusOrTab = "Up"; };
-          "bind \"Alt l\"" = { MoveFocusOrTab = "Right"; };
           # Tab switching by number
           "bind \"Alt 1\"" = { GoToTab = 1; };
           "bind \"Alt 2\"" = { GoToTab = 2; };
