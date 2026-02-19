@@ -1,20 +1,6 @@
 after-login-command = []
-# after-startup-command = ['exec-and-forget borders']
-# adding a minor change to test 
-# Run Sketchybar together with AeroSpace
-# sketchbar has a built-in detection of already running process,
-# so it won't be run twice on AeroSpace restart
-after-startup-command = [
-  # 'exec-and-forget sketchybar',
-  # 'exec-and-forget borders',
-]
+after-startup-command = []
 
-# Notify Sketchybar about workspace change
-# exec-on-workspace-change = [
-#   '/bin/bash',
-#   '-c',
-#   'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
-# ]
 
 # Start AeroSpace at login
 start-at-login = true
@@ -45,9 +31,6 @@ outer.top = [{ monitor."built-in" = 16 }, 15]
 outer.right = 10
 
 [mode.main.binding]
-
-# alt-period = 'layout tiles horizontal vertical'
-# alt-slash = 'layout tiles horizontal vertical'
 cmd-g = 'layout tiles horizontal vertical'
 cmd-h = 'layout floating tiling'
 
@@ -64,12 +47,6 @@ cmd-left = 'focus left --boundaries-action wrap-around-the-workspace'
 cmd-down = 'focus down --boundaries-action wrap-around-the-workspace'
 cmd-up = 'focus up --boundaries-action wrap-around-the-workspace'
 cmd-right = 'focus right --boundaries-action wrap-around-the-workspace'
-
-# setup for accordion
-# cmd-shift-h = ['join-with left', 'layout v_accordion']
-# cmd-shift-j = ['join-with down', 'layout h_accordion']
-# cmd-shift-k = ['join-with up', 'layout h_accordion']
-# cmd-shift-l = ['join-with right', 'layout v_accordion']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 # Move to a particular workspace
@@ -100,36 +77,6 @@ cmd-shift-4 = ['move-node-to-workspace 4_Teams']
 cmd-shift-5 = ['move-node-to-workspace 5_Web']
 cmd-shift-6 = ['move-node-to-workspace 6']
 cmd-shift-7 = ['move-node-to-workspace 7']
-# alt-shift-5 = ['move-node-to-workspace 5_Teams']
-# alt-shift-6 = ['move-node-to-workspace 6_Docs']
-# alt-shift-7 = ['move-node-to-workspace 7_Misc']
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
-# alt-tab = 'workspace-back-and-forth'
-
-# See: https://nikitabobko.github.io/AeroSpace/commands#mode
-# alt-shift-semicolon = 'mode service'
-# cmd-enter = 'mode adjust'
-
-# 'service' binding mode declaration.
-# See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
-# [mode.service.binding]
-# esc = ['reload-config', 'mode main']
-
-# Optional: Define a binding mode for window adjustments
-# same as pop_os
-# [mode.adjust.binding]
-# r = ['flatten-workspace-tree', 'mode main'] # reset layout
-# backspace = ['close-all-windows-but-current', 'mode main']
-# h = 'move left'
-# j = 'move down'
-# k = 'move up'
-# l = 'move right'
-# shift-h = 'resize smart -50'
-# shift-l = 'resize smart +50'
-# shift-k = 'resize smart -50'
-# shift-j = 'resize smart +50'
-# esc = 'mode main'
 
 # Bind windows to workspaces
 [[on-window-detected]]
@@ -144,9 +91,9 @@ run = "move-node-to-workspace 1_Code"
 if.app-id = 'com.google.Chrome.app.faolnafnngnfdaknnbpnkhgohbobgegn'
 run = "move-node-to-workspace 2_Mail"
 
-# [[on-window-detected]]
-# if.app-id = 'com.brave.Browser'
-# run = "move-node-to-workspace 4_Browser"
+[[on-window-detected]]
+if.app-id = 'com.brave.Browser'
+run = "move-node-to-workspace 5_Web"
 
 [[on-window-detected]]
 if.app-id = 'com.google.Chrome'
@@ -163,14 +110,6 @@ run = "move-node-to-workspace 3_IM"
 [[on-window-detected]]
 if.app-id = 'com.microsoft.teams2'
 run = "move-node-to-workspace 4_Teams"
-
-# [[on-window-detected]]
-# if.app-id = 'com.microsoft.Word'
-# run = "move-node-to-workspace 6_Docs"
-#
-# [[on-window-detected]]
-# if.app-id = 'com.microsoft.rdc.macos'
-# run = "move-node-to-workspace 7_Misc"
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
