@@ -875,6 +875,8 @@ ft = {
       sn = {
         description = "Search inside notes by content";
         body = ''
+          argparse 'n/no-preview' -- $argv; or return 1
+
           if not set -q NOTES; or test -z "$NOTES"
             echo -e "\033[31mError:\033[0m NOTES environment variable not set"
             return 1
@@ -887,13 +889,14 @@ ft = {
           set -l prev_dir $PWD
           cd $NOTES
 
+          set -l fzf_opts --ansi --delimiter : --height=80%
+          if not set -q _flag_no_preview
+            set -a fzf_opts --preview "bat --force-colorization --highlight-line {2} {1}" --preview-window=right:50%:wrap
+          end
+
           set -l query (string join " " -- $argv)
           set -l selection (rg --color=always --line-number --no-heading --smart-case -- "$query" "$NOTES" | \
-            fzf --ansi \
-                --delimiter : \
-                --preview "bat --force-colorization --highlight-line {2} {1}" \
-                --preview-window=right:50%:wrap \
-                --height=80%)
+            fzf $fzf_opts)
 
           if test -n "$selection"
             set -l file (echo "$selection" | string split -f1 :)
