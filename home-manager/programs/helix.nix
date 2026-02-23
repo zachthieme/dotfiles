@@ -53,8 +53,8 @@
         i = [ "insert_mode" "collapse_selection" ];
         esc = [ "collapse_selection" "keep_primary_selection" ];
         X = ["extend_line_above"];
-        space.t = [":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1/;b' -e '}' -e 's/^\\([[:space:]]*\\)/\\1- [ ] /'"];
-        space.x = [":pipe sed -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- [ ] /;b' -e '}' -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- [x] /;b' -e '}'"];
+        space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1/;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1/;b' -e '}' -e 's/^\\([[:space:]]*\\)/\\1- [ ] /'" "collapse_selection"];
+        space.x = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- [ ] /;b' -e '}' -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- [x] /;b' -e '}'" "collapse_selection"];
         H = [":buffer-previous"];
         L = [":buffer-next"];
         ret = ["goto_word"];
@@ -67,6 +67,10 @@
           ":open %sh{cat /tmp/unique-file}"
           ":redraw"
         ];
+      };
+      keys.select = {
+        space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1/;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1/;b' -e '}' -e 's/^\\([[:space:]]*\\)/\\1- [ ] /'" "collapse_selection"];
+        space.x = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- [ ] /;b' -e '}' -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- [x] /;b' -e '}'" "collapse_selection"];
       };
     };
     languages = {
