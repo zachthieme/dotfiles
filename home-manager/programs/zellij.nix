@@ -110,7 +110,7 @@ in
                 plugin location="zellij:compact-bar"
             }
             pane size=8 name="tasks" command="fish" {
-                args "-c" "ft; notes-sync"
+                args "-c" "ft '@weekly|@today'"
             }
             pane name="editor" focus=true command="fish" {
                 args "-c" "daily; notes-sync"
