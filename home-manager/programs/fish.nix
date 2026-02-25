@@ -914,6 +914,7 @@ ft = {
             else
               echo "No changes to commit."
             end
+            jj bookmark move main --to @-
             jj git push 2>/dev/null
             and echo -e "\033[32mPushed to remote.\033[0m"
             or echo -e "\033[33mPush skipped (no remote or nothing to push).\033[0m"
