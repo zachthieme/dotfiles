@@ -54,7 +54,7 @@
         esc = [ "collapse_selection" "keep_primary_selection" ];
         X = ["extend_line_above"];
         space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1/;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1/;b' -e '}' -e 's/^\\([[:space:]]*\\)/\\1- [ ] /'" "collapse_selection"];
-        space.x = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- [ ] /;b' -e '}' -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- [x] /;b' -e '}'" "collapse_selection"];
+        space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
         H = [":buffer-previous"];
         L = [":buffer-next"];
         ret = ["goto_word"];
@@ -70,7 +70,7 @@
       };
       keys.select = {
         space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1/;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1/;b' -e '}' -e 's/^\\([[:space:]]*\\)/\\1- [ ] /'" "collapse_selection"];
-        space.x = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- [ ] /;b' -e '}' -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- [x] /;b' -e '}'" "collapse_selection"];
+        space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
       };
     };
     languages = {

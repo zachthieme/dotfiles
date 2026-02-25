@@ -52,7 +52,6 @@
       jl = "jrnl --format short";
       jf = "jrnl @fire";
       n = "notes";
-      nw = "zellij --layout notes";
       fw = "ft '#weekly'";
       fo = "overdue";
       vi = "hx";
@@ -101,7 +100,7 @@
           printf "  %-12s %s\n" "fw"        "Find weekly tasks (ft #weekly)"
           printf "  %-12s %s\n" "overdue"   "Find overdue tasks (unchecked with past due dates)"
           printf "  %-12s %s\n" "fo"        "Find overdue tasks (overdue)"
-          printf "  %-12s %s\n" "nw"        "Open notes workspace (zellij layout)"
+          printf "  %-12s %s\n" "nw"        "Open notes workspace (commits & pushes on close)"
           printf "  %-12s %s\n" "fif"       "Case-insensitive search in files"
           printf "  %-12s %s\n" "fifs"      "Case-sensitive search in files"
           printf "  %-12s %s\n" "fifc"      "Search in chezmoi-managed files"
@@ -868,6 +867,60 @@ ft = {
               $EDITOR "$filepath"
             end
           end
+          cd $prev_dir
+        '';
+      };
+
+      _hx_toggle_task = {
+        description = "Toggle task checkbox with @completed date (used by helix :pipe)";
+        body = ''
+          set -l d (date +%Y-%m-%d)
+          while read -l line
+            if string match -qr '^\s*- \[ \] ' -- "$line"
+              set -l toggled (string replace -- '- [ ] ' '- [x] ' "$line")
+              set -l cleaned (string replace -r ' *@completed\(\d{4}-\d{2}-\d{2}\)' '' -- "$toggled")
+              echo "$cleaned @completed($d)"
+            else if string match -qr '^\s*- \[[xX]\] ' -- "$line"
+              set -l toggled (string replace -r -- '- \[[xX]\] ' '- [ ] ' "$line")
+              set -l cleaned (string replace -r ' *@completed\(\d{4}-\d{2}-\d{2}\)' '' -- "$toggled")
+              echo "$cleaned"
+            else
+              echo "$line"
+            end
+          end
+        '';
+      };
+
+      nw = {
+        description = "Open notes workspace, commit and push on close";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+
+          zellij --layout notes
+
+          # After zellij exits, commit and push notes via jj
+          set -l prev_dir $PWD
+          cd $NOTES
+
+          if jj root &>/dev/null
+            set -l changes (jj diff --stat 2>/dev/null)
+            if test -n "$changes"
+              set -l today (date "+%Y-%m-%d %H:%M")
+              jj commit -m "notes: auto-save $today"
+              echo -e "\033[32mCommitted notes changes.\033[0m"
+            else
+              echo "No changes to commit."
+            end
+            jj git push 2>/dev/null
+            and echo -e "\033[32mPushed to remote.\033[0m"
+            or echo -e "\033[33mPush skipped (no remote or nothing to push).\033[0m"
+          else
+            echo -e "\033[33mNotes directory is not a jj repository, skipping commit/push.\033[0m"
+          end
+
           cd $prev_dir
         '';
       };
