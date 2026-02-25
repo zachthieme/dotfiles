@@ -52,7 +52,7 @@
       jl = "jrnl --format short";
       jf = "jrnl @fire";
       n = "notes";
-      fw = "ft '#weekly'";
+      fw = "ft '@weekly|@today'";
       fo = "overdue";
       vi = "hx";
       ls = "eza";
@@ -604,7 +604,7 @@ ft = {
 
     set -l pattern '\[ \].*'
     if test (count $argv) -gt 0
-      set pattern "(?=.*\[ \])(?=.*$argv[1]).*"
+      set pattern "(?=.*\[ \])(?=.*(?:$argv[1])).*"
     end
 
     set -l prev_dir $PWD
