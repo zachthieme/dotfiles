@@ -891,17 +891,13 @@ ft = {
         '';
       };
 
-      nw = {
-        description = "Open notes workspace, commit and push on close";
+      notes-sync = {
+        description = "Commit and push notes via jj";
         body = ''
           if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
             return 1
           end
 
-          zellij --layout notes
-
-          # After zellij exits, commit and push notes via jj
           set -l prev_dir $PWD
           cd $NOTES
 
@@ -923,6 +919,21 @@ ft = {
           end
 
           cd $prev_dir
+        '';
+      };
+
+      nw = {
+        description = "Open notes workspace, commit and push on close";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+
+          zellij --layout notes
+
+          # Final sync after zellij exits (catches anything panes missed)
+          notes-sync
         '';
       };
 
