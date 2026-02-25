@@ -902,7 +902,7 @@ ft = {
           cd $NOTES
 
           if jj root &>/dev/null
-            set -l changes (jj diff --stat 2>/dev/null)
+            set -l changes (jj diff 2>/dev/null)
             if test -n "$changes"
               set -l today (date "+%Y-%m-%d %H:%M")
               jj commit -m "notes: auto-save $today"
