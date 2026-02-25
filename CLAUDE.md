@@ -172,6 +172,38 @@ home.file = {
 };
 ```
 
+## Nix Multiline String Escaping (`''...''`)
+
+Nix indented strings (`''...''`) have **non-intuitive escaping** for single quotes. The rules:
+
+| Nix source (inside `''...''`) | Output | Explanation |
+|-------------------------------|--------|-------------|
+| `'''` | `''` | Escape sequence for two single quotes |
+| `''''` | `'''` | `'''` (escape → `''`) + `'` (literal) |
+| `'''''` | `''''` | `'''` (escape → `''`) + `''` (ends string!) — **usually a bug** |
+
+**Key rule**: `'''` is the escape sequence that produces a literal `''` in output. Each additional `'` after the escape adds one more literal quote.
+
+**Common pitfall — empty strings in fish/shell code**:
+When a fish function needs an empty string `''` as an argument (e.g., `string replace -r 'pattern' '' -- "$var"`), use exactly `'''` in the Nix source:
+```nix
+# CORRECT — ''' produces '' (fish empty string)
+body = ''
+  set -l result (string replace -r 'pattern' ''' -- "$var")
+'';
+
+# WRONG — '''' produces ''' (three quotes, causes fish glob error)
+body = ''
+  set -l result (string replace -r 'pattern' '''' -- "$var")
+'';
+```
+
+**Other escape sequences in `''...''`**:
+- `''$` → literal `$` (prevents interpolation)
+- `''\` → literal `\` (prevents escape interpretation)
+
+**When in doubt**, test with: `nix eval --expr "''your content here''"` to verify output.
+
 ## Code Style
 
 - **Indentation**: Two spaces in Nix files
