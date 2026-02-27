@@ -609,7 +609,7 @@ ft = {
 
     set -l prev_dir $PWD
     cd $NOTES
-    rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
+    rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
     cd $prev_dir
   '';
 };
