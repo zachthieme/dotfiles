@@ -116,6 +116,22 @@ in
                 args "-c" "daily; notes-sync"
             }
         }
+        tab name="search" {
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+            pane focus=true command="fish" {
+                args "-c" "sn -n"
+            }
+        }
+        tab name="overdue" {
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+            pane focus=true command="fish" {
+                args "-c" "overdue"
+            }
+        }
     }
   '';
 

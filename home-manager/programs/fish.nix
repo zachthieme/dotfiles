@@ -629,10 +629,10 @@ ft = {
           set -l today (date +%Y-%m-%d)
           set -l prev_dir $PWD
           cd $NOTES
-          rg --vimgrep -o -P '(?=.*\[ \])(?=.*\d{4}-\d{2}-\d{2}).*' $NOTES | \
+          rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
             awk -F: -v today="$today" '{
-              if (match($4, /[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/)) {
-                d = substr($4, RSTART, RLENGTH)
+              if (match($4, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                d = substr($4, RSTART+5, 10)
                 if (d < today) {
                   print $4 ":" $1 ":" $2
                 }
