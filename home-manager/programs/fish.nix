@@ -930,7 +930,12 @@ ft = {
             return 1
           end
 
-          zellij --layout notes
+          if set -q ZELLIJ
+            echo "Already inside a zellij session"
+            return 1
+          end
+
+          zellij --layout ~/.config/zellij/layouts/notes.kdl attach --create notes
 
           # Final sync after zellij exits (catches anything panes missed)
           notes-sync

@@ -105,6 +105,12 @@ in
     ${sharedKeybinds}
     layout {
         cwd "~/CloudDocs/Notes"
+        new_tab_template {
+             pane size=1 borderless=true {
+                 plugin location="zellij:compact-bar"
+             }
+             pane
+         }
         tab name="notes" {
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
@@ -131,6 +137,12 @@ in
             pane focus=true command="fish" {
                 args "-c" "overdue"
             }
+        }
+        tab name="shell" {
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+            pane focus=true
         }
     }
   '';
