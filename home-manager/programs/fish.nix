@@ -930,7 +930,7 @@ ft = {
             return 1
           end
 
-          zellij --layout notes
+          zellij attach --create notes --layout notes
 
           # Final sync after zellij exits (catches anything panes missed)
           notes-sync
