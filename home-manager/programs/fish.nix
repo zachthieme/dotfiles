@@ -54,7 +54,6 @@
       n = "notes";
       fw = "ft '@weekly|@today'";
       fo = "overdue";
-      fc = "done";
       fu = "upcoming";
       vi = "hx";
       ls = "eza";
@@ -77,7 +76,6 @@
           printf "  %-8s %s\n" "n"    "Search/create notes (→ notes)"
           printf "  %-8s %s\n" "fw"   "Find weekly/today tasks (→ ft '@weekly|@today')"
           printf "  %-8s %s\n" "fo"   "Find overdue tasks (→ overdue)"
-          printf "  %-8s %s\n" "fc"   "Find completed tasks (→ done)"
           printf "  %-8s %s\n" "fu"   "Find upcoming tasks (→ upcoming)"
           printf "  %-8s %s\n" "vi"   "Open helix editor"
           printf "  %-8s %s\n" "ls"   "List files with eza"
@@ -107,9 +105,9 @@
           printf "  %-12s %s\n" "sn"         "Search inside notes by content (sn [-n])"
           printf "  %-12s %s\n" "ft"         "Find tasks by tag (usage: ft [tag])"
           printf "  %-12s %s\n" "overdue"    "Find overdue tasks (past due dates)"
-          printf "  %-12s %s\n" "done"       "Find recently completed tasks (done [days])"
+          printf "  %-12s %s\n" "completed"  "Find recently completed tasks (completed [days])"
           printf "  %-12s %s\n" "upcoming"   "Find tasks due soon (upcoming [days])"
-          printf "  %-12s %s\n" "ts"         "Show task summary dashboard"
+          printf "  %-12s %s\n" "td"         "Show task summary dashboard"
           printf "  %-12s %s\n" "review"     "Create review with completed tasks (review [week|month])"
           printf "  %-12s %s\n" "nw"         "Open notes workspace (syncs on close)"
           printf "  %-12s %s\n" "notes-sync" "Commit and push notes via jj"
@@ -660,7 +658,7 @@ ft = {
         '';
       };
 
-      done = {
+      completed = {
         description = "Find recently completed tasks (default: last 7 days)";
         body = ''
           if not set -q NOTES; or test -z "$NOTES"
@@ -741,7 +739,7 @@ ft = {
         '';
       };
 
-      ts = {
+      td = {
         description = "Show task summary dashboard";
         body = ''
           if not set -q NOTES; or test -z "$NOTES"

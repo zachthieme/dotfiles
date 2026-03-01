@@ -163,9 +163,9 @@ Tasks use markdown checkboxes with metadata annotations:
 |----------|-------------|
 | `ft [tag]` | Find unchecked tasks, optionally filtered by tag pattern |
 | `overdue` | Find unchecked tasks with `@due()` dates in the past |
-| `done [days]` | Find completed tasks from last N days (default: 7) |
+| `completed [days]` | Find completed tasks from last N days (default: 7) |
 | `upcoming [days]` | Find tasks due within N days (default: 7) |
-| `ts` | Show task summary dashboard (open, overdue, due/completed this week) |
+| `td` | Show task summary dashboard (open, overdue, due/completed this week) |
 | `review [week\|month]` | Create review note pre-filled with completed tasks |
 | `notes` | Fuzzy-find notes or create a new one from the search query |
 | `sn [-n]` | Full-text search inside notes with preview (`-n` disables preview) |
@@ -182,7 +182,6 @@ Tasks use markdown checkboxes with metadata annotations:
 | `n` | `notes` |
 | `fw` | `ft '@weekly\|@today'` |
 | `fo` | `overdue` |
-| `fc` | `done` |
 | `fu` | `upcoming` |
 
 ### Syncing
