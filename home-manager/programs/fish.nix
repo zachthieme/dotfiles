@@ -624,7 +624,7 @@ ft = {
 
     set -l prev_dir $PWD
     cd $NOTES
-    rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+    rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
     cd $prev_dir
   '';
 };
@@ -653,7 +653,7 @@ ft = {
                 }
               }
             }' | \
-            fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
+            fzf --ansi --delimiter ':' --with-nth=1 --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
           cd $prev_dir
         '';
       };
@@ -693,7 +693,7 @@ ft = {
                 }
               }
             }' | \
-            fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
+            fzf --ansi --delimiter ':' --with-nth=1 --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
           cd $prev_dir
         '';
       };
@@ -734,7 +734,7 @@ ft = {
                 }
               }
             }' | \
-            fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
+            fzf --ansi --delimiter ':' --with-nth=1 --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
           cd $prev_dir
         '';
       };
@@ -1136,7 +1136,8 @@ tags: [monthly-review]
             fzf --print-query \
                 --preview "head -50 {}" \
                 --preview-window=right:50%:wrap \
-                --height=80% \
+                --layout=reverse \
+                --border none --no-separator --no-info \
                 --bind "ctrl-n:print-query+abort")
 
           set -l search_query $selected[1]
@@ -1238,6 +1239,13 @@ tags: [monthly-review]
         '';
       };
 
+      nwk = {
+        description = "Kill the notes zellij session";
+        body = ''
+          zellij delete-session notes --force
+        '';
+      };
+
       sn = {
         description = "Search inside notes by content";
         body = ''
@@ -1255,7 +1263,7 @@ tags: [monthly-review]
           set -l prev_dir $PWD
           cd $NOTES
 
-          set -l fzf_opts --ansi --delimiter : --height=80%
+          set -l fzf_opts --ansi --delimiter : --layout=reverse --border none --no-separator --no-info
           if not set -q _flag_no_preview
             set -a fzf_opts --preview "bat --force-colorization --highlight-line {2} {1}" --preview-window=right:50%:wrap
           end

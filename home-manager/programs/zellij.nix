@@ -135,10 +135,10 @@ in
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
-            pane name="overdue" focus=true command="fish" {
+            pane borderless=true name="overdue" focus=true command="fish" {
                 args "-c" "overdue"
             }
-            pane name="next 3 days" command="fish" {
+            pane borderless=true name="next 3 days" command="fish" {
                 args "-c" "upcoming 3"
             }
         }
