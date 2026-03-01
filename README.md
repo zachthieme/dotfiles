@@ -21,6 +21,7 @@ For contributor-specific technical details, see [Repository Guidelines](./CLAUDE
 ```
 
 The script will:
+
 1. Install Nix (via Determinate Systems installer) if needed
 2. Install Homebrew on macOS if needed
 3. Apply the appropriate flake configuration
@@ -57,27 +58,29 @@ install.sh           # Bootstrap script
 
 Hosts are defined in `modules/hosts/definitions.nix`. Current hosts include:
 
-| Host | System | Context |
-|------|--------|---------|
-| cortex | aarch64-darwin | home |
-| malv2 | x86_64-darwin | home |
-| zthieme34911 | aarch64-darwin | work |
-| srv722852 | x86_64-linux | home |
-| omarchy | x86_64-linux | home |
-| pi5 | aarch64-linux | home |
-| pi-nomad1/2/3 | aarch64-linux | home |
+| Host          | System         | Context |
+| ------------- | -------------- | ------- |
+| cortex        | aarch64-darwin | home    |
+| malv2         | x86_64-darwin  | home    |
+| zthieme34911  | aarch64-darwin | work    |
+| srv722852     | x86_64-linux   | home    |
+| omarchy       | x86_64-linux   | home    |
+| pi5           | aarch64-linux  | home    |
+| pi-nomad1/2/3 | aarch64-linux  | home    |
 
 ## Common Tasks
 
 ### Rebuild after edits
 
 **macOS:**
+
 ```bash
 darwin-rebuild switch --flake .#<hostname>
 darwin-rebuild switch --flake .          # Uses detected hostname
 ```
 
 **Linux:**
+
 ```bash
 home-manager switch -b backup --flake .#<hostname>
 ```
@@ -113,6 +116,7 @@ home-manager switch -b backup --flake .#<hostname>
 ### Add a program module
 
 For tools with Home Manager options:
+
 1. Create `home-manager/programs/<tool>.nix`
 2. Import in `home-manager/base.nix`
 
@@ -125,7 +129,7 @@ A plain-markdown notes system built on fish functions, helix, and zellij. Notes 
 Run `nw` to open a zellij workspace with four tabs:
 
 | Tab | Contents |
-|-----|----------|
+| --- | --- |
 | **notes** | Weekly/today tasks at top, daily note below (auto-syncs on open) |
 | **search** | Full-text search across all notes (`sn`) |
 | **overdue** | Tasks with past due dates |
@@ -138,7 +142,7 @@ On exit, `nw` commits and pushes all changes via `notes-sync`.
 Each function creates a markdown file with YAML frontmatter (UUID id, aliases, tags) in its own subdirectory:
 
 | Function | Directory | Purpose |
-|----------|-----------|---------|
+| --- | --- | --- |
 | `daily` | `daily/` | Today's daily note (creates or opens existing) |
 | `weekly` | `weekly/` | Weekly review (wins, challenges, priorities) |
 | `quarterly` | `quarterly/` | Quarterly review (goals, accomplishments, learnings) |
@@ -160,7 +164,7 @@ Tasks use markdown checkboxes with metadata annotations:
 ```
 
 | Function | Description |
-|----------|-------------|
+| --- | --- |
 | `ft [tag]` | Find unchecked tasks, optionally filtered by tag pattern |
 | `overdue` | Find unchecked tasks with `@due()` dates in the past |
 | `completed [days]` | Find completed tasks from last N days (default: 7) |
@@ -172,17 +176,18 @@ Tasks use markdown checkboxes with metadata annotations:
 | `notes-sync` | Commit and push notes via jujutsu |
 
 **Helix keybindings** for editing tasks:
+
 - `space x` - Toggle task completion (adds/removes `@completed(date)`)
 - `space t` - Toggle checkbox syntax on a line
 
 ### Abbreviations
 
-| Alias | Expands to |
-|-------|------------|
-| `n` | `notes` |
-| `fw` | `ft '@weekly\|@today'` |
-| `fo` | `overdue` |
-| `fu` | `upcoming` |
+| Alias | Expands to             |
+| ----- | ---------------------- |
+| `n`   | `notes`                |
+| `fw`  | `ft '@weekly\|@today'` |
+| `fo`  | `overdue`              |
+| `fu`  | `upcoming`             |
 
 ### Syncing
 
@@ -192,14 +197,14 @@ Tasks use markdown checkboxes with metadata annotations:
 
 Other fish functions beyond the notes system:
 
-| Function | Description |
-|----------|-------------|
-| `logg` | Interactive git log explorer |
-| `gff <file>` | Git file history browser |
-| `fif`, `fifs`, `fifc` | Find-in-files with fzf |
-| `k` | Interactive process killer |
-| `mkdd` | Create directory with today's date |
-| `nix-cleanup` | Clean up Nix store |
+| Function              | Description                        |
+| --------------------- | ---------------------------------- |
+| `logg`                | Interactive git log explorer       |
+| `gff <file>`          | Git file history browser           |
+| `fif`, `fifs`, `fifc` | Find-in-files with fzf             |
+| `k`                   | Interactive process killer         |
+| `mkdd`                | Create directory with today's date |
+| `nix-cleanup`         | Clean up Nix store                 |
 
 Run `aliases` to see all abbreviations and functions in the shell.
 

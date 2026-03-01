@@ -103,46 +103,58 @@ in
   # Each layout embeds sharedKeybinds because --layout may not inherit config.kdl keybinds
   xdg.configFile."zellij/layouts/notes.kdl".text = ''
     ${sharedKeybinds}
+    pane_frames true
     layout {
         cwd "~/CloudDocs/Notes"
         new_tab_template {
              pane size=1 borderless=true {
                  plugin location="zellij:compact-bar"
              }
-             pane
+             pane borderless=true
          }
+        tab name="daily" {
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+            pane size=8 borderless=true name="tasks" command="fish" {
+                args "-c" "ft '@weekly|@today'"
+            }
+            pane borderless=true name="editor" focus=true command="fish" {
+                args "-c" "daily; notes-sync"
+            }
+        }
         tab name="notes" {
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
-            pane size=8 name="tasks" command="fish" {
-                args "-c" "ft '@weekly|@today'"
+            pane borderless=true focus=true command="fish" {
+                args "-c" "notes"
             }
-            pane name="editor" focus=true command="fish" {
-                args "-c" "daily; notes-sync"
+        }
+        tab name="tasks" {
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+            pane name="overdue" focus=true command="fish" {
+                args "-c" "overdue"
+            }
+            pane name="next 3 days" command="fish" {
+                args "-c" "upcoming 3"
             }
         }
         tab name="search" {
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
-            pane focus=true command="fish" {
+            pane borderless=true focus=true command="fish" {
                 args "-c" "sn -n"
-            }
-        }
-        tab name="overdue" {
-            pane size=1 borderless=true {
-                plugin location="zellij:compact-bar"
-            }
-            pane focus=true command="fish" {
-                args "-c" "overdue"
             }
         }
         tab name="shell" {
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
-            pane focus=true
+            pane borderless=true focus=true
         }
     }
   '';
