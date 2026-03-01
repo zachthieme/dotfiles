@@ -1417,7 +1417,7 @@ tags: [monthly-review]
 
           # _hx_toggle_task
           set -l checked (echo "- [ ] my task" | _hx_toggle_task)
-          if string match -q "- [x] my task @completed($today)" -- "$checked"
+          if string match -q -- "- [x] my task @completed($today)" "$checked"
             set pass (math $pass + 1); echo "  ✓ _hx_toggle_task check"
           else
             set fail (math $fail + 1); echo "  ✗ _hx_toggle_task check (got: $checked)"
