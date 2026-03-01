@@ -562,44 +562,28 @@ tags: []
         '';
       };
 
-      # ft = {
-      #   description = "Find tasks in notes";
-      #   body = ''
-      #     if not set -q NOTES; or test -z "$NOTES"
-      #       echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-      #       return 1
-      #     end
-      #     if not test -d "$NOTES"
-      #       echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-      #       return 1
-      #     end
+      ft = {
+        description = "Find tasks in notes";
+        body = ''
+          _require_notes_dir; or return 1
+          argparse 't/test' -- $argv; or return 1
 
-      #     rg --vimgrep -o -P '(?=.*\[ \])(?=.*#weekly).*' $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})" --height 7
-      #   '';
-      # };
+          set -l pattern '\[ \].*'
+          if test (count $argv) -gt 0
+            set pattern "(?=.*\[ \])(?=.*(?:$argv[1])).*"
+          end
 
-ft = {
-  description = "Find tasks in notes";
-  body = ''
-    _require_notes_dir; or return 1
-    argparse 't/test' -- $argv; or return 1
-
-    set -l pattern '\[ \].*'
-    if test (count $argv) -gt 0
-      set pattern "(?=.*\[ \])(?=.*(?:$argv[1])).*"
-    end
-
-    set -l prev_dir $PWD
-    cd $NOTES
-    set -l results (rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
-    if set -q _flag_test
-      printf '%s\n' $results
-    else
-      printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
-    end
-    cd $prev_dir
-  '';
-};
+          set -l prev_dir $PWD
+          cd $NOTES
+          set -l results (rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
+          if set -q _flag_test
+            printf '%s\n' $results
+          else
+            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+          end
+          cd $prev_dir
+        '';
+      };
 
       overdue = {
         description = "Find overdue tasks in notes (unchecked tasks with past ISO 8601 due dates)";
@@ -1351,6 +1335,8 @@ tags: [monthly-review]
         body = ''
           set -l pass 0
           set -l fail 0
+          set -l _had_NOTES (set -q NOTES; and echo yes; or echo no)
+          set -l _had_EDITOR (set -q EDITOR; and echo yes; or echo no)
           set -l _orig_NOTES "$NOTES"
           set -l _orig_EDITOR "$EDITOR"
           set -l tmpdir (mktemp -d)
@@ -1389,8 +1375,11 @@ tags: [monthly-review]
           end
 
           # _is_gnu_date
-          _is_gnu_date 2>/dev/null
-          set pass (math $pass + 1); echo "  ✓ _is_gnu_date runs without error"
+          if _is_gnu_date 2>/dev/null
+            set pass (math $pass + 1); echo "  ✓ _is_gnu_date detects GNU date"
+          else
+            set pass (math $pass + 1); echo "  ✓ _is_gnu_date detects BSD date"
+          end
 
           # _require_notes
           if _require_notes >/dev/null 2>&1
@@ -1399,14 +1388,13 @@ tags: [monthly-review]
             set fail (math $fail + 1); echo "  ✗ _require_notes with NOTES set"
           end
 
-          set -l _save_NOTES "$NOTES"
           set -e NOTES
           if not _require_notes >/dev/null 2>&1
             set pass (math $pass + 1); echo "  ✓ _require_notes with NOTES unset"
           else
             set fail (math $fail + 1); echo "  ✗ _require_notes with NOTES unset"
           end
-          set -gx NOTES "$_save_NOTES"
+          set -gx NOTES "$tmpdir"
 
           # _require_notes_dir
           if _require_notes_dir >/dev/null 2>&1
@@ -1618,8 +1606,16 @@ tags: [test]
 
           # ── Teardown ──
           rm -rf "$tmpdir"
-          set -gx NOTES "$_orig_NOTES"
-          set -gx EDITOR "$_orig_EDITOR"
+          if test "$_had_NOTES" = yes
+            set -gx NOTES "$_orig_NOTES"
+          else
+            set -e NOTES
+          end
+          if test "$_had_EDITOR" = yes
+            set -gx EDITOR "$_orig_EDITOR"
+          else
+            set -e EDITOR
+          end
 
           # ── Summary ──
           echo ""
