@@ -141,13 +141,10 @@
             echo "Usage: person <name>"
             return 1
           end
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l name $argv
-          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l slug (_slugify $name)
           set -l dir "$NOTES/people"
           set -l filepath "$dir/$slug.md"
           mkdir -p "$dir"
@@ -179,13 +176,10 @@ tags: []
             echo "Usage: project <name>"
             return 1
           end
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l name $argv
-          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l slug (_slugify $name)
           set -l dir "$NOTES/projects"
           set -l filepath "$dir/$slug.md"
           mkdir -p "$dir"
@@ -229,13 +223,10 @@ tags: [project]
             echo "Usage: adr <name>"
             return 1
           end
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l name $argv
-          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l slug (_slugify $name)
           set -l dir "$NOTES/adrs"
           set -l filepath "$dir/$slug.md"
           mkdir -p "$dir"
@@ -282,10 +273,7 @@ Proposed
       weekly = {
         description = "Create a weekly review note in weekly/";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l today (date +%Y-%m-%d)
           set -l formatted (date +"%B %-d, %Y")
@@ -328,10 +316,7 @@ tags: [weekly-review]
             echo "Example: quarterly Q4 2024"
             return 1
           end
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l quarter $argv[1]
           set -l year (date +%Y)
@@ -381,13 +366,10 @@ tags: [quarterly-review]
             echo "Usage: decision <name>"
             return 1
           end
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l name $argv
-          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l slug (_slugify $name)
           set -l dir "$NOTES/decisions"
           set -l filepath "$dir/$slug.md"
           mkdir -p "$dir"
@@ -444,13 +426,10 @@ status: draft
             echo "Usage: incident <name>"
             return 1
           end
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l name $argv
-          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l slug (_slugify $name)
           set -l dir "$NOTES/incidents"
           set -l filepath "$dir/$slug.md"
           mkdir -p "$dir"
@@ -501,13 +480,10 @@ status: investigating
             echo "Usage: company <name>"
             return 1
           end
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l name $argv
-          set -l slug (string lower -- $name | string replace -a ' ' '-')
+          set -l slug (_slugify $name)
           set -l dir "$NOTES/companies"
           set -l filepath "$dir/$slug.md"
           mkdir -p "$dir"
@@ -555,10 +531,7 @@ date: $today
       daily = {
         description = "Create or open today's daily note in daily/";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l today (date +%Y-%m-%d)
           set -l formatted (date +"%A %B %-d, %Y")
@@ -608,14 +581,7 @@ tags: []
 ft = {
   description = "Find tasks in notes";
   body = ''
-    if not set -q NOTES; or test -z "$NOTES"
-      echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-      return 1
-    end
-    if not test -d "$NOTES"
-      echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-      return 1
-    end
+    _require_notes_dir; or return 1
 
     set -l pattern '\[ \].*'
     if test (count $argv) -gt 0
@@ -632,14 +598,7 @@ ft = {
       overdue = {
         description = "Find overdue tasks in notes (unchecked tasks with past ISO 8601 due dates)";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
-          if not test -d "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-            return 1
-          end
+          _require_notes_dir; or return 1
 
           set -l today (date +%Y-%m-%d)
           set -l prev_dir $PWD
@@ -661,14 +620,7 @@ ft = {
       completed = {
         description = "Find recently completed tasks (default: last 7 days)";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
-          if not test -d "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-            return 1
-          end
+          _require_notes_dir; or return 1
 
           set -l days 7
           if test (count $argv) -gt 0
@@ -676,7 +628,7 @@ ft = {
           end
 
           set -l cutoff
-          if date -d "1 day ago" +%Y-%m-%d &>/dev/null
+          if _is_gnu_date
             set cutoff (date -d "$days days ago" +%Y-%m-%d)
           else
             set cutoff (date -v-{$days}d +%Y-%m-%d)
@@ -701,14 +653,7 @@ ft = {
       upcoming = {
         description = "Find tasks due within N days (default: 7)";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
-          if not test -d "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-            return 1
-          end
+          _require_notes_dir; or return 1
 
           set -l days 7
           if test (count $argv) -gt 0
@@ -717,7 +662,7 @@ ft = {
 
           set -l today (date +%Y-%m-%d)
           set -l horizon
-          if date -d "1 day ago" +%Y-%m-%d &>/dev/null
+          if _is_gnu_date
             set horizon (date -d "+$days days" +%Y-%m-%d)
           else
             set horizon (date -v+{$days}d +%Y-%m-%d)
@@ -742,19 +687,12 @@ ft = {
       td = {
         description = "Show task summary dashboard";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
-          if not test -d "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-            return 1
-          end
+          _require_notes_dir; or return 1
 
           set -l today (date +%Y-%m-%d)
           set -l week_horizon
           set -l week_cutoff
-          if date -d "1 day ago" +%Y-%m-%d &>/dev/null
+          if _is_gnu_date
             set week_horizon (date -d "+7 days" +%Y-%m-%d)
             set week_cutoff (date -d "7 days ago" +%Y-%m-%d)
           else
@@ -805,14 +743,7 @@ ft = {
       review = {
         description = "Generate a review (weekly, monthly, quarterly) pre-filled with tasks for LLM analysis";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
-          if not test -d "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-            return 1
-          end
+          _require_notes_dir; or return 1
 
           set -l period weekly
           if test (count $argv) -gt 0
@@ -826,11 +757,6 @@ ft = {
           set -l dir "$NOTES/reviews"
           set -l tag_label
 
-          set -l is_gnu_date true
-          if not date -d "1 day ago" +%Y-%m-%d &>/dev/null
-            set is_gnu_date false
-          end
-
           switch $period
             case weekly
               # Last full week: Sunday to Saturday
@@ -838,7 +764,7 @@ ft = {
               set -l sat_offset (math $dow + 1)
               set -l sun_offset (math $dow + 7)
 
-              if test "$is_gnu_date" = true
+              if _is_gnu_date
                 set start_date (date -d "-$sun_offset days" +%Y-%m-%d)
                 set end_date (date -d "-$sat_offset days" +%Y-%m-%d)
               else
@@ -852,7 +778,7 @@ ft = {
 
             case monthly
               # Last full calendar month
-              if test "$is_gnu_date" = true
+              if _is_gnu_date
                 set -l first_of_month (date +%Y-%m-01)
                 set start_date (date -d "$first_of_month - 1 month" +%Y-%m-%d)
                 set end_date (date -d "$first_of_month - 1 day" +%Y-%m-%d)
@@ -907,7 +833,7 @@ ft = {
 
               set title "$q_label FY$fy_year Review: $start_date to $end_date"
               set filepath "$dir/quarter-$q_label-fy$fy_year.md"
-              set tag_label "@weekly / @monthly"
+              set tag_label "@weekly / @monthly / @quarterly"
 
             case '*'
               echo "Usage: review [weekly|monthly|quarterly]"
@@ -949,7 +875,7 @@ ft = {
             case weekly
               set tagged_tasks (rg --no-filename -o -P '(?=.*\[ \])(?=.*@weekly).*' $NOTES --glob '*.md' 2>/dev/null)
             case monthly quarterly
-              set tagged_tasks (rg --no-filename -o -P '(?=.*\[ \])(?=.*@(?:weekly|monthly)).*' $NOTES --glob '*.md' 2>/dev/null)
+              set tagged_tasks (rg --no-filename -o -P '(?=.*\[ \])(?=.*@(?:weekly|monthly|quarterly)).*' $NOTES --glob '*.md' 2>/dev/null)
           end
 
           # Build the review document with structured metadata for LLM analysis
@@ -957,7 +883,6 @@ ft = {
           echo "---
 id: $id
 tags: [review, $period]
-period: $period
 start: $start_date
 end: $end_date
 ---
@@ -968,9 +893,7 @@ end: $end_date
 " > "$filepath"
 
           if test (count $completed_tasks) -gt 0
-            for task in $completed_tasks
-              echo "$task" >> "$filepath"
-            end
+            printf '%s\n' $completed_tasks >> "$filepath"
           else
             echo "_No completed tasks._" >> "$filepath"
           end
@@ -978,25 +901,21 @@ end: $end_date
           printf "\n## Overdue\n\n" >> "$filepath"
 
           if test (count $overdue_tasks) -gt 0
-            for task in $overdue_tasks
-              echo "$task" >> "$filepath"
-            end
+            printf '%s\n' $overdue_tasks >> "$filepath"
           else
             echo "_No overdue tasks._" >> "$filepath"
           end
 
-          printf "\n## $tag_label Tasks\n\n" >> "$filepath"
+          printf "\n## %s Tasks\n\n" "$tag_label" >> "$filepath"
 
           if test (count $tagged_tasks) -gt 0
-            for task in $tagged_tasks
-              echo "$task" >> "$filepath"
-            end
+            printf '%s\n' $tagged_tasks >> "$filepath"
           else
             echo "_No tagged tasks._" >> "$filepath"
           end
 
           printf "\n## Reflections\n\n## Key Themes\n\n## Next Period Priorities\n\n" >> "$filepath"
-          printf -- "---\n\n" >> "$filepath"
+          printf "***\n\n" >> "$filepath"
           echo "*Analyze this $period review and identify: key accomplishments and their impact, patterns in completed vs overdue work, recurring themes, suggested priorities for next period, and areas of concern.*" >> "$filepath"
 
           echo "Created: $filepath"
@@ -1011,10 +930,7 @@ end: $end_date
       monthly = {
         description = "Create a monthly review note in monthly/";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l month (date +%Y-%m)
           set -l formatted (date +"%B %Y")
@@ -1187,10 +1103,7 @@ tags: [monthly-review]
       migrate-ids = {
         description = "Replace non-GUID ids in note frontmatter with UUIDs";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           set -l uuid_pattern '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
           set -l count 0
@@ -1233,14 +1146,7 @@ tags: [monthly-review]
       notes = {
         description = "Search notes or create new note";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
-          if not test -d "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-            return 1
-          end
+          _require_notes_dir; or return 1
 
           set -l prev_dir $PWD
           cd $NOTES
@@ -1266,7 +1172,7 @@ tags: [monthly-review]
 
           # If we have a query (from typing or ctrl-n), create new note
           if test -n "$search_query"
-            set -l filename (string lower -- "$search_query" | string replace -a " " "-")".md"
+            set -l filename (_slugify "$search_query")".md"
             set -l filepath "$NOTES/$filename"
 
             if test -e "$filepath"
@@ -1299,6 +1205,41 @@ tags: [monthly-review]
               echo "$line"
             end
           end
+        '';
+      };
+
+      _require_notes = {
+        description = "Check NOTES env var is set and non-empty";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+        '';
+      };
+
+      _require_notes_dir = {
+        description = "Check NOTES env var is set and directory exists";
+        body = ''
+          _require_notes; or return 1
+          if not test -d "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+            return 1
+          end
+        '';
+      };
+
+      _slugify = {
+        description = "Convert string to lowercase slug";
+        body = ''
+          string lower -- $argv | string replace -a ' ' '-'
+        '';
+      };
+
+      _is_gnu_date = {
+        description = "Test whether date is GNU coreutils (vs BSD)";
+        body = ''
+          date -d "1 day ago" +%Y-%m-%d &>/dev/null
         '';
       };
 
@@ -1336,10 +1277,7 @@ tags: [monthly-review]
       nw = {
         description = "Open notes workspace, commit and push on close";
         body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
+          _require_notes; or return 1
 
           if set -q ZELLIJ
             echo "Already inside a zellij session"
@@ -1364,15 +1302,7 @@ tags: [monthly-review]
         description = "Search inside notes by content";
         body = ''
           argparse 'n/no-preview' -- $argv; or return 1
-
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
-          if not test -d "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-            return 1
-          end
+          _require_notes_dir; or return 1
 
           set -l prev_dir $PWD
           cd $NOTES
