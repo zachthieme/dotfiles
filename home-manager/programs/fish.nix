@@ -72,6 +72,9 @@
           printf "  %-8s %s\n" "j"    "Open jrnl"
           printf "  %-8s %s\n" "jl"   "List jrnl entries (short format)"
           printf "  %-8s %s\n" "jf"   "Open jrnl with @fire tag"
+          printf "  %-8s %s\n" "n"    "Search/create notes (→ notes)"
+          printf "  %-8s %s\n" "fw"   "Find weekly/today tasks (→ ft '@weekly|@today')"
+          printf "  %-8s %s\n" "fo"   "Find overdue tasks (→ overdue)"
           printf "  %-8s %s\n" "vi"   "Open helix editor"
           printf "  %-8s %s\n" "ls"   "List files with eza"
           printf "  %-8s %s\n" "ll"   "List files (long format with git)"
@@ -92,15 +95,20 @@
           printf "  %-12s %s\n" "incident"  "Create incident report (incidents/)"
           echo ""
           set_color --bold cyan
-          echo "═══ Search & Navigation ═══"
+          echo "═══ Search & Tasks ═══"
           set_color normal
           echo ""
-          printf "  %-12s %s\n" "notes"     "Search notes or create new note"
-          printf "  %-12s %s\n" "ft"        "Find tasks in notes (usage: ft [tag])"
-          printf "  %-12s %s\n" "fw"        "Find weekly tasks (ft #weekly)"
-          printf "  %-12s %s\n" "overdue"   "Find overdue tasks (unchecked with past due dates)"
-          printf "  %-12s %s\n" "fo"        "Find overdue tasks (overdue)"
-          printf "  %-12s %s\n" "nw"        "Open notes workspace (commits & pushes on close)"
+          printf "  %-12s %s\n" "notes"      "Search notes or create new note (alias: n)"
+          printf "  %-12s %s\n" "sn"         "Search inside notes by content (sn [-n])"
+          printf "  %-12s %s\n" "ft"         "Find tasks by tag (usage: ft [tag])"
+          printf "  %-12s %s\n" "overdue"    "Find overdue tasks (past due dates)"
+          printf "  %-12s %s\n" "nw"         "Open notes workspace (syncs on close)"
+          printf "  %-12s %s\n" "notes-sync" "Commit and push notes via jj"
+          echo ""
+          set_color --bold cyan
+          echo "═══ File Search ═══"
+          set_color normal
+          echo ""
           printf "  %-12s %s\n" "fif"       "Case-insensitive search in files"
           printf "  %-12s %s\n" "fifs"      "Case-sensitive search in files"
           printf "  %-12s %s\n" "fifc"      "Search in chezmoi-managed files"
@@ -114,7 +122,7 @@
           printf "  %-12s %s\n" "k"         "Interactive process killer"
           printf "  %-12s %s\n" "mkdd"      "Create directory with today's date"
           printf "  %-12s %s\n" "nix-cleanup" "Clean up Nix store"
-          printf "  %-12s %s\n" "migrate-ids" "Replace non-GUID note ids with UUIDs"
+          printf "  %-12s %s\n" "migrate-ids" "Replace non-UUID note ids with UUIDs"
           echo ""
         '';
       };

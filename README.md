@@ -9,7 +9,7 @@ For contributor-specific technical details, see [Repository Guidelines](./CLAUDE
 - **Cross-platform**: macOS via nix-darwin, Linux via standalone Home Manager
 - **Fish shell**: Primary shell with vi keybindings, custom functions, and abbreviations
 - **Catppuccin theming**: Consistent mocha theme across terminal, editor, and tools
-- **Obsidian workflow**: Fish functions for notes, ADRs, weekly/quarterly reviews, and more
+- **Notes system**: Plain-markdown notes with zellij workspace, task tracking, and jj sync
 - **Helix editor**: Modal editor with LSP support for Go, Rust, Nix, TypeScript, and more
 - **Modern CLI tools**: eza, bat, fzf, zoxide, ripgrep, fd, jujutsu, lazygit
 
@@ -116,22 +116,86 @@ For tools with Home Manager options:
 1. Create `home-manager/programs/<tool>.nix`
 2. Import in `home-manager/base.nix`
 
-## Fish Shell Functions
+## Notes System
 
-The fish config includes productivity functions:
+A plain-markdown notes system built on fish functions, helix, and zellij. Notes live in `~/CloudDocs/Notes` (set via `$NOTES`) and are synced with jujutsu.
+
+### Workspace
+
+Run `nw` to open a zellij workspace with four tabs:
+
+| Tab | Contents |
+|-----|----------|
+| **notes** | Weekly/today tasks at top, daily note below (auto-syncs on open) |
+| **search** | Full-text search across all notes (`sn`) |
+| **overdue** | Tasks with past due dates |
+| **shell** | General-purpose shell |
+
+On exit, `nw` commits and pushes all changes via `notes-sync`.
+
+### Note Templates
+
+Each function creates a markdown file with YAML frontmatter (UUID id, aliases, tags) in its own subdirectory:
+
+| Function | Directory | Purpose |
+|----------|-----------|---------|
+| `daily` | `daily/` | Today's daily note (creates or opens existing) |
+| `weekly` | `weekly/` | Weekly review (wins, challenges, priorities) |
+| `quarterly` | `quarterly/` | Quarterly review (goals, accomplishments, learnings) |
+| `person <name>` | `people/` | Person profile with contact info and notes |
+| `project <name>` | `projects/` | Project with goals, stakeholders, decisions, risks |
+| `company <name>` | `companies/` | Company research (leadership, culture, tech stack) |
+| `adr <title>` | `adrs/` | Architecture decision record |
+| `decision <title>` | `decisions/` | Decision document with options and tradeoffs |
+| `incident <title>` | `incidents/` | Incident report with timeline and action items |
+
+### Tasks
+
+Tasks use markdown checkboxes with metadata annotations:
+
+```markdown
+- [ ] Implement feature @due(2026-03-15) @weekly
+- [x] Fix bug @due(2026-02-28) @completed(2026-02-27)
+```
 
 | Function | Description |
 |----------|-------------|
-| `note` | Search/create Obsidian notes |
-| `daily`, `weekly`, `quarterly` | Generate dated review templates |
-| `adr`, `decision` | Architecture decision records |
-| `project`, `person`, `company` | Entity templates |
-| `incident` | Incident report template |
+| `ft [tag]` | Find unchecked tasks, optionally filtered by tag pattern |
+| `overdue` | Find unchecked tasks with `@due()` dates in the past |
+| `notes` | Fuzzy-find notes or create a new one from the search query |
+| `sn [-n]` | Full-text search inside notes with preview (`-n` disables preview) |
+| `notes-sync` | Commit and push notes via jujutsu |
+
+**Helix keybindings** for editing tasks:
+- `space x` - Toggle task completion (adds/removes `@completed(date)`)
+- `space t` - Toggle checkbox syntax on a line
+
+### Abbreviations
+
+| Alias | Expands to |
+|-------|------------|
+| `n` | `notes` |
+| `fw` | `ft '@weekly\|@today'` |
+| `fo` | `overdue` |
+
+### Syncing
+
+`notes-sync` uses jujutsu to commit with a timestamp message and push to a remote. It checks for changes first to avoid empty commits. The `nw` workspace calls this automatically on exit.
+
+## Fish Shell Functions
+
+Other fish functions beyond the notes system:
+
+| Function | Description |
+|----------|-------------|
 | `logg` | Interactive git log explorer |
 | `gff <file>` | Git file history browser |
 | `fif`, `fifs`, `fifc` | Find-in-files with fzf |
 | `k` | Interactive process killer |
-| `ft` | Find tasks in Obsidian |
+| `mkdd` | Create directory with today's date |
+| `nix-cleanup` | Clean up Nix store |
+
+Run `aliases` to see all abbreviations and functions in the shell.
 
 ## Validation
 
