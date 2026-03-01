@@ -582,6 +582,7 @@ ft = {
   description = "Find tasks in notes";
   body = ''
     _require_notes_dir; or return 1
+    argparse 't/test' -- $argv; or return 1
 
     set -l pattern '\[ \].*'
     if test (count $argv) -gt 0
@@ -590,7 +591,12 @@ ft = {
 
     set -l prev_dir $PWD
     cd $NOTES
-    rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}' | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+    set -l results (rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
+    if set -q _flag_test
+      printf '%s\n' $results
+    else
+      printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+    end
     cd $prev_dir
   '';
 };
@@ -599,11 +605,12 @@ ft = {
         description = "Find overdue tasks in notes (unchecked tasks with past ISO 8601 due dates)";
         body = ''
           _require_notes_dir; or return 1
+          argparse 't/test' -- $argv; or return 1
 
           set -l today (date +%Y-%m-%d)
           set -l prev_dir $PWD
           cd $NOTES
-          rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
+          set -l results (rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
             awk -F: -v today="$today" '{
               if (match($4, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
                 d = substr($4, RSTART+5, 10)
@@ -611,8 +618,12 @@ ft = {
                   print $4 ":" $1 ":" $2
                 }
               }
-            }' | \
-            fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+            }')
+          if set -q _flag_test
+            printf '%s\n' $results
+          else
+            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+          end
           cd $prev_dir
         '';
       };
@@ -621,6 +632,7 @@ ft = {
         description = "Find recently completed tasks (default: last 7 days)";
         body = ''
           _require_notes_dir; or return 1
+          argparse 't/test' -- $argv; or return 1
 
           set -l days 7
           if test (count $argv) -gt 0
@@ -636,7 +648,7 @@ ft = {
 
           set -l prev_dir $PWD
           cd $NOTES
-          rg --vimgrep -o -P '(?=.*\[[xX]\])(?=.*@completed\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
+          set -l results (rg --vimgrep -o -P '(?=.*\[[xX]\])(?=.*@completed\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
             awk -F: -v cutoff="$cutoff" '{
               if (match($4, /@completed\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
                 d = substr($4, RSTART+11, 10)
@@ -644,8 +656,12 @@ ft = {
                   print $4 ":" $1 ":" $2
                 }
               }
-            }' | \
-            fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+            }')
+          if set -q _flag_test
+            printf '%s\n' $results
+          else
+            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+          end
           cd $prev_dir
         '';
       };
@@ -654,6 +670,7 @@ ft = {
         description = "Find tasks due within N days (default: 7)";
         body = ''
           _require_notes_dir; or return 1
+          argparse 't/test' -- $argv; or return 1
 
           set -l days 7
           if test (count $argv) -gt 0
@@ -670,7 +687,7 @@ ft = {
 
           set -l prev_dir $PWD
           cd $NOTES
-          rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
+          set -l results (rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
             awk -F: -v today="$today" -v horizon="$horizon" '{
               if (match($4, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
                 d = substr($4, RSTART+5, 10)
@@ -678,8 +695,12 @@ ft = {
                   print $4 ":" $1 ":" $2
                 }
               }
-            }' | \
-            fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+            }')
+          if set -q _flag_test
+            printf '%s\n' $results
+          else
+            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+          end
           cd $prev_dir
         '';
       };
@@ -1322,6 +1343,298 @@ tags: [monthly-review]
             $EDITOR "+$line" "$file"
           end
           cd $prev_dir
+        '';
+      };
+
+      notes-test = {
+        description = "Run tests for notes system functions";
+        body = ''
+          set -l pass 0
+          set -l fail 0
+          set -l _orig_NOTES "$NOTES"
+          set -l _orig_EDITOR "$EDITOR"
+          set -l tmpdir (mktemp -d)
+          set -gx NOTES "$tmpdir"
+          set -gx EDITOR true
+          set -l today (date +%Y-%m-%d)
+
+          echo ""
+          set_color --bold cyan
+          echo "═══ Notes Test Suite ═══"
+          set_color normal
+
+          # ── Helper Functions ──
+          echo ""
+          set_color --bold
+          echo "Helper Functions"
+          set_color normal
+
+          # _slugify
+          if test (_slugify "hello world") = "hello-world"
+            set pass (math $pass + 1); echo "  ✓ _slugify basic"
+          else
+            set fail (math $fail + 1); echo "  ✗ _slugify basic"
+          end
+
+          if test (_slugify "My Cool Project") = "my-cool-project"
+            set pass (math $pass + 1); echo "  ✓ _slugify multi-word"
+          else
+            set fail (math $fail + 1); echo "  ✗ _slugify multi-word"
+          end
+
+          if test (_slugify "already-hyphenated") = "already-hyphenated"
+            set pass (math $pass + 1); echo "  ✓ _slugify already-hyphenated"
+          else
+            set fail (math $fail + 1); echo "  ✗ _slugify already-hyphenated"
+          end
+
+          # _is_gnu_date
+          _is_gnu_date 2>/dev/null
+          set pass (math $pass + 1); echo "  ✓ _is_gnu_date runs without error"
+
+          # _require_notes
+          if _require_notes >/dev/null 2>&1
+            set pass (math $pass + 1); echo "  ✓ _require_notes with NOTES set"
+          else
+            set fail (math $fail + 1); echo "  ✗ _require_notes with NOTES set"
+          end
+
+          set -l _save_NOTES "$NOTES"
+          set -e NOTES
+          if not _require_notes >/dev/null 2>&1
+            set pass (math $pass + 1); echo "  ✓ _require_notes with NOTES unset"
+          else
+            set fail (math $fail + 1); echo "  ✗ _require_notes with NOTES unset"
+          end
+          set -gx NOTES "$_save_NOTES"
+
+          # _require_notes_dir
+          if _require_notes_dir >/dev/null 2>&1
+            set pass (math $pass + 1); echo "  ✓ _require_notes_dir with valid dir"
+          else
+            set fail (math $fail + 1); echo "  ✗ _require_notes_dir with valid dir"
+          end
+
+          # _hx_toggle_task
+          set -l checked (echo "- [ ] my task" | _hx_toggle_task)
+          if string match -q "- [x] my task @completed($today)" -- "$checked"
+            set pass (math $pass + 1); echo "  ✓ _hx_toggle_task check"
+          else
+            set fail (math $fail + 1); echo "  ✗ _hx_toggle_task check (got: $checked)"
+          end
+
+          set -l unchecked (echo "- [x] my task @completed($today)" | _hx_toggle_task)
+          if test "$unchecked" = "- [ ] my task"
+            set pass (math $pass + 1); echo "  ✓ _hx_toggle_task uncheck"
+          else
+            set fail (math $fail + 1); echo "  ✗ _hx_toggle_task uncheck (got: $unchecked)"
+          end
+
+          set -l passthrough (echo "regular line" | _hx_toggle_task)
+          if test "$passthrough" = "regular line"
+            set pass (math $pass + 1); echo "  ✓ _hx_toggle_task passthrough"
+          else
+            set fail (math $fail + 1); echo "  ✗ _hx_toggle_task passthrough (got: $passthrough)"
+          end
+
+          # ── Template Creation ──
+          echo ""
+          set_color --bold
+          echo "Template Creation"
+          set_color normal
+
+          person "Test Person" >/dev/null 2>&1
+          if test -e "$tmpdir/people/test-person.md"; and grep -q '^id:' "$tmpdir/people/test-person.md"
+            set pass (math $pass + 1); echo "  ✓ person"
+          else
+            set fail (math $fail + 1); echo "  ✗ person"
+          end
+
+          project "Test Project" >/dev/null 2>&1
+          if test -e "$tmpdir/projects/test-project.md"; and grep -q '^id:' "$tmpdir/projects/test-project.md"
+            set pass (math $pass + 1); echo "  ✓ project"
+          else
+            set fail (math $fail + 1); echo "  ✗ project"
+          end
+
+          adr "Test ADR" >/dev/null 2>&1
+          if test -e "$tmpdir/adrs/test-adr.md"; and grep -q '^id:' "$tmpdir/adrs/test-adr.md"
+            set pass (math $pass + 1); echo "  ✓ adr"
+          else
+            set fail (math $fail + 1); echo "  ✗ adr"
+          end
+
+          decision "Test Decision" >/dev/null 2>&1
+          if test -e "$tmpdir/decisions/test-decision.md"; and grep -q '^id:' "$tmpdir/decisions/test-decision.md"
+            set pass (math $pass + 1); echo "  ✓ decision"
+          else
+            set fail (math $fail + 1); echo "  ✗ decision"
+          end
+
+          incident "Test Incident" >/dev/null 2>&1
+          if test -e "$tmpdir/incidents/test-incident.md"; and grep -q '^id:' "$tmpdir/incidents/test-incident.md"
+            set pass (math $pass + 1); echo "  ✓ incident"
+          else
+            set fail (math $fail + 1); echo "  ✗ incident"
+          end
+
+          company "Test Company" >/dev/null 2>&1
+          if test -e "$tmpdir/companies/test-company.md"; and grep -q '^id:' "$tmpdir/companies/test-company.md"
+            set pass (math $pass + 1); echo "  ✓ company"
+          else
+            set fail (math $fail + 1); echo "  ✗ company"
+          end
+
+          daily >/dev/null 2>&1
+          if test -e "$tmpdir/daily/$today.md"; and grep -q '^id:' "$tmpdir/daily/$today.md"
+            set pass (math $pass + 1); echo "  ✓ daily"
+          else
+            set fail (math $fail + 1); echo "  ✗ daily"
+          end
+
+          weekly >/dev/null 2>&1
+          if test -e "$tmpdir/weekly/$today.md"; and grep -q '^id:' "$tmpdir/weekly/$today.md"
+            set pass (math $pass + 1); echo "  ✓ weekly"
+          else
+            set fail (math $fail + 1); echo "  ✗ weekly"
+          end
+
+          set -l month (date +%Y-%m)
+          monthly >/dev/null 2>&1
+          if test -e "$tmpdir/monthly/$month.md"; and grep -q '^id:' "$tmpdir/monthly/$month.md"
+            set pass (math $pass + 1); echo "  ✓ monthly"
+          else
+            set fail (math $fail + 1); echo "  ✗ monthly"
+          end
+
+          set -l year (date +%Y)
+          quarterly Q1 $year >/dev/null 2>&1
+          if test -e "$tmpdir/quarterly/$year-Q1.md"; and grep -q '^id:' "$tmpdir/quarterly/$year-Q1.md"
+            set pass (math $pass + 1); echo "  ✓ quarterly"
+          else
+            set fail (math $fail + 1); echo "  ✗ quarterly"
+          end
+
+          # ── Task Search ──
+          echo ""
+          set_color --bold
+          echo "Task Search"
+          set_color normal
+
+          # Create fixture data
+          mkdir -p "$tmpdir/fixtures"
+          set -l upcoming_date
+          if _is_gnu_date
+            set upcoming_date (date -d "+3 days" +%Y-%m-%d)
+          else
+            set upcoming_date (date -v+3d +%Y-%m-%d)
+          end
+          echo "# Test Tasks
+- [ ] overdue task @due(2020-01-01)
+- [ ] weekly task @weekly
+- [ ] upcoming task @due($upcoming_date)
+- [x] done task @completed($today)" > "$tmpdir/fixtures/tasks.md"
+
+          # overdue --test
+          set -l overdue_output (overdue --test 2>/dev/null)
+          if string match -q '*overdue task*' -- "$overdue_output"
+            set pass (math $pass + 1); echo "  ✓ overdue --test finds overdue task"
+          else
+            set fail (math $fail + 1); echo "  ✗ overdue --test finds overdue task"
+          end
+
+          # completed --test
+          set -l completed_output (completed --test 9999 2>/dev/null)
+          if string match -q '*done task*' -- "$completed_output"
+            set pass (math $pass + 1); echo "  ✓ completed --test finds completed task"
+          else
+            set fail (math $fail + 1); echo "  ✗ completed --test finds completed task"
+          end
+
+          # upcoming --test
+          set -l upcoming_output (upcoming --test 2>/dev/null)
+          if string match -q '*upcoming task*' -- "$upcoming_output"
+            set pass (math $pass + 1); echo "  ✓ upcoming --test finds upcoming task"
+          else
+            set fail (math $fail + 1); echo "  ✗ upcoming --test finds upcoming task"
+          end
+
+          # ft --test with tag filter
+          set -l ft_output (ft --test '@weekly' 2>/dev/null)
+          if string match -q '*weekly task*' -- "$ft_output"
+            set pass (math $pass + 1); echo "  ✓ ft --test finds tagged task"
+          else
+            set fail (math $fail + 1); echo "  ✗ ft --test finds tagged task"
+          end
+
+          # td counts
+          set -l td_output (td 2>/dev/null)
+          if string match -q '*Open tasks*3*' -- "$td_output"
+            set pass (math $pass + 1); echo "  ✓ td open count"
+          else
+            set fail (math $fail + 1); echo "  ✗ td open count"
+          end
+          if string match -q '*Overdue*1*' -- "$td_output"
+            set pass (math $pass + 1); echo "  ✓ td overdue count"
+          else
+            set fail (math $fail + 1); echo "  ✗ td overdue count"
+          end
+
+          # review weekly
+          review weekly >/dev/null 2>&1
+          set -l review_file (find "$tmpdir/reviews" -name 'week-*.md' 2>/dev/null | head -1)
+          if test -n "$review_file"; and grep -q 'Completed Tasks' "$review_file"; and grep -q 'Overdue' "$review_file"
+            set pass (math $pass + 1); echo "  ✓ review weekly"
+          else
+            set fail (math $fail + 1); echo "  ✗ review weekly"
+          end
+
+          # ── Sync & Migration ──
+          echo ""
+          set_color --bold
+          echo "Sync & Migration"
+          set_color normal
+
+          set -l sync_output (notes-sync 2>/dev/null)
+          if string match -q '*not a jj repository*' -- "$sync_output"
+            set pass (math $pass + 1); echo "  ✓ notes-sync handles non-jj dir"
+          else
+            set fail (math $fail + 1); echo "  ✗ notes-sync handles non-jj dir (got: $sync_output)"
+          end
+
+          mkdir -p "$tmpdir/migrate-test"
+          echo "---
+id: weekly-2024-01-01
+tags: [test]
+---
+# Test" > "$tmpdir/migrate-test/test.md"
+          migrate-ids >/dev/null 2>&1
+          set -l new_id (awk '/^---$/{n++; next} n==1 && /^id:/{sub(/^id: */, ""); print; exit}' "$tmpdir/migrate-test/test.md")
+          if string match -rq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' -- "$new_id"
+            set pass (math $pass + 1); echo "  ✓ migrate-ids replaces non-UUID ids"
+          else
+            set fail (math $fail + 1); echo "  ✗ migrate-ids replaces non-UUID ids (got: $new_id)"
+          end
+
+          # ── Teardown ──
+          rm -rf "$tmpdir"
+          set -gx NOTES "$_orig_NOTES"
+          set -gx EDITOR "$_orig_EDITOR"
+
+          # ── Summary ──
+          echo ""
+          set -l total (math $pass + $fail)
+          if test $fail -eq 0
+            set_color --bold green
+            echo "All $total tests passed."
+          else
+            set_color --bold red
+            echo "$fail of $total tests failed."
+          end
+          set_color normal
+          echo ""
+
+          return $fail
         '';
       };
     };
