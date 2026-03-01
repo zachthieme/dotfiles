@@ -142,6 +142,7 @@ Each function creates a markdown file with YAML frontmatter (UUID id, aliases, t
 | `daily` | `daily/` | Today's daily note (creates or opens existing) |
 | `weekly` | `weekly/` | Weekly review (wins, challenges, priorities) |
 | `quarterly` | `quarterly/` | Quarterly review (goals, accomplishments, learnings) |
+| `monthly` | `monthly/` | Monthly review (highlights, completed, priorities) |
 | `person <name>` | `people/` | Person profile with contact info and notes |
 | `project <name>` | `projects/` | Project with goals, stakeholders, decisions, risks |
 | `company <name>` | `companies/` | Company research (leadership, culture, tech stack) |
@@ -162,6 +163,10 @@ Tasks use markdown checkboxes with metadata annotations:
 |----------|-------------|
 | `ft [tag]` | Find unchecked tasks, optionally filtered by tag pattern |
 | `overdue` | Find unchecked tasks with `@due()` dates in the past |
+| `done [days]` | Find completed tasks from last N days (default: 7) |
+| `upcoming [days]` | Find tasks due within N days (default: 7) |
+| `ts` | Show task summary dashboard (open, overdue, due/completed this week) |
+| `review [week\|month]` | Create review note pre-filled with completed tasks |
 | `notes` | Fuzzy-find notes or create a new one from the search query |
 | `sn [-n]` | Full-text search inside notes with preview (`-n` disables preview) |
 | `notes-sync` | Commit and push notes via jujutsu |
@@ -177,6 +182,8 @@ Tasks use markdown checkboxes with metadata annotations:
 | `n` | `notes` |
 | `fw` | `ft '@weekly\|@today'` |
 | `fo` | `overdue` |
+| `fc` | `done` |
+| `fu` | `upcoming` |
 
 ### Syncing
 

@@ -54,6 +54,8 @@
       n = "notes";
       fw = "ft '@weekly|@today'";
       fo = "overdue";
+      fc = "done";
+      fu = "upcoming";
       vi = "hx";
       ls = "eza";
       ll = "eza -la --git";
@@ -75,6 +77,8 @@
           printf "  %-8s %s\n" "n"    "Search/create notes (→ notes)"
           printf "  %-8s %s\n" "fw"   "Find weekly/today tasks (→ ft '@weekly|@today')"
           printf "  %-8s %s\n" "fo"   "Find overdue tasks (→ overdue)"
+          printf "  %-8s %s\n" "fc"   "Find completed tasks (→ done)"
+          printf "  %-8s %s\n" "fu"   "Find upcoming tasks (→ upcoming)"
           printf "  %-8s %s\n" "vi"   "Open helix editor"
           printf "  %-8s %s\n" "ls"   "List files with eza"
           printf "  %-8s %s\n" "ll"   "List files (long format with git)"
@@ -87,6 +91,7 @@
           printf "  %-12s %s\n" "daily"     "Create/open today's daily note (daily/)"
           printf "  %-12s %s\n" "weekly"    "Create/open weekly review (weekly/)"
           printf "  %-12s %s\n" "quarterly" "Create quarterly review (quarterly/)"
+          printf "  %-12s %s\n" "monthly"   "Create monthly review (monthly/)"
           printf "  %-12s %s\n" "person"    "Create person profile (people/)"
           printf "  %-12s %s\n" "project"   "Create project note (projects/)"
           printf "  %-12s %s\n" "company"   "Create company research (companies/)"
@@ -102,6 +107,10 @@
           printf "  %-12s %s\n" "sn"         "Search inside notes by content (sn [-n])"
           printf "  %-12s %s\n" "ft"         "Find tasks by tag (usage: ft [tag])"
           printf "  %-12s %s\n" "overdue"    "Find overdue tasks (past due dates)"
+          printf "  %-12s %s\n" "done"       "Find recently completed tasks (done [days])"
+          printf "  %-12s %s\n" "upcoming"   "Find tasks due soon (upcoming [days])"
+          printf "  %-12s %s\n" "ts"         "Show task summary dashboard"
+          printf "  %-12s %s\n" "review"     "Create review with completed tasks (review [week|month])"
           printf "  %-12s %s\n" "nw"         "Open notes workspace (syncs on close)"
           printf "  %-12s %s\n" "notes-sync" "Commit and push notes via jj"
           echo ""
@@ -647,6 +656,287 @@ ft = {
               }
             }' | \
             fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
+          cd $prev_dir
+        '';
+      };
+
+      done = {
+        description = "Find recently completed tasks (default: last 7 days)";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+          if not test -d "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+            return 1
+          end
+
+          set -l days 7
+          if test (count $argv) -gt 0
+            set days $argv[1]
+          end
+
+          set -l cutoff
+          if date -d "1 day ago" +%Y-%m-%d &>/dev/null
+            set cutoff (date -d "$days days ago" +%Y-%m-%d)
+          else
+            set cutoff (date -v-{$days}d +%Y-%m-%d)
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          rg --vimgrep -o -P '(?=.*\[[xX]\])(?=.*@completed\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
+            awk -F: -v cutoff="$cutoff" '{
+              if (match($4, /@completed\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                d = substr($4, RSTART+11, 10)
+                if (d >= cutoff) {
+                  print $4 ":" $1 ":" $2
+                }
+              }
+            }' | \
+            fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
+          cd $prev_dir
+        '';
+      };
+
+      upcoming = {
+        description = "Find tasks due within N days (default: 7)";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+          if not test -d "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+            return 1
+          end
+
+          set -l days 7
+          if test (count $argv) -gt 0
+            set days $argv[1]
+          end
+
+          set -l today (date +%Y-%m-%d)
+          set -l horizon
+          if date -d "1 day ago" +%Y-%m-%d &>/dev/null
+            set horizon (date -d "+$days days" +%Y-%m-%d)
+          else
+            set horizon (date -v+{$days}d +%Y-%m-%d)
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
+            awk -F: -v today="$today" -v horizon="$horizon" '{
+              if (match($4, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                d = substr($4, RSTART+5, 10)
+                if (d >= today && d <= horizon) {
+                  print $4 ":" $1 ":" $2
+                }
+              }
+            }' | \
+            fzf --ansi --delimiter ':' --with-nth=1 --bind "enter:execute($EDITOR {2}:{3})"
+          cd $prev_dir
+        '';
+      };
+
+      ts = {
+        description = "Show task summary dashboard";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+          if not test -d "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+            return 1
+          end
+
+          set -l today (date +%Y-%m-%d)
+          set -l week_horizon
+          set -l week_cutoff
+          if date -d "1 day ago" +%Y-%m-%d &>/dev/null
+            set week_horizon (date -d "+7 days" +%Y-%m-%d)
+            set week_cutoff (date -d "7 days ago" +%Y-%m-%d)
+          else
+            set week_horizon (date -v+7d +%Y-%m-%d)
+            set week_cutoff (date -v-7d +%Y-%m-%d)
+          end
+
+          set -l open (rg -c '\[ \]' $NOTES --glob '*.md' | awk -F: '{s+=$2} END {print s+0}')
+          set -l overdue_count (rg --no-filename -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES --glob '*.md' | \
+            awk -v today="$today" '{
+              if (match($0, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                d = substr($0, RSTART+5, 10)
+                if (d < today) count++
+              }
+            } END {print count+0}')
+          set -l due_week (rg --no-filename -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES --glob '*.md' | \
+            awk -v today="$today" -v horizon="$week_horizon" '{
+              if (match($0, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                d = substr($0, RSTART+5, 10)
+                if (d >= today && d <= horizon) count++
+              }
+            } END {print count+0}')
+          set -l done_week (rg --no-filename -o -P '(?=.*\[[xX]\])(?=.*@completed\(\d{4}-\d{2}-\d{2}\)).*' $NOTES --glob '*.md' | \
+            awk -v cutoff="$week_cutoff" '{
+              if (match($0, /@completed\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                d = substr($0, RSTART+11, 10)
+                if (d >= cutoff) count++
+              }
+            } END {print count+0}')
+
+          echo ""
+          set_color --bold cyan
+          echo "═══ Task Summary ═══"
+          set_color normal
+          echo ""
+          printf "  %-24s %s\n" "Open tasks" "$open"
+          if test "$overdue_count" -gt 0
+            printf "  %-24s \033[31m%s\033[0m\n" "Overdue" "$overdue_count"
+          else
+            printf "  %-24s %s\n" "Overdue" "$overdue_count"
+          end
+          printf "  %-24s %s\n" "Due this week" "$due_week"
+          printf "  %-24s %s\n" "Completed this week" "$done_week"
+          echo ""
+        '';
+      };
+
+      review = {
+        description = "Create a review note pre-filled with completed tasks";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+          if not test -d "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
+            return 1
+          end
+
+          set -l period week
+          if test (count $argv) -gt 0
+            set period $argv[1]
+          end
+
+          set -l days
+          set -l filepath
+          set -l title
+          set -l dir "$NOTES/reviews"
+
+          switch $period
+            case week
+              set days 7
+              set -l today (date +%Y-%m-%d)
+              set filepath "$dir/week-$today.md"
+              set title "Weekly Review - $today"
+            case month
+              set days 30
+              set -l ym (date +%Y-%m)
+              set filepath "$dir/month-$ym.md"
+              set title "Monthly Review - $ym"
+            case '*'
+              echo "Usage: review [week|month]"
+              return 1
+          end
+
+          mkdir -p "$dir"
+
+          if test -e "$filepath"
+            set -l prev_dir $PWD
+            cd $NOTES
+            $EDITOR "$filepath"
+            cd $prev_dir
+            return 0
+          end
+
+          set -l cutoff
+          if date -d "1 day ago" +%Y-%m-%d &>/dev/null
+            set cutoff (date -d "$days days ago" +%Y-%m-%d)
+          else
+            set cutoff (date -v-{$days}d +%Y-%m-%d)
+          end
+
+          set -l completed_tasks (rg --no-filename -o -P '(?=.*\[[xX]\])(?=.*@completed\(\d{4}-\d{2}-\d{2}\)).*' $NOTES --glob '*.md' | \
+            awk -v cutoff="$cutoff" '{
+              if (match($0, /@completed\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                d = substr($0, RSTART+11, 10)
+                if (d >= cutoff) print
+              }
+            }')
+
+          set -l id (uuidgen)
+          echo "---
+id: $id
+tags: [review]
+---
+
+# $title
+
+## Completed Tasks
+" > "$filepath"
+
+          if test (count $completed_tasks) -gt 0
+            for task in $completed_tasks
+              echo "$task" >> "$filepath"
+            end
+          else
+            echo "_No completed tasks found._" >> "$filepath"
+          end
+
+          printf "\n## Wins\n\n## Challenges\n\n## Notes\n" >> "$filepath"
+
+          echo "Created: $filepath"
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
+          cd $prev_dir
+        '';
+      };
+
+      monthly = {
+        description = "Create a monthly review note in monthly/";
+        body = ''
+          if not set -q NOTES; or test -z "$NOTES"
+            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
+            return 1
+          end
+
+          set -l month (date +%Y-%m)
+          set -l formatted (date +"%B %Y")
+          set -l dir "$NOTES/monthly"
+          set -l filepath "$dir/$month.md"
+          mkdir -p "$dir"
+
+          if not test -e "$filepath"
+            set -l id (uuidgen)
+            echo "---
+id: $id
+aliases:
+  - $formatted Review
+tags: [monthly-review]
+---
+
+# $formatted
+
+## Highlights
+
+## Completed
+
+## Challenges
+
+## Next Month Priorities
+
+## Notes" > "$filepath"
+            echo "Created: $filepath"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          $EDITOR "$filepath"
           cd $prev_dir
         '';
       };
