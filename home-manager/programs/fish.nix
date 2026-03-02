@@ -1158,8 +1158,8 @@ tags: [monthly-review]
 
           set -l selected (fd --type f --extension md . "$NOTES" | \
             fzf --print-query \
-                --preview "head -50 {}" \
-                --preview-window=right:50%:wrap \
+                --preview "bat --force-colorization --style=plain --line-range :50 {}" \
+                --preview-window=right:50%:wrap:border-left \
                 --height=100% \
                 --layout=reverse \
                 --border none --no-separator --no-info \
@@ -1405,7 +1405,7 @@ tags: [monthly-review]
 
           # _hx_toggle_task
           set -l checked (echo "- [ ] my task" | _hx_toggle_task)
-          if string match -q -- "- [x] my task @completed($today)" "$checked"
+          if test "$checked" = "- [x] my task @completed($today)"
             set pass (math $pass + 1); echo "  ✓ _hx_toggle_task check"
           else
             set fail (math $fail + 1); echo "  ✗ _hx_toggle_task check (got: $checked)"
