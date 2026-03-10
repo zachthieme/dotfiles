@@ -33,7 +33,9 @@
       ui = {
         default-command = "log";
         pager = "delta";
-        diff-formatter = [ "delta" "--color-only" ];
+      };
+      diff = {
+        format = "git";
       };
       colors = {
         added = "green";
