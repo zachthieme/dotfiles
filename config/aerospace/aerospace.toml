@@ -33,13 +33,14 @@ outer.right = 10
 [mode.main.binding]
 cmd-g = 'layout tiles horizontal vertical'
 cmd-h = 'layout floating tiling'
+cmd-j = 'join-with right'
+cmd-y = 'layout v_accordion tiles'
+cmd-e = 'balance-sizes'
+
 
 alt-tab = 'focus right --boundaries-action wrap-around-the-workspace'
 alt-shift-tab = 'focus left --boundaries-action wrap-around-the-workspace'
 
-cmd-e = 'balance-sizes'
-cmd-m = 'macos-native-minimize'
-cmd-r = 'reload-config'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
 # same as pop_os

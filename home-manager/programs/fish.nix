@@ -584,6 +584,28 @@ tags: []
           cd $prev_dir
         '';
       };
+      ftg = {
+        description = "Find tags in notes";
+        body = ''
+          _require_notes_dir; or return 1
+          argparse 't/test' -- $argv; or return 1
+
+          set -l pattern '@\w+'
+          if test (count $argv) -gt 0
+            set pattern "@(?:$argv[1])"
+          end
+
+          set -l prev_dir $PWD
+          cd $NOTES
+          set -l results (rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
+          if set -q _flag_test
+            printf '%s\n' $results
+          else
+            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+          end
+          cd $prev_dir
+        '';
+      };
 
       overdue = {
         description = "Find overdue tasks in notes (unchecked tasks with past ISO 8601 due dates)";

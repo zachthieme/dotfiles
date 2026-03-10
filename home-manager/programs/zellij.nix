@@ -141,6 +141,9 @@ in
             pane name="next 3 days" command="fish" {
                 args "-c" "upcoming 3"
             }
+            pane name="horizon" focus=true command="fish" {
+                args "-c" "ft '@horizon'"
+            }
         }
         tab name="search" {
             pane size=1 borderless=true {
