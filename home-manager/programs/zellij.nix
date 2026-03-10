@@ -136,16 +136,16 @@ in
                 plugin location="zellij:compact-bar"
             }
             pane name="talk" focus=true command="fish" {
-                args "-c" "ftg 'talk'"
+                args "-c" "ft -t 'talk'"
             }
             pane name="overdue" focus=true command="fish" {
-                args "-c" "overdue"
+                args "-c" "ft -o"
             }
             pane name="next 3 days" command="fish" {
-                args "-c" "upcoming 3"
+                args "-c" "ft -u 3"
             }
             pane name="horizon" focus=true command="fish" {
-                args "-c" "ftg 'risk|horizon'"
+                args "-c" "ft -t 'risk|horizon'"
             }
         }
         tab name="search" {

@@ -53,8 +53,8 @@
       jf = "jrnl @fire";
       n = "notes";
       fw = "ft '@weekly|@today'";
-      fo = "overdue";
-      fu = "upcoming";
+      fo = "ft -o";
+      fu = "ft -u";
       vi = "hx";
       ls = "eza";
       ll = "eza -la --git";
@@ -75,8 +75,8 @@
           printf "  %-8s %s\n" "jf"   "Open jrnl with @fire tag"
           printf "  %-8s %s\n" "n"    "Search/create notes (→ notes)"
           printf "  %-8s %s\n" "fw"   "Find weekly/today tasks (→ ft '@weekly|@today')"
-          printf "  %-8s %s\n" "fo"   "Find overdue tasks (→ overdue)"
-          printf "  %-8s %s\n" "fu"   "Find upcoming tasks (→ upcoming)"
+          printf "  %-8s %s\n" "fo"   "Find overdue tasks (→ ft -o)"
+          printf "  %-8s %s\n" "fu"   "Find upcoming tasks (→ ft -u)"
           printf "  %-8s %s\n" "vi"   "Open helix editor"
           printf "  %-8s %s\n" "ls"   "List files with eza"
           printf "  %-8s %s\n" "ll"   "List files (long format with git)"
@@ -103,10 +103,7 @@
           echo ""
           printf "  %-12s %s\n" "notes"      "Search notes or create new note (alias: n)"
           printf "  %-12s %s\n" "sn"         "Search inside notes by content (sn [-n])"
-          printf "  %-12s %s\n" "ft"         "Find tasks by tag (usage: ft [tag])"
-          printf "  %-12s %s\n" "overdue"    "Find overdue tasks (past due dates)"
-          printf "  %-12s %s\n" "completed"  "Find recently completed tasks (completed [days])"
-          printf "  %-12s %s\n" "upcoming"   "Find tasks due soon (upcoming [days])"
+          printf "  %-12s %s\n" "ft"         "Find tasks (ft -h for all options)"
           printf "  %-12s %s\n" "td"         "Show task summary dashboard"
           printf "  %-12s %s\n" "review"     "Create review with completed tasks (review [week|month])"
           printf "  %-12s %s\n" "nw"         "Open notes workspace (syncs on close)"
@@ -563,149 +560,101 @@ tags: []
       };
 
       ft = {
-        description = "Find tasks in notes";
+        description = "Find tasks in notes (search, tags, overdue, upcoming, completed)";
         body = ''
           _require_notes_dir; or return 1
-          argparse 't/test' -- $argv; or return 1
+          argparse 'h/help' 't/tags' 'o/overdue' 'u/upcoming' 'c/completed' 'test' -- $argv; or return 1
 
-          set -l pattern '\[ \].*'
-          if test (count $argv) -gt 0
-            set pattern "(?=.*\[ \])(?=.*(?:$argv[1])).*"
+          if set -q _flag_help
+            echo "Usage: ft [OPTIONS] [PATTERN|DAYS]"
+            echo ""
+            echo "Find and filter tasks in notes. Default: show open tasks."
+            echo ""
+            echo "Options:"
+            echo "  -t, --tags [PATTERN]      Search @tags (e.g. ft -t 'talk')"
+            echo "  -o, --overdue             Show tasks past their @due date"
+            echo "  -u, --upcoming [DAYS]     Show tasks due within N days (default: 7)"
+            echo "  -c, --completed [DAYS]    Show tasks completed within N days (default: 7)"
+            echo "  -h, --help                Show this help"
+            echo ""
+            echo "Examples:"
+            echo "  ft                        All open tasks"
+            echo "  ft '@weekly|@today'       Open tasks matching tags"
+            echo "  ft -t 'risk|horizon'      Lines containing @risk or @horizon"
+            echo "  ft -o                     Overdue tasks"
+            echo "  ft -u 3                   Tasks due in next 3 days"
+            echo "  ft -c 14                  Tasks completed in last 14 days"
+            return 0
           end
 
           set -l prev_dir $PWD
           cd $NOTES
-          set -l results (rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
-          if set -q _flag_test
-            printf '%s\n' $results
-          else
-            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
-          end
-          cd $prev_dir
-        '';
-      };
-      ftg = {
-        description = "Find tags in notes";
-        body = ''
-          _require_notes_dir; or return 1
-          argparse 't/test' -- $argv; or return 1
+          set -l results
 
-          set -l pattern '@\w+'
-          if test (count $argv) -gt 0
-            set pattern "@(?:$argv[1])"
-          end
-
-          set -l prev_dir $PWD
-          cd $NOTES
-          set -l results (rg --vimgrep -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
-          if set -q _flag_test
-            printf '%s\n' $results
-          else
-            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
-          end
-          cd $prev_dir
-        '';
-      };
-
-      overdue = {
-        description = "Find overdue tasks in notes (unchecked tasks with past ISO 8601 due dates)";
-        body = ''
-          _require_notes_dir; or return 1
-          argparse 't/test' -- $argv; or return 1
-
-          set -l today (date +%Y-%m-%d)
-          set -l prev_dir $PWD
-          cd $NOTES
-          set -l results (rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
-            awk -F: -v today="$today" '{
-              if (match($4, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
-                d = substr($4, RSTART+5, 10)
-                if (d < today) {
-                  print $4 ":" $1 ":" $2
+          if set -q _flag_overdue
+            set -l today (date +%Y-%m-%d)
+            set results (rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
+              awk -F: -v today="$today" '{
+                if (match($4, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                  d = substr($4, RSTART+5, 10)
+                  if (d < today) print $4 ":" $1 ":" $2
                 }
-              }
-            }')
-          if set -q _flag_test
-            printf '%s\n' $results
-          else
-            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
-          end
-          cd $prev_dir
-        '';
-      };
-
-      completed = {
-        description = "Find recently completed tasks (default: last 7 days)";
-        body = ''
-          _require_notes_dir; or return 1
-          argparse 't/test' -- $argv; or return 1
-
-          set -l days 7
-          if test (count $argv) -gt 0
-            set days $argv[1]
-          end
-
-          set -l cutoff
-          if _is_gnu_date
-            set cutoff (date -d "$days days ago" +%Y-%m-%d)
-          else
-            set cutoff (date -v-{$days}d +%Y-%m-%d)
-          end
-
-          set -l prev_dir $PWD
-          cd $NOTES
-          set -l results (rg --vimgrep -o -P '(?=.*\[[xX]\])(?=.*@completed\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
-            awk -F: -v cutoff="$cutoff" '{
-              if (match($4, /@completed\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
-                d = substr($4, RSTART+11, 10)
-                if (d >= cutoff) {
-                  print $4 ":" $1 ":" $2
+              }')
+          else if set -q _flag_upcoming
+            set -l days 7
+            if test (count $argv) -gt 0
+              set days $argv[1]
+            end
+            set -l today (date +%Y-%m-%d)
+            set -l horizon
+            if _is_gnu_date
+              set horizon (date -d "+$days days" +%Y-%m-%d)
+            else
+              set horizon (date -v+{$days}d +%Y-%m-%d)
+            end
+            set results (rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
+              awk -F: -v today="$today" -v horizon="$horizon" '{
+                if (match($4, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                  d = substr($4, RSTART+5, 10)
+                  if (d >= today && d <= horizon) print $4 ":" $1 ":" $2
                 }
-              }
-            }')
-          if set -q _flag_test
-            printf '%s\n' $results
-          else
-            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
-          end
-          cd $prev_dir
-        '';
-      };
-
-      upcoming = {
-        description = "Find tasks due within N days (default: 7)";
-        body = ''
-          _require_notes_dir; or return 1
-          argparse 't/test' -- $argv; or return 1
-
-          set -l days 7
-          if test (count $argv) -gt 0
-            set days $argv[1]
-          end
-
-          set -l today (date +%Y-%m-%d)
-          set -l horizon
-          if _is_gnu_date
-            set horizon (date -d "+$days days" +%Y-%m-%d)
-          else
-            set horizon (date -v+{$days}d +%Y-%m-%d)
-          end
-
-          set -l prev_dir $PWD
-          cd $NOTES
-          set -l results (rg --vimgrep -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
-            awk -F: -v today="$today" -v horizon="$horizon" '{
-              if (match($4, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
-                d = substr($4, RSTART+5, 10)
-                if (d >= today && d <= horizon) {
-                  print $4 ":" $1 ":" $2
+              }')
+          else if set -q _flag_completed
+            set -l days 7
+            if test (count $argv) -gt 0
+              set days $argv[1]
+            end
+            set -l cutoff
+            if _is_gnu_date
+              set cutoff (date -d "$days days ago" +%Y-%m-%d)
+            else
+              set cutoff (date -v-{$days}d +%Y-%m-%d)
+            end
+            set results (rg --vimgrep -o -P '(?=.*\[[xX]\])(?=.*@completed\(\d{4}-\d{2}-\d{2}\)).*' $NOTES | \
+              awk -F: -v cutoff="$cutoff" '{
+                if (match($4, /@completed\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                  d = substr($4, RSTART+11, 10)
+                  if (d >= cutoff) print $4 ":" $1 ":" $2
                 }
-              }
-            }')
+              }')
+          else if set -q _flag_tags
+            set -l pattern '@\w+'
+            if test (count $argv) -gt 0
+              set pattern "@(?:$argv[1])"
+            end
+            set results (rg --vimgrep -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
+          else
+            set -l pattern '\[ \].*'
+            if test (count $argv) -gt 0
+              set pattern "(?=.*\[ \])(?=.*(?:$argv[1])).*"
+            end
+            set results (rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
+          end
+
           if set -q _flag_test
             printf '%s\n' $results
           else
-            printf '%s\n' $results | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
+            printf '%s\n' $results | _colorize_tags | fzf --ansi --delimiter ':' --with-nth=1 --height=100% --layout=reverse --border none --no-separator --no-info --bind "enter:execute($EDITOR {2}:{3})"
           end
           cd $prev_dir
         '';
@@ -1215,6 +1164,13 @@ tags: [monthly-review]
         '';
       };
 
+      _colorize_tags = {
+        description = "Add ANSI colors to @tags in piped task lines";
+        body = ''
+          perl -pe 's/\@(\w+(?:\([^)]*\))?)/my $t=$1; my $g=$&; $t=~m{^(?:risk|due)\b} ? "\e[31m$g\e[0m" : $t eq "today" ? "\e[32m$g\e[0m" : $t=~m{^(?:weekly|monthly|quarterly)\b} ? "\e[34m$g\e[0m" : $t eq "horizon" ? "\e[33m$g\e[0m" : $t eq "talk" ? "\e[35m$g\e[0m" : $t=~m{^completed\b} ? "\e[32m$g\e[0m" : "\e[36m$g\e[0m"/ge'
+        '';
+      };
+
       _hx_toggle_task = {
         description = "Toggle task checkbox with @completed date (used by helix :pipe)";
         body = ''
@@ -1545,28 +1501,28 @@ tags: [monthly-review]
 - [ ] upcoming task @due($upcoming_date)
 - [x] done task @completed($today)" > "$tmpdir/fixtures/tasks.md"
 
-          # overdue --test
-          set -l overdue_output (overdue --test 2>/dev/null)
+          # ft -o --test (overdue)
+          set -l overdue_output (ft -o --test 2>/dev/null)
           if string match -q '*overdue task*' -- "$overdue_output"
-            set pass (math $pass + 1); echo "  ✓ overdue --test finds overdue task"
+            set pass (math $pass + 1); echo "  ✓ ft -o --test finds overdue task"
           else
-            set fail (math $fail + 1); echo "  ✗ overdue --test finds overdue task"
+            set fail (math $fail + 1); echo "  ✗ ft -o --test finds overdue task"
           end
 
-          # completed --test
-          set -l completed_output (completed --test 9999 2>/dev/null)
+          # ft -c --test (completed)
+          set -l completed_output (ft -c --test 9999 2>/dev/null)
           if string match -q '*done task*' -- "$completed_output"
-            set pass (math $pass + 1); echo "  ✓ completed --test finds completed task"
+            set pass (math $pass + 1); echo "  ✓ ft -c --test finds completed task"
           else
-            set fail (math $fail + 1); echo "  ✗ completed --test finds completed task"
+            set fail (math $fail + 1); echo "  ✗ ft -c --test finds completed task"
           end
 
-          # upcoming --test
-          set -l upcoming_output (upcoming --test 2>/dev/null)
+          # ft -u --test (upcoming)
+          set -l upcoming_output (ft -u --test 2>/dev/null)
           if string match -q '*upcoming task*' -- "$upcoming_output"
-            set pass (math $pass + 1); echo "  ✓ upcoming --test finds upcoming task"
+            set pass (math $pass + 1); echo "  ✓ ft -u --test finds upcoming task"
           else
-            set fail (math $fail + 1); echo "  ✗ upcoming --test finds upcoming task"
+            set fail (math $fail + 1); echo "  ✗ ft -u --test finds upcoming task"
           end
 
           # ft --test with tag filter
