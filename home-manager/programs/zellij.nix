@@ -135,6 +135,9 @@ in
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
+            pane name="talk" focus=true command="fish" {
+                args "-c" "ftg 'talk'"
+            }
             pane name="overdue" focus=true command="fish" {
                 args "-c" "overdue"
             }
@@ -142,7 +145,7 @@ in
                 args "-c" "upcoming 3"
             }
             pane name="horizon" focus=true command="fish" {
-                args "-c" "ft 'risk|horizon'"
+                args "-c" "ftg 'risk|horizon'"
             }
         }
         tab name="search" {
