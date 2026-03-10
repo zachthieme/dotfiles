@@ -142,7 +142,7 @@ in
                 args "-c" "upcoming 3"
             }
             pane name="horizon" focus=true command="fish" {
-                args "-c" "ft '@horizon'"
+                args "-c" "ft 'risk|horizon'"
             }
         }
         tab name="search" {
