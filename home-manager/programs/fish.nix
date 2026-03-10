@@ -597,7 +597,7 @@ tags: []
 
           set -l prev_dir $PWD
           cd $NOTES
-          set -l results (rg --vimgrep -o -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
+          set -l results (rg --vimgrep -P $pattern $NOTES | awk -F: '{print $4 ":" $1 ":" $2}')
           if set -q _flag_test
             printf '%s\n' $results
           else
