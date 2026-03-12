@@ -123,14 +123,6 @@ in
                 args "-c" "daily; notes-sync"
             }
         }
-        tab name="notes" {
-            pane size=1 borderless=true {
-                plugin location="zellij:compact-bar"
-            }
-            pane borderless=true focus=true command="fish" {
-                args "-c" "notes"
-            }
-        }
         tab name="tasks" {
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
@@ -146,6 +138,14 @@ in
             }
             pane name="horizon" focus=true command="fish" {
                 args "-c" "ft -t 'risk|horizon'"
+            }
+        }
+        tab name="docs" {
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+            pane borderless=true focus=true command="fish" {
+                args "-c" "notes"
             }
         }
         tab name="search" {
