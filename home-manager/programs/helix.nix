@@ -88,6 +88,7 @@
         {
           name = "markdown";
           auto-format = true;
+          comment-tokens = ["-" "+" "*" "1." ">" "- [ ]"];
           language-servers = [ "markdown-oxide" ];
           formatter = {
             command = "prettier";
