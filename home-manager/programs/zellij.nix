@@ -139,6 +139,9 @@ in
             pane name="horizon" focus=true command="fish" {
                 args "-c" "ft -t 'risk|horizon'"
             }
+            pane name="delegated" focus=true command="fish" {
+                args "-c" "ft -t 'delegated'"
+            }
         }
         tab name="docs" {
             pane size=1 borderless=true {
