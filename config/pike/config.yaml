@@ -25,6 +25,7 @@ tag_colors:
   quarterly: "#9370DB"
   horizon: "#FFD93D"
   talk: magenta
+  delegated: "#FFA500"
   _default: cyan
 
 views:
