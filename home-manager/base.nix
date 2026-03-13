@@ -135,6 +135,7 @@ in
     # These paths are relative to the root dotfiles directory
     home.file = {
       ".config/aerospace".source = ../config/aerospace;
+      ".config/pike".source = ../config/pike;
       ".config/borders".source = ../config/borders;
       ".config/ripgrep".source = ../config/ripgrep;
       ".terminfo".source = ../config/terminfo;
