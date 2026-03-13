@@ -104,6 +104,8 @@ in
   xdg.configFile."zellij/layouts/notes.kdl".text = ''
     ${sharedKeybinds}
     pane_frames true
+    load_env_vars true
+
     layout {
         cwd "~/CloudDocs/Notes"
         new_tab_template {
@@ -116,8 +118,8 @@ in
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
-            pane size=8 borderless=true name="tasks" command="fish" {
-                args "-c" "ft '@weekly|@today'"
+            pane size=8 borderless=true command="pike" {
+                args "--config" "$HOME/.config/pike/todo.yaml"
             }
             pane borderless=true name="editor" focus=true command="fish" {
                 args "-c" "daily; notes-sync"
@@ -127,20 +129,7 @@ in
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
-            pane name="talk" focus=true command="fish" {
-                args "-c" "ft -t 'talk'"
-            }
-            pane name="overdue" focus=true command="fish" {
-                args "-c" "ft -o"
-            }
-            pane name="next 3 days" command="fish" {
-                args "-c" "ft -u 3"
-            }
-            pane name="horizon" focus=true command="fish" {
-                args "-c" "ft -t 'risk|horizon'"
-            }
-            pane name="delegated" focus=true command="fish" {
-                args "-c" "ft -t 'delegated'"
+            pane borderless=true focus=true command="pike" {
             }
         }
         tab name="docs" {

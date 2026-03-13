@@ -32,6 +32,7 @@
       # Add tool-specific paths
       fish_add_path "$HOME/.opencode/bin"
       fish_add_path "$HOME/.jjforge/bin"
+      fish_add_path "$HOME/.bin"
 
       # Enable vi key bindings
       fish_vi_key_bindings
