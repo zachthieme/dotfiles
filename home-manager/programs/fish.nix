@@ -141,10 +141,9 @@
           end
           _require_notes; or return 1
 
-          set -l name $argv
-          set -l slug (_slugify $name)
+          set -l name (_titlecase $argv)
           set -l dir "$NOTES/people"
-          set -l filepath "$dir/$slug.md"
+          set -l filepath "$dir/$name.md"
           mkdir -p "$dir"
 
           if not test -e "$filepath"
@@ -188,7 +187,7 @@ tags: []
 id: $id
 aliases:
   - $name
-tags: [project]
+tags: []
 ---
 
 # $name
@@ -231,14 +230,11 @@ tags: [project]
 
           if not test -e "$filepath"
             set -l id (uuidgen)
-            set -l today (date +%Y-%m-%d)
             echo "---
 id: $id
 aliases:
   - $name
-tags: [adr]
-date: $today
-status: proposed
+tags: []
 ---
 
 # $name
@@ -280,11 +276,12 @@ Proposed
           mkdir -p "$dir"
 
           if not test -e "$filepath"
+            set -l id (uuidgen)
             echo "---
-id: weekly-$today
+id: $id
 aliases:
   - Week of $formatted
-tags: [weekly-review]
+tags: []
 ---
 
 # Week of $formatted
@@ -327,11 +324,12 @@ tags: [weekly-review]
           mkdir -p "$dir"
 
           if not test -e "$filepath"
+            set -l id (uuidgen)
             echo "---
-id: $year-$quarter-review
+id: $id
 aliases:
   - $quarter $year Review
-tags: [quarterly-review]
+tags: []
 ---
 
 # $quarter $year Review
@@ -374,14 +372,11 @@ tags: [quarterly-review]
 
           if not test -e "$filepath"
             set -l id (uuidgen)
-            set -l today (date +%Y-%m-%d)
             echo "---
 id: $id
 aliases:
   - $name
-tags: [decision]
-date: $today
-status: draft
+tags: []
 ---
 
 # $name
@@ -434,16 +429,12 @@ status: draft
 
           if not test -e "$filepath"
             set -l id (uuidgen)
-            set -l today (date +%Y-%m-%d)
             set -l now (date +%H:%M)
             echo "---
 id: $id
 aliases:
   - $name
-tags: [incident]
-date: $today
-severity:
-status: investigating
+tags: []
 ---
 
 # $name
@@ -488,13 +479,11 @@ status: investigating
 
           if not test -e "$filepath"
             set -l id (uuidgen)
-            set -l today (date +%Y-%m-%d)
             echo "---
 id: $id
 aliases:
   - $name
-tags: [company-research]
-date: $today
+tags: []
 ---
 
 # $name
@@ -538,10 +527,11 @@ date: $today
           mkdir -p "$dir"
 
           if not test -e "$filepath"
+            set -l id (uuidgen)
             echo "---
-id: $today
+id: $id
 aliases:
-  - $today
+  - $formatted
 tags: []
 ---
 
@@ -921,7 +911,7 @@ end: $end_date
 id: $id
 aliases:
   - $formatted Review
-tags: [monthly-review]
+tags: []
 ---
 
 # $formatted
@@ -1220,6 +1210,19 @@ tags: [monthly-review]
         '';
       };
 
+      _titlecase = {
+        description = "Convert string to Title Case";
+        body = ''
+          set -l result
+          for word in (string split ' ' -- $argv)
+            set -l first (string sub -l 1 -- $word | string upper)
+            set -l rest (string sub -s 2 -- $word | string lower)
+            set result $result "$first$rest"
+          end
+          string join ' ' -- $result
+        '';
+      };
+
       _is_gnu_date = {
         description = "Test whether date is GNU coreutils (vs BSD)";
         body = ''
@@ -1353,6 +1356,19 @@ tags: [monthly-review]
             set fail (math $fail + 1); echo "  ✗ _slugify already-hyphenated"
           end
 
+          # _titlecase
+          if test (_titlecase "john doe") = "John Doe"
+            set pass (math $pass + 1); echo "  ✓ _titlecase basic"
+          else
+            set fail (math $fail + 1); echo "  ✗ _titlecase basic"
+          end
+
+          if test (_titlecase "JOHN DOE") = "John Doe"
+            set pass (math $pass + 1); echo "  ✓ _titlecase uppercase input"
+          else
+            set fail (math $fail + 1); echo "  ✗ _titlecase uppercase input"
+          end
+
           # _is_gnu_date
           if _is_gnu_date 2>/dev/null
             set pass (math $pass + 1); echo "  ✓ _is_gnu_date detects GNU date"
@@ -1411,7 +1427,7 @@ tags: [monthly-review]
           set_color normal
 
           person "Test Person" >/dev/null 2>&1
-          if test -e "$tmpdir/people/test-person.md"; and grep -q '^id:' "$tmpdir/people/test-person.md"
+          if test -e "$tmpdir/people/Test Person.md"; and grep -q '^id:' "$tmpdir/people/Test Person.md"
             set pass (math $pass + 1); echo "  ✓ person"
           else
             set fail (math $fail + 1); echo "  ✗ person"
