@@ -51,53 +51,46 @@ in
   xdg.configFile."pike/config.yaml".source = yaml.generate "pike-config.yaml" (commonSettings // {
     views = [
       {
-        title = "Weekly";
-        query = "open and @weekly";
+        title = "Priority";
+        query = "open and @weekly and @today";
         sort = "due_asc";
         color = colors.blue;
         order = 1;
-      }
-      {
-        title = "Today";
-        query = "open and @today";
-        sort = "due_asc";
-        color = colors.green;
-        order = 2;
       }
       {
         title = "Overdue";
         query = "open and @due < today";
         sort = "due_asc";
         color = colors.red;
-        order = 3;
+        order = 2;
       }
       {
         title = "Next 3 Days";
         query = "open and @due >= today and @due <= today+3d";
         sort = "due_asc";
         color = colors.yellow;
-        order = 4;
+        order = 3;
       }
       {
         title = "Talk";
         query = "open and @talk";
         sort = "file";
         color = colors.pink;
-        order = 5;
+        order = 4;
       }
       {
         title = "Delegated";
         query = "open and @delegated";
         sort = "file";
         color = colors.peach;
-        order = 6;
+        order = 5;
       }
       {
         title = "Horizon";
         query = "@risk or @horizon";
         sort = "file";
         color = colors.mauve;
-        order = 7;
+        order = 6;
       }
     ];
   });
