@@ -215,6 +215,12 @@ if [ "$FLAKE_UPDATE" = true ]; then
   fi
 fi
 
+# --- Update Pike to latest ---
+
+log "Updating pike input"
+nix $NIX_FLAGS flake update pike --flake "$SCRIPT_DIR" 2>/dev/null || \
+  echo "Warning: failed to update pike, continuing with existing version"
+
 # --- Configure Nix trusted-users (before rebuild to avoid warnings) ---
 
 configure_trusted_users
