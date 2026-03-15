@@ -52,7 +52,7 @@ in
     views = [
       {
         title = "Priority";
-        query = "open and @weekly and @today";
+        query = "open and (@weekly or @today)";
         sort = "due_asc";
         color = colors.blue;
         order = 1;
