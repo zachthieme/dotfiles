@@ -132,22 +132,6 @@ in
             pane borderless=true focus=true command="pike" {
             }
         }
-        tab name="docs" {
-            pane size=1 borderless=true {
-                plugin location="zellij:compact-bar"
-            }
-            pane borderless=true focus=true command="fish" {
-                args "-c" "notes"
-            }
-        }
-        tab name="search" {
-            pane size=1 borderless=true {
-                plugin location="zellij:compact-bar"
-            }
-            pane borderless=true focus=true command="fish" {
-                args "-c" "sn -n"
-            }
-        }
         tab name="shell" {
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"

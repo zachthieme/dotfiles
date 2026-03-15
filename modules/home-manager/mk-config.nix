@@ -1,4 +1,4 @@
-{ home-manager, nixpkgs, catppuccin, helpers }:
+{ home-manager, nixpkgs, catppuccin, helpers, pikeOverlay }:
 hostname:
 { system, user, isWork, vcs, packageProfile ? "full", packages ? [ ], ... }:
 let
@@ -10,6 +10,7 @@ in
 home-manager.lib.homeManagerConfiguration {
   pkgs = import nixpkgs {
     inherit system;
+    overlays = [ pikeOverlay ];
     # Allow specific unfree packages (vault has BSL license)
     # On Darwin, this is handled at the system level in system/darwin.nix
     config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "vault" ];

@@ -1,4 +1,4 @@
-{ nix-darwin, home-manager, catppuccin, helpers }:
+{ nix-darwin, home-manager, catppuccin, helpers, pikeOverlay }:
 hostname:
 { system, user, isWork, vcs, packageProfile ? "full", packages ? [ ], ... }:
 let
@@ -16,6 +16,7 @@ in
 nix-darwin.lib.darwinSystem {
   inherit system;
   modules = [
+    { nixpkgs.overlays = [ pikeOverlay ]; }
     systemModule
     osModule
     contextSystemModule

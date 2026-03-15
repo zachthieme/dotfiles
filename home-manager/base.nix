@@ -46,6 +46,7 @@ in
     ./programs/helix.nix
     ./programs/jujutsu.nix
     ./programs/lazygit.nix
+    ./programs/pike.nix
     ./programs/ssh.nix
     ./programs/zellij.nix
   ];
@@ -135,7 +136,6 @@ in
     # These paths are relative to the root dotfiles directory
     home.file = {
       ".config/aerospace".source = ../config/aerospace;
-      ".config/pike".source = ../config/pike;
       ".config/borders".source = ../config/borders;
       ".config/ripgrep".source = ../config/ripgrep;
       ".terminfo".source = ../config/terminfo;

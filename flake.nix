@@ -15,6 +15,11 @@
     };
 
     catppuccin.url = "github:catppuccin/nix";
+
+    pike = {
+      url = "github:zachthieme/pike";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -24,18 +29,22 @@
       nix-darwin,
       home-manager,
       catppuccin,
+      pike,
       ...
     }:
     let
       lib = nixpkgs.lib;
       helpers = import ./modules/lib.nix { inherit lib; };
+      pikeOverlay = final: prev: {
+        pike = pike.packages.${final.system}.default;
+      };
       hostData = import ./modules/hosts/definitions.nix { inherit lib helpers; };
       detectHostData = import ./modules/hosts/detect.nix { inherit (hostData) hosts; };
       mkDarwinConfig = import ./modules/darwin/mk-config.nix {
-        inherit nix-darwin home-manager catppuccin helpers;
+        inherit nix-darwin home-manager catppuccin helpers pikeOverlay;
       };
       mkHomeConfig = import ./modules/home-manager/mk-config.nix {
-        inherit home-manager nixpkgs catppuccin helpers;
+        inherit home-manager nixpkgs catppuccin helpers pikeOverlay;
       };
       inherit (hostData) hosts darwinHosts linuxHosts;
       defaultHost = detectHostData.defaultHost;
