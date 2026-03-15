@@ -175,10 +175,9 @@ tags: []
           end
           _require_notes; or return 1
 
-          set -l name $argv
-          set -l slug (_slugify $name)
+          set -l name (_titlecase $argv)
           set -l dir "$NOTES/projects"
-          set -l filepath "$dir/$slug.md"
+          set -l filepath "$dir/$name.md"
           mkdir -p "$dir"
 
           if not test -e "$filepath"
@@ -222,10 +221,9 @@ tags: []
           end
           _require_notes; or return 1
 
-          set -l name $argv
-          set -l slug (_slugify $name)
+          set -l name (_titlecase $argv)
           set -l dir "$NOTES/adrs"
-          set -l filepath "$dir/$slug.md"
+          set -l filepath "$dir/$name.md"
           mkdir -p "$dir"
 
           if not test -e "$filepath"
@@ -364,10 +362,9 @@ tags: []
           end
           _require_notes; or return 1
 
-          set -l name $argv
-          set -l slug (_slugify $name)
+          set -l name (_titlecase $argv)
           set -l dir "$NOTES/decisions"
-          set -l filepath "$dir/$slug.md"
+          set -l filepath "$dir/$name.md"
           mkdir -p "$dir"
 
           if not test -e "$filepath"
@@ -421,10 +418,9 @@ tags: []
           end
           _require_notes; or return 1
 
-          set -l name $argv
-          set -l slug (_slugify $name)
+          set -l name (_titlecase $argv)
           set -l dir "$NOTES/incidents"
-          set -l filepath "$dir/$slug.md"
+          set -l filepath "$dir/$name.md"
           mkdir -p "$dir"
 
           if not test -e "$filepath"
@@ -471,10 +467,9 @@ tags: []
           end
           _require_notes; or return 1
 
-          set -l name $argv
-          set -l slug (_slugify $name)
+          set -l name (_titlecase $argv)
           set -l dir "$NOTES/companies"
-          set -l filepath "$dir/$slug.md"
+          set -l filepath "$dir/$name.md"
           mkdir -p "$dir"
 
           if not test -e "$filepath"
@@ -1179,6 +1174,96 @@ tags: []
               echo "$line"
             end
           end
+        '';
+      };
+
+      _hx_ensure_note = {
+        description = "Create a note from template if missing, write path to /tmp/hx_note_path (used by helix :pipe)";
+        body = ''
+          set -l type $argv[1]
+          set -l input (cat)
+          # Handle both [[Name]] (with brackets) and bare Name (selected inside brackets)
+          set -l match (string match -r '\[\[([^\]]+)\]\]' -- $input)
+          set -l name
+          if test -n "$match[2]"
+            set name $match[2]
+          else
+            set name (string trim -- $input)
+          end
+
+          if test -z "$name"; or not set -q NOTES; or test -z "$NOTES"
+            echo -n $input
+            return 1
+          end
+
+          switch $type
+            case person
+              set -l tname (_titlecase $name)
+              set -l filepath "$NOTES/people/$tname.md"
+              mkdir -p "$NOTES/people"
+              if not test -e "$filepath"
+                set -l id (uuidgen)
+                printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" > "$filepath"
+              end
+              echo -n "$filepath" > /tmp/hx_note_path
+
+            case project
+              set -l tname (_titlecase $name)
+              set -l filepath "$NOTES/projects/$tname.md"
+              mkdir -p "$NOTES/projects"
+              if not test -e "$filepath"
+                set -l id (uuidgen)
+                printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Overview" "" "## Goals" "" "## Stakeholders" "" "## Key Decisions" "" "## Risks" "" "## Status Updates" > "$filepath"
+              end
+              echo -n "$filepath" > /tmp/hx_note_path
+
+            case adr
+              set -l tname (_titlecase $name)
+              set -l filepath "$NOTES/adrs/$tname.md"
+              mkdir -p "$NOTES/adrs"
+              if not test -e "$filepath"
+                set -l id (uuidgen)
+                printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Status" "" "Proposed" "" "## Context" "" "## Options Considered" "" "### Option 1" "" "### Option 2" "" "## Decision" "" "## Consequences" > "$filepath"
+              end
+              echo -n "$filepath" > /tmp/hx_note_path
+
+            case company
+              set -l tname (_titlecase $name)
+              set -l filepath "$NOTES/companies/$tname.md"
+              mkdir -p "$NOTES/companies"
+              if not test -e "$filepath"
+                set -l id (uuidgen)
+                printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Overview" "" "## Leadership" "" "## Culture Signals" "" "## Tech Stack & Challenges" "" "## Role Details" "" "## Compensation" "" "## Concerns" "" "## Questions to Ask" "" "## Verdict" > "$filepath"
+              end
+              echo -n "$filepath" > /tmp/hx_note_path
+
+            case decision
+              set -l tname (_titlecase $name)
+              set -l filepath "$NOTES/decisions/$tname.md"
+              mkdir -p "$NOTES/decisions"
+              if not test -e "$filepath"
+                set -l id (uuidgen)
+                printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Problem Statement" "" "## Options" "" "### Option 1" "" "**Pros:**" "" "**Cons:**" "" "### Option 2" "" "**Pros:**" "" "**Cons:**" "" "## Recommendation" "" "## Tradeoffs" "" "## Decision" > "$filepath"
+              end
+              echo -n "$filepath" > /tmp/hx_note_path
+
+            case incident
+              set -l tname (_titlecase $name)
+              set -l filepath "$NOTES/incidents/$tname.md"
+              mkdir -p "$NOTES/incidents"
+              if not test -e "$filepath"
+                set -l id (uuidgen)
+                set -l now (date +%H:%M)
+                printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Timeline" "" "- $now - Incident identified" "" "## Impact" "" "## Root Cause" "" "## Resolution" "" "## Action Items" "" "## Prevention" > "$filepath"
+              end
+              echo -n "$filepath" > /tmp/hx_note_path
+
+            case '*'
+              echo -n $input
+              return 1
+          end
+
+          echo -n $input
         '';
       };
 

@@ -55,6 +55,14 @@
         X = ["extend_line_above"];
         space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
         space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
+        space.o = {
+          p = [":pipe _hx_ensure_note person" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          j = [":pipe _hx_ensure_note project" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          a = [":pipe _hx_ensure_note adr" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          c = [":pipe _hx_ensure_note company" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          d = [":pipe _hx_ensure_note decision" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          i = [":pipe _hx_ensure_note incident" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+        };
         H = [":buffer-previous"];
         L = [":buffer-next"];
         ret = ["goto_word"];
@@ -71,6 +79,14 @@
       keys.select = {
         space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
         space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
+        space.o = {
+          p = [":pipe _hx_ensure_note person" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          j = [":pipe _hx_ensure_note project" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          a = [":pipe _hx_ensure_note adr" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          c = [":pipe _hx_ensure_note company" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          d = [":pipe _hx_ensure_note decision" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+          i = [":pipe _hx_ensure_note incident" "collapse_selection" ":open %sh{cat /tmp/hx_note_path}"];
+        };
       };
     };
     languages = {
