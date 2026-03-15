@@ -96,15 +96,4 @@ in
     ];
   });
 
-  xdg.configFile."pike/todo.yaml".source = yaml.generate "pike-todo.yaml" (commonSettings // {
-    views = [
-      {
-        title = "Priority";
-        query = "open and (@weekly or @today)";
-        sort = "due_asc";
-        color = colors.sky;
-        order = 1;
-      }
-    ];
-  });
 }
