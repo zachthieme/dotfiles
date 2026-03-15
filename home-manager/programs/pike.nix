@@ -29,6 +29,7 @@ let
       "CLAUDE.md"
       "reviews/**"
     ];
+    recently_completed_days = 1;
     refresh_interval = "5s";
     editor = "hx";
     link_color = colors.sapphire;
