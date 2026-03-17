@@ -118,11 +118,11 @@ in
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
-            pane split_direction="vertical" {
-                pane size=8 borderless=true command="pike" {
+            pane split_direction="vertical" size=9 {
+                pane borderless=true command="pike" {
                     args "-w" "priority"
                 }
-                pane borderless=true command="wen" {
+                pane size=22 borderless=true command="wen" {
                     args "cal"
                 }
             }
