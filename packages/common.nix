@@ -22,6 +22,7 @@ in
       marksman # LSP for notes
       pike
       ripgrep
+      wen
       tree
       unzip
       vivid

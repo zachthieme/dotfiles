@@ -118,9 +118,15 @@ in
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
-            pane size=8 borderless=true command="pike" {
-                args "-w" "priority"
+            pane split_direction="vertical" {
+                pane size=8 borderless=true command="pike" {
+                    args "-w" "priority"
+                }
+                pane borderless=true command="wen" {
+                    args "cal"
+                }
             }
+            
             pane borderless=true name="editor" focus=true command="fish" {
                 args "-c" "daily; notes-sync"
             }
