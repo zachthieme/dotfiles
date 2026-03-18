@@ -122,7 +122,7 @@ in
                 pane borderless=true command="pike" {
                     args "-w" "priority"
                 }
-                pane size=30 borderless=true command="wen" {
+                pane size=25 borderless=true command="wen" {
                     args "cal" "--padding-left" "2"
                 }
             }
