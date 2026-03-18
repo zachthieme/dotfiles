@@ -213,7 +213,7 @@ tags: []
       };
 
       adr = {
-        description = "Create an architecture decision record in adrs/";
+        description = "Create an architecture decision record in decisions/";
         body = ''
           if test (count $argv) -eq 0
             echo "Usage: adr <name>"
@@ -222,7 +222,7 @@ tags: []
           _require_notes; or return 1
 
           set -l name (_titlecase $argv)
-          set -l dir "$NOTES/adrs"
+          set -l dir "$NOTES/decisions"
           set -l filepath "$dir/$name.md"
           mkdir -p "$dir"
 
@@ -263,13 +263,13 @@ Proposed
       };
 
       weekly = {
-        description = "Create a weekly review note in weekly/";
+        description = "Create a weekly review note in reviews/";
         body = ''
           _require_notes; or return 1
 
           set -l today (date +%Y-%m-%d)
           set -l formatted (date +"%B %-d, %Y")
-          set -l dir "$NOTES/weekly"
+          set -l dir "$NOTES/reviews"
           set -l filepath "$dir/$today.md"
           mkdir -p "$dir"
 
@@ -1214,16 +1214,6 @@ tags: []
               if not test -e "$filepath"
                 set -l id (uuidgen)
                 printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Overview" "" "## Goals" "" "## Stakeholders" "" "## Key Decisions" "" "## Risks" "" "## Status Updates" > "$filepath"
-              end
-              echo -n "$filepath" > /tmp/hx_note_path
-
-            case adr
-              set -l tname (_titlecase $name)
-              set -l filepath "$NOTES/adrs/$tname.md"
-              mkdir -p "$NOTES/adrs"
-              if not test -e "$filepath"
-                set -l id (uuidgen)
-                printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Status" "" "Proposed" "" "## Context" "" "## Options Considered" "" "### Option 1" "" "### Option 2" "" "## Decision" "" "## Consequences" > "$filepath"
               end
               echo -n "$filepath" > /tmp/hx_note_path
 

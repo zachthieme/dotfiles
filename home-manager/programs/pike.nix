@@ -50,6 +50,14 @@ let
 in
 {
   xdg.configFile."pike/config.yaml".source = yaml.generate "pike-config.yaml" (commonSettings // {
+    keybindings = {
+      custom = [
+        {
+          key = "m";
+          query = "@reporting";
+        }
+      ];
+    };
     views = [
       {
         title = "Priority";
