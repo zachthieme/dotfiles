@@ -55,6 +55,7 @@
         X = ["extend_line_above"];
         space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
         space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
+        space.T = [":insert-output pike --scope '%{buffer_name}'"];
         space.o = {
           p = [":pipe _hx_ensure_note person" "collapse_selection"];
           j = [":pipe _hx_ensure_note project" "collapse_selection"];
@@ -79,6 +80,7 @@
       keys.select = {
         space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
         space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
+        space.T = [":insert-output pike --scope '%{buffer_name}'"];
         space.o = {
           p = [":pipe _hx_ensure_note person" "collapse_selection"];
           j = [":pipe _hx_ensure_note project" "collapse_selection"];
