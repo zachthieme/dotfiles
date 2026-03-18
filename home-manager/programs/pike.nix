@@ -56,6 +56,10 @@ in
           key = "m";
           query = "@reporting";
         }
+        {
+          key = "r";
+          query = "@rumor";
+        }
       ];
     };
     views = [
