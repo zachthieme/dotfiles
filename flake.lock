@@ -134,11 +134,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773859832,
-        "narHash": "sha256-puJ4eUduHnxtJUVSp3o5Blw+ZGnwndNEtgGIx7i860M=",
+        "lastModified": 1773896955,
+        "narHash": "sha256-lQi7/7oxrS/D3Yepm1+pnZuEDdmVfVTiJIoCqGXAFtg=",
         "owner": "zachthieme",
         "repo": "pike",
-        "rev": "4d2bebef24054bab102f3d666d8062aba6b45d19",
+        "rev": "8a25291ba287a86738e91879d6edb1624834f80f",
         "type": "github"
       },
       "original": {

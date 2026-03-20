@@ -20,6 +20,7 @@ in
       less
       markdown-oxide # LSP for notes
       marksman # LSP for notes
+      neovim
       pike
       ripgrep
       wen
