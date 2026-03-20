@@ -17,10 +17,7 @@ return {
         "rust_analyzer",
         "ts_ls",
         "bashls",
-        "marksman",
       },
-      -- Catch-all handler: every server in ensure_installed gets default setup
-      -- with blink.cmp capabilities. No per-server config needed.
       handlers = {
         function(server_name)
           local capabilities = require("blink.cmp").get_lsp_capabilities()
@@ -30,5 +27,15 @@ return {
         end,
       },
     },
+  },
+  {
+    -- markdown-oxide is installed via nix, configure it directly
+    "neovim/nvim-lspconfig",
+    opts = function()
+      local capabilities = require("blink.cmp").get_lsp_capabilities()
+      require("lspconfig").markdown_oxide.setup({
+        capabilities = capabilities,
+      })
+    end,
   },
 }

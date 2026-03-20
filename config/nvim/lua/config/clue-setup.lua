@@ -39,6 +39,8 @@ miniclue.setup({
     { mode = "n", keys = "<Leader>g", desc = "+Git" },
     -- Helix: space+c → code actions (rename, format, actions)
     { mode = "n", keys = "<Leader>c", desc = "+Code" },
+    -- Helix: space+o → create/open notes
+    { mode = "n", keys = "<Leader>o", desc = "+Notes" },
   },
 
   window = {
