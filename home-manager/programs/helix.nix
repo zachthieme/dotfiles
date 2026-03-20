@@ -27,6 +27,8 @@
         line-number = "relative";
         lsp.display-messages = true;
         mouse = false;
+        popup-border = "all";
+        smart-tab.enable = true;
         true-color = true;
         file-picker = {
           git-ignore = false;
