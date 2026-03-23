@@ -215,13 +215,15 @@ if [ "$FLAKE_UPDATE" = true ]; then
   fi
 fi
 
-# --- Update Pike and Wen to latest ---
+# --- Update Pike, Wen, and Grove to latest ---
 
-log "Updating pike and wen inputs"
+log "Updating pike, wen, and grove inputs"
 nix $NIX_FLAGS flake update pike --flake "$SCRIPT_DIR" 2>/dev/null || \
   echo "Warning: failed to update pike, continuing with existing version"
 nix $NIX_FLAGS flake update wen --flake "$SCRIPT_DIR" 2>/dev/null || \
   echo "Warning: failed to update wen, continuing with existing version"
+nix $NIX_FLAGS flake update grove --flake "$SCRIPT_DIR" 2>/dev/null || \
+  echo "Warning: failed to update grove, continuing with existing version"
 
 # --- Configure Nix trusted-users (before rebuild to avoid warnings) ---
 

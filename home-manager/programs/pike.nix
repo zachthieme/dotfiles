@@ -32,6 +32,7 @@ let
     recently_completed_days = 1;
     refresh_interval = "5s";
     editor = "hx";
+    due_dates_path = "~/.local/share/pike/due.json";
     link_color = colors.sapphire;
     tag_colors = {
       risk = colors.red;

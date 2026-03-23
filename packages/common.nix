@@ -21,6 +21,7 @@ in
       markdown-oxide # LSP for notes
       marksman # LSP for notes
       neovim
+      grove
       pike
       ripgrep
       wen
