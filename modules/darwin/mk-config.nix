@@ -14,9 +14,9 @@ let
     ../../overlays/context/home-manager/work.nix;
 in
 nix-darwin.lib.darwinSystem {
-  inherit system;
   modules = [
-    { nixpkgs.overlays = [ pikeOverlay wenOverlay groveOverlay ]; }
+    { nixpkgs.hostPlatform = system;
+      nixpkgs.overlays = [ pikeOverlay wenOverlay groveOverlay ]; }
     systemModule
     osModule
     contextSystemModule
