@@ -14,7 +14,6 @@
       quick-terminal-animation-duration = 0;
       macos-option-as-alt = true;
       keybind = [
-        "global:ctrl+grave_accent=toggle_quick_terminal"
         "alt+left=unbind"
         "alt+right=unbind"
         "alt+shift+0=text:\x1b)"
