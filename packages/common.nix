@@ -24,6 +24,7 @@ in
       grove
       pike
       ripgrep
+      tick
       wen
       tree
       unzip

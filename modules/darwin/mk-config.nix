@@ -1,4 +1,4 @@
-{ nix-darwin, home-manager, catppuccin, helpers, pikeOverlay, wenOverlay, groveOverlay }:
+{ nix-darwin, home-manager, catppuccin, helpers, pikeOverlay, tickOverlay, wenOverlay, groveOverlay }:
 hostname:
 { system, user, isWork, vcs, packageProfile ? "full", packages ? [ ], ... }:
 let
@@ -16,7 +16,7 @@ in
 nix-darwin.lib.darwinSystem {
   modules = [
     { nixpkgs.hostPlatform = system;
-      nixpkgs.overlays = [ pikeOverlay wenOverlay groveOverlay ]; }
+      nixpkgs.overlays = [ pikeOverlay tickOverlay wenOverlay groveOverlay ]; }
     systemModule
     osModule
     contextSystemModule

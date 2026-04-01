@@ -21,6 +21,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    tick = {
+      url = "github:zachthieme/tick";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     wen = {
       url = "github:zachthieme/wen";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -40,6 +45,7 @@
       home-manager,
       catppuccin,
       pike,
+      tick,
       wen,
       grove,
       ...
@@ -50,6 +56,9 @@
       pikeOverlay = final: prev: {
         pike = pike.packages.${final.system}.default;
       };
+      tickOverlay = final: prev: {
+        tick = tick.packages.${final.system}.default;
+      };
       wenOverlay = final: prev: {
         wen = wen.packages.${final.system}.default;
       };
@@ -59,10 +68,10 @@
       hostData = import ./modules/hosts/definitions.nix { inherit lib helpers; };
       detectHostData = import ./modules/hosts/detect.nix { inherit (hostData) hosts; };
       mkDarwinConfig = import ./modules/darwin/mk-config.nix {
-        inherit nix-darwin home-manager catppuccin helpers pikeOverlay wenOverlay groveOverlay;
+        inherit nix-darwin home-manager catppuccin helpers pikeOverlay tickOverlay wenOverlay groveOverlay;
       };
       mkHomeConfig = import ./modules/home-manager/mk-config.nix {
-        inherit home-manager nixpkgs catppuccin helpers pikeOverlay wenOverlay groveOverlay;
+        inherit home-manager nixpkgs catppuccin helpers pikeOverlay tickOverlay wenOverlay groveOverlay;
       };
       inherit (hostData) hosts darwinHosts linuxHosts;
       defaultHost = detectHostData.defaultHost;
