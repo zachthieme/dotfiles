@@ -126,9 +126,14 @@ in
                     args "cal" "--padding-left" "2"
                 }
             }
-            
-            pane borderless=true name="editor" focus=true command="fish" {
-                args "-c" "daily; notes-sync"
+
+            pane split_direction="vertical" {
+                pane borderless=true name="editor" focus=true command="fish" {
+                    args "-c" "daily; notes-sync"
+                }
+                pane size=30 borderless=true command="tick" {
+                    args "--hosts" "10950" "--deadline" "2026-09-30"
+                }
             }
         }
         tab name="tasks" {

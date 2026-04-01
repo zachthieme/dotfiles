@@ -98,11 +98,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775061117,
-        "narHash": "sha256-6HUuMkpBzI02aHTN8qdXpOwBu9MUiyy0IWypfxBem5E=",
+        "lastModified": 1775084353,
+        "narHash": "sha256-EgTHDr6YPbp4Isne0mpOC6ih5l0wD7uoWaTj+PGeV54=",
         "owner": "zachthieme",
         "repo": "grove",
-        "rev": "683b5c1691f6dae4bfbfae143eeb18b1e47ef060",
+        "rev": "6cd1a75113ef79452599b80002b509760a758fe1",
         "type": "github"
       },
       "original": {
