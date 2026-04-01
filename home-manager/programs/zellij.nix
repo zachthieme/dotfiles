@@ -138,6 +138,14 @@ in
             pane borderless=true focus=true command="pike" {
             }
         }
+        tab name="days" {
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+            pane borderless=true focus=true command="tick" {
+                args "--hosts" "10950" "--deadline" "2026-09-30"
+            }
+        }
         tab name="shell" {
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
