@@ -215,9 +215,9 @@ if [ "$FLAKE_UPDATE" = true ]; then
   fi
 fi
 
-# --- Update Pike, Wen, and Grove to latest ---
+# --- Update Zach Apps to latest ---
 
-log "Updating pike, wen, and grove inputs"
+log "Updating Zach Apps"
 nix $NIX_FLAGS flake update pike --flake "$SCRIPT_DIR" 2>/dev/null || \
   echo "Warning: failed to update pike, continuing with existing version"
 nix $NIX_FLAGS flake update wen --flake "$SCRIPT_DIR" 2>/dev/null || \

@@ -118,21 +118,25 @@ in
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
-            pane split_direction="vertical" size=9 {
-                pane borderless=true command="pike" {
-                    args "-w" "priority"
-                }
-                pane size=25 borderless=true command="wen" {
-                    args "cal" "--padding-left" "2"
-                }
-            }
-
             pane split_direction="vertical" {
-                pane borderless=true name="editor" focus=true command="fish" {
-                    args "-c" "daily; notes-sync"
+                pane {
+                    pane size=9 borderless=true command="pike" {
+                        args "-w" "priority"
+                    }
+                    pane borderless=true name="editor" focus=true command="fish" {
+                        args "-c" "daily; notes-sync"
+                    }
                 }
-                pane size=30 borderless=true command="tick" {
-                    args "--hosts" "10950" "--deadline" "2026-09-30"
+                pane size=30 {
+                    pane size=9 borderless=true command="wen" {
+                        args "cal" "--padding-left" "2"
+                    }
+                    pane size=12 borderless=true command="tick" {
+                        args "--hosts" "10950" "--deadline" "2026-09-30"
+                    }
+                    pane borderless=true command="tail" {
+                        args "-f" "/dev/null"
+                    }
                 }
             }
         }
@@ -143,15 +147,7 @@ in
             pane borderless=true focus=true command="pike" {
             }
         }
-        tab name="days" {
-            pane size=1 borderless=true {
-                plugin location="zellij:compact-bar"
-            }
-            pane borderless=true focus=true command="tick" {
-                args "--hosts" "10950" "--deadline" "2026-09-30"
-            }
-        }
-        tab name="shell" {
+tab name="shell" {
             pane size=1 borderless=true {
                 plugin location="zellij:compact-bar"
             }
