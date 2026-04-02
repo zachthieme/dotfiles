@@ -98,11 +98,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775084353,
-        "narHash": "sha256-EgTHDr6YPbp4Isne0mpOC6ih5l0wD7uoWaTj+PGeV54=",
+        "lastModified": 1775445528,
+        "narHash": "sha256-O2PIgKkFTOg84WYNvNWcgtkjZprQV8dWmuCCFz61gns=",
         "owner": "zachthieme",
         "repo": "grove",
-        "rev": "6cd1a75113ef79452599b80002b509760a758fe1",
+        "rev": "64f54bbdbf92ca8bd20228c69e1df2db7255e46c",
         "type": "github"
       },
       "original": {
@@ -305,11 +305,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774978988,
-        "narHash": "sha256-gLvtnaczGtjOF2lmLpc/qMTo9DIBreN86ZWqV8BmneY=",
+        "lastModified": 1775437931,
+        "narHash": "sha256-pmfW9KhOgFFMH+XVZRrFym2HTmn5jcRd84Q/7eRyb6Y=",
         "owner": "zachthieme",
         "repo": "wen",
-        "rev": "a873d6716a920aeaf9facf51571a560912ddecfd",
+        "rev": "b1c6a2f129d99e504ac80fa8b59753917a075795",
         "type": "github"
       },
       "original": {

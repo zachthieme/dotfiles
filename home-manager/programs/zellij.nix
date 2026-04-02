@@ -128,8 +128,8 @@ in
                     }
                 }
                 pane size=30 {
-                    pane size=9 borderless=true command="wen" {
-                        args "cal" "--padding-left" "2"
+                    pane size=12 borderless=true command="wen" {
+                        args "cal" 
                     }
                     pane size=12 borderless=true command="tick" {
                         args "--hosts" "10950" "--deadline" "2026-09-30"
