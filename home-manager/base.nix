@@ -40,7 +40,7 @@ in
   imports = [
     ./programs/bat.nix
     ./programs/btop.nix
-    ./programs/fish.nix
+    ./programs/fish
     ./programs/ghostty.nix
     ./programs/git.nix
     ./programs/helix.nix

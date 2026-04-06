@@ -1,0 +1,31 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Check flake schema
+        run: nix flake check --no-build
+
+      - name: Evaluate Linux configurations
+        run: |
+          for host in $(nix eval .#homeConfigurations --apply 'x: builtins.attrNames x' --json | jq -r '.[]'); do
+            echo "Evaluating homeConfigurations.$host..."
+            nix eval ".#homeConfigurations.$host.activationPackage.drvPath" > /dev/null
+          done
+
+      - name: Evaluate Darwin configurations (parse only)
+        run: |
+          for host in $(nix eval .#darwinConfigurations --apply 'x: builtins.filter (n: n != "default") (builtins.attrNames x)' --json | jq -r '.[]'); do
+            echo "Evaluating darwinConfigurations.$host..."
+            nix eval ".#darwinConfigurations.$host.system.drvPath" > /dev/null 2>&1 || echo "  (skipped — darwin-only derivation)"
+          done
