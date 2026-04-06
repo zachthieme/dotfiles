@@ -127,9 +127,9 @@ in
                         args "-c" "daily; notes-sync"
                     }
                 }
-                pane size=30 {
+                pane size=40 {
                     pane size=12 borderless=true command="wen" {
-                        args "cal" 
+                        args "cal"
                     }
                     pane size=12 borderless=true command="tick" {
                         args "--hosts" "10950" "--deadline" "2026-09-30"
