@@ -127,7 +127,7 @@ in
                         args "-c" "daily; notes-sync"
                     }
                 }
-                pane size=40 {
+                pane size=33 {
                     pane size=12 borderless=true command="wen" {
                         args "cal"
                     }

@@ -61,12 +61,16 @@ in
           key = "r";
           query = "@rumor";
         }
+        {
+          key = "u";
+          query = "open and not @due";
+        }
       ];
     };
     views = [
       {
         title = "Priority";
-        query = "open and (@weekly or @today)";
+        query = "open and ((@weekly or @today) or (@due <= today))";
         sort = "due_asc";
         color = colors.blue;
         order = 1;
