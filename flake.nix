@@ -31,6 +31,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    claude-code = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     grove = {
       url = "github:zachthieme/grove";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -44,6 +49,7 @@
       nix-darwin,
       home-manager,
       catppuccin,
+      claude-code,
       pike,
       tick,
       wen,
@@ -53,25 +59,23 @@
     let
       lib = nixpkgs.lib;
       helpers = import ./modules/lib.nix { inherit lib; };
-      pikeOverlay = final: prev: {
-        pike = pike.packages.${final.system}.default;
+      mkOverlay = name: input: final: _prev: {
+        ${name} = input.packages.${final.system}.default;
       };
-      tickOverlay = final: prev: {
-        tick = tick.packages.${final.system}.default;
-      };
-      wenOverlay = final: prev: {
-        wen = wen.packages.${final.system}.default;
-      };
-      groveOverlay = final: prev: {
-        grove = grove.packages.${final.system}.default;
-      };
+      customOverlays = [
+        (mkOverlay "claude-code" claude-code)
+        (mkOverlay "grove" grove)
+        (mkOverlay "pike" pike)
+        (mkOverlay "tick" tick)
+        (mkOverlay "wen" wen)
+      ];
       hostData = import ./modules/hosts/definitions.nix { inherit lib helpers; };
       detectHostData = import ./modules/hosts/detect.nix { inherit (hostData) hosts; };
       mkDarwinConfig = import ./modules/darwin/mk-config.nix {
-        inherit nix-darwin home-manager catppuccin helpers pikeOverlay tickOverlay wenOverlay groveOverlay;
+        inherit nix-darwin home-manager catppuccin helpers customOverlays;
       };
       mkHomeConfig = import ./modules/home-manager/mk-config.nix {
-        inherit home-manager nixpkgs catppuccin helpers pikeOverlay tickOverlay wenOverlay groveOverlay;
+        inherit home-manager nixpkgs catppuccin helpers customOverlays;
       };
       inherit (hostData) hosts darwinHosts linuxHosts;
       defaultHost = detectHostData.defaultHost;

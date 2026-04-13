@@ -10,6 +10,9 @@ let
     email = "zach@techsage.org";
   };
 
+  # Valid package profiles
+  validProfiles = [ "core" "core+dev" "full" ];
+
   # Validate and apply defaults to a host definition
   validateHost = name: host:
     let
@@ -29,9 +32,6 @@ let
         # Apply default package profile if not specified
         packageProfile = profile;
       };
-
-  # Valid package profiles
-  validProfiles = [ "core" "core+dev" "full" ];
 
   # Raw host definitions (validated below)
   rawHosts = {

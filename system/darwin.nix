@@ -72,9 +72,9 @@
       allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "vault" ];
     };
 
-    # make sure that todesk cannot be installed
+    # Block todesk — unapproved remote-access software (security policy)
     nixpkgs.overlays = [
-      (self: super: {
+      (_self: _super: {
         todesk = throw "Blocked package: todesk";
       })
     ];

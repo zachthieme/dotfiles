@@ -10,18 +10,15 @@ NIX_FLAGS="--extra-experimental-features nix-command --extra-experimental-featur
 
 # --- Parse Arguments ---
 
-UPGRADE_TOOLS=false
 FLAKE_UPDATE=false
 for arg in "$@"; do
   case $arg in
-    --upgrade|-u) UPGRADE_TOOLS=true ;;
     --flake-update|-f) FLAKE_UPDATE=true ;;
     --help|-h)
       echo "Usage: $0 [OPTIONS]"
       echo ""
       echo "Options:"
       echo "  --flake-update, -f  Update flake.lock before rebuilding"
-      echo "  --upgrade, -u       Upgrade claude and opencode CLI tools (home machines only)"
       echo "  --help, -h          Show this help message"
       exit 0
       ;;
@@ -32,14 +29,6 @@ done
 
 log() { echo "=== $1 ==="; }
 die() { echo "Error: $1" >&2; exit 1; }
-
-upgrade_tools() {
-  log "Upgrading CLI tools"
-  echo "Upgrading Claude Code..."
-  curl -fsSL https://claude.ai/install.sh | bash
-  echo "Upgrading OpenCode..."
-  curl -fsSL https://opencode.ai/install | bash
-}
 
 source_nix_profile() {
   if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
@@ -55,28 +44,19 @@ install_nix() {
   echo "Nix installed successfully."
 }
 
-# Fetch host info from definitions.nix (sets HOST_EXISTS and IS_WORK)
+# Fetch host info from definitions.nix (sets HOST_EXISTS)
 fetch_host_info() {
   local hostname=$1
-  local info
-  info=$(nix $NIX_FLAGS eval --raw --impure --expr "
+  local exists
+  exists=$(nix $NIX_FLAGS eval --raw --impure --expr "
     let
       flake = builtins.getFlake \"$SCRIPT_DIR\";
       hosts = flake.outputs.hosts or {};
-      exists = builtins.hasAttr \"$hostname\" hosts;
-      host = hosts.\"$hostname\" or {};
     in
-      if exists then \"exists:\" + (if host.isWork or false then \"work\" else \"home\")
-      else \"missing\"
-  " 2>/dev/null) || info="missing"
+      if builtins.hasAttr \"$hostname\" hosts then \"true\" else \"false\"
+  " 2>/dev/null) || exists="false"
 
-  if [ "$info" = "missing" ]; then
-    HOST_EXISTS=false
-    IS_WORK=false
-  else
-    HOST_EXISTS=true
-    IS_WORK=$( [ "$info" = "exists:work" ] && echo true || echo false )
-  fi
+  HOST_EXISTS=$exists
 }
 
 show_available_hosts() {
@@ -301,16 +281,6 @@ EOF
     echo "Setting fish as default shell..."
     sudo chsh -s "$FISH_PATH" "$USER"
     echo "Default shell changed to fish. Log out and back in to use it."
-  fi
-fi
-
-# --- Upgrade Tools (if requested, home machines only) ---
-
-if [ "$UPGRADE_TOOLS" = true ]; then
-  if [ "$IS_WORK" = true ]; then
-    echo "Skipping tool upgrades on work machine"
-  else
-    upgrade_tools
   fi
 fi
 

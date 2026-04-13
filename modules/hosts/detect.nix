@@ -1,6 +1,8 @@
 { hosts }:
 let
   # Try HOSTNAME first (Linux), then HOST (macOS)
+  # Note: builtins.getEnv only works during impure evaluation (nix build --impure,
+  # or commands like darwin-rebuild/home-manager that evaluate impurely by default).
   hostname =
     let h = builtins.getEnv "HOSTNAME";
     in if h != "" then h else builtins.getEnv "HOST";

@@ -66,47 +66,26 @@ in
     news.display = "silent";
 
     # Nix settings for optimal performance and caching
-    # Linux: Full nix management via Home Manager
-    # macOS: User-level settings only (Determinate Nix manages system config)
-    nix = lib.mkMerge [
-      # Linux-specific: Home Manager manages nix
-      (lib.mkIf pkgs.stdenv.isLinux {
-        package = pkgs.nix;
-        settings = {
-          experimental-features = [ "nix-command" "flakes" ];
-          # Use all available cores for parallel builds
-          max-jobs = "auto";
-          # Deduplicate store files via hard links
-          auto-optimise-store = true;
-          # Increase download buffer to avoid warnings during large fetches
-          download-buffer-size = 256 * 1024 * 1024; # 256 MiB
-          # Add community binary caches for faster installs
-          extra-substituters = [
-            "https://nix-community.cachix.org"
-          ];
-          extra-trusted-public-keys = [
-            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-          ];
-        };
-      })
-      # macOS: Only user-level settings (system managed by Determinate Nix)
-      (lib.mkIf pkgs.stdenv.isDarwin {
-        package = pkgs.nix; # Required for nix.settings configuration
-        settings = {
-          # Use all available cores for parallel builds
-          max-jobs = "auto";
-          # Increase download buffer to avoid warnings during large fetches
-          download-buffer-size = 256 * 1024 * 1024; # 256 MiB
-          # Add community binary caches for faster installs
-          extra-substituters = [
-            "https://nix-community.cachix.org"
-          ];
-          extra-trusted-public-keys = [
-            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-          ];
-        };
-      })
-    ];
+    # Shared settings apply to both platforms; Linux adds nix management extras
+    # macOS: Determinate Nix manages the daemon, so we only set user-level options
+    nix = {
+      package = pkgs.nix;
+      settings = {
+        max-jobs = "auto";
+        download-buffer-size = 256 * 1024 * 1024; # 256 MiB
+        extra-substituters = [
+          "https://claude-code.cachix.org"
+          "https://nix-community.cachix.org"
+        ];
+        extra-trusted-public-keys = [
+          "claude-code.cachix.org-1:LSMRqGJFczEaKDBoXDjZnJpnaFRHBaGW/g8TMC3oFwA="
+          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        ];
+      } // lib.optionalAttrs pkgs.stdenv.isLinux {
+        experimental-features = [ "nix-command" "flakes" ];
+        auto-optimise-store = true;
+      };
+    };
 
     home.sessionVariables = {
       EDITOR = "hx";
@@ -128,7 +107,6 @@ in
     home.sessionPath =
       [
         "${config.home.homeDirectory}/.local/bin"
-        "${config.home.homeDirectory}/.opencode/bin"
       ]
       ++ lib.optionals pkgs.stdenv.isDarwin [ "/opt/homebrew/bin" ]
       ++ lib.optionals pkgs.stdenv.isLinux [ "${config.home.homeDirectory}/.local/state/nix/profiles/home-manager/home-path/bin" ];

@@ -2,9 +2,11 @@
 { config, ... }:
 
 let
-  # Shared keybinds KDL block embedded in layout files.
+  # TECH DEBT: This KDL string duplicates the structured keybinds in settings below.
   # Layouts launched via --layout may not inherit config.kdl keybinds
   # (https://github.com/zellij-org/zellij/issues/4256), so we embed them directly.
+  # Once that issue is resolved, remove this string and rely solely on settings.keybinds.
+  #
   # Pane navigation goes in shared_except "locked" to match the default scope and
   # cleanly replace the defaults. Putting them in "shared" creates a cross-scope
   # collision with the defaults' shared_except "locked" bindings for Alt j/k
