@@ -60,7 +60,7 @@
       lib = nixpkgs.lib;
       helpers = import ./modules/lib.nix { inherit lib; };
       mkOverlay = name: input: final: _prev: {
-        ${name} = input.packages.${final.system}.default;
+        ${name} = input.packages.${final.stdenv.hostPlatform.system}.default;
       };
       customOverlays = [
         (mkOverlay "claude-code" claude-code)
