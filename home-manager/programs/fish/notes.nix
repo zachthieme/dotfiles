@@ -792,17 +792,18 @@ end: $end_date
         end
 
         # Tab 1: daily
-        #   pike        | wen cal
-        #   editor (hx) | tick
+        #   pike (83%)   | wen cal (17%)
+        #   (14% height) | (14% height)
+        #                | tick (26% of remainder)
+        #   editor       | shell
         # Create session at current terminal size so pane layout survives attach
         set -l cols (tput cols)
         set -l rows (tput lines)
         set -l pike_pane (tmux new-session -d -s $session -n daily -c $notes_dir -x $cols -y $rows -P -F '#{pane_id}')
-        set -l wen_pane (tmux split-window -h -p 33 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
-        set -l editor_pane (tmux split-window -v -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
-        set -l tick_pane (tmux split-window -v -t $wen_pane -c $notes_dir -P -F '#{pane_id}')
-        tmux resize-pane -t $pike_pane -y 10
-        tmux resize-pane -t $wen_pane -y 10
+        set -l wen_pane (tmux split-window -h -p 17 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
+        set -l editor_pane (tmux split-window -v -p 86 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
+        set -l tick_pane (tmux split-window -v -p 86 -t $wen_pane -c $notes_dir -P -F '#{pane_id}')
+        tmux split-window -v -p 74 -t $tick_pane -c $notes_dir "sleep infinity"
 
         tmux send-keys -t $pike_pane "pike -w priority" Enter
         tmux send-keys -t $wen_pane "wen cal" Enter
