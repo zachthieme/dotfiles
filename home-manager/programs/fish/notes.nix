@@ -794,30 +794,29 @@ end: $end_date
         # Tab 1: daily
         #   pike        | wen cal
         #   editor (hx) | tick
-        tmux new-session -d -s $session -n daily -c $notes_dir
-        tmux split-window -h -l 33 -t {$session}:daily.0 -c $notes_dir
-        tmux split-window -v -t {$session}:daily.0 -c $notes_dir
-        tmux split-window -v -t {$session}:daily.1 -c $notes_dir
-        tmux resize-pane -t {$session}:daily.0 -y 9
-        tmux resize-pane -t {$session}:daily.1 -y 12
+        set -l pike_pane (tmux new-session -d -s $session -n daily -c $notes_dir -P -F '#{pane_id}')
+        set -l wen_pane (tmux split-window -h -l 33 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
+        set -l editor_pane (tmux split-window -v -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
+        set -l tick_pane (tmux split-window -v -t $wen_pane -c $notes_dir -P -F '#{pane_id}')
+        tmux resize-pane -t $pike_pane -y 9
+        tmux resize-pane -t $wen_pane -y 12
 
-        tmux send-keys -t {$session}:daily.0 "pike -w priority" Enter
-        tmux send-keys -t {$session}:daily.1 "wen cal" Enter
-        tmux send-keys -t {$session}:daily.2 "daily; notes-sync" Enter
-        tmux send-keys -t {$session}:daily.3 "tick --hosts 10950 --deadline 2026-09-30" Enter
+        tmux send-keys -t $pike_pane "pike -w priority" Enter
+        tmux send-keys -t $wen_pane "wen cal" Enter
+        tmux send-keys -t $editor_pane "daily; notes-sync" Enter
+        tmux send-keys -t $tick_pane "tick --hosts 10950 --deadline 2026-09-30" Enter
 
-        # Focus the editor pane
-        tmux select-pane -t {$session}:daily.2
+        tmux select-pane -t $editor_pane
 
         # Tab 2: tasks — pike
         tmux new-window -t $session -n tasks -c $notes_dir
-        tmux send-keys -t {$session}:tasks "pike" Enter
+        tmux send-keys "pike" Enter
 
         # Tab 3: shell
         tmux new-window -t $session -n shell -c $notes_dir
 
         # Start on the daily tab
-        tmux select-window -t {$session}:daily
+        tmux select-window -t $session:1
 
         tmux attach-session -t $session
 
