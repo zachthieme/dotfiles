@@ -771,6 +771,61 @@ end: $end_date
       '';
     };
 
+    nw-tmux = {
+      description = "Open notes workspace in tmux, commit and push on close";
+      body = ''
+        _require_notes; or return 1
+
+        if set -q TMUX
+          echo "Already inside a tmux session"
+          return 1
+        end
+
+        set -l notes_dir ~/CloudDocs/Notes
+        set -l session notes
+
+        # Attach if session already exists
+        if tmux has-session -t $session 2>/dev/null
+          tmux attach-session -t $session
+          notes-sync
+          return
+        end
+
+        # Tab 1: daily
+        #   pike        | wen cal
+        #   editor (hx) | tick
+        tmux new-session -d -s $session -n daily -c $notes_dir
+        tmux split-window -h -l 33 -t {$session}:daily.0 -c $notes_dir
+        tmux split-window -v -t {$session}:daily.0 -c $notes_dir
+        tmux split-window -v -t {$session}:daily.1 -c $notes_dir
+        tmux resize-pane -t {$session}:daily.0 -y 9
+        tmux resize-pane -t {$session}:daily.1 -y 12
+
+        tmux send-keys -t {$session}:daily.0 "pike -w priority" Enter
+        tmux send-keys -t {$session}:daily.1 "wen cal" Enter
+        tmux send-keys -t {$session}:daily.2 "daily; notes-sync" Enter
+        tmux send-keys -t {$session}:daily.3 "tick --hosts 10950 --deadline 2026-09-30" Enter
+
+        # Focus the editor pane
+        tmux select-pane -t {$session}:daily.2
+
+        # Tab 2: tasks — pike
+        tmux new-window -t $session -n tasks -c $notes_dir
+        tmux send-keys -t {$session}:tasks "pike" Enter
+
+        # Tab 3: shell
+        tmux new-window -t $session -n shell -c $notes_dir
+
+        # Start on the daily tab
+        tmux select-window -t {$session}:daily
+
+        tmux attach-session -t $session
+
+        # Final sync after tmux exits
+        notes-sync
+      '';
+    };
+
     _hx_ensure_note = {
       description = "Create a note from template if missing, write path to /tmp/hx_note_path (used by helix :pipe)";
       body = ''
