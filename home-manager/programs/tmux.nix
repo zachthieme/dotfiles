@@ -32,6 +32,10 @@
       # Renumber windows when one is closed
       set -g renumber-windows on
 
+      # Hide pane borders
+      set -g pane-border-style "fg=black"
+      set -g pane-active-border-style "fg=black"
+
       # Pane splitting — leader+| for side-by-side, leader+- for stacked
       unbind '"'
       unbind %

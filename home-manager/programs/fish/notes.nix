@@ -771,6 +771,15 @@ end: $end_date
       '';
     };
 
+    nwk-tmux = {
+      description = "Kill the notes tmux session";
+      body = ''
+        tmux kill-session -t notes 2>/dev/null
+        and echo "Killed notes session."
+        or echo "No notes session running."
+      '';
+    };
+
     nw-tmux = {
       description = "Open notes workspace in tmux, commit and push on close";
       body = ''
@@ -791,19 +800,24 @@ end: $end_date
           return
         end
 
-        # Tab 1: daily
-        #   pike (83%)   | wen cal (17%)
-        #   (14% height) | (14% height)
-        #                | tick (26% of remainder)
-        #   editor       | shell
+        # Tab 1: daily — right column is fixed, left column absorbs extra space
+        #   pike        | wen cal (28 wide, 9 tall)
+        #               | tick (14 tall)
+        #   editor      | spacer
         # Create session at current terminal size so pane layout survives attach
         set -l cols (tput cols)
         set -l rows (tput lines)
         set -l pike_pane (tmux new-session -d -s $session -n daily -c $notes_dir -x $cols -y $rows -P -F '#{pane_id}')
-        set -l wen_pane (tmux split-window -h -p 17 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
-        set -l editor_pane (tmux split-window -v -p 86 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
-        set -l tick_pane (tmux split-window -v -p 86 -t $wen_pane -c $notes_dir -P -F '#{pane_id}')
-        tmux split-window -v -p 74 -t $tick_pane -c $notes_dir "sleep infinity"
+        set -l wen_pane (tmux split-window -h -l 28 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
+        set -l editor_pane (tmux split-window -v -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
+        tmux resize-pane -t $pike_pane -y 10
+        set -l tick_pane (tmux split-window -v -t $wen_pane -c $notes_dir -P -F '#{pane_id}')
+        tmux resize-pane -t $wen_pane -y 10
+        tmux split-window -v -t $tick_pane -c $notes_dir "sleep infinity"
+        tmux resize-pane -t $tick_pane -y 14
+
+        # Pin right column to 28 wide on terminal resize
+        tmux set-hook -t $session window-resized "resize-pane -t $wen_pane -x 28 ; resize-pane -t $tick_pane -x 28"
 
         tmux send-keys -t $pike_pane "pike -w priority" Enter
         tmux send-keys -t $wen_pane "wen cal" Enter
