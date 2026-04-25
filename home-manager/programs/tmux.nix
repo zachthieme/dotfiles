@@ -36,6 +36,10 @@
       set -g pane-border-style "fg=black"
       set -g pane-active-border-style "fg=black"
 
+      # Subtle highlight on active pane
+      set -g window-style "bg=default"
+      set -g window-active-style "bg=#1e1e2e"
+
       # Pane splitting — leader+| for side-by-side, leader+- for stacked
       unbind '"'
       unbind %
