@@ -48,6 +48,7 @@ in
     ./programs/lazygit.nix
     ./programs/pike.nix
     ./programs/ssh.nix
+    ./programs/tmux.nix
     ./programs/wen.nix
     ./programs/zellij.nix
   ];
