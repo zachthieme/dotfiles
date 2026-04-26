@@ -77,8 +77,5 @@
       set -g status-position top
     '';
 
-    plugins = with pkgs.tmuxPlugins; [
-      tmux-which-key
-    ];
-  };
+};
 }
