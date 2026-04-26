@@ -747,8 +747,8 @@ end: $end_date
       '';
     };
 
-    nw = {
-      description = "Open notes workspace, commit and push on close";
+    nw-zellij = {
+      description = "Open notes workspace in zellij, commit and push on close";
       body = ''
         _require_notes; or return 1
 
@@ -764,14 +764,14 @@ end: $end_date
       '';
     };
 
-    nwk = {
+    nwk-zellij = {
       description = "Kill the notes zellij session";
       body = ''
         zellij delete-session notes --force
       '';
     };
 
-    nwk-tmux = {
+    nwk = {
       description = "Kill the notes tmux session";
       body = ''
         tmux kill-session -t notes 2>/dev/null
@@ -780,7 +780,7 @@ end: $end_date
       '';
     };
 
-    nw-tmux = {
+    nw = {
       description = "Open notes workspace in tmux, commit and push on close";
       body = ''
         _require_notes; or return 1
