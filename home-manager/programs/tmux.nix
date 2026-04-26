@@ -76,5 +76,9 @@
       # Status bar at top (matches zellij compact-top layout)
       set -g status-position top
     '';
+
+    plugins = with pkgs.tmuxPlugins; [
+      tmux-which-key
+    ];
   };
 }
