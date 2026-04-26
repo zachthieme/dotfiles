@@ -33,7 +33,7 @@
       set -g renumber-windows on
 
       # Pane borders — active matches JankyBorders green
-      set -g pane-border-style "fg=black"
+      set -g pane-border-style "fg=#1e1e2e"
       set -g pane-active-border-style "fg=#a6e3a1"
 
       # Pane splitting — leader+| for side-by-side, leader+- for stacked
