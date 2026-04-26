@@ -813,7 +813,7 @@ end: $end_date
         tmux resize-pane -t $pike_pane -y 10
         set -l tick_pane (tmux split-window -v -t $wen_pane -c $notes_dir -P -F '#{pane_id}')
         tmux resize-pane -t $wen_pane -y 10
-        tmux split-window -v -t $tick_pane -c $notes_dir "sleep infinity"
+        tmux split-window -v -t $tick_pane -c $notes_dir "cat"
         tmux resize-pane -t $tick_pane -y 14
 
         # Pin right column to 28 wide on terminal resize
