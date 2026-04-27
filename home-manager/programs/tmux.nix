@@ -9,9 +9,9 @@
       set -g @catppuccin_window_status_style "rounded"
       set -g @catppuccin_window_text "#W"
       set -g @catppuccin_window_current_text "#W"
-      set -g status-left ""
+      set -g status-left "#{E:@catppuccin_status_session}"
       set -g @catppuccin_date_time_text "%H:%M"
-      set -g status-right "#{E:@catppuccin_status_session}#{E:@catppuccin_status_date_time}"
+      set -g status-right "#{E:@catppuccin_status_date_time}"
     '';
   };
 
