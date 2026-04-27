@@ -10,6 +10,7 @@
       set -g @catppuccin_window_text "#W"
       set -g @catppuccin_window_current_text "#W"
       set -g status-left ""
+      set -g @catppuccin_date_time_text "%H:%M"
       set -g status-right "#{E:@catppuccin_status_session}#{E:@catppuccin_status_date_time}"
     '';
   };

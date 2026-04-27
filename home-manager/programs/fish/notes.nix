@@ -821,7 +821,7 @@ end: $end_date
         tmux resize-pane -t $tick_pane -y 14
 
         # Pin right column to 28 wide on terminal resize
-        tmux set-hook -t $session window-resized "resize-pane -t $wen_pane -x 28 ; resize-pane -t $tick_pane -x 28"
+        tmux set-hook -t $session window-resized "resize-pane -t $pike_pane -y 10 ; resize-pane -t $wen_pane -x 28 ; resize-pane -t $tick_pane -x 28"
 
         tmux send-keys -t $pike_pane "pike -w priority" Enter
         tmux send-keys -t $wen_pane "wen cal" Enter
