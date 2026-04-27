@@ -32,6 +32,10 @@
       # Renumber windows when one is closed
       set -g renumber-windows on
 
+      # Pane numbering starts at 1 (matches baseIndex for windows)
+      set -g pane-base-index 1
+      setw -g pane-base-index 1
+
       # Pane borders — active matches JankyBorders green
       set -g pane-border-style "fg=#1e1e2e"
       set -g pane-active-border-style "fg=#a6e3a1"
@@ -59,6 +63,20 @@
       bind -n M-7 select-window -t 7
       bind -n M-8 select-window -t 8
       bind -n M-9 select-window -t 9
+
+      # Pane switching — Alt+P enters "panes" key table, then 1-9 selects pane
+      # Tmux owns the second keystroke so apps (helix) never see it
+      bind -n M-p switch-client -T panes
+      bind -T panes 1 select-pane -t :.1
+      bind -T panes 2 select-pane -t :.2
+      bind -T panes 3 select-pane -t :.3
+      bind -T panes 4 select-pane -t :.4
+      bind -T panes 5 select-pane -t :.5
+      bind -T panes 6 select-pane -t :.6
+      bind -T panes 7 select-pane -t :.7
+      bind -T panes 8 select-pane -t :.8
+      bind -T panes 9 select-pane -t :.9
+      bind -T panes Escape switch-client -T root
 
       # Pane resizing with prefix+arrow keys
       bind -r Left resize-pane -L 5

@@ -800,19 +800,23 @@ end: $end_date
           return
         end
 
-        # Tab 1: daily — right column is fixed, left column absorbs extra space
-        #   pike        | wen cal (28 wide, 9 tall)
-        #               | tick (14 tall)
-        #   editor      | spacer
+        # Tab 1: daily — split row-major so pane indexes follow reading order
+        # (1=pike top-left, 2=wen top-right, 3=editor bot-left, 4=tick bot-right, 5=spacer)
+        #   pike (1)    | wen (2)   28 wide, 10 tall
+        #   ------------+---------
+        #   editor (3)  | tick (4)   14 tall
+        #               | spacer (5)
         # Create session at current terminal size so pane layout survives attach
         set -l cols (tput cols)
         set -l rows (tput lines)
         set -l pike_pane (tmux new-session -d -s $session -n daily -c $notes_dir -x $cols -y $rows -P -F '#{pane_id}')
-        set -l wen_pane (tmux split-window -h -l 28 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
+        # Row split: top (pike) over bottom (editor)
         set -l editor_pane (tmux split-window -v -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
         tmux resize-pane -t $pike_pane -y 10
-        set -l tick_pane (tmux split-window -v -t $wen_pane -c $notes_dir -P -F '#{pane_id}')
-        tmux resize-pane -t $wen_pane -y 10
+        # Top row: pike | wen
+        set -l wen_pane (tmux split-window -h -l 28 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
+        # Bottom row: editor | tick (right column becomes tick+spacer)
+        set -l tick_pane (tmux split-window -h -l 28 -t $editor_pane -c $notes_dir -P -F '#{pane_id}')
         tmux split-window -v -t $tick_pane -c $notes_dir "cat"
         tmux resize-pane -t $tick_pane -y 14
 
