@@ -93,6 +93,7 @@
 
       # Status bar at top (matches zellij compact-top layout)
       set -g status-position top
+      set -g status-justify centre
     '';
 
 };
