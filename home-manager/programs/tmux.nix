@@ -37,9 +37,13 @@
       set -g pane-base-index 1
       setw -g pane-base-index 1
 
-      # Pane borders — active matches JankyBorders green
+      # Pane borders — nearly invisible, let dimming do the work
       set -g pane-border-style "fg=#1e1e2e"
-      set -g pane-active-border-style "fg=#a6e3a1"
+      set -g pane-active-border-style "fg=#1e1e2e"
+
+      # Dim inactive panes (catppuccin mocha: overlay0 dim, text active)
+      set -g window-style 'fg=#7f849c'
+      set -g window-active-style 'fg=#cdd6f4'
 
       # Pane splitting — leader+| for side-by-side, leader+- for stacked
       unbind '"'
