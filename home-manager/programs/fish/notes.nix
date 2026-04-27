@@ -818,10 +818,10 @@ end: $end_date
         # Bottom row: editor | tick (right column becomes tick+spacer)
         set -l tick_pane (tmux split-window -h -l 28 -t $editor_pane -c $notes_dir -P -F '#{pane_id}')
         tmux split-window -v -t $tick_pane -c $notes_dir "cat"
-        tmux resize-pane -t $tick_pane -y 14
+        tmux resize-pane -t $tick_pane -y 12
 
         # Pin right column to 28 wide on terminal resize
-        tmux set-hook -t $session window-resized "resize-pane -t $pike_pane -y 10 ; resize-pane -t $wen_pane -x 28 ; resize-pane -t $tick_pane -x 28"
+        tmux set-hook -t $session window-resized "resize-pane -t $pike_pane -y 10 ; resize-pane -t $wen_pane -x 28 ; resize-pane -t $tick_pane -x 28 ; resize-pane -t $tick_pane -y 12"
 
         tmux send-keys -t $pike_pane "pike -w priority" Enter
         tmux send-keys -t $wen_pane "wen cal" Enter
