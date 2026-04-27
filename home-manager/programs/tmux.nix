@@ -41,9 +41,9 @@
       set -g pane-border-style "fg=#1e1e2e"
       set -g pane-active-border-style "fg=#1e1e2e"
 
-      # Dim inactive panes (catppuccin mocha: overlay0 dim, text active)
-      set -g window-style 'fg=#7f849c'
-      set -g window-active-style 'fg=#cdd6f4'
+      # Dim inactive panes via background (catppuccin mocha: mantle inactive, base active)
+      set -g window-style 'bg=#181825'
+      set -g window-active-style 'bg=#1e1e2e'
 
       # Pane splitting — leader+| for side-by-side, leader+- for stacked
       unbind '"'
