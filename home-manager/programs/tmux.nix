@@ -88,6 +88,10 @@
       # New window in current path
       bind c new-window -c "#{pane_current_path}"
 
+      # Clipboard — OSC 52 lets tmux set the terminal clipboard directly
+      # Works on macOS + Linux without platform-specific tools (Ghostty, iTerm2, etc.)
+      set -g set-clipboard on
+
       # Vi copy mode
       bind -T copy-mode-vi v send -X begin-selection
       bind -T copy-mode-vi y send -X copy-selection-and-cancel
