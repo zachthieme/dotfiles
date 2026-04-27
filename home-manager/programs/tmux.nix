@@ -37,9 +37,9 @@
       set -g pane-base-index 1
       setw -g pane-base-index 1
 
-      # Pane borders — nearly invisible, let dimming do the work
-      set -g pane-border-style "fg=#1e1e2e"
-      set -g pane-active-border-style "fg=#1e1e2e"
+      # Pane borders — match inactive pane background so they disappear
+      set -g pane-border-style "fg=#181825"
+      set -g pane-active-border-style "fg=#181825"
 
       # Dim inactive panes via background (catppuccin mocha: mantle inactive, base active)
       set -g window-style 'bg=#181825'
