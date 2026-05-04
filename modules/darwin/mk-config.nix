@@ -1,4 +1,4 @@
-{ nix-darwin, home-manager, catppuccin, helpers, customOverlays }:
+{ nix-darwin, home-manager, catppuccin, nixvim, helpers, customOverlays }:
 hostname:
 { system, user, isWork, vcs, packageProfile ? "full", packages ? [ ], ... }:
 let
@@ -34,6 +34,7 @@ nix-darwin.lib.darwinSystem {
       home-manager.users.${user} = {
         imports = [
           catppuccin.homeModules.catppuccin
+          nixvim.homeManagerModules.nixvim
           contextHomeModule
         ];
         home.username = user;

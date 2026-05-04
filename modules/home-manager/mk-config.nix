@@ -1,4 +1,4 @@
-{ home-manager, nixpkgs, catppuccin, helpers, customOverlays }:
+{ home-manager, nixpkgs, catppuccin, nixvim, helpers, customOverlays }:
 hostname:
 { system, user, isWork, vcs, packageProfile ? "full", packages ? [ ], ... }:
 let
@@ -17,6 +17,7 @@ home-manager.lib.homeManagerConfiguration {
   };
   modules = [
     catppuccin.homeModules.catppuccin
+    nixvim.homeManagerModules.nixvim
     contextModule
     {
       home.username = user;
