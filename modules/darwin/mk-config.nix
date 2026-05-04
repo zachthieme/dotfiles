@@ -34,7 +34,7 @@ nix-darwin.lib.darwinSystem {
       home-manager.users.${user} = {
         imports = [
           catppuccin.homeModules.catppuccin
-          nixvim.homeManagerModules.nixvim
+          nixvim.homeModules.nixvim
           contextHomeModule
         ];
         home.username = user;

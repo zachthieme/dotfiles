@@ -17,7 +17,7 @@ home-manager.lib.homeManagerConfiguration {
   };
   modules = [
     catppuccin.homeModules.catppuccin
-    nixvim.homeManagerModules.nixvim
+    nixvim.homeModules.nixvim
     contextModule
     {
       home.username = user;

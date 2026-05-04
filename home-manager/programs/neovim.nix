@@ -144,6 +144,16 @@
 
     extraPlugins = with pkgs.vimPlugins; [
       yazi-nvim
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "vimdeck-nvim";
+        version = "unstable-2025-03-15";
+        src = pkgs.fetchFromGitHub {
+          owner = "ducks";
+          repo = "vimdeck.nvim";
+          rev = "5590daaede0e65613f712a4daf98c1cd51df87dd";
+          hash = "sha256-0WNri2NQ2OADvXVBQa5hc6HfYgD5U8xui6fmTPT0R3c=";
+        };
+      })
     ];
 
     keymaps = [
@@ -245,6 +255,13 @@
         open_for_directories = false,
       })
       vim.keymap.set("n", "<C-y>", "<cmd>Yazi<CR>", { desc = "Open yazi" })
+
+      -- Vimdeck presentations
+      require("vimdeck").setup({
+        use_figlet = true,
+        center_vertical = true,
+        center_horizontal = true,
+      })
 
       -- Toggle task syntax: "- " → "- [ ] " → "- "
       local function toggle_task_syntax()
