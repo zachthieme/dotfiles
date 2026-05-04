@@ -11,6 +11,7 @@ in
       curl
       eza
       fd
+      figlet
       gh
       git
       jq
