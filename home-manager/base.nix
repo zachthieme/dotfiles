@@ -118,7 +118,6 @@ in
     home.file = {
       ".config/aerospace".source = ../config/aerospace;
       ".config/borders".source = ../config/borders;
-      ".config/nvim".source = ../config/nvim;
       ".config/ripgrep".source = ../config/ripgrep;
       ".terminfo".source = ../config/terminfo;
       # markdown-oxide config goes in the Obsidian vault root
