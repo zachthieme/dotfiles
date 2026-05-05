@@ -22,7 +22,6 @@ in
       marksman # LSP for notes
       grove
       pike
-      ripgrep
       tick
       wen
       tree

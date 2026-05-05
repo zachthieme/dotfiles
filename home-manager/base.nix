@@ -95,7 +95,6 @@ in
       COLORTERM = "truecolor";
       OBSIDIAN_VAULT = "${config.home.homeDirectory}/CloudDocs/Obsidian";
       _ZO_FZF_OPTS = "--height 20% --reverse";
-      RIPGREP_CONFIG_PATH = "${config.home.homeDirectory}/.config/ripgrep/config";
       MANPAGER = "sh -c 'col -bx | bat -l man -p'";
       MANROFFOPT = "-c";
       OPENSSL_DIR = "${pkgs.openssl.dev}";
@@ -118,7 +117,6 @@ in
     home.file = {
       ".config/aerospace".source = ../config/aerospace;
       ".config/borders".source = ../config/borders;
-      ".config/ripgrep".source = ../config/ripgrep;
       ".terminfo".source = ../config/terminfo;
       # markdown-oxide config goes in the Obsidian vault root
       "CloudDocs/Obsidian/.moxide.toml".source = ../config/moxide/.moxide.toml;
@@ -134,6 +132,18 @@ in
     '';
 
     # Simple program configs kept inline
+    programs.ripgrep = {
+      enable = true;
+      arguments = [
+        "--smart-case"
+        "--hidden"
+        "--glob=!.git/*"
+        "--glob=!.jj/*"
+        "--glob=!node_modules/*"
+        "--glob=!.direnv/*"
+      ];
+    };
+
     programs.fzf = {
       enable = true;
       defaultCommand = "fd --type f";
