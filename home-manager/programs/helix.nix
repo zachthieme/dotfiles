@@ -97,6 +97,15 @@ in
           language-servers = [ "gopls" ];
         }
         {
+          name = "markdown-prompt";
+          scope = "source.markdown";
+          file-types = [{ glob = "*.pt.md"; }];
+          auto-format = false;
+          comment-tokens = ["-" "+" "*" "1." ">" "- [ ]"];
+          language-servers = [ "markdown-oxide" ];
+          grammar = "markdown";
+        }
+        {
           name = "markdown";
           auto-format = true;
           comment-tokens = ["-" "+" "*" "1." ">" "- [ ]"];
