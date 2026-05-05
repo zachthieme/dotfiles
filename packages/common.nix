@@ -14,21 +14,24 @@ in
       figlet
       gh
       git
+      grove
       jq
       jrnl
       jujutsu
       lazyjj
       less
       marksman # LSP for notes
-      grove
       pike
+      presenterm
+      ripgrep
+      slides
       tick
-      wen
       tree
       unzip
       vivid
-      wget
       watch
+      wen
+      wget
       which
       zsh
     ] ++ pkgs.lib.optionals isLinux [
