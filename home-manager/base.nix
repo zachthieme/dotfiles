@@ -115,11 +115,12 @@ in
     # This will be imported by user-specific configurations
     # These paths are relative to the root dotfiles directory
     home.file = {
+      # markdown-oxide config goes in the Obsidian vault root
+      "CloudDocs/Obsidian/.moxide.toml".source = ../config/moxide/.moxide.toml;
+    } // lib.optionalAttrs pkgs.stdenv.isDarwin {
       ".config/aerospace".source = ../config/aerospace;
       ".config/borders".source = ../config/borders;
       ".terminfo".source = ../config/terminfo;
-      # markdown-oxide config goes in the Obsidian vault root
-      "CloudDocs/Obsidian/.moxide.toml".source = ../config/moxide/.moxide.toml;
     };
 
     # Copy jrnl config only if it doesn't exist (jrnl needs to write to its config)

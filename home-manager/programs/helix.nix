@@ -1,6 +1,20 @@
 # Helix editor configuration
 { ... }:
-
+let
+  sharedBinds = {
+    space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
+    space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
+    space.T = [":insert-output pike --scope '%{buffer_name}'"];
+    space.o = {
+      p = [":pipe _hx_ensure_note person" "collapse_selection"];
+      j = [":pipe _hx_ensure_note project" "collapse_selection"];
+      a = [":pipe _hx_ensure_note adr" "collapse_selection"];
+      c = [":pipe _hx_ensure_note company" "collapse_selection"];
+      d = [":pipe _hx_ensure_note decision" "collapse_selection"];
+      i = [":pipe _hx_ensure_note incident" "collapse_selection"];
+    };
+  };
+in
 {
   programs.helix = {
     enable = true;
@@ -50,22 +64,11 @@
           mode.select = "S";
         };
       };
-      keys.normal = {
+      keys.normal = sharedBinds // {
         a = [ "append_mode" "collapse_selection" ];
         i = [ "insert_mode" "collapse_selection" ];
         esc = [ "collapse_selection" "keep_primary_selection" ];
         X = ["extend_line_above"];
-        space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
-        space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
-        space.T = [":insert-output pike --scope '%{buffer_name}'"];
-        space.o = {
-          p = [":pipe _hx_ensure_note person" "collapse_selection"];
-          j = [":pipe _hx_ensure_note project" "collapse_selection"];
-          a = [":pipe _hx_ensure_note adr" "collapse_selection"];
-          c = [":pipe _hx_ensure_note company" "collapse_selection"];
-          d = [":pipe _hx_ensure_note decision" "collapse_selection"];
-          i = [":pipe _hx_ensure_note incident" "collapse_selection"];
-        };
         H = [":buffer-previous"];
         L = [":buffer-next"];
         ret = ["goto_word"];
@@ -79,19 +82,7 @@
           ":redraw"
         ];
       };
-      keys.select = {
-        space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
-        space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
-        space.T = [":insert-output pike --scope '%{buffer_name}'"];
-        space.o = {
-          p = [":pipe _hx_ensure_note person" "collapse_selection"];
-          j = [":pipe _hx_ensure_note project" "collapse_selection"];
-          a = [":pipe _hx_ensure_note adr" "collapse_selection"];
-          c = [":pipe _hx_ensure_note company" "collapse_selection"];
-          d = [":pipe _hx_ensure_note decision" "collapse_selection"];
-          i = [":pipe _hx_ensure_note incident" "collapse_selection"];
-        };
-      };
+      keys.select = sharedBinds;
     };
     languages = {
       language = [

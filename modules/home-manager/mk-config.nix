@@ -12,7 +12,6 @@ home-manager.lib.homeManagerConfiguration {
     inherit system;
     overlays = customOverlays;
     # Allow specific unfree packages (vault has BSL license)
-    # On Darwin, this is handled at the system level in system/darwin.nix
     config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "vault" ];
   };
   modules = [
