@@ -7,6 +7,10 @@
   environment.systemPackages = with pkgs; [
   ];
 
+  homebrew.brews = [
+    "copilot-cli"
+  ];
+
   homebrew.casks = [
     "google-chrome"
   ];
