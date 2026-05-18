@@ -8,7 +8,6 @@
   ];
 
   homebrew.brews = [
-    "copilot-cli"
   ];
 
   homebrew.casks = [

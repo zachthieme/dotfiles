@@ -5,6 +5,9 @@ after-startup-command = []
 # Start AeroSpace at login
 start-at-login = true
 
+# Disable mac hiding
+automatically-unhide-macos-hidden-apps = false
+
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
@@ -59,8 +62,8 @@ cmd-shift-right = 'move right'
 cmd-1 = 'workspace 1_Code'  # terminal
 cmd-2 = 'workspace 2_Mail'  # Mail
 cmd-3 = 'workspace 3_IM'    # Slack/Messages
-cmd-4 = 'workspace 4_Teams' # Browser
-cmd-5 = 'workspace 5_Web'   # Teams
+cmd-4 = 'workspace 4_Teams' # Teams
+cmd-5 = 'workspace 5_Web'   # Web
 cmd-6 = 'workspace 6'       # Docs
 cmd-7 = 'workspace 7'       # misc
 
@@ -85,37 +88,37 @@ cmd-shift-6 = ['move-node-to-workspace 6']
 cmd-shift-7 = ['move-node-to-workspace 7']
 
 # Bind windows to workspaces
-[[on-window-detected]]
-if.app-id = 'com.github.wez.wezterm'
-run = "move-node-to-workspace 1_Code"
+# [[on-window-detected]]
+# if.app-id = 'com.github.wez.wezterm'
+# run = "move-node-to-workspace 1_Code"
 
-[[on-window-detected]]
-if.app-id = 'com.mitchellh.ghostty'
-run = "move-node-to-workspace 1_Code"
+# [[on-window-detected]]
+# if.app-id = 'com.mitchellh.ghostty'
+# run = "move-node-to-workspace 1_Code"
 
-[[on-window-detected]]
-if.app-id = 'com.google.Chrome.app.faolnafnngnfdaknnbpnkhgohbobgegn'
-run = "move-node-to-workspace 2_Mail"
+# [[on-window-detected]]
+# if.app-id = 'com.google.Chrome.app.faolnafnngnfdaknnbpnkhgohbobgegn'
+# run = "move-node-to-workspace 2_Mail"
 
-[[on-window-detected]]
-if.app-id = 'com.brave.Browser'
-run = "move-node-to-workspace 5_Web"
+# [[on-window-detected]]
+# if.app-id = 'com.brave.Browser'
+# run = "move-node-to-workspace 5_Web"
 
-[[on-window-detected]]
-if.app-id = 'com.google.Chrome'
-run = "move-node-to-workspace 5_Web"
+# [[on-window-detected]]
+# if.app-id = 'com.google.Chrome'
+# run = "move-node-to-workspace 5_Web"
 
-[[on-window-detected]]
-if.app-id = 'com.tinyspeck.slackmacgap'
-run = "move-node-to-workspace 3_IM"
+# [[on-window-detected]]
+# if.app-id = 'com.tinyspeck.slackmacgap'
+# run = "move-node-to-workspace 3_IM"
 
-[[on-window-detected]]
-if.app-id = 'com.apple.MobileSMS'
-run = "move-node-to-workspace 3_IM"
+# [[on-window-detected]]
+# if.app-id = 'com.apple.MobileSMS'
+# run = "move-node-to-workspace 3_IM"
 
-[[on-window-detected]]
-if.app-id = 'com.microsoft.teams2'
-run = "move-node-to-workspace 4_Teams"
+# [[on-window-detected]]
+# if.app-id = 'com.microsoft.teams2'
+# run = "move-node-to-workspace 4_Teams"
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
@@ -125,6 +128,6 @@ run = "layout floating"
 if.app-id = 'com.pqrs.Karabiner-Elements'
 run = "layout floating"
 
-[[on-window-detected]]
-if.app-id = "com.mitchellh.ghostty"
-run = ["layout tiling"]
+# [[on-window-detected]]
+# if.app-id = "com.mitchellh.ghostty"
+# run = ["layout tiling"]
