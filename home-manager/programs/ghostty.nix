@@ -21,8 +21,8 @@
       keybind = [
         "alt+left=unbind"
         "alt+right=unbind"
-        "alt+shift+0=text:\\x1b)"
-        "alt+shift+9=text:\\x1b("
+        "\"alt+shift+0=text:\\x1b)\""
+        "\"alt+shift+9=text:\\x1b(\""
       ];
     };
     # Define catppuccin-mocha theme inline without # in hex colors
