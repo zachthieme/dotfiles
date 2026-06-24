@@ -158,11 +158,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778044123,
-        "narHash": "sha256-QTY+Zc/o1gGZ8YUHzlHU4fi3n9UgAOM3lQleGGWlneg=",
+        "lastModified": 1779945789,
+        "narHash": "sha256-1iWPOAGSh64D8SVQ7hJMSU8PcOx0VRCmDHX272wDTbM=",
         "owner": "zachthieme",
         "repo": "grove",
-        "rev": "dc8012b631149a3a6a138a8e73286b079fda0019",
+        "rev": "ea9ac2aa48a857333a179da08270a6c561cb1c78",
         "type": "github"
       },
       "original": {

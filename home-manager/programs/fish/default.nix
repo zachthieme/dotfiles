@@ -3,6 +3,7 @@
 
 {
   imports = [
+    ./macos.nix
     ./notes.nix
     ./tasks.nix
     ./utils.nix
