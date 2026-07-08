@@ -218,38 +218,41 @@
       '';
     };
 
+    _daily_create = {
+      description = "Create today's daily note from template if missing; prints its path";
+      body = ''
+        if not set -q NOTES; or test -z "$NOTES"
+          return 1
+        end
+
+        set -l today (date +%Y-%m-%d)
+        set -l formatted (date +"%A %B %-d, %Y")
+        set -l dir "$NOTES/daily"
+        set -l filepath "$dir/$today.md"
+        mkdir -p "$dir"
+
+        if not test -e "$filepath"
+          set -l id (uuidgen)
+          printf "%s\n" "---" "id: $id" "aliases:" "  - $formatted" "tags: []" "---" "" "# $formatted" "" "## Meetings" "" "## Notes" > "$filepath"
+          echo "Created: $filepath" >&2
+        end
+
+        echo -n "$filepath"
+      '';
+    };
+
     daily = {
       description = "Create or open today's daily note in daily/";
       body = ''
-                _require_notes; or return 1
+        _require_notes; or return 1
 
-                set -l today (date +%Y-%m-%d)
-                set -l formatted (date +"%A %B %-d, %Y")
-                set -l dir "$NOTES/daily"
-                set -l filepath "$dir/$today.md"
-                mkdir -p "$dir"
+        set -l filepath (_daily_create)
+        or return 1
 
-                if not test -e "$filepath"
-                  set -l id (uuidgen)
-                  echo "---
-        id: $id
-        aliases:
-          - $formatted
-        tags: []
-        ---
-
-        # $formatted
-
-        ## Meetings
-
-        ## Notes" > "$filepath"
-                  echo "Created: $filepath"
-                end
-
-                set -l prev_dir $PWD
-                cd $NOTES
-                $EDITOR "$filepath"
-                cd $prev_dir
+        set -l prev_dir $PWD
+        cd $NOTES
+        $EDITOR "$filepath"
+        cd $prev_dir
       '';
     };
 
@@ -865,6 +868,31 @@
                 set_color --bold
                 echo "Template Creation"
                 set_color normal
+
+                # _daily_create
+                set -l dc_path (_daily_create 2>/dev/null)
+                if test "$dc_path" = "$tmpdir/daily/$today.md"; and test -e "$dc_path"; and grep -q '^id:' "$dc_path"
+                  set pass (math $pass + 1); echo "  ✓ _daily_create creates today's note"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _daily_create creates today's note (got: $dc_path)"
+                end
+
+                set -l dc_mtime (stat -c %Y "$dc_path" 2>/dev/null; or stat -f %m "$dc_path")
+                set -l dc_path2 (_daily_create 2>/dev/null)
+                set -l dc_mtime2 (stat -c %Y "$dc_path" 2>/dev/null; or stat -f %m "$dc_path")
+                if test "$dc_path2" = "$dc_path"; and test "$dc_mtime2" = "$dc_mtime"
+                  set pass (math $pass + 1); echo "  ✓ _daily_create idempotent"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _daily_create idempotent"
+                end
+
+                set -e NOTES
+                if not _daily_create >/dev/null 2>&1
+                  set pass (math $pass + 1); echo "  ✓ _daily_create fails with NOTES unset"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _daily_create fails with NOTES unset"
+                end
+                set -gx NOTES "$tmpdir"
 
                 person "Test Person" >/dev/null 2>&1
                 if test -e "$tmpdir/people/Test Person.md"; and grep -q '^id:' "$tmpdir/people/Test Person.md"
