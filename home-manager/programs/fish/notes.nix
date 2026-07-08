@@ -571,6 +571,7 @@
           return 1
         end
 
+        set -l sync_failed 0
         if jj root &>/dev/null
           set -l changes (jj diff --summary 2>/dev/null)
           if test -n "$changes"
@@ -578,9 +579,17 @@
             jj commit -m "notes: auto-save $today"
             echo -e "\033[32mCommitted notes changes.\033[0m"
             jj bookmark move main --to @-
-            jj git push 2>/dev/null
-            and echo -e "\033[32mPushed to remote.\033[0m"
-            or echo -e "\033[33mPush skipped (no remote or nothing to push).\033[0m"
+            set -l remotes (jj git remote list 2>/dev/null)
+            if test (count $remotes) -gt 0
+              jj git push 2>/dev/null
+              and echo -e "\033[32mPushed to remote.\033[0m"
+              or begin
+                echo -e "\033[31mPush FAILED.\033[0m" >&2
+                set sync_failed 1
+              end
+            else
+              echo -e "\033[33mPush skipped (no remote).\033[0m"
+            end
           else
             echo "No changes to commit."
           end
@@ -589,13 +598,14 @@
         end
 
         cd $prev_dir
+        return $sync_failed
       '';
     };
 
     nw-zellij = {
       description = "Open notes workspace in zellij, commit and push on close";
       body = ''
-        _require_notes; or return 1
+        _require_notes_dir; or return 1
 
         if set -q ZELLIJ
           echo "Already inside a zellij session"
@@ -628,7 +638,7 @@
     nw = {
       description = "Open notes workspace in tmux, commit and push on close";
       body = ''
-        _require_notes; or return 1
+        _require_notes_dir; or return 1
 
         if set -q TMUX
           echo "Already inside a tmux session"
@@ -1017,6 +1027,37 @@
                 else
                   set fail (math $fail + 1); echo "  ✗ migrate-ids replaces non-UUID ids (got: $new_id)"
                 end
+
+                set -l remote_dir "$tmpdir/remote.git"
+                git init --bare -q "$remote_dir"
+                set -l pushfail_dir "$tmpdir/pushfail"
+                jj git init "$pushfail_dir" >/dev/null 2>&1
+                jj -R "$pushfail_dir" git remote add origin "$remote_dir"
+                echo "seed" > "$pushfail_dir/f.md"
+                jj -R "$pushfail_dir" commit -m seed >/dev/null 2>&1
+                jj -R "$pushfail_dir" bookmark create main -r @- >/dev/null 2>&1
+                jj -R "$pushfail_dir" git push --allow-new >/dev/null 2>&1
+                rm -rf "$remote_dir"
+                echo "more" >> "$pushfail_dir/f.md"
+                set -gx NOTES "$pushfail_dir"
+                if not notes-sync >/dev/null 2>&1
+                  set pass (math $pass + 1); echo "  ✓ notes-sync fails when push fails"
+                else
+                  set fail (math $fail + 1); echo "  ✗ notes-sync fails when push fails"
+                end
+                set -gx NOTES "$tmpdir"
+
+                set -l _saved_tmux (set -q TMUX; and echo "$TMUX"; or echo "")
+                set -gx TMUX "test-guard"
+                set -gx NOTES "$tmpdir/missing-notes-dir"
+                set -l nw_out (nw 2>&1)
+                if string match -q '*does not exist*' -- "$nw_out"
+                  set pass (math $pass + 1); echo "  ✓ nw fails fast when NOTES dir missing"
+                else
+                  set fail (math $fail + 1); echo "  ✗ nw fails fast when NOTES dir missing (got: $nw_out)"
+                end
+                set -gx NOTES "$tmpdir"
+                if test -n "$_saved_tmux"; set -gx TMUX "$_saved_tmux"; else; set -e TMUX; end
 
                 # ── Teardown ──
                 rm -rf "$tmpdir"
