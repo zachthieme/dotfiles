@@ -3,8 +3,9 @@
   # Single macro per binding (helix forbids macros inside command sequences):
   # mi[ selects the innermost [...] pair around the cursor so these work from
   # anywhere inside a [[wikilink]] (no-op fallback to the existing selection),
-  # then :pipe creates the note and ; collapses the selection
-  noteBind = type: "@mi[:pipe<space>_hx_ensure_note<space>${type}<ret>;";
+  # then :pipe creates the note, ; collapses the selection, and :write saves
+  # the buffer so the LSP re-indexes and the new note's reference resolves
+  noteBind = type: "@mi[:pipe<space>_hx_ensure_note<space>${type}<ret>;:write<ret>";
   sharedBinds = {
     space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
     space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];

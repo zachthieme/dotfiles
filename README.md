@@ -185,10 +185,10 @@ Keybindings for working with notes in helix (`home-manager/programs/helix.nix`):
 Each wikilink-based `space o` binding is a single keyboard macro (helix does not allow macros inside command sequences), e.g. for projects:
 
 ```
-"@mi[:pipe<space>_hx_ensure_note<space>project<ret>;"
+"@mi[:pipe<space>_hx_ensure_note<space>project<ret>;:write<ret>"
 ```
 
-The macro replays `mi[` to select the contents of the innermost `[...]` pair around the cursor, so the bindings work from anywhere inside a `[[wikilink]]` — no manual selection needed; with no surrounding brackets, the current selection is used instead. The selected text is then piped through `_hx_ensure_note`, which creates the note from a template if it doesn't exist and echoes the text back unchanged, leaving the buffer untouched. The trailing `;` collapses the selection.
+The macro replays `mi[` to select the contents of the innermost `[...]` pair around the cursor, so the bindings work from anywhere inside a `[[wikilink]]` — no manual selection needed; with no surrounding brackets, the current selection is used instead. The selected text is then piped through `_hx_ensure_note`, which creates the note from a template if it doesn't exist and echoes the text back unchanged, leaving the buffer untouched. The trailing `;` collapses the selection, and `:write` saves the buffer so the LSP re-indexes and the new note's reference resolves immediately.
 
 ### Note Templates
 
