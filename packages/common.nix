@@ -15,7 +15,6 @@ in
       gh
       git
       grove
-      herdr
       jq
       jrnl
       jujutsu
