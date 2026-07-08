@@ -36,7 +36,6 @@ config/              # Static dotfiles symlinked into the home directory
   borders/           # Window border styling
   jrnl/              # Journal CLI config
   moxide/            # Markdown-oxide LSP config (symlinked into the notes vault)
-  pike/              # Pike task dashboard config
   terminfo/          # Terminal capabilities (ghostty)
 docs/                # Plans and design notes
 home-manager/        # Home Manager modules
