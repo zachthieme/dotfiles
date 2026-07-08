@@ -566,6 +566,10 @@
 
         set -l prev_dir $PWD
         cd $NOTES
+        or begin
+          echo "notes-sync: cannot cd to NOTES ($NOTES)" >&2
+          return 1
+        end
 
         if jj root &>/dev/null
           set -l changes (jj diff --summary 2>/dev/null)
@@ -980,6 +984,15 @@
                 set_color --bold
                 echo "Sync & Migration"
                 set_color normal
+
+                set -l _saved_notes $NOTES
+                set -gx NOTES "$tmpdir/does-not-exist"
+                if not notes-sync >/dev/null 2>&1
+                  set pass (math $pass + 1); echo "  ✓ notes-sync fails when NOTES dir missing"
+                else
+                  set fail (math $fail + 1); echo "  ✗ notes-sync fails when NOTES dir missing"
+                end
+                set -gx NOTES "$_saved_notes"
 
                 set -l sync_output (notes-sync 2>/dev/null)
                 if string match -q '*not a jj repository*' -- "$sync_output"
