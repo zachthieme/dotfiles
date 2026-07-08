@@ -15,17 +15,16 @@
   ...
 }: let
   systemModule = ../../system/darwin.nix;
-  osModule = ../../overlays/os/darwin.nix;
   contextSystemModule =
     helpers.selectContextModule
     isWork
-    ../../overlays/context/system/home.nix
-    ../../overlays/context/system/work.nix;
+    ../../contexts/system/home.nix
+    ../../contexts/system/work.nix;
   contextHomeModule =
     helpers.selectContextModule
     isWork
-    ../../overlays/context/home-manager/home.nix
-    ../../overlays/context/home-manager/work.nix;
+    ../../contexts/home-manager/home.nix
+    ../../contexts/home-manager/work.nix;
 in
   nix-darwin.lib.darwinSystem {
     modules = [
@@ -35,7 +34,6 @@ in
         nixpkgs.config.allowUnfreePredicate = helpers.allowUnfreePredicate;
       }
       systemModule
-      osModule
       contextSystemModule
       {
         local.hostname = hostname;

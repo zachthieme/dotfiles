@@ -17,8 +17,8 @@
   contextModule =
     helpers.selectContextModule
     isWork
-    ../../overlays/context/home-manager/home.nix
-    ../../overlays/context/home-manager/work.nix;
+    ../../contexts/home-manager/home.nix
+    ../../contexts/home-manager/work.nix;
 in
   home-manager.lib.homeManagerConfiguration {
     pkgs = import nixpkgs {

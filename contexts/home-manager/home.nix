@@ -1,7 +1,7 @@
 # Home-specific Home Manager configuration
 {pkgs, ...}: {
   imports = [
-    ../../../home-manager/base.nix
+    ../../home-manager/base.nix
   ];
 
   # Home-specific shell abbreviations

@@ -5,7 +5,7 @@
 # (e.g., different shell abbreviations, work-only packages, or work-specific dotfiles).
 {pkgs, ...}: {
   imports = [
-    ../../../home-manager/base.nix
+    ../../home-manager/base.nix
   ];
 
   # Work-specific shell abbreviations

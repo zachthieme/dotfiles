@@ -1,4 +1,5 @@
-# Base system configuration for nix-darwin and NixOS machines
+# System configuration shared by all nix-darwin machines
+# (packages, users, hostname, Homebrew, macOS defaults)
 # Note: Linux Home Manager-only configs use home-manager/base.nix instead
 {
   pkgs,
@@ -64,6 +65,57 @@
     nix.enable = false;
     # Required even with nix.enable = false for nix.conf generation
     nix.package = pkgs.nix;
+    nix.settings.experimental-features = ["nix-command" "flakes"];
+
+    # Homebrew packages and casks shared by all macOS machines
+    # (context-specific casks live in contexts/system/{home,work}.nix)
+    homebrew = {
+      enable = true;
+      taps = [
+        "FelixKratz/formulae"
+      ];
+      brews = [
+        "FelixKratz/formulae/borders"
+        "spotify_player"
+        "bazelisk"
+      ];
+      casks = [
+        "balenaetcher"
+        "bartender"
+        "dropbox"
+        "ghostty"
+        "homerow"
+        "keycastr"
+        "logi-options+"
+        "nikitabobko/tap/aerospace"
+        "spotify"
+        "zed"
+      ];
+    };
+
+    # macOS defaults
+    system.defaults = {
+      dock.autohide = true;
+      dock.expose-group-apps = true;
+      dock.expose-animation-duration = 0.1;
+      dock.mru-spaces = false;
+      finder.AppleShowAllExtensions = true;
+      finder.FXPreferredViewStyle = "clmv";
+      finder.ShowPathbar = true;
+      NSGlobalDomain.NSWindowShouldDragOnGesture = true;
+      screencapture.location = "~/Pictures/screenshots";
+      screensaver.askForPasswordDelay = 10;
+      spaces.spans-displays = true;
+    };
+
+    # Keyboard settings
+    system.keyboard = {
+      enableKeyMapping = true;
+      remapCapsLockToEscape = true;
+    };
+
+    # Enable Touch ID for sudo
+    security.pam.services.sudo_local.touchIdAuth = true;
 
     # Unfree packages are allowed via helpers.allowUnfreePredicate,
     # set by the builder in modules/darwin/mk-config.nix
