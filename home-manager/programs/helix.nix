@@ -1,19 +1,21 @@
 # Helix editor configuration
 {...}: let
+  # Single macro per binding (helix forbids macros inside command sequences):
+  # mi[ selects the innermost [...] pair around the cursor so these work from
+  # anywhere inside a [[wikilink]] (no-op fallback to the existing selection),
+  # then :pipe creates the note and ; collapses the selection
+  noteBind = type: "@mi[:pipe<space>_hx_ensure_note<space>${type}<ret>;";
   sharedBinds = {
     space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
     space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
     space.T = [":insert-output pike --scope '%{buffer_name}'"];
-    # "@mi[" selects the innermost [...] pair around the cursor, so these work
-    # from anywhere inside a [[wikilink]]; with no surrounding brackets the
-    # match is a no-op and the existing selection is piped instead
     space.o = {
-      p = ["@mi[" ":pipe _hx_ensure_note person" "collapse_selection"];
-      j = ["@mi[" ":pipe _hx_ensure_note project" "collapse_selection"];
-      a = ["@mi[" ":pipe _hx_ensure_note adr" "collapse_selection"];
-      c = ["@mi[" ":pipe _hx_ensure_note company" "collapse_selection"];
-      d = ["@mi[" ":pipe _hx_ensure_note decision" "collapse_selection"];
-      i = ["@mi[" ":pipe _hx_ensure_note incident" "collapse_selection"];
+      p = noteBind "person";
+      j = noteBind "project";
+      a = noteBind "adr";
+      c = noteBind "company";
+      d = noteBind "decision";
+      i = noteBind "incident";
     };
   };
 in {
