@@ -45,6 +45,11 @@
       url = "github:zachthieme/grove";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    herdr = {
+      url = "github:ogulcancelik/herdr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -60,6 +65,7 @@
       tick,
       wen,
       grove,
+      herdr,
       ...
     }:
     let
@@ -71,6 +77,7 @@
       customOverlays = [
         (mkOverlay "claude-code" claude-code)
         (mkOverlay "grove" grove)
+        (mkOverlay "herdr" herdr)
         (mkOverlay "pike" pike)
         (mkOverlay "tick" tick)
         (mkOverlay "wen" wen)
