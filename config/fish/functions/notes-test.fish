@@ -1,0 +1,381 @@
+function notes-test --description="Run tests for notes system functions"
+    set -l pass 0
+    set -l fail 0
+    set -l _had_NOTES (set -q NOTES; and echo yes; or echo no)
+    set -l _had_EDITOR (set -q EDITOR; and echo yes; or echo no)
+    set -l _orig_NOTES "$NOTES"
+    set -l _orig_EDITOR "$EDITOR"
+    set -l tmpdir (mktemp -d)
+    set -gx NOTES "$tmpdir"
+    set -gx EDITOR true
+    set -l today (date +%Y-%m-%d)
+
+    echo ""
+    set_color --bold cyan
+    echo "═══ Notes Test Suite ═══"
+    set_color normal
+
+    # ── Helper Functions ──
+    echo ""
+    set_color --bold
+    echo "Helper Functions"
+    set_color normal
+
+    # _slugify
+    if test (_slugify "hello world") = hello-world
+        set pass (math $pass + 1)
+        echo "  ✓ _slugify basic"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _slugify basic"
+    end
+
+    if test (_slugify "My Cool Project") = my-cool-project
+        set pass (math $pass + 1)
+        echo "  ✓ _slugify multi-word"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _slugify multi-word"
+    end
+
+    if test (_slugify "already-hyphenated") = already-hyphenated
+        set pass (math $pass + 1)
+        echo "  ✓ _slugify already-hyphenated"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _slugify already-hyphenated"
+    end
+
+    # _titlecase
+    if test (_titlecase "john doe") = "John Doe"
+        set pass (math $pass + 1)
+        echo "  ✓ _titlecase basic"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _titlecase basic"
+    end
+
+    if test (_titlecase "JOHN DOE") = "John Doe"
+        set pass (math $pass + 1)
+        echo "  ✓ _titlecase uppercase input"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _titlecase uppercase input"
+    end
+
+    # _is_gnu_date
+    if _is_gnu_date 2>/dev/null
+        set pass (math $pass + 1)
+        echo "  ✓ _is_gnu_date detects GNU date"
+    else
+        set pass (math $pass + 1)
+        echo "  ✓ _is_gnu_date detects BSD date"
+    end
+
+    # _require_notes
+    if _require_notes >/dev/null 2>&1
+        set pass (math $pass + 1)
+        echo "  ✓ _require_notes with NOTES set"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _require_notes with NOTES set"
+    end
+
+    set -e NOTES
+    if not _require_notes >/dev/null 2>&1
+        set pass (math $pass + 1)
+        echo "  ✓ _require_notes with NOTES unset"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _require_notes with NOTES unset"
+    end
+    set -gx NOTES "$tmpdir"
+
+    # _require_notes_dir
+    if _require_notes_dir >/dev/null 2>&1
+        set pass (math $pass + 1)
+        echo "  ✓ _require_notes_dir with valid dir"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _require_notes_dir with valid dir"
+    end
+
+    # _hx_toggle_task
+    set -l checked (echo "- [ ] my task" | _hx_toggle_task)
+    if test "$checked" = "- [x] my task @completed($today)"
+        set pass (math $pass + 1)
+        echo "  ✓ _hx_toggle_task check"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _hx_toggle_task check (got: $checked)"
+    end
+
+    set -l unchecked (echo "- [x] my task @completed($today)" | _hx_toggle_task)
+    if test "$unchecked" = "- [ ] my task"
+        set pass (math $pass + 1)
+        echo "  ✓ _hx_toggle_task uncheck"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _hx_toggle_task uncheck (got: $unchecked)"
+    end
+
+    set -l passthrough (echo "regular line" | _hx_toggle_task)
+    if test "$passthrough" = "regular line"
+        set pass (math $pass + 1)
+        echo "  ✓ _hx_toggle_task passthrough"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _hx_toggle_task passthrough (got: $passthrough)"
+    end
+
+    # ── Template Creation ──
+    echo ""
+    set_color --bold
+    echo "Template Creation"
+    set_color normal
+
+    # _daily_create
+    set -l dc_path (_daily_create 2>/dev/null)
+    if test "$dc_path" = "$tmpdir/daily/$today.md"; and test -e "$dc_path"; and grep -q '^id:' "$dc_path"
+        set pass (math $pass + 1)
+        echo "  ✓ _daily_create creates today's note"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _daily_create creates today's note (got: $dc_path)"
+    end
+
+    echo SENTINEL-do-not-clobber >>"$dc_path"
+    set -l dc_path2 (_daily_create 2>/dev/null)
+    if test "$dc_path2" = "$dc_path"; and grep -q SENTINEL-do-not-clobber "$dc_path"
+        set pass (math $pass + 1)
+        echo "  ✓ _daily_create idempotent"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _daily_create idempotent"
+    end
+
+    set -e NOTES
+    if not _daily_create >/dev/null 2>&1
+        set pass (math $pass + 1)
+        echo "  ✓ _daily_create fails with NOTES unset"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _daily_create fails with NOTES unset"
+    end
+    set -gx NOTES "$tmpdir"
+
+    person "Test Person" >/dev/null 2>&1
+    if test -e "$tmpdir/people/Test Person.md"; and grep -q '^id:' "$tmpdir/people/Test Person.md"
+        set pass (math $pass + 1)
+        echo "  ✓ person"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ person"
+    end
+
+    project "Test Project" >/dev/null 2>&1
+    if test -e "$tmpdir/projects/Test Project.md"; and grep -q '^id:' "$tmpdir/projects/Test Project.md"
+        set pass (math $pass + 1)
+        echo "  ✓ project"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ project"
+    end
+
+    adr "Test ADR" >/dev/null 2>&1
+    if test -e "$tmpdir/decisions/Test Adr.md"; and grep -q '^id:' "$tmpdir/decisions/Test Adr.md"
+        set pass (math $pass + 1)
+        echo "  ✓ adr"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ adr"
+    end
+
+    decision "Test Decision" >/dev/null 2>&1
+    if test -e "$tmpdir/decisions/Test Decision.md"; and grep -q '^id:' "$tmpdir/decisions/Test Decision.md"
+        set pass (math $pass + 1)
+        echo "  ✓ decision"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ decision"
+    end
+
+    incident "Test Incident" >/dev/null 2>&1
+    if test -e "$tmpdir/incidents/Test Incident.md"; and grep -q '^id:' "$tmpdir/incidents/Test Incident.md"
+        set pass (math $pass + 1)
+        echo "  ✓ incident"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ incident"
+    end
+
+    company "Test Company" >/dev/null 2>&1
+    if test -e "$tmpdir/companies/Test Company.md"; and grep -q '^id:' "$tmpdir/companies/Test Company.md"
+        set pass (math $pass + 1)
+        echo "  ✓ company"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ company"
+    end
+
+    daily >/dev/null 2>&1
+    if test -e "$tmpdir/daily/$today.md"; and grep -q '^id:' "$tmpdir/daily/$today.md"
+        set pass (math $pass + 1)
+        echo "  ✓ daily"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ daily"
+    end
+
+    weekly >/dev/null 2>&1
+    if test -e "$tmpdir/reviews/$today.md"; and grep -q '^id:' "$tmpdir/reviews/$today.md"
+        set pass (math $pass + 1)
+        echo "  ✓ weekly"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ weekly"
+    end
+
+    set -l month (date +%Y-%m)
+    monthly >/dev/null 2>&1
+    if test -e "$tmpdir/monthly/$month.md"; and grep -q '^id:' "$tmpdir/monthly/$month.md"
+        set pass (math $pass + 1)
+        echo "  ✓ monthly"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ monthly"
+    end
+
+    set -l year (date +%Y)
+    quarterly Q1 $year >/dev/null 2>&1
+    if test -e "$tmpdir/quarterly/$year-Q1.md"; and grep -q '^id:' "$tmpdir/quarterly/$year-Q1.md"
+        set pass (math $pass + 1)
+        echo "  ✓ quarterly"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ quarterly"
+    end
+
+    # review weekly
+    review weekly >/dev/null 2>&1
+    set -l review_file (find "$tmpdir/reviews" -name 'week-*.md' 2>/dev/null | head -1)
+    if test -n "$review_file"; and grep -q 'Completed Tasks' "$review_file"; and grep -q Overdue "$review_file"
+        set pass (math $pass + 1)
+        echo "  ✓ review weekly"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ review weekly"
+    end
+
+    # ── Sync & Migration ──
+    echo ""
+    set_color --bold
+    echo "Sync & Migration"
+    set_color normal
+
+    set -l _saved_notes $NOTES
+    set -l _saved_cwd $PWD
+    cd $tmpdir
+    set -gx NOTES "$tmpdir/does-not-exist"
+    if not notes-sync >/dev/null 2>&1
+        set pass (math $pass + 1)
+        echo "  ✓ notes-sync fails when NOTES dir missing"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ notes-sync fails when NOTES dir missing"
+    end
+    set -gx NOTES "$_saved_notes"
+    cd $_saved_cwd
+
+    set -l sync_output (notes-sync 2>/dev/null)
+    if string match -q '*not a jj repository*' -- "$sync_output"
+        set pass (math $pass + 1)
+        echo "  ✓ notes-sync handles non-jj dir"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ notes-sync handles non-jj dir (got: $sync_output)"
+    end
+
+    mkdir -p "$tmpdir/migrate-test"
+    echo "---
+id: weekly-2024-01-01
+tags: [test]
+---
+# Test" >"$tmpdir/migrate-test/test.md"
+    migrate-ids >/dev/null 2>&1
+    set -l new_id (awk '/^---$/{n++; next} n==1 && /^id:/{sub(/^id: */, ""); print; exit}' "$tmpdir/migrate-test/test.md")
+    if string match -rq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' -- "$new_id"
+        set pass (math $pass + 1)
+        echo "  ✓ migrate-ids replaces non-UUID ids"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ migrate-ids replaces non-UUID ids (got: $new_id)"
+    end
+
+    set -l remote_dir "$tmpdir/remote.git"
+    git init --bare -q "$remote_dir"
+    set -l pushfail_dir "$tmpdir/pushfail"
+    jj git init "$pushfail_dir" >/dev/null 2>&1
+    jj -R "$pushfail_dir" git remote add origin "$remote_dir"
+    echo seed >"$pushfail_dir/f.md"
+    jj -R "$pushfail_dir" commit -m seed >/dev/null 2>&1
+    jj -R "$pushfail_dir" bookmark create main -r @- >/dev/null 2>&1
+    jj -R "$pushfail_dir" git push --allow-new >/dev/null 2>&1
+    rm -rf "$remote_dir"
+    echo more >>"$pushfail_dir/f.md"
+    set -gx NOTES "$pushfail_dir"
+    if not notes-sync >/dev/null 2>&1
+        set pass (math $pass + 1)
+        echo "  ✓ notes-sync fails when push fails"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ notes-sync fails when push fails"
+    end
+    set -gx NOTES "$tmpdir"
+
+    set -l _saved_tmux (set -q TMUX; and echo "$TMUX"; or echo "")
+    set -gx TMUX test-guard
+    set -gx NOTES "$tmpdir/missing-notes-dir"
+    set -l nw_out (nw 2>&1)
+    if string match -q '*does not exist*' -- "$nw_out"
+        set pass (math $pass + 1)
+        echo "  ✓ nw fails fast when NOTES dir missing"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ nw fails fast when NOTES dir missing (got: $nw_out)"
+    end
+    set -gx NOTES "$tmpdir"
+    if test -n "$_saved_tmux"
+        set -gx TMUX "$_saved_tmux"
+    else
+        set -e TMUX
+    end
+
+    # ── Teardown ──
+    rm -rf "$tmpdir"
+    if test "$_had_NOTES" = yes
+        set -gx NOTES "$_orig_NOTES"
+    else
+        set -e NOTES
+    end
+    if test "$_had_EDITOR" = yes
+        set -gx EDITOR "$_orig_EDITOR"
+    else
+        set -e EDITOR
+    end
+
+    # ── Summary ──
+    echo ""
+    set -l total (math $pass + $fail)
+    if test $fail -eq 0
+        set_color --bold green
+        echo "All $total tests passed."
+    else
+        set_color --bold red
+        echo "$fail of $total tests failed."
+    end
+    set_color normal
+    echo ""
+
+    return $fail
+end

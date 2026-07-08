@@ -1,10 +1,8 @@
-# Fish shell configuration — settings, abbreviations, plugins, and shared helpers
+# Fish shell configuration — settings, abbreviations, and plugins
+# Functions live as real .fish files in config/fish/functions/ (see functions.nix)
 {pkgs, ...}: {
   imports = [
-    ./macos.nix
-    ./notes.nix
-    ./tasks.nix
-    ./utils.nix
+    ./functions.nix
   ];
 
   programs.fish = {
@@ -70,56 +68,6 @@
       ls = "eza";
       ll = "eza -la --git";
       lt = "eza -T --level=2";
-    };
-
-    functions = {
-      _require_notes = {
-        description = "Check NOTES env var is set and non-empty";
-        body = ''
-          if not set -q NOTES; or test -z "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES environment variable not set"
-            return 1
-          end
-        '';
-      };
-
-      _require_notes_dir = {
-        description = "Check NOTES env var is set and directory exists";
-        body = ''
-          _require_notes; or return 1
-          if not test -d "$NOTES"
-            echo -e "\033[31mError:\033[0m NOTES directory does not exist: $NOTES"
-            return 1
-          end
-        '';
-      };
-
-      _slugify = {
-        description = "Convert string to lowercase slug";
-        body = ''
-          string lower -- $argv | string replace -a ' ' '-'
-        '';
-      };
-
-      _titlecase = {
-        description = "Convert string to Title Case";
-        body = ''
-          set -l result
-          for word in (string split ' ' -- $argv)
-            set -l first (string sub -l 1 -- $word | string upper)
-            set -l rest (string sub -s 2 -- $word | string lower)
-            set result $result "$first$rest"
-          end
-          string join ' ' -- $result
-        '';
-      };
-
-      _is_gnu_date = {
-        description = "Test whether date is GNU coreutils (vs BSD)";
-        body = ''
-          date -d "1 day ago" +%Y-%m-%d &>/dev/null
-        '';
-      };
     };
 
     plugins = [
