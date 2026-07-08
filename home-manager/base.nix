@@ -96,6 +96,7 @@ in {
     home.sessionVariables = {
       EDITOR = "hx";
       VISUAL = "hx";
+      CARGO_TARGET_DIR = "${config.home.homeDirectory}/.cache/cargo-target";
       COLORTERM = "truecolor";
       NOTES = config.dotfiles.notesDir;
       OBSIDIAN_VAULT = "${config.home.homeDirectory}/CloudDocs/Obsidian";

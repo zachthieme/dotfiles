@@ -9,8 +9,8 @@ For contributor-specific technical details, see [Repository Guidelines](./CLAUDE
 - **Cross-platform**: macOS via nix-darwin, Linux via standalone Home Manager
 - **Fish shell**: Primary shell with vi keybindings, custom functions, and abbreviations
 - **Catppuccin theming**: Consistent mocha theme across terminal, editor, and tools
-- **Notes system**: Plain-markdown notes with zellij workspace, task tracking, and jj sync
-- **Helix editor**: Modal editor with LSP support for Go, Rust, Nix, TypeScript, and more
+- **Notes system**: Plain-markdown notes with tmux workspace, task tracking, and jj sync
+- **Helix editor**: Modal editor with LSP support for Go, Nix, Zig, C/C++, Bash, Markdown, and more
 - **Modern CLI tools**: eza, bat, fzf, zoxide, ripgrep, fd, jujutsu, lazygit
 
 ## Quick Start
@@ -31,13 +31,14 @@ The script will:
 
 ```
 system/              # Platform-specific system configs (darwin.nix for macOS)
-config/              # Static dotfiles symlinked to ~/.config
+config/              # Static dotfiles symlinked into the home directory
   aerospace/         # macOS tiling window manager
   borders/           # Window border styling
   jrnl/              # Journal CLI config
-  moxide/            # Markdown-oxide LSP config (for Obsidian)
-  ripgrep/           # Ripgrep config
+  moxide/            # Markdown-oxide LSP config (symlinked into the notes vault)
+  pike/              # Pike task dashboard config
   terminfo/          # Terminal capabilities (ghostty)
+docs/                # Plans and design notes
 home-manager/        # Home Manager modules
   base.nix           # Shared user config (programs, dotfiles, env vars)
   programs/          # Per-program configs (fish, git, helix, etc.)
@@ -58,15 +59,15 @@ install.sh           # Bootstrap script
 
 Hosts are defined in `modules/hosts/definitions.nix`. Current hosts include:
 
-| Host          | System         | Context |
-| ------------- | -------------- | ------- |
-| cortex        | aarch64-darwin | home    |
-| malv2         | x86_64-darwin  | home    |
-| zthieme34911  | aarch64-darwin | work    |
-| srv722852     | x86_64-linux   | home    |
-| omarchy       | x86_64-linux   | home    |
-| pi5           | aarch64-linux  | home    |
-| pi-nomad1/2/3 | aarch64-linux  | home    |
+| Host                 | System         | Context | Profile |
+| -------------------- | -------------- | ------- | ------- |
+| cortex               | aarch64-darwin | home    | full    |
+| malv2                | x86_64-darwin  | home    | full    |
+| zthieme34911         | aarch64-darwin | work    | full    |
+| prod, dev, util      | x86_64-linux   | home    | full    |
+| claude               | x86_64-linux   | home    | full    |
+| omarchy              | x86_64-linux   | home    | full    |
+| pi5, pi-nomad1/2/3   | aarch64-linux  | home    | core    |
 
 ## Common Tasks
 
@@ -101,7 +102,7 @@ home-manager switch -b backup --flake .#<hostname>
 
 ### Add software
 
-- **All machines**: Add to `profiles.basePackages` in `packages/common.nix`
+- **All machines**: Add to the appropriate tier in `packages/common.nix` (`corePackages`, `devPackages`, or `heavyPackages`)
 - **One host**: Add to that host's `packages` list in `definitions.nix`
 - **macOS Homebrew**: Add to `overlays/os/darwin.nix` or context modules in `overlays/context/system/`
 
@@ -130,19 +131,19 @@ The tools each handle a different part of the workflow:
 - **Wen** shows a terminal calendar with due dates from pike highlighted inline
 - **Helix** provides keybindings for toggling task checkboxes and creating linked notes from selected text
 - **Fish functions** create templated notes and handle search, sync, and workspace management
-- **Zellij** ties everything into a multi-pane workspace via `nw`
+- **Tmux** ties everything into a multi-pane workspace via `nw` (a zellij variant is available as `nw-zellij`)
 
 ### Workspace
 
-Run `nw` to open a zellij workspace with three tabs:
+Run `nw` to open a tmux workspace with three windows:
 
-| Tab | Contents |
+| Window | Contents |
 | --- | --- |
-| **daily** | Pike priority view (left), daily note in editor (center), wen calendar + tick countdown (right) |
+| **daily** | Pike priority view + wen calendar (top), daily note in editor + tick countdown (bottom) |
 | **tasks** | Full pike dashboard with all configured views |
 | **shell** | General-purpose shell |
 
-On exit, `nw` commits and pushes all changes via `notes-sync`.
+On exit, `nw` commits and pushes all changes via `notes-sync` (`nwk` kills the session).
 
 ### Tasks
 
@@ -157,7 +158,7 @@ Pike queries these across all notes. Views are configured in `home-manager/progr
 
 | View | Query | Purpose |
 | --- | --- | --- |
-| Priority | `open and (@weekly or @today)` | Tasks to focus on now |
+| Priority | `open and ((@weekly or @today) or (@due <= today))` | Tasks to focus on now |
 | Overdue | `open and @due < today` | Past-due tasks |
 | Next 3 Days | `open and @due >= today and @due <= today+3d` | Upcoming deadlines |
 | Talk | `open and @talk` | Items to discuss with someone |
@@ -171,16 +172,16 @@ Keybindings for working with notes in helix (`home-manager/programs/helix.nix`):
 | Binding | Action |
 | --- | --- |
 | `space x` | Toggle task completion — checks/unchecks the box and stamps `@completed(YYYY-MM-DD)` |
-| `space t` | Strip checkbox formatting from a line |
+| `space t` | Toggle checkbox formatting on a line (list item ↔ task) |
 | `space T` | Insert pike task list scoped to the current file |
-| `space o p` | Create or open a person note from selected `[[Name]]` text |
-| `space o j` | Create or open a project note |
-| `space o c` | Create or open a company note |
-| `space o a` | Create or open an ADR |
-| `space o d` | Create or open a decision document |
-| `space o i` | Create or open an incident report |
+| `space o p` | Create a person note from the `[[wikilink]]` under the cursor |
+| `space o j` | Create a project note |
+| `space o c` | Create a company note |
+| `space o a` | Create an ADR |
+| `space o d` | Create a decision document |
+| `space o i` | Create an incident report |
 
-The `space o` bindings work by piping selected text through `_hx_ensure_note`, which creates the note from a template if it doesn't exist and writes the path to `/tmp/hx_note_path` for helix to open.
+The `space o` bindings auto-select the contents of the innermost `[...]` pair around the cursor (via an `mi[` macro), so they work from anywhere inside a `[[wikilink]]`; with no surrounding brackets, the current selection is used instead. The text is piped through `_hx_ensure_note`, which creates the note from a template if it doesn't exist and echoes the text back unchanged, leaving the buffer untouched.
 
 ### Note Templates
 
@@ -198,7 +199,7 @@ Fish functions create markdown files with YAML frontmatter (UUID id, aliases, ta
 | `adr <title>` | `decisions/` | Architecture decision record |
 | `decision <title>` | `decisions/` | Decision document with options and tradeoffs |
 | `incident <title>` | `incidents/` | Incident report with timeline and action items |
-| `review [week\|month\|quarter]` | `reviews/` | Review pre-filled with completed/overdue tasks for LLM analysis |
+| `review [weekly\|monthly\|quarterly]` | `reviews/` | Review pre-filled with completed/overdue tasks for LLM analysis |
 
 ### Search and Navigation
 
@@ -230,7 +231,7 @@ Other fish functions beyond the notes system:
 | --------------------- | ---------------------------------- |
 | `logg`                | Interactive git log explorer       |
 | `gff <file>`          | Git file history browser           |
-| `fif`, `fifs`, `fifc` | Find-in-files with fzf             |
+| `fif`, `fifs`        | Find-in-files with fzf             |
 | `k`                   | Interactive process killer         |
 | `mkdd`                | Create directory with today's date |
 | `nix-cleanup`         | Clean up Nix store                 |
