@@ -16,7 +16,7 @@
       c = noteBind "company";
       d = noteBind "decision";
       i = noteBind "incident";
-      t = [":open %sh{_daily_create}"];
+      t = [":open %sh{_daily_create}"]; # no selection needed, so a plain command sequence works
     };
   };
 in {

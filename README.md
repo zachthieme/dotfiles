@@ -143,7 +143,7 @@ Run `nw` to open a tmux workspace with four windows:
 | **herdr** | Herdr workspace for AI coding agents |
 | **shell** | General-purpose shell |
 
-On exit, `nw` commits and pushes all changes via `notes-sync` (`nwk` kills the session).
+A small pane in the daily window runs `notes-sync` hourly while the session is open, and `nw` runs a final sync on exit (`nwk` kills the session).
 
 ### Tasks
 
@@ -180,8 +180,9 @@ Keybindings for working with notes in helix (`home-manager/programs/helix.nix`):
 | `space o a` | Create an ADR |
 | `space o d` | Create a decision document |
 | `space o i` | Create an incident report |
+| `space o t` | Create or open today's daily note |
 
-Each `space o` binding is a single keyboard macro (helix does not allow macros inside command sequences), e.g. for projects:
+Each wikilink-based `space o` binding is a single keyboard macro (helix does not allow macros inside command sequences), e.g. for projects:
 
 ```
 "@mi[:pipe<space>_hx_ensure_note<space>project<ret>;"
@@ -227,7 +228,7 @@ Fish functions create markdown files with YAML frontmatter (UUID id, aliases, ta
 
 ### Syncing
 
-`notes-sync` uses jujutsu to commit with a timestamp message and push to a remote. It checks for changes first to avoid empty commits. The `nw` workspace calls this automatically on exit.
+`notes-sync` uses jujutsu to commit with a timestamp message and push to a remote. It checks for changes first to avoid empty commits. The `nw` workspace calls this automatically every hour and on exit.
 
 ## Fish Shell Functions
 
