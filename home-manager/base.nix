@@ -121,8 +121,8 @@ in {
     # These paths are relative to the root dotfiles directory
     home.file =
       {
-        # markdown-oxide config goes in the Obsidian vault root
-        "CloudDocs/Obsidian/.moxide.toml".source = ../config/moxide/.moxide.toml;
+        # markdown-oxide config goes in the notes vault root
+        "CloudDocs/Notes/.moxide.toml".source = ../config/moxide/.moxide.toml;
       }
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         ".config/aerospace".source = ../config/aerospace;

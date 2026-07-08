@@ -19,6 +19,7 @@ in {
         jujutsu
         lazyjj
         less
+        markdown-oxide # LSP for notes
         marksman # LSP for notes
         pike
         presenterm
