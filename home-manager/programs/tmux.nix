@@ -1,8 +1,6 @@
 # Tmux terminal multiplexer configuration
 # Navigation mirrors zellij: Alt+h/j/k/l for panes, Alt+1-9 for windows
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   catppuccin.tmux = {
     enable = true;
     extraConfig = ''
@@ -104,6 +102,5 @@
       set -g status-position top
       set -g status-justify centre
     '';
-
-};
+  };
 }

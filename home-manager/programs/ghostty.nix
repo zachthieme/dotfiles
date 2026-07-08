@@ -1,9 +1,11 @@
 # Ghostty terminal configuration
 # - macOS: installed via Homebrew (package = null)
 # - Linux: installed via Nix (package = pkgs.ghostty)
-{ pkgs, lib, ... }:
-
 {
+  pkgs,
+  lib,
+  ...
+}: {
   # Disable catppuccin's ghostty integration — its theme file uses # in hex
   # colors (palette = 0=#45475a) which ghostty treats as comments
   catppuccin.ghostty.enable = false;
@@ -11,7 +13,10 @@
   programs.ghostty = {
     enable = true;
     # Homebrew manages ghostty on macOS, Nix on Linux
-    package = if pkgs.stdenv.isDarwin then null else pkgs.ghostty;
+    package =
+      if pkgs.stdenv.isDarwin
+      then null
+      else pkgs.ghostty;
     enableFishIntegration = true;
     settings = {
       command = "${pkgs.fish}/bin/fish";

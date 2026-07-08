@@ -1,8 +1,6 @@
 # Fish functions for task checkbox management
 # Task querying, filtering, and dashboards are handled by pike
-{ ... }:
-
-{
+{...}: {
   programs.fish.functions = {
     _hx_toggle_task = {
       description = "Toggle task checkbox with @completed date (used by helix :pipe)";

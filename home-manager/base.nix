@@ -4,10 +4,8 @@
   pkgs,
   lib,
   ...
-}:
-
-let
-  packageProfiles = import ../packages/common.nix { inherit pkgs; };
+}: let
+  packageProfiles = import ../packages/common.nix {inherit pkgs;};
   p = packageProfiles.profiles;
 
   # Map profile names to package lists
@@ -16,8 +14,7 @@ let
     "core+dev" = p.corePackages ++ p.devPackages;
     "full" = p.fullPackages;
   };
-in
-{
+in {
   # Custom options for dotfiles-specific settings
   options.dotfiles = {
     vcs = {
@@ -31,7 +28,7 @@ in
       };
     };
     packageProfile = lib.mkOption {
-      type = lib.types.enum [ "core" "core+dev" "full" ];
+      type = lib.types.enum ["core" "core+dev" "full"];
       default = "full";
       description = "Package profile tier: core (minimal), core+dev (with dev tools), full (everything)";
     };
@@ -77,21 +74,23 @@ in
     # macOS: Determinate Nix manages the daemon, so we only set user-level options
     nix = {
       package = pkgs.nix;
-      settings = {
-        max-jobs = "auto";
-        download-buffer-size = 256 * 1024 * 1024; # 256 MiB
-        extra-substituters = [
-          "https://claude-code.cachix.org"
-          "https://nix-community.cachix.org"
-        ];
-        extra-trusted-public-keys = [
-          "claude-code.cachix.org-1:LSMRqGJFczEaKDBoXDjZnJpnaFRHBaGW/g8TMC3oFwA="
-          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        ];
-      } // lib.optionalAttrs pkgs.stdenv.isLinux {
-        experimental-features = [ "nix-command" "flakes" ];
-        auto-optimise-store = true;
-      };
+      settings =
+        {
+          max-jobs = "auto";
+          download-buffer-size = 256 * 1024 * 1024; # 256 MiB
+          extra-substituters = [
+            "https://claude-code.cachix.org"
+            "https://nix-community.cachix.org"
+          ];
+          extra-trusted-public-keys = [
+            "claude-code.cachix.org-1:LSMRqGJFczEaKDBoXDjZnJpnaFRHBaGW/g8TMC3oFwA="
+            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+          ];
+        }
+        // lib.optionalAttrs pkgs.stdenv.isLinux {
+          experimental-features = ["nix-command" "flakes"];
+          auto-optimise-store = true;
+        };
     };
 
     home.sessionVariables = {
@@ -116,21 +115,23 @@ in
       [
         "${config.home.homeDirectory}/.local/bin"
       ]
-      ++ lib.optionals pkgs.stdenv.isDarwin [ "/opt/homebrew/bin" ];
+      ++ lib.optionals pkgs.stdenv.isDarwin ["/opt/homebrew/bin"];
 
     # This will be imported by user-specific configurations
     # These paths are relative to the root dotfiles directory
-    home.file = {
-      # markdown-oxide config goes in the Obsidian vault root
-      "CloudDocs/Obsidian/.moxide.toml".source = ../config/moxide/.moxide.toml;
-    } // lib.optionalAttrs pkgs.stdenv.isDarwin {
-      ".config/aerospace".source = ../config/aerospace;
-      ".config/borders".source = ../config/borders;
-      ".terminfo".source = ../config/terminfo;
-    };
+    home.file =
+      {
+        # markdown-oxide config goes in the Obsidian vault root
+        "CloudDocs/Obsidian/.moxide.toml".source = ../config/moxide/.moxide.toml;
+      }
+      // lib.optionalAttrs pkgs.stdenv.isDarwin {
+        ".config/aerospace".source = ../config/aerospace;
+        ".config/borders".source = ../config/borders;
+        ".terminfo".source = ../config/terminfo;
+      };
 
     # Copy jrnl config only if it doesn't exist (jrnl needs to write to its config)
-    home.activation.jrnlConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    home.activation.jrnlConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
       if [ ! -f ~/.config/jrnl/jrnl.yaml ]; then
         mkdir -p ~/.config/jrnl
         cp ${../config/jrnl/jrnl.yaml} ~/.config/jrnl/jrnl.yaml
@@ -158,8 +159,8 @@ in
         "--height 40%"
         "--border"
       ];
-      fileWidgetOptions = [ "--height 20%" ];
-      historyWidgetOptions = [ "--height 20%" "--reverse" ];
+      fileWidgetOptions = ["--height 20%"];
+      historyWidgetOptions = ["--height 20%" "--reverse"];
       enableFishIntegration = true;
     };
 

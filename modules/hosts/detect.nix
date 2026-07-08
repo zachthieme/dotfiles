@@ -1,25 +1,27 @@
-{ hosts }:
-let
+{hosts}: let
   # Try HOSTNAME first (Linux), then HOST (macOS)
   # Note: builtins.getEnv only works during impure evaluation (nix build --impure,
   # or commands like darwin-rebuild/home-manager that evaluate impurely by default).
-  hostname =
-    let h = builtins.getEnv "HOSTNAME";
-    in if h != "" then h else builtins.getEnv "HOST";
+  hostname = let
+    h = builtins.getEnv "HOSTNAME";
+  in
+    if h != ""
+    then h
+    else builtins.getEnv "HOST";
 
   # Use actual hostname if it exists in definitions.nix
   defaultHost =
-    if hostname != "" && builtins.hasAttr hostname hosts then
-      hostname
-    else if hostname != "" then
+    if hostname != "" && builtins.hasAttr hostname hosts
+    then hostname
+    else if hostname != ""
+    then
       # Only show warning if hostname is set but not found
       builtins.trace
-        "Warning: Hostname '${hostname}' not found in modules/hosts/definitions.nix. Available hosts: ${builtins.toString (builtins.attrNames hosts)}"
-        ""
+      "Warning: Hostname '${hostname}' not found in modules/hosts/definitions.nix. Available hosts: ${builtins.toString (builtins.attrNames hosts)}"
+      ""
     else
       # Hostname not set - silently return empty (user is likely specifying host explicitly)
       "";
-in
-{
+in {
   inherit defaultHost;
 }

@@ -1,13 +1,15 @@
-{ lib, helpers }:
-let
+{
+  lib,
+  helpers,
+}: let
   # Required fields for each host definition
-  requiredFields = [ "system" ];
+  requiredFields = ["system"];
 
   # Defaults applied to every host (any field can be overridden per-host)
   hostDefaults = {
     user = "zach";
     isWork = false;
-    packages = [ ];
+    packages = [];
   };
 
   # Default VCS identity for git/jj (can be overridden per-host)
@@ -17,22 +19,23 @@ let
   };
 
   # Valid package profiles
-  validProfiles = [ "core" "core+dev" "full" ];
+  validProfiles = ["core" "core+dev" "full"];
 
   # Validate and apply defaults to a host definition
-  validateHost = name: host:
-    let
-      missingFields = builtins.filter (f: !(host ? ${f})) requiredFields;
-      hasMissing = builtins.length missingFields > 0;
-      profile = host.packageProfile or "full";
-      validProfile = builtins.elem profile validProfiles;
-    in
-    if hasMissing then
-      throw "Host '${name}' is missing required fields: ${builtins.concatStringsSep ", " missingFields}"
-    else if !validProfile then
-      throw "Host '${name}' has invalid packageProfile '${profile}'. Valid values: ${builtins.concatStringsSep ", " validProfiles}"
+  validateHost = name: host: let
+    missingFields = builtins.filter (f: !(host ? ${f})) requiredFields;
+    hasMissing = builtins.length missingFields > 0;
+    profile = host.packageProfile or "full";
+    validProfile = builtins.elem profile validProfiles;
+  in
+    if hasMissing
+    then throw "Host '${name}' is missing required fields: ${builtins.concatStringsSep ", " missingFields}"
+    else if !validProfile
+    then throw "Host '${name}' has invalid packageProfile '${profile}'. Valid values: ${builtins.concatStringsSep ", " validProfiles}"
     else
-      hostDefaults // host // {
+      hostDefaults
+      // host
+      // {
         # Apply default VCS identity if not specified
         vcs = host.vcs or defaultVcs;
         # Apply default package profile if not specified
@@ -91,8 +94,7 @@ let
   # Use shared helper functions to avoid duplication
   isDarwin = host: helpers.isDarwin host.system;
   isLinux = host: helpers.isLinux host.system;
-in
-{
+in {
   inherit hosts;
   darwinHosts = lib.filterAttrs (_: host: isDarwin host) hosts;
   linuxHosts = lib.filterAttrs (_: host: isLinux host) hosts;

@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   programs.nixvim = {
     enable = true;
 
@@ -53,7 +52,7 @@
         no_italic = true;
         integrations = {
           blink_cmp = true;
-          mini = { enabled = true; };
+          mini = {enabled = true;};
           snacks = true;
           treesitter = true;
         };
@@ -112,7 +111,7 @@
           use_nvim_cmp_as_default = true;
           nerd_font_variant = "mono";
         };
-        sources.default = [ "lsp" "path" "snippets" "buffer" ];
+        sources.default = ["lsp" "path" "snippets" "buffer"];
       };
     };
 
@@ -131,9 +130,9 @@
     plugins.snacks = {
       enable = true;
       settings = {
-        picker = { enabled = true; };
-        notifier = { enabled = true; };
-        lazygit = { enabled = true; };
+        picker = {enabled = true;};
+        notifier = {enabled = true;};
+        lazygit = {enabled = true;};
       };
     };
 
@@ -158,57 +157,199 @@
 
     keymaps = [
       # Clear search highlight
-      { mode = "n"; key = "<Esc>"; action = "<cmd>nohlsearch<CR>"; }
+      {
+        mode = "n";
+        key = "<Esc>";
+        action = "<cmd>nohlsearch<CR>";
+      }
 
       # Window navigation
-      { mode = "n"; key = "<C-h>"; action = "<C-w>h"; options.desc = "Move to left window"; }
-      { mode = "n"; key = "<C-j>"; action = "<C-w>j"; options.desc = "Move to lower window"; }
-      { mode = "n"; key = "<C-k>"; action = "<C-w>k"; options.desc = "Move to upper window"; }
-      { mode = "n"; key = "<C-l>"; action = "<C-w>l"; options.desc = "Move to right window"; }
+      {
+        mode = "n";
+        key = "<C-h>";
+        action = "<C-w>h";
+        options.desc = "Move to left window";
+      }
+      {
+        mode = "n";
+        key = "<C-j>";
+        action = "<C-w>j";
+        options.desc = "Move to lower window";
+      }
+      {
+        mode = "n";
+        key = "<C-k>";
+        action = "<C-w>k";
+        options.desc = "Move to upper window";
+      }
+      {
+        mode = "n";
+        key = "<C-l>";
+        action = "<C-w>l";
+        options.desc = "Move to right window";
+      }
 
       # Buffer navigation
-      { mode = "n"; key = "<S-h>"; action = "<cmd>bprevious<CR>"; options.desc = "Previous buffer"; }
-      { mode = "n"; key = "<S-l>"; action = "<cmd>bnext<CR>"; options.desc = "Next buffer"; }
+      {
+        mode = "n";
+        key = "<S-h>";
+        action = "<cmd>bprevious<CR>";
+        options.desc = "Previous buffer";
+      }
+      {
+        mode = "n";
+        key = "<S-l>";
+        action = "<cmd>bnext<CR>";
+        options.desc = "Next buffer";
+      }
 
       # Better indenting (stay in visual mode)
-      { mode = "v"; key = "<"; action = "<gv"; }
-      { mode = "v"; key = ">"; action = ">gv"; }
+      {
+        mode = "v";
+        key = "<";
+        action = "<gv";
+      }
+      {
+        mode = "v";
+        key = ">";
+        action = ">gv";
+      }
 
       # Move lines
-      { mode = "n"; key = "<A-j>"; action = "<cmd>m .+1<CR>=="; options.desc = "Move line down"; }
-      { mode = "n"; key = "<A-k>"; action = "<cmd>m .-2<CR>=="; options.desc = "Move line up"; }
-      { mode = "v"; key = "<A-j>"; action = ":m '>+1<CR>gv=gv"; options.desc = "Move selection down"; }
-      { mode = "v"; key = "<A-k>"; action = ":m '<-2<CR>gv=gv"; options.desc = "Move selection up"; }
+      {
+        mode = "n";
+        key = "<A-j>";
+        action = "<cmd>m .+1<CR>==";
+        options.desc = "Move line down";
+      }
+      {
+        mode = "n";
+        key = "<A-k>";
+        action = "<cmd>m .-2<CR>==";
+        options.desc = "Move line up";
+      }
+      {
+        mode = "v";
+        key = "<A-j>";
+        action = ":m '>+1<CR>gv=gv";
+        options.desc = "Move selection down";
+      }
+      {
+        mode = "v";
+        key = "<A-k>";
+        action = ":m '<-2<CR>gv=gv";
+        options.desc = "Move selection up";
+      }
 
       # Snacks: file picker
-      { mode = "n"; key = "<leader>ff"; action.__raw = ''function() Snacks.picker.files() end''; options.desc = "Find files"; }
-      { mode = "n"; key = "<leader>fr"; action.__raw = ''function() Snacks.picker.recent() end''; options.desc = "Recent files"; }
-      { mode = "n"; key = "<leader>fg"; action.__raw = ''function() Snacks.picker.grep() end''; options.desc = "Find in project"; }
+      {
+        mode = "n";
+        key = "<leader>ff";
+        action.__raw = ''function() Snacks.picker.files() end'';
+        options.desc = "Find files";
+      }
+      {
+        mode = "n";
+        key = "<leader>fr";
+        action.__raw = ''function() Snacks.picker.recent() end'';
+        options.desc = "Recent files";
+      }
+      {
+        mode = "n";
+        key = "<leader>fg";
+        action.__raw = ''function() Snacks.picker.grep() end'';
+        options.desc = "Find in project";
+      }
 
       # Snacks: buffer picker
-      { mode = "n"; key = "<leader>bb"; action.__raw = ''function() Snacks.picker.buffers() end''; options.desc = "Buffer list"; }
-      { mode = "n"; key = "<leader>bd"; action.__raw = ''function() Snacks.bufdelete() end''; options.desc = "Delete buffer"; }
+      {
+        mode = "n";
+        key = "<leader>bb";
+        action.__raw = ''function() Snacks.picker.buffers() end'';
+        options.desc = "Buffer list";
+      }
+      {
+        mode = "n";
+        key = "<leader>bd";
+        action.__raw = ''function() Snacks.bufdelete() end'';
+        options.desc = "Delete buffer";
+      }
 
       # Snacks: global search
-      { mode = "n"; key = "<leader>/g"; action.__raw = ''function() Snacks.picker.grep() end''; options.desc = "Live grep"; }
-      { mode = "n"; key = "<leader>/w"; action.__raw = ''function() Snacks.picker.grep_word() end''; options.desc = "Grep word under cursor"; }
+      {
+        mode = "n";
+        key = "<leader>/g";
+        action.__raw = ''function() Snacks.picker.grep() end'';
+        options.desc = "Live grep";
+      }
+      {
+        mode = "n";
+        key = "<leader>/w";
+        action.__raw = ''function() Snacks.picker.grep_word() end'';
+        options.desc = "Grep word under cursor";
+      }
 
       # Snacks: symbol picker
-      { mode = "n"; key = "<leader>sd"; action.__raw = ''function() Snacks.picker.lsp_symbols() end''; options.desc = "Document symbols"; }
-      { mode = "n"; key = "<leader>sw"; action.__raw = ''function() Snacks.picker.lsp_workspace_symbols() end''; options.desc = "Workspace symbols"; }
+      {
+        mode = "n";
+        key = "<leader>sd";
+        action.__raw = ''function() Snacks.picker.lsp_symbols() end'';
+        options.desc = "Document symbols";
+      }
+      {
+        mode = "n";
+        key = "<leader>sw";
+        action.__raw = ''function() Snacks.picker.lsp_workspace_symbols() end'';
+        options.desc = "Workspace symbols";
+      }
 
       # Snacks: diagnostics
-      { mode = "n"; key = "<leader>df"; action.__raw = ''function() vim.diagnostic.open_float() end''; options.desc = "Open float"; }
-      { mode = "n"; key = "<leader>dn"; action.__raw = ''function() vim.diagnostic.goto_next() end''; options.desc = "Next diagnostic"; }
-      { mode = "n"; key = "<leader>dp"; action.__raw = ''function() vim.diagnostic.goto_prev() end''; options.desc = "Prev diagnostic"; }
-      { mode = "n"; key = "<leader>dl"; action.__raw = ''function() Snacks.picker.diagnostics() end''; options.desc = "List all"; }
+      {
+        mode = "n";
+        key = "<leader>df";
+        action.__raw = ''function() vim.diagnostic.open_float() end'';
+        options.desc = "Open float";
+      }
+      {
+        mode = "n";
+        key = "<leader>dn";
+        action.__raw = ''function() vim.diagnostic.goto_next() end'';
+        options.desc = "Next diagnostic";
+      }
+      {
+        mode = "n";
+        key = "<leader>dp";
+        action.__raw = ''function() vim.diagnostic.goto_prev() end'';
+        options.desc = "Prev diagnostic";
+      }
+      {
+        mode = "n";
+        key = "<leader>dl";
+        action.__raw = ''function() Snacks.picker.diagnostics() end'';
+        options.desc = "List all";
+      }
 
       # Snacks: git
-      { mode = "n"; key = "<leader>gg"; action.__raw = ''function() Snacks.lazygit() end''; options.desc = "Lazygit"; }
+      {
+        mode = "n";
+        key = "<leader>gg";
+        action.__raw = ''function() Snacks.lazygit() end'';
+        options.desc = "Lazygit";
+      }
 
       # Flash
-      { mode = "n"; key = "<CR>"; action.__raw = ''function() require("flash").jump() end''; options.desc = "Flash jump"; }
-      { mode = ["n" "x" "o"]; key = "S"; action.__raw = ''function() require("flash").treesitter() end''; options.desc = "Flash treesitter"; }
+      {
+        mode = "n";
+        key = "<CR>";
+        action.__raw = ''function() require("flash").jump() end'';
+        options.desc = "Flash jump";
+      }
+      {
+        mode = ["n" "x" "o"];
+        key = "S";
+        action.__raw = ''function() require("flash").treesitter() end'';
+        options.desc = "Flash treesitter";
+      }
     ];
 
     extraConfigLua = ''

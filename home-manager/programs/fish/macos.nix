@@ -1,7 +1,9 @@
 # Fish functions for macOS-specific tools (aerospace, etc.)
-{ pkgs, lib, ... }:
-
 {
+  pkgs,
+  lib,
+  ...
+}: {
   programs.fish.functions = lib.optionalAttrs pkgs.stdenv.isDarwin {
     aero-tidy = {
       description = "Move all windows to their assigned workspaces";

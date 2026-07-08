@@ -1,81 +1,83 @@
-{ pkgs }:
-let
+{pkgs}: let
   inherit (pkgs.stdenv) isLinux;
-in
-{
+in {
   profiles = rec {
     # Essential CLI tools - always installed on all machines including Pi
-    corePackages = with pkgs; [
-      bat
-      btop
-      curl
-      eza
-      fd
-      figlet
-      gh
-      git
-      grove
-      jq
-      jrnl
-      jujutsu
-      lazyjj
-      less
-      marksman # LSP for notes
-      pike
-      presenterm
-      ripgrep
-      slides
-      tick
-      tree
-      unzip
-      vivid
-      watch
-      wen
-      wget
-      which
-      zsh
-    ] ++ pkgs.lib.optionals isLinux [
-      helix # Darwin installs at system level
-      vault # Darwin installs at system level
-    ];
+    corePackages = with pkgs;
+      [
+        bat
+        btop
+        curl
+        eza
+        fd
+        figlet
+        gh
+        git
+        grove
+        jq
+        jrnl
+        jujutsu
+        lazyjj
+        less
+        marksman # LSP for notes
+        pike
+        presenterm
+        ripgrep
+        slides
+        tick
+        tree
+        unzip
+        vivid
+        watch
+        wen
+        wget
+        which
+        zsh
+      ]
+      ++ pkgs.lib.optionals isLinux [
+        helix # Darwin installs at system level
+        vault # Darwin installs at system level
+      ];
 
     # Development tools - compilers, LSPs, formatters
-    devPackages = with pkgs; [
-      bazelisk
-      bash-language-server
-      mosh
-      nixd
-      clang-tools
-      delve
-      devbox
-      devenv
-      gcc
-      go
-      golangci-lint
-      golangci-lint-langserver
-      gopls
-      gotools
-      lldb_20
-      gnumake
-      nixfmt
-      nodejs_24
-      openssl
-      openssl.dev
-      pandoc
-      pkg-config
-      prettier
-      python3
-      python312Packages.pdf2docx
-      rustup
-      typst
-      uv
-      zig
-      zls
-    ] ++ pkgs.lib.optionals isLinux [
-      pkgs.libgcc # Linux only
-      docker
-      docker-compose
-    ];
+    devPackages = with pkgs;
+      [
+        bazelisk
+        bash-language-server
+        mosh
+        nixd
+        clang-tools
+        delve
+        devbox
+        devenv
+        gcc
+        go
+        golangci-lint
+        golangci-lint-langserver
+        gopls
+        gotools
+        lldb_20
+        gnumake
+        nixfmt
+        nodejs_24
+        openssl
+        openssl.dev
+        pandoc
+        pkg-config
+        prettier
+        python3
+        python312Packages.pdf2docx
+        rustup
+        typst
+        uv
+        zig
+        zls
+      ]
+      ++ pkgs.lib.optionals isLinux [
+        pkgs.libgcc # Linux only
+        docker
+        docker-compose
+      ];
 
     # Heavy/specialized - resource-intensive packages
     heavyPackages = with pkgs; [

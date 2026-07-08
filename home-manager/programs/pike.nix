@@ -1,8 +1,11 @@
 # Pike task extraction tool configuration
-{ config, pkgs, lib, ... }:
-
-let
-  yaml = pkgs.formats.yaml { };
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
+  yaml = pkgs.formats.yaml {};
 
   # Catppuccin Mocha palette
   colors = {
@@ -22,7 +25,7 @@ let
 
   commonSettings = {
     notes_dir = config.dotfiles.notesDir;
-    include = [ "**/*.md" ];
+    include = ["**/*.md"];
     exclude = [
       "templates/**"
       "archive/**"
@@ -48,69 +51,68 @@ let
       _default = colors.sky;
     };
   };
-in
-{
-  xdg.configFile."pike/config.yaml".source = yaml.generate "pike-config.yaml" (commonSettings // {
-    keybindings = {
-      custom = [
+in {
+  xdg.configFile."pike/config.yaml".source = yaml.generate "pike-config.yaml" (commonSettings
+    // {
+      keybindings = {
+        custom = [
+          {
+            key = "m";
+            query = "@reporting";
+          }
+          {
+            key = "r";
+            query = "@rumor";
+          }
+          {
+            key = "u";
+            query = "open and not @due";
+          }
+        ];
+      };
+      views = [
         {
-          key = "m";
-          query = "@reporting";
+          title = "Priority";
+          query = "open and ((@weekly or @today) or (@due <= today))";
+          sort = "due_asc";
+          color = colors.blue;
+          order = 1;
         }
         {
-          key = "r";
-          query = "@rumor";
+          title = "Overdue";
+          query = "open and @due < today";
+          sort = "due_asc";
+          color = colors.red;
+          order = 2;
         }
         {
-          key = "u";
-          query = "open and not @due";
+          title = "Next 3 Days";
+          query = "open and @due >= today and @due <= today+3d";
+          sort = "due_asc";
+          color = colors.yellow;
+          order = 3;
+        }
+        {
+          title = "Talk";
+          query = "open and @talk";
+          sort = "file";
+          color = colors.pink;
+          order = 4;
+        }
+        {
+          title = "Delegated";
+          query = "open and @delegated";
+          sort = "file";
+          color = colors.peach;
+          order = 5;
+        }
+        {
+          title = "Horizon";
+          query = "@risk or @horizon";
+          sort = "file";
+          color = colors.mauve;
+          order = 6;
         }
       ];
-    };
-    views = [
-      {
-        title = "Priority";
-        query = "open and ((@weekly or @today) or (@due <= today))";
-        sort = "due_asc";
-        color = colors.blue;
-        order = 1;
-      }
-      {
-        title = "Overdue";
-        query = "open and @due < today";
-        sort = "due_asc";
-        color = colors.red;
-        order = 2;
-      }
-      {
-        title = "Next 3 Days";
-        query = "open and @due >= today and @due <= today+3d";
-        sort = "due_asc";
-        color = colors.yellow;
-        order = 3;
-      }
-      {
-        title = "Talk";
-        query = "open and @talk";
-        sort = "file";
-        color = colors.pink;
-        order = 4;
-      }
-      {
-        title = "Delegated";
-        query = "open and @delegated";
-        sort = "file";
-        color = colors.peach;
-        order = 5;
-      }
-      {
-        title = "Horizon";
-        query = "@risk or @horizon";
-        sort = "file";
-        color = colors.mauve;
-        order = 6;
-      }
-    ];
-  });
-
+    });
 }

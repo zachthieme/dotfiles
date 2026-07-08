@@ -1,6 +1,5 @@
 # Helix editor configuration
-{ ... }:
-let
+{...}: let
   sharedBinds = {
     space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
     space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
@@ -14,16 +13,19 @@ let
       i = [":pipe _hx_ensure_note incident" "collapse_selection"];
     };
   };
-in
-{
+in {
   programs.helix = {
     enable = true;
     themes = {
       everforest_dark_multiselect = {
         inherits = "everforest_dark";
-        "ui.selection.primary" = { bg = "#3d5a5e"; };
-        "ui.selection" = { bg = "#4a3f55"; };
-        "ui.cursor.primary" = { fg = "#2d353b"; bg = "#83c092"; modifiers = ["bold"]; };
+        "ui.selection.primary" = {bg = "#3d5a5e";};
+        "ui.selection" = {bg = "#4a3f55";};
+        "ui.cursor.primary" = {
+          fg = "#2d353b";
+          bg = "#83c092";
+          modifiers = ["bold"];
+        };
       };
     };
     settings = {
@@ -64,55 +66,57 @@ in
           mode.select = "S";
         };
       };
-      keys.normal = sharedBinds // {
-        a = [ "append_mode" "collapse_selection" ];
-        i = [ "insert_mode" "collapse_selection" ];
-        esc = [ "collapse_selection" "keep_primary_selection" ];
-        X = ["extend_line_above"];
-        H = [":buffer-previous"];
-        L = [":buffer-next"];
-        ret = ["goto_word"];
-        A-j = ["move_line_down"];
-        A-k = ["move_line_up"];
-        C-y = [
-          ":sh rm -f /tmp/unique-file"
-          ":insert-output yazi %{buffer_name} --chooser-file=/tmp/unique-file"
-          '':insert-output echo "\\x1b[?1049h\\x1b[?2004h" > /dev/tty''
-          ":open %sh{cat /tmp/unique-file}"
-          ":redraw"
-        ];
-      };
+      keys.normal =
+        sharedBinds
+        // {
+          a = ["append_mode" "collapse_selection"];
+          i = ["insert_mode" "collapse_selection"];
+          esc = ["collapse_selection" "keep_primary_selection"];
+          X = ["extend_line_above"];
+          H = [":buffer-previous"];
+          L = [":buffer-next"];
+          ret = ["goto_word"];
+          A-j = ["move_line_down"];
+          A-k = ["move_line_up"];
+          C-y = [
+            ":sh rm -f /tmp/unique-file"
+            ":insert-output yazi %{buffer_name} --chooser-file=/tmp/unique-file"
+            '':insert-output echo "\\x1b[?1049h\\x1b[?2004h" > /dev/tty''
+            ":open %sh{cat /tmp/unique-file}"
+            ":redraw"
+          ];
+        };
       keys.select = sharedBinds;
     };
     languages = {
       language = [
         {
           name = "nix";
-          language-servers = [ "nixd" ];
+          language-servers = ["nixd"];
         }
         {
           name = "go";
           auto-format = true;
           formatter.command = "goimports";
-          language-servers = [ "gopls" ];
+          language-servers = ["gopls"];
         }
         {
           name = "markdown-prompt";
           scope = "source.markdown";
-          file-types = [{ glob = "*.pt.md"; }];
+          file-types = [{glob = "*.pt.md";}];
           auto-format = false;
           comment-tokens = ["-" "+" "*" "1." ">" "- [ ]"];
-          language-servers = [ "markdown-oxide" ];
+          language-servers = ["markdown-oxide"];
           grammar = "markdown";
         }
         {
           name = "markdown";
           auto-format = true;
           comment-tokens = ["-" "+" "*" "1." ">" "- [ ]"];
-          language-servers = [ "markdown-oxide" ];
+          language-servers = ["markdown-oxide"];
           formatter = {
             command = "prettier";
-            args = [ "--parser" "markdown" "--prose-wrap" "never" ];
+            args = ["--parser" "markdown" "--prose-wrap" "never"];
           };
         }
       ];

@@ -2,9 +2,7 @@
 #
 # User identity is configured in modules/hosts/definitions.nix per host.
 # Most hosts use the default identity; override per-host if needed.
-{ config, ... }:
-
-{
+{config, ...}: {
   programs.git = {
     enable = true;
     settings = {

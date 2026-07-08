@@ -1,7 +1,5 @@
 # Fish shell configuration — settings, abbreviations, plugins, and shared helpers
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   imports = [
     ./macos.nix
     ./notes.nix

@@ -1,7 +1,5 @@
 # Fish functions for general utilities — git, file search, system tools
-{ ... }:
-
-{
+{...}: {
   programs.fish.functions = {
     aliases = {
       description = "Show all custom abbreviations and functions";

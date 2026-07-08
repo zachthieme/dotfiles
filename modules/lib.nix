@@ -1,10 +1,7 @@
-{ lib }:
-
-let
+{lib}: let
   # Unfree packages allowed on all hosts (vault has a BSL license)
-  unfreePackages = [ "vault" ];
-in
-{
+  unfreePackages = ["vault"];
+in {
   inherit unfreePackages;
 
   # Predicate for nixpkgs.config.allowUnfreePredicate — single source of truth
@@ -36,5 +33,7 @@ in
   # workModule: path - path to work context module
   # returns: path - selected module path
   selectContextModule = isWork: homeModule: workModule:
-    if isWork then workModule else homeModule;
+    if isWork
+    then workModule
+    else homeModule;
 }

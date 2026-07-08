@@ -1,7 +1,5 @@
 # Home-specific Home Manager configuration
-{ pkgs, ... }:
-
-{
+{pkgs, ...}: {
   imports = [
     ../../../home-manager/base.nix
   ];

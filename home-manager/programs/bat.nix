@@ -1,7 +1,5 @@
 # Bat configuration
-{ ... }:
-
-{
+{...}: {
   programs.bat = {
     enable = true;
     config = {

@@ -5,9 +5,7 @@
   lib,
   config,
   ...
-}:
-
-{
+}: {
   # Accept arguments for user-specific settings with defaults
   options = {
     local = {
@@ -31,7 +29,6 @@
   };
 
   config = {
-
     # System-level packages (most packages go in home-manager/base.nix to avoid duplication)
     # Only include packages that must be system-level (e.g., login shell)
     environment.systemPackages = with pkgs; [
@@ -55,7 +52,9 @@
     # System activation script
     system.activationScripts.postActivation.text = ''
       echo "${
-        if config.local.isWork then "Work" else "Home"
+        if config.local.isWork
+        then "Work"
+        else "Home"
       } system configuration for ${config.local.hostname} activated"
     '';
 

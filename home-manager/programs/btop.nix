@@ -1,7 +1,5 @@
 # Btop configuration
-{ ... }:
-
-{
+{...}: {
   programs.btop = {
     enable = true;
     settings = {

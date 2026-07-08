@@ -1,7 +1,5 @@
 # Zellij terminal multiplexer configuration
-{ config, ... }:
-
-let
+{config, ...}: let
   # TECH DEBT: This KDL string duplicates the structured keybinds in settings below.
   # Layouts launched via --layout may not inherit config.kdl keybinds
   # (https://github.com/zellij-org/zellij/issues/4256), so we embed them directly.
@@ -46,8 +44,7 @@ let
         }
     }
   '';
-in
-{
+in {
   # Enable catppuccin theme for zellij (inherits flavor from global catppuccin.flavor)
   catppuccin.zellij.enable = true;
 
@@ -65,37 +62,37 @@ in
         # scope. Using "shared" creates a cross-scope collision for Alt j/k where the
         # defaults bind MoveFocus but we want MoveFocusOrTab.
         "shared_except \"locked\"" = {
-          "unbind \"Alt Right\"" = { };
-          "unbind \"Alt Left\"" = { };
-          "unbind \"Alt Up\"" = { };
-          "unbind \"Alt Down\"" = { };
-          "bind \"Alt h\"" = { MoveFocusOrTab = "Left"; };
-          "bind \"Alt j\"" = { MoveFocus = "Down"; };
-          "bind \"Alt k\"" = { MoveFocus = "Up"; };
-          "bind \"Alt l\"" = { MoveFocusOrTab = "Right"; };
+          "unbind \"Alt Right\"" = {};
+          "unbind \"Alt Left\"" = {};
+          "unbind \"Alt Up\"" = {};
+          "unbind \"Alt Down\"" = {};
+          "bind \"Alt h\"" = {MoveFocusOrTab = "Left";};
+          "bind \"Alt j\"" = {MoveFocus = "Down";};
+          "bind \"Alt k\"" = {MoveFocus = "Up";};
+          "bind \"Alt l\"" = {MoveFocusOrTab = "Right";};
         };
         shared = {
           # Remove bindings so they don't conflict with helix
-          "unbind \"Alt Shift 0\"" = { };
-          "unbind \"Alt Shift 1\"" = { };
-          "unbind \"Alt Shift 2\"" = { };
-          "unbind \"Alt Shift 3\"" = { };
-          "unbind \"Alt Shift 4\"" = { };
-          "unbind \"Alt Shift 5\"" = { };
-          "unbind \"Alt Shift 6\"" = { };
-          "unbind \"Alt Shift 7\"" = { };
-          "unbind \"Alt Shift 8\"" = { };
-          "unbind \"Alt Shift 9\"" = { };
+          "unbind \"Alt Shift 0\"" = {};
+          "unbind \"Alt Shift 1\"" = {};
+          "unbind \"Alt Shift 2\"" = {};
+          "unbind \"Alt Shift 3\"" = {};
+          "unbind \"Alt Shift 4\"" = {};
+          "unbind \"Alt Shift 5\"" = {};
+          "unbind \"Alt Shift 6\"" = {};
+          "unbind \"Alt Shift 7\"" = {};
+          "unbind \"Alt Shift 8\"" = {};
+          "unbind \"Alt Shift 9\"" = {};
           # Tab switching by number
-          "bind \"Alt 1\"" = { GoToTab = 1; };
-          "bind \"Alt 2\"" = { GoToTab = 2; };
-          "bind \"Alt 3\"" = { GoToTab = 3; };
-          "bind \"Alt 4\"" = { GoToTab = 4; };
-          "bind \"Alt 5\"" = { GoToTab = 5; };
-          "bind \"Alt 6\"" = { GoToTab = 6; };
-          "bind \"Alt 7\"" = { GoToTab = 7; };
-          "bind \"Alt 8\"" = { GoToTab = 8; };
-          "bind \"Alt 9\"" = { GoToTab = 9; };
+          "bind \"Alt 1\"" = {GoToTab = 1;};
+          "bind \"Alt 2\"" = {GoToTab = 2;};
+          "bind \"Alt 3\"" = {GoToTab = 3;};
+          "bind \"Alt 4\"" = {GoToTab = 4;};
+          "bind \"Alt 5\"" = {GoToTab = 5;};
+          "bind \"Alt 6\"" = {GoToTab = 6;};
+          "bind \"Alt 7\"" = {GoToTab = 7;};
+          "bind \"Alt 8\"" = {GoToTab = 8;};
+          "bind \"Alt 9\"" = {GoToTab = 9;};
         };
       };
     };
@@ -104,58 +101,58 @@ in
   # Custom layout files - Home Manager doesn't have structured layout options
   # Each layout embeds sharedKeybinds because --layout may not inherit config.kdl keybinds
   xdg.configFile."zellij/layouts/notes.kdl".text = ''
-    ${sharedKeybinds}
-    pane_frames true
-    load_env_vars true
+        ${sharedKeybinds}
+        pane_frames true
+        load_env_vars true
 
-    layout {
-        cwd "${config.dotfiles.notesDir}"
-        new_tab_template {
-             pane size=1 borderless=true {
-                 plugin location="zellij:compact-bar"
+        layout {
+            cwd "${config.dotfiles.notesDir}"
+            new_tab_template {
+                 pane size=1 borderless=true {
+                     plugin location="zellij:compact-bar"
+                 }
+                 pane borderless=true
              }
-             pane borderless=true
-         }
-        tab name="daily" {
-            pane size=1 borderless=true {
-                plugin location="zellij:compact-bar"
-            }
-            pane split_direction="vertical" {
-                pane {
-                    pane size=9 borderless=true command="pike" {
-                        args "-w" "priority"
+            tab name="daily" {
+                pane size=1 borderless=true {
+                    plugin location="zellij:compact-bar"
+                }
+                pane split_direction="vertical" {
+                    pane {
+                        pane size=9 borderless=true command="pike" {
+                            args "-w" "priority"
+                        }
+                        pane borderless=true name="editor" focus=true command="fish" {
+                            args "-c" "daily; notes-sync"
+                        }
                     }
-                    pane borderless=true name="editor" focus=true command="fish" {
-                        args "-c" "daily; notes-sync"
+                    pane size=33 {
+                        pane size=12 borderless=true command="wen" {
+                            args "cal"
+                        }
+                        pane size=12 borderless=true command="tick" {
+                            args "--hosts" "10950" "--deadline" "2026-09-30"
+                        }
+                        pane borderless=true command="tail" {
+                            args "-f" "/dev/null"
+                        }
                     }
                 }
-                pane size=33 {
-                    pane size=12 borderless=true command="wen" {
-                        args "cal"
-                    }
-                    pane size=12 borderless=true command="tick" {
-                        args "--hosts" "10950" "--deadline" "2026-09-30"
-                    }
-                    pane borderless=true command="tail" {
-                        args "-f" "/dev/null"
-                    }
+            }
+            tab name="tasks" {
+                pane size=1 borderless=true {
+                    plugin location="zellij:compact-bar"
+                }
+                pane borderless=true focus=true command="pike" {
                 }
             }
-        }
-        tab name="tasks" {
-            pane size=1 borderless=true {
-                plugin location="zellij:compact-bar"
+    tab name="shell" {
+                pane size=1 borderless=true {
+                    plugin location="zellij:compact-bar"
+                }
+                pane borderless=true focus=true
             }
-            pane borderless=true focus=true command="pike" {
-            }
         }
-tab name="shell" {
-            pane size=1 borderless=true {
-                plugin location="zellij:compact-bar"
-            }
-            pane borderless=true focus=true
-        }
-    }
   '';
 
   xdg.configFile."zellij/layouts/compact-top.kdl".text = ''

@@ -1,7 +1,5 @@
 # Fish functions for note creation, browsing, synchronization, and migration
-{ ... }:
-
-{
+{...}: {
   programs.fish.functions = {
     # Single source of truth for note templates — used by the interactive
     # commands (person, project, ...) and by _hx_ensure_note (helix :pipe)
@@ -111,91 +109,91 @@
     weekly = {
       description = "Create a weekly review note in reviews/";
       body = ''
-        _require_notes; or return 1
+                _require_notes; or return 1
 
-        set -l today (date +%Y-%m-%d)
-        set -l formatted (date +"%B %-d, %Y")
-        set -l dir "$NOTES/reviews"
-        set -l filepath "$dir/$today.md"
-        mkdir -p "$dir"
+                set -l today (date +%Y-%m-%d)
+                set -l formatted (date +"%B %-d, %Y")
+                set -l dir "$NOTES/reviews"
+                set -l filepath "$dir/$today.md"
+                mkdir -p "$dir"
 
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          echo "---
-id: $id
-aliases:
-  - Week of $formatted
-tags: []
----
+                if not test -e "$filepath"
+                  set -l id (uuidgen)
+                  echo "---
+        id: $id
+        aliases:
+          - Week of $formatted
+        tags: []
+        ---
 
-# Week of $formatted
+        # Week of $formatted
 
-## Wins
+        ## Wins
 
-## Challenges
+        ## Challenges
 
-## Next Week Priorities
+        ## Next Week Priorities
 
-## Notes" > "$filepath"
-          echo "Created: $filepath"
-        end
+        ## Notes" > "$filepath"
+                  echo "Created: $filepath"
+                end
 
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+                set -l prev_dir $PWD
+                cd $NOTES
+                $EDITOR "$filepath"
+                cd $prev_dir
       '';
     };
 
     quarterly = {
       description = "Create a quarterly review note in quarterly/. Usage: quarterly Q4 [year]";
       body = ''
-        if test (count $argv) -eq 0
-          echo "Usage: quarterly <quarter> [year]"
-          echo "Example: quarterly Q4 2024"
-          return 1
-        end
-        _require_notes; or return 1
+                if test (count $argv) -eq 0
+                  echo "Usage: quarterly <quarter> [year]"
+                  echo "Example: quarterly Q4 2024"
+                  return 1
+                end
+                _require_notes; or return 1
 
-        set -l quarter $argv[1]
-        set -l year (date +%Y)
-        if test (count $argv) -gt 1
-          set year $argv[2]
-        end
+                set -l quarter $argv[1]
+                set -l year (date +%Y)
+                if test (count $argv) -gt 1
+                  set year $argv[2]
+                end
 
-        set -l dir "$NOTES/quarterly"
-        set -l filepath "$dir/$year-$quarter.md"
-        mkdir -p "$dir"
+                set -l dir "$NOTES/quarterly"
+                set -l filepath "$dir/$year-$quarter.md"
+                mkdir -p "$dir"
 
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          echo "---
-id: $id
-aliases:
-  - $quarter $year Review
-tags: []
----
+                if not test -e "$filepath"
+                  set -l id (uuidgen)
+                  echo "---
+        id: $id
+        aliases:
+          - $quarter $year Review
+        tags: []
+        ---
 
-# $quarter $year Review
+        # $quarter $year Review
 
-## Goals
+        ## Goals
 
-## Accomplishments
+        ## Accomplishments
 
-## What Worked
+        ## What Worked
 
-## What Didn't
+        ## What Didn't
 
-## Key Learnings
+        ## Key Learnings
 
-## Next Quarter Priorities" > "$filepath"
-          echo "Created: $filepath"
-        end
+        ## Next Quarter Priorities" > "$filepath"
+                  echo "Created: $filepath"
+                end
 
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+                set -l prev_dir $PWD
+                cd $NOTES
+                $EDITOR "$filepath"
+                cd $prev_dir
       '';
     };
 
@@ -223,263 +221,263 @@ tags: []
     daily = {
       description = "Create or open today's daily note in daily/";
       body = ''
-        _require_notes; or return 1
+                _require_notes; or return 1
 
-        set -l today (date +%Y-%m-%d)
-        set -l formatted (date +"%A %B %-d, %Y")
-        set -l dir "$NOTES/daily"
-        set -l filepath "$dir/$today.md"
-        mkdir -p "$dir"
+                set -l today (date +%Y-%m-%d)
+                set -l formatted (date +"%A %B %-d, %Y")
+                set -l dir "$NOTES/daily"
+                set -l filepath "$dir/$today.md"
+                mkdir -p "$dir"
 
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          echo "---
-id: $id
-aliases:
-  - $formatted
-tags: []
----
+                if not test -e "$filepath"
+                  set -l id (uuidgen)
+                  echo "---
+        id: $id
+        aliases:
+          - $formatted
+        tags: []
+        ---
 
-# $formatted
+        # $formatted
 
-## Meetings
+        ## Meetings
 
-## Notes" > "$filepath"
-          echo "Created: $filepath"
-        end
+        ## Notes" > "$filepath"
+                  echo "Created: $filepath"
+                end
 
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+                set -l prev_dir $PWD
+                cd $NOTES
+                $EDITOR "$filepath"
+                cd $prev_dir
       '';
     };
 
     monthly = {
       description = "Create a monthly review note in monthly/";
       body = ''
-        _require_notes; or return 1
+                _require_notes; or return 1
 
-        set -l month (date +%Y-%m)
-        set -l formatted (date +"%B %Y")
-        set -l dir "$NOTES/monthly"
-        set -l filepath "$dir/$month.md"
-        mkdir -p "$dir"
+                set -l month (date +%Y-%m)
+                set -l formatted (date +"%B %Y")
+                set -l dir "$NOTES/monthly"
+                set -l filepath "$dir/$month.md"
+                mkdir -p "$dir"
 
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          echo "---
-id: $id
-aliases:
-  - $formatted Review
-tags: []
----
+                if not test -e "$filepath"
+                  set -l id (uuidgen)
+                  echo "---
+        id: $id
+        aliases:
+          - $formatted Review
+        tags: []
+        ---
 
-# $formatted
+        # $formatted
 
-## Highlights
+        ## Highlights
 
-## Completed
+        ## Completed
 
-## Challenges
+        ## Challenges
 
-## Next Month Priorities
+        ## Next Month Priorities
 
-## Notes" > "$filepath"
-          echo "Created: $filepath"
-        end
+        ## Notes" > "$filepath"
+                  echo "Created: $filepath"
+                end
 
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+                set -l prev_dir $PWD
+                cd $NOTES
+                $EDITOR "$filepath"
+                cd $prev_dir
       '';
     };
 
     review = {
       description = "Generate a review (weekly, monthly, quarterly) pre-filled with tasks for LLM analysis";
       body = ''
-        _require_notes_dir; or return 1
+                _require_notes_dir; or return 1
 
-        set -l period weekly
-        if test (count $argv) -gt 0
-          set period $argv[1]
-        end
+                set -l period weekly
+                if test (count $argv) -gt 0
+                  set period $argv[1]
+                end
 
-        set -l start_date
-        set -l end_date
-        set -l title
-        set -l filepath
-        set -l dir "$NOTES/reviews"
-        set -l tag_label
+                set -l start_date
+                set -l end_date
+                set -l title
+                set -l filepath
+                set -l dir "$NOTES/reviews"
+                set -l tag_label
 
-        switch $period
-          case weekly
-            # Last full week: Sunday to Saturday
-            set -l dow (date +%w)
-            set -l sat_offset (math $dow + 1)
-            set -l sun_offset (math $dow + 7)
+                switch $period
+                  case weekly
+                    # Last full week: Sunday to Saturday
+                    set -l dow (date +%w)
+                    set -l sat_offset (math $dow + 1)
+                    set -l sun_offset (math $dow + 7)
 
-            if _is_gnu_date
-              set start_date (date -d "-$sun_offset days" +%Y-%m-%d)
-              set end_date (date -d "-$sat_offset days" +%Y-%m-%d)
-            else
-              set start_date (date -v-{$sun_offset}d +%Y-%m-%d)
-              set end_date (date -v-{$sat_offset}d +%Y-%m-%d)
-            end
+                    if _is_gnu_date
+                      set start_date (date -d "-$sun_offset days" +%Y-%m-%d)
+                      set end_date (date -d "-$sat_offset days" +%Y-%m-%d)
+                    else
+                      set start_date (date -v-{$sun_offset}d +%Y-%m-%d)
+                      set end_date (date -v-{$sat_offset}d +%Y-%m-%d)
+                    end
 
-            set title "Weekly Review: $start_date to $end_date"
-            set filepath "$dir/week-$start_date.md"
-            set tag_label "@weekly"
+                    set title "Weekly Review: $start_date to $end_date"
+                    set filepath "$dir/week-$start_date.md"
+                    set tag_label "@weekly"
 
-          case monthly
-            # Last full calendar month
-            if _is_gnu_date
-              set -l first_of_month (date +%Y-%m-01)
-              set start_date (date -d "$first_of_month - 1 month" +%Y-%m-%d)
-              set end_date (date -d "$first_of_month - 1 day" +%Y-%m-%d)
-            else
-              set start_date (date -v1d -v-1m +%Y-%m-%d)
-              set end_date (date -v1d -v-1d +%Y-%m-%d)
-            end
+                  case monthly
+                    # Last full calendar month
+                    if _is_gnu_date
+                      set -l first_of_month (date +%Y-%m-01)
+                      set start_date (date -d "$first_of_month - 1 month" +%Y-%m-%d)
+                      set end_date (date -d "$first_of_month - 1 day" +%Y-%m-%d)
+                    else
+                      set start_date (date -v1d -v-1m +%Y-%m-%d)
+                      set end_date (date -v1d -v-1d +%Y-%m-%d)
+                    end
 
-            set -l ym (string sub -l 7 $start_date)
-            set title "Monthly Review: $ym"
-            set filepath "$dir/month-$ym.md"
-            set tag_label "@weekly / @monthly"
+                    set -l ym (string sub -l 7 $start_date)
+                    set title "Monthly Review: $ym"
+                    set filepath "$dir/month-$ym.md"
+                    set tag_label "@weekly / @monthly"
 
-          case quarterly
-            # Last full fiscal quarter (Q1=Oct-Dec, Q2=Jan-Mar, Q3=Apr-Jun, Q4=Jul-Sep)
-            set -l month (date +%-m)
-            set -l year (date +%Y)
-            set -l q_start_month
-            set -l q_end_month
-            set -l q_year
-            set -l q_label
-            set -l fy_year
+                  case quarterly
+                    # Last full fiscal quarter (Q1=Oct-Dec, Q2=Jan-Mar, Q3=Apr-Jun, Q4=Jul-Sep)
+                    set -l month (date +%-m)
+                    set -l year (date +%Y)
+                    set -l q_start_month
+                    set -l q_end_month
+                    set -l q_year
+                    set -l q_label
+                    set -l fy_year
 
-            if test $month -ge 10
-              # In Q1 (Oct-Dec): last full = Q4 Jul-Sep same year
-              set q_start_month 7; set q_end_month 9; set q_year $year; set q_label Q4
-            else if test $month -ge 7
-              # In Q4 (Jul-Sep): last full = Q3 Apr-Jun same year
-              set q_start_month 4; set q_end_month 6; set q_year $year; set q_label Q3
-            else if test $month -ge 4
-              # In Q3 (Apr-Jun): last full = Q2 Jan-Mar same year
-              set q_start_month 1; set q_end_month 3; set q_year $year; set q_label Q2
-            else
-              # In Q2 (Jan-Mar): last full = Q1 Oct-Dec previous year
-              set q_start_month 10; set q_end_month 12; set q_year (math $year - 1); set q_label Q1
-            end
+                    if test $month -ge 10
+                      # In Q1 (Oct-Dec): last full = Q4 Jul-Sep same year
+                      set q_start_month 7; set q_end_month 9; set q_year $year; set q_label Q4
+                    else if test $month -ge 7
+                      # In Q4 (Jul-Sep): last full = Q3 Apr-Jun same year
+                      set q_start_month 4; set q_end_month 6; set q_year $year; set q_label Q3
+                    else if test $month -ge 4
+                      # In Q3 (Apr-Jun): last full = Q2 Jan-Mar same year
+                      set q_start_month 1; set q_end_month 3; set q_year $year; set q_label Q2
+                    else
+                      # In Q2 (Jan-Mar): last full = Q1 Oct-Dec previous year
+                      set q_start_month 10; set q_end_month 12; set q_year (math $year - 1); set q_label Q1
+                    end
 
-            # Fiscal year label (Q1 Oct 2025 = FY2026)
-            if test $q_start_month -ge 10
-              set fy_year (math $q_year + 1)
-            else
-              set fy_year $q_year
-            end
+                    # Fiscal year label (Q1 Oct 2025 = FY2026)
+                    if test $q_start_month -ge 10
+                      set fy_year (math $q_year + 1)
+                    else
+                      set fy_year $q_year
+                    end
 
-            set start_date (printf "%04d-%02d-01" $q_year $q_start_month)
-            switch $q_end_month
-              case 3 12
-                set end_date (printf "%04d-%02d-31" $q_year $q_end_month)
-              case 6 9
-                set end_date (printf "%04d-%02d-30" $q_year $q_end_month)
-            end
+                    set start_date (printf "%04d-%02d-01" $q_year $q_start_month)
+                    switch $q_end_month
+                      case 3 12
+                        set end_date (printf "%04d-%02d-31" $q_year $q_end_month)
+                      case 6 9
+                        set end_date (printf "%04d-%02d-30" $q_year $q_end_month)
+                    end
 
-            set title "$q_label FY$fy_year Review: $start_date to $end_date"
-            set filepath "$dir/quarter-$q_label-fy$fy_year.md"
-            set tag_label "@weekly / @monthly / @quarterly"
+                    set title "$q_label FY$fy_year Review: $start_date to $end_date"
+                    set filepath "$dir/quarter-$q_label-fy$fy_year.md"
+                    set tag_label "@weekly / @monthly / @quarterly"
 
-          case '*'
-            echo "Usage: review [weekly|monthly|quarterly]"
-            return 1
-        end
+                  case '*'
+                    echo "Usage: review [weekly|monthly|quarterly]"
+                    return 1
+                end
 
-        mkdir -p "$dir"
+                mkdir -p "$dir"
 
-        if test -e "$filepath"
-          set -l prev_dir $PWD
-          cd $NOTES
-          $EDITOR "$filepath"
-          cd $prev_dir
-          return 0
-        end
+                if test -e "$filepath"
+                  set -l prev_dir $PWD
+                  cd $NOTES
+                  $EDITOR "$filepath"
+                  cd $prev_dir
+                  return 0
+                end
 
-        # Gather completed tasks in the period
-        set -l completed_tasks (rg --no-filename -o -P '(?=.*\[[xX]\])(?=.*@completed\(\d{4}-\d{2}-\d{2}\)).*' $NOTES --glob '*.md' 2>/dev/null | \
-          awk -v start="$start_date" -v end_date="$end_date" '{
-            if (match($0, /@completed\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
-              d = substr($0, RSTART+11, 10)
-              if (d >= start && d <= end_date) print
-            }
-          }')
+                # Gather completed tasks in the period
+                set -l completed_tasks (rg --no-filename -o -P '(?=.*\[[xX]\])(?=.*@completed\(\d{4}-\d{2}-\d{2}\)).*' $NOTES --glob '*.md' 2>/dev/null | \
+                  awk -v start="$start_date" -v end_date="$end_date" '{
+                    if (match($0, /@completed\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                      d = substr($0, RSTART+11, 10)
+                      if (d >= start && d <= end_date) print
+                    }
+                  }')
 
-        # Gather overdue tasks
-        set -l today (date +%Y-%m-%d)
-        set -l overdue_tasks (rg --no-filename -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES --glob '*.md' 2>/dev/null | \
-          awk -v today="$today" '{
-            if (match($0, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
-              d = substr($0, RSTART+5, 10)
-              if (d < today) print
-            }
-          }')
+                # Gather overdue tasks
+                set -l today (date +%Y-%m-%d)
+                set -l overdue_tasks (rg --no-filename -o -P '(?=.*\[ \])(?=.*@due\(\d{4}-\d{2}-\d{2}\)).*' $NOTES --glob '*.md' 2>/dev/null | \
+                  awk -v today="$today" '{
+                    if (match($0, /@due\([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]\)/)) {
+                      d = substr($0, RSTART+5, 10)
+                      if (d < today) print
+                    }
+                  }')
 
-        # Gather open tagged tasks
-        set -l tagged_tasks
-        switch $period
-          case weekly
-            set tagged_tasks (rg --no-filename -o -P '(?=.*\[ \])(?=.*@weekly).*' $NOTES --glob '*.md' 2>/dev/null)
-          case monthly quarterly
-            set tagged_tasks (rg --no-filename -o -P '(?=.*\[ \])(?=.*@(?:weekly|monthly|quarterly)).*' $NOTES --glob '*.md' 2>/dev/null)
-        end
+                # Gather open tagged tasks
+                set -l tagged_tasks
+                switch $period
+                  case weekly
+                    set tagged_tasks (rg --no-filename -o -P '(?=.*\[ \])(?=.*@weekly).*' $NOTES --glob '*.md' 2>/dev/null)
+                  case monthly quarterly
+                    set tagged_tasks (rg --no-filename -o -P '(?=.*\[ \])(?=.*@(?:weekly|monthly|quarterly)).*' $NOTES --glob '*.md' 2>/dev/null)
+                end
 
-        # Build the review document with structured metadata for LLM analysis
-        set -l id (uuidgen)
-        echo "---
-id: $id
-tags: [review, $period]
-start: $start_date
-end: $end_date
----
+                # Build the review document with structured metadata for LLM analysis
+                set -l id (uuidgen)
+                echo "---
+        id: $id
+        tags: [review, $period]
+        start: $start_date
+        end: $end_date
+        ---
 
-# $title
+        # $title
 
-## Completed Tasks
-" > "$filepath"
+        ## Completed Tasks
+        " > "$filepath"
 
-        if test (count $completed_tasks) -gt 0
-          printf '%s\n' $completed_tasks >> "$filepath"
-        else
-          echo "_No completed tasks._" >> "$filepath"
-        end
+                if test (count $completed_tasks) -gt 0
+                  printf '%s\n' $completed_tasks >> "$filepath"
+                else
+                  echo "_No completed tasks._" >> "$filepath"
+                end
 
-        printf "\n## Overdue\n\n" >> "$filepath"
+                printf "\n## Overdue\n\n" >> "$filepath"
 
-        if test (count $overdue_tasks) -gt 0
-          printf '%s\n' $overdue_tasks >> "$filepath"
-        else
-          echo "_No overdue tasks._" >> "$filepath"
-        end
+                if test (count $overdue_tasks) -gt 0
+                  printf '%s\n' $overdue_tasks >> "$filepath"
+                else
+                  echo "_No overdue tasks._" >> "$filepath"
+                end
 
-        printf "\n## %s Tasks\n\n" "$tag_label" >> "$filepath"
+                printf "\n## %s Tasks\n\n" "$tag_label" >> "$filepath"
 
-        if test (count $tagged_tasks) -gt 0
-          printf '%s\n' $tagged_tasks >> "$filepath"
-        else
-          echo "_No tagged tasks._" >> "$filepath"
-        end
+                if test (count $tagged_tasks) -gt 0
+                  printf '%s\n' $tagged_tasks >> "$filepath"
+                else
+                  echo "_No tagged tasks._" >> "$filepath"
+                end
 
-        printf "\n## Reflections\n\n## Key Themes\n\n## Next Period Priorities\n\n" >> "$filepath"
-        printf "***\n\n" >> "$filepath"
-        echo "*Analyze this $period review and identify: key accomplishments and their impact, patterns in completed vs overdue work, recurring themes, suggested priorities for next period, and areas of concern.*" >> "$filepath"
+                printf "\n## Reflections\n\n## Key Themes\n\n## Next Period Priorities\n\n" >> "$filepath"
+                printf "***\n\n" >> "$filepath"
+                echo "*Analyze this $period review and identify: key accomplishments and their impact, patterns in completed vs overdue work, recurring themes, suggested priorities for next period, and areas of concern.*" >> "$filepath"
 
-        echo "Created: $filepath"
+                echo "Created: $filepath"
 
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+                set -l prev_dir $PWD
+                cd $NOTES
+                $EDITOR "$filepath"
+                cd $prev_dir
       '';
     };
 
@@ -753,252 +751,252 @@ end: $end_date
     notes-test = {
       description = "Run tests for notes system functions";
       body = ''
-        set -l pass 0
-        set -l fail 0
-        set -l _had_NOTES (set -q NOTES; and echo yes; or echo no)
-        set -l _had_EDITOR (set -q EDITOR; and echo yes; or echo no)
-        set -l _orig_NOTES "$NOTES"
-        set -l _orig_EDITOR "$EDITOR"
-        set -l tmpdir (mktemp -d)
-        set -gx NOTES "$tmpdir"
-        set -gx EDITOR true
-        set -l today (date +%Y-%m-%d)
+                set -l pass 0
+                set -l fail 0
+                set -l _had_NOTES (set -q NOTES; and echo yes; or echo no)
+                set -l _had_EDITOR (set -q EDITOR; and echo yes; or echo no)
+                set -l _orig_NOTES "$NOTES"
+                set -l _orig_EDITOR "$EDITOR"
+                set -l tmpdir (mktemp -d)
+                set -gx NOTES "$tmpdir"
+                set -gx EDITOR true
+                set -l today (date +%Y-%m-%d)
 
-        echo ""
-        set_color --bold cyan
-        echo "═══ Notes Test Suite ═══"
-        set_color normal
+                echo ""
+                set_color --bold cyan
+                echo "═══ Notes Test Suite ═══"
+                set_color normal
 
-        # ── Helper Functions ──
-        echo ""
-        set_color --bold
-        echo "Helper Functions"
-        set_color normal
+                # ── Helper Functions ──
+                echo ""
+                set_color --bold
+                echo "Helper Functions"
+                set_color normal
 
-        # _slugify
-        if test (_slugify "hello world") = "hello-world"
-          set pass (math $pass + 1); echo "  ✓ _slugify basic"
-        else
-          set fail (math $fail + 1); echo "  ✗ _slugify basic"
-        end
+                # _slugify
+                if test (_slugify "hello world") = "hello-world"
+                  set pass (math $pass + 1); echo "  ✓ _slugify basic"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _slugify basic"
+                end
 
-        if test (_slugify "My Cool Project") = "my-cool-project"
-          set pass (math $pass + 1); echo "  ✓ _slugify multi-word"
-        else
-          set fail (math $fail + 1); echo "  ✗ _slugify multi-word"
-        end
+                if test (_slugify "My Cool Project") = "my-cool-project"
+                  set pass (math $pass + 1); echo "  ✓ _slugify multi-word"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _slugify multi-word"
+                end
 
-        if test (_slugify "already-hyphenated") = "already-hyphenated"
-          set pass (math $pass + 1); echo "  ✓ _slugify already-hyphenated"
-        else
-          set fail (math $fail + 1); echo "  ✗ _slugify already-hyphenated"
-        end
+                if test (_slugify "already-hyphenated") = "already-hyphenated"
+                  set pass (math $pass + 1); echo "  ✓ _slugify already-hyphenated"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _slugify already-hyphenated"
+                end
 
-        # _titlecase
-        if test (_titlecase "john doe") = "John Doe"
-          set pass (math $pass + 1); echo "  ✓ _titlecase basic"
-        else
-          set fail (math $fail + 1); echo "  ✗ _titlecase basic"
-        end
+                # _titlecase
+                if test (_titlecase "john doe") = "John Doe"
+                  set pass (math $pass + 1); echo "  ✓ _titlecase basic"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _titlecase basic"
+                end
 
-        if test (_titlecase "JOHN DOE") = "John Doe"
-          set pass (math $pass + 1); echo "  ✓ _titlecase uppercase input"
-        else
-          set fail (math $fail + 1); echo "  ✗ _titlecase uppercase input"
-        end
+                if test (_titlecase "JOHN DOE") = "John Doe"
+                  set pass (math $pass + 1); echo "  ✓ _titlecase uppercase input"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _titlecase uppercase input"
+                end
 
-        # _is_gnu_date
-        if _is_gnu_date 2>/dev/null
-          set pass (math $pass + 1); echo "  ✓ _is_gnu_date detects GNU date"
-        else
-          set pass (math $pass + 1); echo "  ✓ _is_gnu_date detects BSD date"
-        end
+                # _is_gnu_date
+                if _is_gnu_date 2>/dev/null
+                  set pass (math $pass + 1); echo "  ✓ _is_gnu_date detects GNU date"
+                else
+                  set pass (math $pass + 1); echo "  ✓ _is_gnu_date detects BSD date"
+                end
 
-        # _require_notes
-        if _require_notes >/dev/null 2>&1
-          set pass (math $pass + 1); echo "  ✓ _require_notes with NOTES set"
-        else
-          set fail (math $fail + 1); echo "  ✗ _require_notes with NOTES set"
-        end
+                # _require_notes
+                if _require_notes >/dev/null 2>&1
+                  set pass (math $pass + 1); echo "  ✓ _require_notes with NOTES set"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _require_notes with NOTES set"
+                end
 
-        set -e NOTES
-        if not _require_notes >/dev/null 2>&1
-          set pass (math $pass + 1); echo "  ✓ _require_notes with NOTES unset"
-        else
-          set fail (math $fail + 1); echo "  ✗ _require_notes with NOTES unset"
-        end
-        set -gx NOTES "$tmpdir"
+                set -e NOTES
+                if not _require_notes >/dev/null 2>&1
+                  set pass (math $pass + 1); echo "  ✓ _require_notes with NOTES unset"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _require_notes with NOTES unset"
+                end
+                set -gx NOTES "$tmpdir"
 
-        # _require_notes_dir
-        if _require_notes_dir >/dev/null 2>&1
-          set pass (math $pass + 1); echo "  ✓ _require_notes_dir with valid dir"
-        else
-          set fail (math $fail + 1); echo "  ✗ _require_notes_dir with valid dir"
-        end
+                # _require_notes_dir
+                if _require_notes_dir >/dev/null 2>&1
+                  set pass (math $pass + 1); echo "  ✓ _require_notes_dir with valid dir"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _require_notes_dir with valid dir"
+                end
 
-        # _hx_toggle_task
-        set -l checked (echo "- [ ] my task" | _hx_toggle_task)
-        if test "$checked" = "- [x] my task @completed($today)"
-          set pass (math $pass + 1); echo "  ✓ _hx_toggle_task check"
-        else
-          set fail (math $fail + 1); echo "  ✗ _hx_toggle_task check (got: $checked)"
-        end
+                # _hx_toggle_task
+                set -l checked (echo "- [ ] my task" | _hx_toggle_task)
+                if test "$checked" = "- [x] my task @completed($today)"
+                  set pass (math $pass + 1); echo "  ✓ _hx_toggle_task check"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _hx_toggle_task check (got: $checked)"
+                end
 
-        set -l unchecked (echo "- [x] my task @completed($today)" | _hx_toggle_task)
-        if test "$unchecked" = "- [ ] my task"
-          set pass (math $pass + 1); echo "  ✓ _hx_toggle_task uncheck"
-        else
-          set fail (math $fail + 1); echo "  ✗ _hx_toggle_task uncheck (got: $unchecked)"
-        end
+                set -l unchecked (echo "- [x] my task @completed($today)" | _hx_toggle_task)
+                if test "$unchecked" = "- [ ] my task"
+                  set pass (math $pass + 1); echo "  ✓ _hx_toggle_task uncheck"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _hx_toggle_task uncheck (got: $unchecked)"
+                end
 
-        set -l passthrough (echo "regular line" | _hx_toggle_task)
-        if test "$passthrough" = "regular line"
-          set pass (math $pass + 1); echo "  ✓ _hx_toggle_task passthrough"
-        else
-          set fail (math $fail + 1); echo "  ✗ _hx_toggle_task passthrough (got: $passthrough)"
-        end
+                set -l passthrough (echo "regular line" | _hx_toggle_task)
+                if test "$passthrough" = "regular line"
+                  set pass (math $pass + 1); echo "  ✓ _hx_toggle_task passthrough"
+                else
+                  set fail (math $fail + 1); echo "  ✗ _hx_toggle_task passthrough (got: $passthrough)"
+                end
 
-        # ── Template Creation ──
-        echo ""
-        set_color --bold
-        echo "Template Creation"
-        set_color normal
+                # ── Template Creation ──
+                echo ""
+                set_color --bold
+                echo "Template Creation"
+                set_color normal
 
-        person "Test Person" >/dev/null 2>&1
-        if test -e "$tmpdir/people/Test Person.md"; and grep -q '^id:' "$tmpdir/people/Test Person.md"
-          set pass (math $pass + 1); echo "  ✓ person"
-        else
-          set fail (math $fail + 1); echo "  ✗ person"
-        end
+                person "Test Person" >/dev/null 2>&1
+                if test -e "$tmpdir/people/Test Person.md"; and grep -q '^id:' "$tmpdir/people/Test Person.md"
+                  set pass (math $pass + 1); echo "  ✓ person"
+                else
+                  set fail (math $fail + 1); echo "  ✗ person"
+                end
 
-        project "Test Project" >/dev/null 2>&1
-        if test -e "$tmpdir/projects/Test Project.md"; and grep -q '^id:' "$tmpdir/projects/Test Project.md"
-          set pass (math $pass + 1); echo "  ✓ project"
-        else
-          set fail (math $fail + 1); echo "  ✗ project"
-        end
+                project "Test Project" >/dev/null 2>&1
+                if test -e "$tmpdir/projects/Test Project.md"; and grep -q '^id:' "$tmpdir/projects/Test Project.md"
+                  set pass (math $pass + 1); echo "  ✓ project"
+                else
+                  set fail (math $fail + 1); echo "  ✗ project"
+                end
 
-        adr "Test ADR" >/dev/null 2>&1
-        if test -e "$tmpdir/decisions/Test Adr.md"; and grep -q '^id:' "$tmpdir/decisions/Test Adr.md"
-          set pass (math $pass + 1); echo "  ✓ adr"
-        else
-          set fail (math $fail + 1); echo "  ✗ adr"
-        end
+                adr "Test ADR" >/dev/null 2>&1
+                if test -e "$tmpdir/decisions/Test Adr.md"; and grep -q '^id:' "$tmpdir/decisions/Test Adr.md"
+                  set pass (math $pass + 1); echo "  ✓ adr"
+                else
+                  set fail (math $fail + 1); echo "  ✗ adr"
+                end
 
-        decision "Test Decision" >/dev/null 2>&1
-        if test -e "$tmpdir/decisions/Test Decision.md"; and grep -q '^id:' "$tmpdir/decisions/Test Decision.md"
-          set pass (math $pass + 1); echo "  ✓ decision"
-        else
-          set fail (math $fail + 1); echo "  ✗ decision"
-        end
+                decision "Test Decision" >/dev/null 2>&1
+                if test -e "$tmpdir/decisions/Test Decision.md"; and grep -q '^id:' "$tmpdir/decisions/Test Decision.md"
+                  set pass (math $pass + 1); echo "  ✓ decision"
+                else
+                  set fail (math $fail + 1); echo "  ✗ decision"
+                end
 
-        incident "Test Incident" >/dev/null 2>&1
-        if test -e "$tmpdir/incidents/Test Incident.md"; and grep -q '^id:' "$tmpdir/incidents/Test Incident.md"
-          set pass (math $pass + 1); echo "  ✓ incident"
-        else
-          set fail (math $fail + 1); echo "  ✗ incident"
-        end
+                incident "Test Incident" >/dev/null 2>&1
+                if test -e "$tmpdir/incidents/Test Incident.md"; and grep -q '^id:' "$tmpdir/incidents/Test Incident.md"
+                  set pass (math $pass + 1); echo "  ✓ incident"
+                else
+                  set fail (math $fail + 1); echo "  ✗ incident"
+                end
 
-        company "Test Company" >/dev/null 2>&1
-        if test -e "$tmpdir/companies/Test Company.md"; and grep -q '^id:' "$tmpdir/companies/Test Company.md"
-          set pass (math $pass + 1); echo "  ✓ company"
-        else
-          set fail (math $fail + 1); echo "  ✗ company"
-        end
+                company "Test Company" >/dev/null 2>&1
+                if test -e "$tmpdir/companies/Test Company.md"; and grep -q '^id:' "$tmpdir/companies/Test Company.md"
+                  set pass (math $pass + 1); echo "  ✓ company"
+                else
+                  set fail (math $fail + 1); echo "  ✗ company"
+                end
 
-        daily >/dev/null 2>&1
-        if test -e "$tmpdir/daily/$today.md"; and grep -q '^id:' "$tmpdir/daily/$today.md"
-          set pass (math $pass + 1); echo "  ✓ daily"
-        else
-          set fail (math $fail + 1); echo "  ✗ daily"
-        end
+                daily >/dev/null 2>&1
+                if test -e "$tmpdir/daily/$today.md"; and grep -q '^id:' "$tmpdir/daily/$today.md"
+                  set pass (math $pass + 1); echo "  ✓ daily"
+                else
+                  set fail (math $fail + 1); echo "  ✗ daily"
+                end
 
-        weekly >/dev/null 2>&1
-        if test -e "$tmpdir/reviews/$today.md"; and grep -q '^id:' "$tmpdir/reviews/$today.md"
-          set pass (math $pass + 1); echo "  ✓ weekly"
-        else
-          set fail (math $fail + 1); echo "  ✗ weekly"
-        end
+                weekly >/dev/null 2>&1
+                if test -e "$tmpdir/reviews/$today.md"; and grep -q '^id:' "$tmpdir/reviews/$today.md"
+                  set pass (math $pass + 1); echo "  ✓ weekly"
+                else
+                  set fail (math $fail + 1); echo "  ✗ weekly"
+                end
 
-        set -l month (date +%Y-%m)
-        monthly >/dev/null 2>&1
-        if test -e "$tmpdir/monthly/$month.md"; and grep -q '^id:' "$tmpdir/monthly/$month.md"
-          set pass (math $pass + 1); echo "  ✓ monthly"
-        else
-          set fail (math $fail + 1); echo "  ✗ monthly"
-        end
+                set -l month (date +%Y-%m)
+                monthly >/dev/null 2>&1
+                if test -e "$tmpdir/monthly/$month.md"; and grep -q '^id:' "$tmpdir/monthly/$month.md"
+                  set pass (math $pass + 1); echo "  ✓ monthly"
+                else
+                  set fail (math $fail + 1); echo "  ✗ monthly"
+                end
 
-        set -l year (date +%Y)
-        quarterly Q1 $year >/dev/null 2>&1
-        if test -e "$tmpdir/quarterly/$year-Q1.md"; and grep -q '^id:' "$tmpdir/quarterly/$year-Q1.md"
-          set pass (math $pass + 1); echo "  ✓ quarterly"
-        else
-          set fail (math $fail + 1); echo "  ✗ quarterly"
-        end
+                set -l year (date +%Y)
+                quarterly Q1 $year >/dev/null 2>&1
+                if test -e "$tmpdir/quarterly/$year-Q1.md"; and grep -q '^id:' "$tmpdir/quarterly/$year-Q1.md"
+                  set pass (math $pass + 1); echo "  ✓ quarterly"
+                else
+                  set fail (math $fail + 1); echo "  ✗ quarterly"
+                end
 
-        # review weekly
-        review weekly >/dev/null 2>&1
-        set -l review_file (find "$tmpdir/reviews" -name 'week-*.md' 2>/dev/null | head -1)
-        if test -n "$review_file"; and grep -q 'Completed Tasks' "$review_file"; and grep -q 'Overdue' "$review_file"
-          set pass (math $pass + 1); echo "  ✓ review weekly"
-        else
-          set fail (math $fail + 1); echo "  ✗ review weekly"
-        end
+                # review weekly
+                review weekly >/dev/null 2>&1
+                set -l review_file (find "$tmpdir/reviews" -name 'week-*.md' 2>/dev/null | head -1)
+                if test -n "$review_file"; and grep -q 'Completed Tasks' "$review_file"; and grep -q 'Overdue' "$review_file"
+                  set pass (math $pass + 1); echo "  ✓ review weekly"
+                else
+                  set fail (math $fail + 1); echo "  ✗ review weekly"
+                end
 
-        # ── Sync & Migration ──
-        echo ""
-        set_color --bold
-        echo "Sync & Migration"
-        set_color normal
+                # ── Sync & Migration ──
+                echo ""
+                set_color --bold
+                echo "Sync & Migration"
+                set_color normal
 
-        set -l sync_output (notes-sync 2>/dev/null)
-        if string match -q '*not a jj repository*' -- "$sync_output"
-          set pass (math $pass + 1); echo "  ✓ notes-sync handles non-jj dir"
-        else
-          set fail (math $fail + 1); echo "  ✗ notes-sync handles non-jj dir (got: $sync_output)"
-        end
+                set -l sync_output (notes-sync 2>/dev/null)
+                if string match -q '*not a jj repository*' -- "$sync_output"
+                  set pass (math $pass + 1); echo "  ✓ notes-sync handles non-jj dir"
+                else
+                  set fail (math $fail + 1); echo "  ✗ notes-sync handles non-jj dir (got: $sync_output)"
+                end
 
-        mkdir -p "$tmpdir/migrate-test"
-        echo "---
-id: weekly-2024-01-01
-tags: [test]
----
-# Test" > "$tmpdir/migrate-test/test.md"
-        migrate-ids >/dev/null 2>&1
-        set -l new_id (awk '/^---$/{n++; next} n==1 && /^id:/{sub(/^id: */, ""); print; exit}' "$tmpdir/migrate-test/test.md")
-        if string match -rq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' -- "$new_id"
-          set pass (math $pass + 1); echo "  ✓ migrate-ids replaces non-UUID ids"
-        else
-          set fail (math $fail + 1); echo "  ✗ migrate-ids replaces non-UUID ids (got: $new_id)"
-        end
+                mkdir -p "$tmpdir/migrate-test"
+                echo "---
+        id: weekly-2024-01-01
+        tags: [test]
+        ---
+        # Test" > "$tmpdir/migrate-test/test.md"
+                migrate-ids >/dev/null 2>&1
+                set -l new_id (awk '/^---$/{n++; next} n==1 && /^id:/{sub(/^id: */, ""); print; exit}' "$tmpdir/migrate-test/test.md")
+                if string match -rq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' -- "$new_id"
+                  set pass (math $pass + 1); echo "  ✓ migrate-ids replaces non-UUID ids"
+                else
+                  set fail (math $fail + 1); echo "  ✗ migrate-ids replaces non-UUID ids (got: $new_id)"
+                end
 
-        # ── Teardown ──
-        rm -rf "$tmpdir"
-        if test "$_had_NOTES" = yes
-          set -gx NOTES "$_orig_NOTES"
-        else
-          set -e NOTES
-        end
-        if test "$_had_EDITOR" = yes
-          set -gx EDITOR "$_orig_EDITOR"
-        else
-          set -e EDITOR
-        end
+                # ── Teardown ──
+                rm -rf "$tmpdir"
+                if test "$_had_NOTES" = yes
+                  set -gx NOTES "$_orig_NOTES"
+                else
+                  set -e NOTES
+                end
+                if test "$_had_EDITOR" = yes
+                  set -gx EDITOR "$_orig_EDITOR"
+                else
+                  set -e EDITOR
+                end
 
-        # ── Summary ──
-        echo ""
-        set -l total (math $pass + $fail)
-        if test $fail -eq 0
-          set_color --bold green
-          echo "All $total tests passed."
-        else
-          set_color --bold red
-          echo "$fail of $total tests failed."
-        end
-        set_color normal
-        echo ""
+                # ── Summary ──
+                echo ""
+                set -l total (math $pass + $fail)
+                if test $fail -eq 0
+                  set_color --bold green
+                  echo "All $total tests passed."
+                else
+                  set_color --bold red
+                  echo "$fail of $total tests failed."
+                end
+                set_color normal
+                echo ""
 
-        return $fail
+                return $fail
       '';
     };
   };
