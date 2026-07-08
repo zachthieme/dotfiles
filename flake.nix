@@ -100,6 +100,38 @@
     # (under lib because top-level custom outputs trip `nix flake check` warnings)
     lib = {inherit hosts;};
 
+    # Hermetic tests, run by `nix flake check` locally and in CI.
+    # Linux-only: the notes test needs uuidgen (util-linux), which nixpkgs
+    # doesn't ship for darwin; darwin CI covers evaluation instead.
+    checks = lib.genAttrs ["x86_64-linux" "aarch64-linux"] (
+      system: let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in {
+        fish-functions =
+          pkgs.runCommand "fish-functions-check" {
+            nativeBuildInputs = with pkgs; [
+              coreutils
+              fd
+              findutils
+              fish
+              gawk
+              git
+              gnugrep
+              jujutsu
+              ripgrep
+              util-linux
+            ];
+          } ''
+            export HOME=$TMPDIR
+            # jj identity for the notes-sync tests (no user config in the sandbox)
+            export JJ_USER=nix-check JJ_EMAIL=check@example.invalid
+            fish -n ${./config/fish/functions}/*.fish ${./config/fish/functions}/darwin/*.fish
+            fish -C "set -p fish_function_path ${./config/fish/functions}" -c notes-test
+            touch $out
+          '';
+      }
+    );
+
     # Formatter for `nix fmt` (CLAUDE.md: run before every commit)
     # Wrapped because newer nix invokes the formatter with no arguments,
     # and bare alejandra would then read stdin instead of the tree
