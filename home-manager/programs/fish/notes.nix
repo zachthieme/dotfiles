@@ -642,11 +642,11 @@
         end
 
         # Tab 1: daily — split row-major so pane indexes follow reading order
-        # (1=pike top-left, 2=wen top-right, 3=editor bot-left, 4=tick bot-right, 5=spacer)
+        # (1=pike top-left, 2=wen top-right, 3=editor bot-left, 4=tick bot-right, 5=sync)
         #   pike (1)    | wen (2)   28 wide, 10 tall
         #   ------------+---------
         #   editor (3)  | tick (4)   14 tall
-        #               | spacer (5)
+        #               | sync (5)
         # Create session at current terminal size so pane layout survives attach
         set -l cols (tput cols)
         set -l rows (tput lines)
@@ -656,9 +656,9 @@
         tmux resize-pane -t $pike_pane -y 10
         # Top row: pike | wen
         set -l wen_pane (tmux split-window -h -l 28 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
-        # Bottom row: editor | tick (right column becomes tick+spacer)
+        # Bottom row: editor | tick (right column becomes tick+sync)
         set -l tick_pane (tmux split-window -h -l 28 -t $editor_pane -c $notes_dir -P -F '#{pane_id}')
-        tmux split-window -v -t $tick_pane -c $notes_dir "cat"
+        tmux split-window -v -t $tick_pane -c $notes_dir "fish -c 'while true; notes-sync >/dev/null 2>&1; echo synced (date +%H:%M); sleep 3600; end'"
         tmux resize-pane -t $tick_pane -y 12
 
         # Pin right column to 28 wide on terminal resize
