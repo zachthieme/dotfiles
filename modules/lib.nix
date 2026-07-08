@@ -1,6 +1,16 @@
 { lib }:
 
+let
+  # Unfree packages allowed on all hosts (vault has a BSL license)
+  unfreePackages = [ "vault" ];
+in
 {
+  inherit unfreePackages;
+
+  # Predicate for nixpkgs.config.allowUnfreePredicate — single source of truth
+  # for unfree packages across darwin and standalone Home Manager builders
+  allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) unfreePackages;
+
   # Get the home directory path based on the OS
   # user: string - username
   # system: string - system identifier (e.g., "aarch64-darwin", "x86_64-linux")

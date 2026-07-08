@@ -67,7 +67,6 @@ in
       python3
       python312Packages.pdf2docx
       rustup
-      slides
       typst
       uv
       zig
@@ -88,7 +87,7 @@ in
     ];
 
     # Convenience: full = everything (default behavior for workstations)
-    basePackages =
+    fullPackages =
       corePackages
       ++ devPackages
       ++ heavyPackages;

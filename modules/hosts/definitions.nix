@@ -1,8 +1,14 @@
 { lib, helpers }:
 let
   # Required fields for each host definition
-  requiredFields = [ "system" "user" "isWork" ];
+  requiredFields = [ "system" ];
 
+  # Defaults applied to every host (any field can be overridden per-host)
+  hostDefaults = {
+    user = "zach";
+    isWork = false;
+    packages = [ ];
+  };
 
   # Default VCS identity for git/jj (can be overridden per-host)
   defaultVcs = {
@@ -26,90 +32,56 @@ let
     else if !validProfile then
       throw "Host '${name}' has invalid packageProfile '${profile}'. Valid values: ${builtins.concatStringsSep ", " validProfiles}"
     else
-      host // {
+      hostDefaults // host // {
         # Apply default VCS identity if not specified
         vcs = host.vcs or defaultVcs;
         # Apply default package profile if not specified
         packageProfile = profile;
       };
 
-  # Raw host definitions (validated below)
+  # Raw host definitions (validated below; hostDefaults fills user/isWork/packages)
   rawHosts = {
     "cortex" = {
       system = "aarch64-darwin";
-      user = "zach";
-      isWork = false;
-      packages = [ ];
     };
     "malv2" = {
       system = "x86_64-darwin";
-      user = "zach";
-      isWork = false;
-      packages = [ ];
     };
     "zthieme34911" = {
       system = "aarch64-darwin";
       user = "zthieme";
       isWork = true;
-      packages = [ ];
     };
     "prod" = {
       system = "x86_64-linux";
-      user = "zach";
-      isWork = false;
-      packages = [ ];
     };
     "dev" = {
       system = "x86_64-linux";
-      user = "zach";
-      isWork = false;
-      packages = [ ];
     };
     "util" = {
       system = "x86_64-linux";
-      user = "zach";
-      isWork = false;
-      packages = [ ];
     };
     "claude" = {
       system = "x86_64-linux";
-      user = "zach";
-      isWork = false;
-      packages = [ ];
     };
     "omarchy" = {
       system = "x86_64-linux";
-      user = "zach";
-      isWork = false;
-      packages = [ ];
     };
     "pi5" = {
       system = "aarch64-linux";
-      user = "zach";
-      isWork = false;
       packageProfile = "core";
-      packages = [ ];
     };
     "pi-nomad1" = {
       system = "aarch64-linux";
-      user = "zach";
-      isWork = false;
       packageProfile = "core";
-      packages = [ ];
     };
     "pi-nomad2" = {
       system = "aarch64-linux";
-      user = "zach";
-      isWork = false;
       packageProfile = "core";
-      packages = [ ];
     };
     "pi-nomad3" = {
       system = "aarch64-linux";
-      user = "zach";
-      isWork = false;
       packageProfile = "core";
-      packages = [ ];
     };
   };
 

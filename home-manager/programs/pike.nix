@@ -21,7 +21,7 @@ let
   };
 
   commonSettings = {
-    notes_dir = "~/CloudDocs/Notes";
+    notes_dir = config.dotfiles.notesDir;
     include = [ "**/*.md" ];
     exclude = [
       "templates/**"

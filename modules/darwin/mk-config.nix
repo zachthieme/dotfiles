@@ -16,7 +16,8 @@ in
 nix-darwin.lib.darwinSystem {
   modules = [
     { nixpkgs.hostPlatform = system;
-      nixpkgs.overlays = customOverlays; }
+      nixpkgs.overlays = customOverlays;
+      nixpkgs.config.allowUnfreePredicate = helpers.allowUnfreePredicate; }
     systemModule
     osModule
     contextSystemModule
@@ -24,7 +25,6 @@ nix-darwin.lib.darwinSystem {
       local.hostname = hostname;
       local.username = user;
       local.isWork = isWork;
-      environment.systemPackages = packages;
     }
     home-manager.darwinModules.home-manager
     {
@@ -39,6 +39,8 @@ nix-darwin.lib.darwinSystem {
         ];
         home.username = user;
         home.homeDirectory = helpers.getHomeDirectory user system;
+        # Host-specific packages install at the user level on both platforms
+        home.packages = packages;
         dotfiles.vcs = vcs;
         dotfiles.packageProfile = packageProfile;
       };

@@ -29,13 +29,13 @@
         set_color normal
         echo ""
         printf "  %-12s %s\n" "daily"     "Create/open today's daily note (daily/)"
-        printf "  %-12s %s\n" "weekly"    "Create/open weekly review (weekly/)"
+        printf "  %-12s %s\n" "weekly"    "Create/open weekly review (reviews/)"
         printf "  %-12s %s\n" "quarterly" "Create quarterly review (quarterly/)"
         printf "  %-12s %s\n" "monthly"   "Create monthly review (monthly/)"
         printf "  %-12s %s\n" "person"    "Create person profile (people/)"
         printf "  %-12s %s\n" "project"   "Create project note (projects/)"
         printf "  %-12s %s\n" "company"   "Create company research (companies/)"
-        printf "  %-12s %s\n" "adr"       "Create architecture decision record (adrs/)"
+        printf "  %-12s %s\n" "adr"       "Create architecture decision record (decisions/)"
         printf "  %-12s %s\n" "decision"  "Create decision document (decisions/)"
         printf "  %-12s %s\n" "incident"  "Create incident report (incidents/)"
         echo ""
@@ -56,7 +56,6 @@
         echo ""
         printf "  %-12s %s\n" "fif"       "Case-insensitive search in files"
         printf "  %-12s %s\n" "fifs"      "Case-sensitive search in files"
-        printf "  %-12s %s\n" "fifc"      "Search in chezmoi-managed files"
         echo ""
         set_color --bold cyan
         echo "═══ Git & System ═══"
@@ -150,13 +149,9 @@
       body = ''
         set -l ignore_case_flag $argv[1]
         set -l search_term $argv[2]
-        set -l chezmoi_flag ""
-        if test (count $argv) -ge 3
-          set chezmoi_flag $argv[3]
-        end
 
         if test -z "$search_term"
-          echo "Usage: _fif_common <ignore_case_flag> <search_term> [--chezmoi]"
+          echo "Usage: _fif_common <ignore_case_flag> <search_term>"
           return 1
         end
 
@@ -175,11 +170,7 @@
           set -a resolved_files (realpath "$file")
         end
 
-        if test "$chezmoi_flag" = "--chezmoi"
-          cm edit $resolved_files
-        else
-          $EDITOR $resolved_files
-        end
+        $EDITOR $resolved_files
       '';
     };
 
@@ -187,13 +178,6 @@
       description = "Case-sensitive search for text in files";
       body = ''
         _fif_common "" $argv
-      '';
-    };
-
-    fifc = {
-      description = "Case-sensitive search in chezmoi-managed files";
-      body = ''
-        _fif_common "" $argv "--chezmoi"
       '';
     };
 

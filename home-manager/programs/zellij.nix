@@ -109,7 +109,7 @@ in
     load_env_vars true
 
     layout {
-        cwd "~/CloudDocs/Notes"
+        cwd "${config.dotfiles.notesDir}"
         new_tab_template {
              pane size=1 borderless=true {
                  plugin location="zellij:compact-bar"

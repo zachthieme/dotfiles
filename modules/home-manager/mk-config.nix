@@ -11,8 +11,7 @@ home-manager.lib.homeManagerConfiguration {
   pkgs = import nixpkgs {
     inherit system;
     overlays = customOverlays;
-    # Allow specific unfree packages (vault has BSL license)
-    config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "vault" ];
+    config.allowUnfreePredicate = helpers.allowUnfreePredicate;
   };
   modules = [
     catppuccin.homeModules.catppuccin

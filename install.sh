@@ -51,7 +51,7 @@ fetch_host_info() {
   exists=$(nix $NIX_FLAGS eval --raw --impure --expr "
     let
       flake = builtins.getFlake \"$SCRIPT_DIR\";
-      hosts = flake.outputs.hosts or {};
+      hosts = (flake.outputs.lib or {}).hosts or {};
     in
       if builtins.hasAttr \"$hostname\" hosts then \"true\" else \"false\"
   " 2>/dev/null) || exists="false"
@@ -61,7 +61,7 @@ fetch_host_info() {
 
 show_available_hosts() {
   echo "Available hosts:"
-  nix $NIX_FLAGS eval --json --impure --expr "builtins.attrNames ((builtins.getFlake \"$SCRIPT_DIR\").outputs.hosts or {})" \
+  nix $NIX_FLAGS eval --json --impure --expr "builtins.attrNames (((builtins.getFlake \"$SCRIPT_DIR\").outputs.lib or {}).hosts or {})" \
     2>/dev/null | grep -oP '(?<=")[\w-]+(?=")' | sed 's/^/  - /'
 }
 
@@ -187,7 +187,7 @@ if [ "$FLAKE_UPDATE" = true ]; then
     read -p "Continue with rebuild? [Y/n] " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Nn]$ ]]; then
-      echo "Aborting. Run 'git checkout flake.lock' to revert."
+      echo "Aborting. Run 'jj restore flake.lock' to revert."
       exit 0
     fi
   else
@@ -198,12 +198,10 @@ fi
 # --- Update Zach Apps to latest ---
 
 log "Updating Zach Apps"
-nix $NIX_FLAGS flake update pike --flake "$SCRIPT_DIR" 2>/dev/null || \
-  echo "Warning: failed to update pike, continuing with existing version"
-nix $NIX_FLAGS flake update wen --flake "$SCRIPT_DIR" 2>/dev/null || \
-  echo "Warning: failed to update wen, continuing with existing version"
-nix $NIX_FLAGS flake update grove --flake "$SCRIPT_DIR" 2>/dev/null || \
-  echo "Warning: failed to update grove, continuing with existing version"
+for app in pike tick wen grove; do
+  nix $NIX_FLAGS flake update "$app" --flake "$SCRIPT_DIR" 2>/dev/null || \
+    echo "Warning: failed to update $app, continuing with existing version"
+done
 
 # --- Configure Nix trusted-users (before rebuild to avoid warnings) ---
 

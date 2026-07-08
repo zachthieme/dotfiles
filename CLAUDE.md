@@ -115,9 +115,9 @@ All host metadata lives in `modules/hosts/definitions.nix`:
 {
   "cortex" = {
     system = "aarch64-darwin";
-    user = "zach";
-    isWork = false;
-    packages = [ ];  # Host-specific packages
+    # user = "zach";  # Optional: defaults to "zach"
+    # isWork = false;  # Optional: defaults to false
+    # packages = [ ];  # Optional: host-specific packages (defaults to [ ])
     # packageProfile = "full";  # Optional: "core", "core+dev", or "full" (default)
     # vcs = { name = "..."; email = "..."; };  # Optional: override default identity
   };
@@ -125,12 +125,14 @@ All host metadata lives in `modules/hosts/definitions.nix`:
 }
 ```
 
-**Required fields**: `system`, `user`, `isWork` (validated at eval time - missing fields cause build failure)
+**Required fields**: `system` (validated at eval time - missing fields cause build failure)
 
-**Optional fields**:
+**Optional fields** (defaults applied by `validateHost`):
+- `user`: Username (default: `"zach"`)
+- `isWork`: Work context flag (default: `false`)
 - `packageProfile`: Controls which package tier to install (default: `"full"`)
 - `vcs`: Override default VCS identity for git/jj
-- `packages`: Host-specific additional packages
+- `packages`: Host-specific additional packages (default: `[ ]`)
 
 The `isWork` flag selects which context modules to load. Add packages here rather than scattering conditionals throughout modules.
 
@@ -235,10 +237,10 @@ body = ''
    ```nix
    "newhostname" = {
      system = "aarch64-darwin";  # or x86_64-darwin, x86_64-linux, aarch64-linux
-     user = "username";
-     isWork = true;
-     packageProfile = "full";  # or "core" for Pi/minimal, "core+dev" for dev without heavy
-     packages = [ ];
+     # Only override the defaults you need:
+     # user = "username";        # default: "zach"
+     # isWork = true;            # default: false
+     # packageProfile = "core";  # default: "full"; "core" for Pi/minimal
    };
    ```
 2. Hostname must match the machine's actual hostname

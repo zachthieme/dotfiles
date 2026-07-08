@@ -46,9 +46,14 @@
       # source secrets file if it exists
       test -f ~/.config/fish/secrets.fish && source ~/.config/fish/secrets.fish
 
+      # NOTES is set via home.sessionVariables from dotfiles.notesDir (base.nix)
+
       set -x VAULT_ADDR "https://vault.jjforge.cloud:8200"
-      set -x VAULT_SKIP_VERIFY true
-      set -gx NOTES "$HOME/CloudDocs/Notes"
+      # Prefer proper TLS: set VAULT_CACERT to the private CA in secrets.fish.
+      # Skip verification only as a fallback when no CA cert is configured.
+      if not set -q VAULT_CACERT
+        set -x VAULT_SKIP_VERIFY true
+      end
 
       # Set LS_COLORS using vivid with catppuccin theme
       set -gx LS_COLORS (vivid generate catppuccin-mocha)

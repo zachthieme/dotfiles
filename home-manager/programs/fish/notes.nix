@@ -3,133 +3,108 @@
 
 {
   programs.fish.functions = {
-    person = {
-      description = "Create a person profile note in people/";
+    # Single source of truth for note templates — used by the interactive
+    # commands (person, project, ...) and by _hx_ensure_note (helix :pipe)
+    _note_template = {
+      description = "Print note content (frontmatter + body) for a type. Usage: _note_template <type> <name>";
       body = ''
-        if test (count $argv) -eq 0
-          echo "Usage: person <name>"
+        set -l type $argv[1]
+        set -l name $argv[2..]
+        set -l id (uuidgen)
+        printf "%s\n" "---" "id: $id" "aliases:" "  - $name" "tags: []" "---" "" "# $name"
+
+        switch $type
+          case person
+            # header only
+          case project
+            printf "%s\n" "" "## Overview" "" "## Goals" "" "## Stakeholders" "" "## Key Decisions" "" "## Risks" "" "## Status Updates"
+          case company
+            printf "%s\n" "" "## Overview" "" "## Leadership" "" "## Culture Signals" "" "## Tech Stack & Challenges" "" "## Role Details" "" "## Compensation" "" "## Concerns" "" "## Questions to Ask" "" "## Verdict"
+          case adr
+            printf "%s\n" "" "## Status" "" "Proposed" "" "## Context" "" "## Options Considered" "" "### Option 1" "" "### Option 2" "" "## Decision" "" "## Consequences"
+          case decision
+            printf "%s\n" "" "## Problem Statement" "" "## Options" "" "### Option 1" "" "**Pros:**" "" "**Cons:**" "" "### Option 2" "" "**Pros:**" "" "**Cons:**" "" "## Recommendation" "" "## Tradeoffs" "" "## Decision"
+          case incident
+            set -l now (date +%H:%M)
+            printf "%s\n" "" "## Timeline" "" "- $now - Incident identified" "" "## Impact" "" "## Root Cause" "" "## Resolution" "" "## Action Items" "" "## Prevention"
+        end
+      '';
+    };
+
+    _note_create = {
+      description = "Create a note from template if missing; prints its path. Usage: _note_create <type> <name>";
+      body = ''
+        set -l type $argv[1]
+        set -l name (_titlecase $argv[2..])
+
+        set -l dir
+        switch $type
+          case person
+            set dir people
+          case project
+            set dir projects
+          case company
+            set dir companies
+          case adr decision
+            set dir decisions
+          case incident
+            set dir incidents
+          case '*'
+            echo "Unknown note type: $type" >&2
+            return 1
+        end
+
+        set -l filepath "$NOTES/$dir/$name.md"
+        mkdir -p "$NOTES/$dir"
+
+        if not test -e "$filepath"
+          _note_template $type $name > "$filepath"
+          echo "Created: $filepath" >&2
+        end
+
+        echo -n "$filepath"
+      '';
+    };
+
+    _note_edit = {
+      description = "Create a note if missing and open it in EDITOR. Usage: _note_edit <type> <name>";
+      body = ''
+        set -l type $argv[1]
+        set -l name $argv[2..]
+        if test -z "$name"
+          echo "Usage: $type <name>"
           return 1
         end
         _require_notes; or return 1
 
-        set -l name (_titlecase $argv)
-        set -l dir "$NOTES/people"
-        set -l filepath "$dir/$name.md"
-        mkdir -p "$dir"
-
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          echo "---
-id: $id
-aliases:
-  - $name
-tags: []
----
-
-# $name" > "$filepath"
-          echo "Created: $filepath"
-        end
+        set -l filepath (_note_create $type $name)
+        or return 1
 
         set -l prev_dir $PWD
         cd $NOTES
         $EDITOR "$filepath"
         cd $prev_dir
+      '';
+    };
+
+    person = {
+      description = "Create a person profile note in people/";
+      body = ''
+        _note_edit person $argv
       '';
     };
 
     project = {
       description = "Create a project note in projects/";
       body = ''
-        if test (count $argv) -eq 0
-          echo "Usage: project <name>"
-          return 1
-        end
-        _require_notes; or return 1
-
-        set -l name (_titlecase $argv)
-        set -l dir "$NOTES/projects"
-        set -l filepath "$dir/$name.md"
-        mkdir -p "$dir"
-
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          echo "---
-id: $id
-aliases:
-  - $name
-tags: []
----
-
-# $name
-
-## Overview
-
-## Goals
-
-## Stakeholders
-
-## Key Decisions
-
-## Risks
-
-## Status Updates" > "$filepath"
-          echo "Created: $filepath"
-        end
-
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+        _note_edit project $argv
       '';
     };
 
     adr = {
       description = "Create an architecture decision record in decisions/";
       body = ''
-        if test (count $argv) -eq 0
-          echo "Usage: adr <name>"
-          return 1
-        end
-        _require_notes; or return 1
-
-        set -l name (_titlecase $argv)
-        set -l dir "$NOTES/decisions"
-        set -l filepath "$dir/$name.md"
-        mkdir -p "$dir"
-
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          echo "---
-id: $id
-aliases:
-  - $name
-tags: []
----
-
-# $name
-
-## Status
-
-Proposed
-
-## Context
-
-## Options Considered
-
-### Option 1
-
-### Option 2
-
-## Decision
-
-## Consequences" > "$filepath"
-          echo "Created: $filepath"
-        end
-
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+        _note_edit adr $argv
       '';
     };
 
@@ -227,157 +202,21 @@ tags: []
     decision = {
       description = "Create a decision document in decisions/";
       body = ''
-        if test (count $argv) -eq 0
-          echo "Usage: decision <name>"
-          return 1
-        end
-        _require_notes; or return 1
-
-        set -l name (_titlecase $argv)
-        set -l dir "$NOTES/decisions"
-        set -l filepath "$dir/$name.md"
-        mkdir -p "$dir"
-
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          echo "---
-id: $id
-aliases:
-  - $name
-tags: []
----
-
-# $name
-
-## Problem Statement
-
-## Options
-
-### Option 1
-
-**Pros:**
-
-**Cons:**
-
-### Option 2
-
-**Pros:**
-
-**Cons:**
-
-## Recommendation
-
-## Tradeoffs
-
-## Decision" > "$filepath"
-          echo "Created: $filepath"
-        end
-
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+        _note_edit decision $argv
       '';
     };
 
     incident = {
       description = "Create an incident report in incidents/";
       body = ''
-        if test (count $argv) -eq 0
-          echo "Usage: incident <name>"
-          return 1
-        end
-        _require_notes; or return 1
-
-        set -l name (_titlecase $argv)
-        set -l dir "$NOTES/incidents"
-        set -l filepath "$dir/$name.md"
-        mkdir -p "$dir"
-
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          set -l now (date +%H:%M)
-          echo "---
-id: $id
-aliases:
-  - $name
-tags: []
----
-
-# $name
-
-## Timeline
-
-- $now - Incident identified
-
-## Impact
-
-## Root Cause
-
-## Resolution
-
-## Action Items
-
-## Prevention" > "$filepath"
-          echo "Created: $filepath"
-        end
-
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+        _note_edit incident $argv
       '';
     };
 
     company = {
       description = "Create a company research note in companies/";
       body = ''
-        if test (count $argv) -eq 0
-          echo "Usage: company <name>"
-          return 1
-        end
-        _require_notes; or return 1
-
-        set -l name (_titlecase $argv)
-        set -l dir "$NOTES/companies"
-        set -l filepath "$dir/$name.md"
-        mkdir -p "$dir"
-
-        if not test -e "$filepath"
-          set -l id (uuidgen)
-          echo "---
-id: $id
-aliases:
-  - $name
-tags: []
----
-
-# $name
-
-## Overview
-
-## Leadership
-
-## Culture Signals
-
-## Tech Stack & Challenges
-
-## Role Details
-
-## Compensation
-
-## Concerns
-
-## Questions to Ask
-
-## Verdict" > "$filepath"
-          echo "Created: $filepath"
-        end
-
-        set -l prev_dir $PWD
-        cd $NOTES
-        $EDITOR "$filepath"
-        cd $prev_dir
+        _note_edit company $argv
       '';
     };
 
@@ -790,7 +629,7 @@ end: $end_date
           return 1
         end
 
-        set -l notes_dir ~/CloudDocs/Notes
+        set -l notes_dir $NOTES
         set -l session notes
 
         # Attach if session already exists
@@ -866,63 +705,13 @@ end: $end_date
           return 1
         end
 
-        switch $type
-          case person
-            set -l tname (_titlecase $name)
-            set -l filepath "$NOTES/people/$tname.md"
-            mkdir -p "$NOTES/people"
-            if not test -e "$filepath"
-              set -l id (uuidgen)
-              printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" > "$filepath"
-            end
-            echo -n "$filepath" > /tmp/hx_note_path
-
-          case project
-            set -l tname (_titlecase $name)
-            set -l filepath "$NOTES/projects/$tname.md"
-            mkdir -p "$NOTES/projects"
-            if not test -e "$filepath"
-              set -l id (uuidgen)
-              printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Overview" "" "## Goals" "" "## Stakeholders" "" "## Key Decisions" "" "## Risks" "" "## Status Updates" > "$filepath"
-            end
-            echo -n "$filepath" > /tmp/hx_note_path
-
-          case company
-            set -l tname (_titlecase $name)
-            set -l filepath "$NOTES/companies/$tname.md"
-            mkdir -p "$NOTES/companies"
-            if not test -e "$filepath"
-              set -l id (uuidgen)
-              printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Overview" "" "## Leadership" "" "## Culture Signals" "" "## Tech Stack & Challenges" "" "## Role Details" "" "## Compensation" "" "## Concerns" "" "## Questions to Ask" "" "## Verdict" > "$filepath"
-            end
-            echo -n "$filepath" > /tmp/hx_note_path
-
-          case decision
-            set -l tname (_titlecase $name)
-            set -l filepath "$NOTES/decisions/$tname.md"
-            mkdir -p "$NOTES/decisions"
-            if not test -e "$filepath"
-              set -l id (uuidgen)
-              printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Problem Statement" "" "## Options" "" "### Option 1" "" "**Pros:**" "" "**Cons:**" "" "### Option 2" "" "**Pros:**" "" "**Cons:**" "" "## Recommendation" "" "## Tradeoffs" "" "## Decision" > "$filepath"
-            end
-            echo -n "$filepath" > /tmp/hx_note_path
-
-          case incident
-            set -l tname (_titlecase $name)
-            set -l filepath "$NOTES/incidents/$tname.md"
-            mkdir -p "$NOTES/incidents"
-            if not test -e "$filepath"
-              set -l id (uuidgen)
-              set -l now (date +%H:%M)
-              printf "%s\n" "---" "id: $id" "aliases:" "  - $tname" "tags: []" "---" "" "# $tname" "" "## Timeline" "" "- $now - Incident identified" "" "## Impact" "" "## Root Cause" "" "## Resolution" "" "## Action Items" "" "## Prevention" > "$filepath"
-            end
-            echo -n "$filepath" > /tmp/hx_note_path
-
-          case '*'
-            echo -n $input
-            return 1
+        set -l filepath (_note_create $type $name 2>/dev/null)
+        if test -z "$filepath"
+          echo -n $input
+          return 1
         end
 
+        echo -n "$filepath" > /tmp/hx_note_path
         echo -n $input
       '';
     };
@@ -1083,35 +872,35 @@ end: $end_date
         end
 
         project "Test Project" >/dev/null 2>&1
-        if test -e "$tmpdir/projects/test-project.md"; and grep -q '^id:' "$tmpdir/projects/test-project.md"
+        if test -e "$tmpdir/projects/Test Project.md"; and grep -q '^id:' "$tmpdir/projects/Test Project.md"
           set pass (math $pass + 1); echo "  ✓ project"
         else
           set fail (math $fail + 1); echo "  ✗ project"
         end
 
         adr "Test ADR" >/dev/null 2>&1
-        if test -e "$tmpdir/adrs/test-adr.md"; and grep -q '^id:' "$tmpdir/adrs/test-adr.md"
+        if test -e "$tmpdir/decisions/Test Adr.md"; and grep -q '^id:' "$tmpdir/decisions/Test Adr.md"
           set pass (math $pass + 1); echo "  ✓ adr"
         else
           set fail (math $fail + 1); echo "  ✗ adr"
         end
 
         decision "Test Decision" >/dev/null 2>&1
-        if test -e "$tmpdir/decisions/test-decision.md"; and grep -q '^id:' "$tmpdir/decisions/test-decision.md"
+        if test -e "$tmpdir/decisions/Test Decision.md"; and grep -q '^id:' "$tmpdir/decisions/Test Decision.md"
           set pass (math $pass + 1); echo "  ✓ decision"
         else
           set fail (math $fail + 1); echo "  ✗ decision"
         end
 
         incident "Test Incident" >/dev/null 2>&1
-        if test -e "$tmpdir/incidents/test-incident.md"; and grep -q '^id:' "$tmpdir/incidents/test-incident.md"
+        if test -e "$tmpdir/incidents/Test Incident.md"; and grep -q '^id:' "$tmpdir/incidents/Test Incident.md"
           set pass (math $pass + 1); echo "  ✓ incident"
         else
           set fail (math $fail + 1); echo "  ✗ incident"
         end
 
         company "Test Company" >/dev/null 2>&1
-        if test -e "$tmpdir/companies/test-company.md"; and grep -q '^id:' "$tmpdir/companies/test-company.md"
+        if test -e "$tmpdir/companies/Test Company.md"; and grep -q '^id:' "$tmpdir/companies/Test Company.md"
           set pass (math $pass + 1); echo "  ✓ company"
         else
           set fail (math $fail + 1); echo "  ✗ company"
@@ -1125,7 +914,7 @@ end: $end_date
         end
 
         weekly >/dev/null 2>&1
-        if test -e "$tmpdir/weekly/$today.md"; and grep -q '^id:' "$tmpdir/weekly/$today.md"
+        if test -e "$tmpdir/reviews/$today.md"; and grep -q '^id:' "$tmpdir/reviews/$today.md"
           set pass (math $pass + 1); echo "  ✓ weekly"
         else
           set fail (math $fail + 1); echo "  ✗ weekly"

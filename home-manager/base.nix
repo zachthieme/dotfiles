@@ -14,7 +14,7 @@ let
   profilePackages = {
     "core" = p.corePackages;
     "core+dev" = p.corePackages ++ p.devPackages;
-    "full" = p.basePackages;
+    "full" = p.fullPackages;
   };
 in
 {
@@ -34,6 +34,11 @@ in
       type = lib.types.enum [ "core" "core+dev" "full" ];
       default = "full";
       description = "Package profile tier: core (minimal), core+dev (with dev tools), full (everything)";
+    };
+    notesDir = lib.mkOption {
+      type = lib.types.str;
+      default = "${config.home.homeDirectory}/CloudDocs/Notes";
+      description = "Notes directory — single source of truth for the NOTES env var, pike, and workspace layouts";
     };
   };
 
@@ -62,7 +67,7 @@ in
       accent = "sky";
     };
 
-    home.stateVersion = "25.05"; # Adjust based on your nixpkgs version
+    home.stateVersion = "25.05"; # Do NOT change after initial install — pins state migration behavior, not the nixpkgs version
 
     # Disable news notifications
     news.display = "silent";
@@ -93,6 +98,7 @@ in
       EDITOR = "hx";
       VISUAL = "hx";
       COLORTERM = "truecolor";
+      NOTES = config.dotfiles.notesDir;
       OBSIDIAN_VAULT = "${config.home.homeDirectory}/CloudDocs/Obsidian";
       _ZO_FZF_OPTS = "--height 20% --reverse";
       MANPAGER = "sh -c 'col -bx | bat -l man -p'";
@@ -102,15 +108,15 @@ in
     };
 
     # PATH additions
-    # - Linux: Home Manager standalone puts packages in ~/.local/state/nix/profiles/home-manager/home-path/bin
-    #   (unlike macOS where nix-darwin manages paths system-wide)
     # - macOS: Homebrew is at /opt/homebrew/bin on Apple Silicon
+    # - Linux: the Home Manager bin path is NOT listed here — sessionPath appends,
+    #   but that path must shadow system dirs, so fish prepends it in shellInit
+    #   (programs/fish/default.nix) and install.sh prepends it in .bashrc
     home.sessionPath =
       [
         "${config.home.homeDirectory}/.local/bin"
       ]
-      ++ lib.optionals pkgs.stdenv.isDarwin [ "/opt/homebrew/bin" ]
-      ++ lib.optionals pkgs.stdenv.isLinux [ "${config.home.homeDirectory}/.local/state/nix/profiles/home-manager/home-path/bin" ];
+      ++ lib.optionals pkgs.stdenv.isDarwin [ "/opt/homebrew/bin" ];
 
     # This will be imported by user-specific configurations
     # These paths are relative to the root dotfiles directory

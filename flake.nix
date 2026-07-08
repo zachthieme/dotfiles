@@ -14,7 +14,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    catppuccin.url = "github:catppuccin/nix";
+    catppuccin = {
+      url = "github:catppuccin/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nixvim = {
       url = "github:nix-community/nixvim";
@@ -97,7 +100,13 @@
     in
     {
       # Expose hosts for validation in install.sh
-      inherit hosts;
+      # (under lib because top-level custom outputs trip `nix flake check` warnings)
+      lib = { inherit hosts; };
+
+      # Formatter for `nix fmt` (CLAUDE.md: run before every commit)
+      formatter = lib.genAttrs [ "aarch64-darwin" "x86_64-darwin" "x86_64-linux" "aarch64-linux" ] (
+        system: nixpkgs.legacyPackages.${system}.alejandra
+      );
 
       darwinConfigurations =
         darwinConfigs

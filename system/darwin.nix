@@ -11,22 +11,21 @@
   # Accept arguments for user-specific settings with defaults
   options = {
     local = {
+      # No defaults: the builder (modules/darwin/mk-config.nix) always sets these
+      # from definitions.nix, and a missing value should fail loudly at eval time
       username = lib.mkOption {
         type = lib.types.str;
         description = "The primary user's username";
-        default = "zach";
       };
 
       isWork = lib.mkOption {
         type = lib.types.bool;
         description = "Whether this is a work machine";
-        default = false;
       };
 
       hostname = lib.mkOption {
         type = lib.types.str;
         description = "The hostname of the machine";
-        default = "cortex";
       };
     };
   };
@@ -67,10 +66,8 @@
     # Required even with nix.enable = false for nix.conf generation
     nix.package = pkgs.nix;
 
-    # Allow selective unfree packages
-    nixpkgs.config = {
-      allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [ "vault" ];
-    };
+    # Unfree packages are allowed via helpers.allowUnfreePredicate,
+    # set by the builder in modules/darwin/mk-config.nix
 
     # Block todesk — unapproved remote-access software (security policy)
     nixpkgs.overlays = [
