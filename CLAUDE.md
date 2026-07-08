@@ -39,8 +39,8 @@ darwin-rebuild switch --show-trace --flake .#<hostname>  # Debug errors
 
 **Linux (Home Manager):**
 ```bash
-home-manager switch --flake .#srv722852
-home-manager switch --dry-run --flake .#srv722852  # Preview changes
+home-manager switch --flake .#<hostname>
+home-manager switch --dry-run --flake .#<hostname>  # Preview changes
 ```
 
 ### Validation
