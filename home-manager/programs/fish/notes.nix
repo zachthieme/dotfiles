@@ -671,7 +671,11 @@
         tmux new-window -t $session -n tasks -c $notes_dir
         tmux send-keys "pike" Enter
 
-        # Tab 3: shell
+        # Tab 3: herdr — AI agent workspace
+        tmux new-window -t $session -n herdr -c $notes_dir
+        tmux send-keys "herdr" Enter
+
+        # Tab 4: shell
         tmux new-window -t $session -n shell -c $notes_dir
 
         # Start on the daily tab

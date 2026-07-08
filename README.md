@@ -134,12 +134,13 @@ The tools each handle a different part of the workflow:
 
 ### Workspace
 
-Run `nw` to open a tmux workspace with three windows:
+Run `nw` to open a tmux workspace with four windows:
 
 | Window | Contents |
 | --- | --- |
 | **daily** | Pike priority view + wen calendar (top), daily note in editor + tick countdown (bottom) |
 | **tasks** | Full pike dashboard with all configured views |
+| **herdr** | Herdr workspace for AI coding agents |
 | **shell** | General-purpose shell |
 
 On exit, `nw` commits and pushes all changes via `notes-sync` (`nwk` kills the session).
