@@ -222,6 +222,7 @@
       description = "Create today's daily note from template if missing; prints its path";
       body = ''
         if not set -q NOTES; or test -z "$NOTES"
+          echo "NOTES not set" >&2
           return 1
         end
 
@@ -877,10 +878,9 @@
                   set fail (math $fail + 1); echo "  ✗ _daily_create creates today's note (got: $dc_path)"
                 end
 
-                set -l dc_mtime (stat -c %Y "$dc_path" 2>/dev/null; or stat -f %m "$dc_path")
+                echo "SENTINEL-do-not-clobber" >> "$dc_path"
                 set -l dc_path2 (_daily_create 2>/dev/null)
-                set -l dc_mtime2 (stat -c %Y "$dc_path" 2>/dev/null; or stat -f %m "$dc_path")
-                if test "$dc_path2" = "$dc_path"; and test "$dc_mtime2" = "$dc_mtime"
+                if test "$dc_path2" = "$dc_path"; and grep -q 'SENTINEL-do-not-clobber' "$dc_path"
                   set pass (math $pass + 1); echo "  ✓ _daily_create idempotent"
                 else
                   set fail (math $fail + 1); echo "  ✗ _daily_create idempotent"
