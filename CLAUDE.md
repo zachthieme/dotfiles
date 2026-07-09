@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a Nix flake-based dotfiles repository that manages macOS (via nix-darwin) and Linux (via Home Manager) configurations across multiple machines. The architecture uses a layered approach: base system defaults, OS-specific settings (Darwin), and context overlays (home/work) that compose together to produce machine-specific configurations.
+This is a Nix flake-based dotfiles repository that manages macOS (via nix-darwin) and Linux (via Home Manager) configurations across multiple machines. The architecture uses a layered approach: base system defaults, OS-specific settings (Darwin), and context modules (home/work) that compose together to produce machine-specific configurations.
 
 ## Version Control
 
@@ -45,9 +45,12 @@ home-manager switch --dry-run --flake .#<hostname>  # Preview changes
 
 ### Validation
 ```bash
-nix flake check  # Run before every commit
+nix flake check  # Run before every commit — builds the fish-functions test suite
+nix build .#checks.x86_64-linux.fish-functions  # Run just the notes/fish tests
 nix build .#darwinConfigurations.<hostname>.system  # Build system derivation
 ```
+
+CI (`.github/workflows/check.yml`) runs the formatter check, `nix flake check`, and evaluates every Linux configuration on ubuntu; Darwin configurations are evaluated on a macOS runner (they use import-from-derivation and cannot be fully evaluated on Linux).
 
 ### Formatting
 ```bash
@@ -89,22 +92,21 @@ These helpers eliminate code duplication and provide a single source of truth fo
 ### Layer Composition
 
 **macOS hosts** (`modules/darwin/mk-config.nix`) stack these modules:
-1. `system/darwin.nix` - System settings (packages, users, hostname)
-2. `overlays/os/darwin.nix` - macOS-only settings (Homebrew, system defaults, keyboard)
-3. `overlays/context/system/{home,work}.nix` - Context system overrides
-4. Inline module with host-specific `local.hostname`, `local.username`, packages
-5. Home Manager as Darwin module, importing `overlays/context/home-manager/{home,work}.nix`
+1. `system/darwin.nix` - System settings shared by all macs (packages, users, hostname, Homebrew, macOS defaults, keyboard)
+2. `contexts/system/{home,work}.nix` - Context system overrides
+3. Inline module with host-specific `local.hostname`, `local.username`, packages
+4. Home Manager as Darwin module, importing `contexts/home-manager/{home,work}.nix`
 
 **Linux hosts** (`modules/home-manager/mk-config.nix`) load:
-1. `overlays/context/home-manager/{home,work}.nix` (which imports `home-manager/base.nix`)
+1. `contexts/home-manager/{home,work}.nix` (which imports `home-manager/base.nix`)
 2. Inline module setting `home.username`, `home.homeDirectory`, `home.packages`
 
 ### Context Modules
 
-Context modules (`overlays/context/`) determine home vs work environments. The appropriate module is selected by the builder using `helpers.selectContextModule` based on the `isWork` flag from `definitions.nix`.
+Context modules (`contexts/`) determine home vs work environments. The appropriate module is selected by the builder using `helpers.selectContextModule` based on the `isWork` flag from `definitions.nix`.
 
-- **System context**: `overlays/context/system/home.nix` and `work.nix` - Context-specific system packages and settings. The `local.isWork` value is set by the builder from `definitions.nix`.
-- **User context**: `overlays/context/home-manager/home.nix` and `work.nix` - User-level context differences.
+- **System context**: `contexts/system/home.nix` and `work.nix` - Context-specific system packages and settings. The `local.isWork` value is set by the builder from `definitions.nix`.
+- **User context**: `contexts/home-manager/home.nix` and `work.nix` - User-level context differences.
 
 Both home-manager context modules import `home-manager/base.nix`, which contains shared user settings (fish, fzf, program imports, dotfile symlinks). This base module is a Home Manager module, so it receives `config.home.username` and `config.home.homeDirectory` from the host wiring (set via `helpers.getHomeDirectory`).
 
@@ -119,6 +121,7 @@ All host metadata lives in `modules/hosts/definitions.nix`:
     # isWork = false;  # Optional: defaults to false
     # packages = [ ];  # Optional: host-specific packages (defaults to [ ])
     # packageProfile = "full";  # Optional: "core", "core+dev", or "full" (default)
+    # allowFlakeUpdate = true;  # Optional: false blocks install.sh -f (prod-like hosts)
     # vcs = { name = "..."; email = "..."; };  # Optional: override default identity
   };
   # ... more hosts
@@ -131,6 +134,7 @@ All host metadata lives in `modules/hosts/definitions.nix`:
 - `user`: Username (default: `"zach"`)
 - `isWork`: Work context flag (default: `false`)
 - `packageProfile`: Controls which package tier to install (default: `"full"`)
+- `allowFlakeUpdate`: Whether `install.sh -f` may update `flake.lock` on this host (default: `true`). Set to `false` on prod-like hosts (prod, the nomad Pis) so lock bumps are tested on a dev machine and arrive via a committed `flake.lock`.
 - `vcs`: Override default VCS identity for git/jj
 - `packages`: Host-specific additional packages (default: `[ ]`)
 
@@ -152,7 +156,7 @@ Profiles are selected per-host via `packageProfile` in `definitions.nix`. The `h
 
 Program-specific Home Manager configurations live in `home-manager/programs/`:
 - `bat.nix`, `btop.nix` - Terminal utilities
-- `fish.nix` - Shell configuration with functions and abbreviations
+- `fish/` - Shell configuration (settings, abbreviations, plugins in `default.nix`; function symlinking in `functions.nix`)
 - `git.nix` - Git settings and delta pager
 - `ghostty.nix`, `helix.nix` - Terminal and editor
 - `jujutsu.nix`, `lazygit.nix` - VCS tools
@@ -160,6 +164,15 @@ Program-specific Home Manager configurations live in `home-manager/programs/`:
 - `zellij.nix` - Terminal multiplexer
 
 These are imported by `home-manager/base.nix` and apply to all hosts.
+
+### Fish Functions
+
+Fish functions live as real `.fish` files in `config/fish/functions/` (macOS-only functions in `config/fish/functions/darwin/`), NOT as Nix string literals. `home-manager/programs/fish/functions.nix` symlinks every file in that directory into fish's autoload path.
+
+- **Add/edit a function**: Edit the `.fish` file directly — no Nix changes needed. Use `fish -n <file>` to syntax-check and `fish_indent` to format.
+- **Do not** add function bodies to `programs.fish.functions` in Nix — that reintroduces the `''` escaping trap and makes functions untestable.
+- **Tests**: `config/fish/functions/notes-test.fish` is the notes-system test suite. It runs hermetically as the `fish-functions` flake check (`nix flake check`) and in CI. Run it directly with `notes-test` in a shell, or `nix build .#checks.x86_64-linux.fish-functions`.
+- Functions that need Nix-interpolated values (store paths, config options) are the exception — keep those in Nix, but prefer reading environment variables (like `$NOTES`, set from `dotfiles.notesDir`) so the function can stay a plain file.
 
 ### Application Configs
 
@@ -175,6 +188,8 @@ home.file = {
 ```
 
 ## Nix Multiline String Escaping (`''...''`)
+
+> **Note**: Fish functions no longer live in Nix strings (see "Fish Functions" above), which eliminated the main source of this pitfall. These rules still apply to the shell fragments that remain in Nix (`shellInit`, `interactiveShellInit`, activation scripts).
 
 Nix indented strings (`''...''`) have **non-intuitive escaping** for single quotes. The rules:
 
@@ -210,7 +225,7 @@ body = ''
 
 - **Indentation**: Two spaces in Nix files
 - **Attribute ordering**: Alphabetize attribute sets where practical
-- **Module naming**: Follow existing patterns (`modules/<domain>/*.nix`, `overlays/<dimension>/<detail>.nix`)
+- **Module naming**: Follow existing patterns (`modules/<domain>/*.nix`, `contexts/<layer>/<context>.nix`)
 - **Host keys**: Use short lowercase names in `definitions.nix`
 - **Formatting**: Run `nix fmt` or `alejandra .` before committing
 - **Commit messages**: Concise, lowercase subject lines describing the change (e.g., `adding uv`, `fix fish path on linux`)
@@ -221,7 +236,7 @@ body = ''
 
 2. **No Duplication**: Use shared helper functions from `modules/lib.nix` for any logic that appears in multiple places. OS detection, path resolution, and module selection should use helpers rather than inline logic.
 
-3. **Layer Separation**: Keep system-level logic in `system/`, shared user config in `home-manager/base.nix`, and deltas in `overlays/context/`. Avoid repeating base settings in context modules.
+3. **Layer Separation**: Keep system-level logic in `system/`, shared user config in `home-manager/base.nix`, and deltas in `contexts/`. Avoid repeating base settings in context modules.
 
 4. **Host-Specific Packages**: Prefer adding packages to a host's `packages` list in `definitions.nix` over adding conditionals inside modules.
 
@@ -257,7 +272,7 @@ body = ''
 
 **For resource-constrained hosts**: Set `packageProfile = "core"` in `definitions.nix` to skip dev and heavy packages
 
-**Homebrew casks/formulas** (macOS only): Add to the appropriate context module in `overlays/context/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `overlays/os/darwin.nix` for all macOS machines
+**Homebrew casks/formulas** (macOS only): Add to the appropriate context module in `contexts/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `system/darwin.nix` for all macOS machines
 
 ## Common Patterns
 
@@ -337,18 +352,10 @@ programs.fish = {
     vi = "hx";
     gs = "git status";
   };
-
-  # Functions (preferred over inline function definitions)
-  functions = {
-    my_function = {
-      description = "Brief description shown by 'functions -D'";
-      body = ''
-        # Function implementation
-        echo "Hello $argv"
-      '';
-    };
-  };
 };
+
+# Functions do NOT go here — add a .fish file to config/fish/functions/
+# instead (see "Fish Functions" above); functions.nix symlinks it automatically.
 
 # Use native integrations for tools
 programs.carapace.enable = true;
@@ -387,7 +394,7 @@ The `install.sh` script automatically:
 1. Configures `~/.bashrc` with the Home Manager PATH
 2. Sources `hm-session-vars.sh` for environment variables
 
-Fish shell has this path added via `fish_add_path` in `home-manager/programs/fish.nix`.
+Fish shell has this path added via `fish_add_path` in `home-manager/programs/fish/default.nix`.
 
 ### Default Shell Change (Linux)
 
@@ -464,10 +471,20 @@ nix $NIX_FLAGS profile add nixpkgs#home-manager
 ```
 
 This will:
-1. Run `nix flake update` to update all inputs in `flake.lock`
+1. Run `nix flake update` to update all inputs in `flake.lock` (including the personal tools pike/tick/wen/grove)
 2. Show a diff of changes for review
 3. Prompt for confirmation before rebuilding
 4. If you decline, the lock file changes remain (use `jj restore flake.lock` to revert)
+
+Without `-f`, `./install.sh` never touches `flake.lock` — rebuilds are reproducible from the committed lock.
+
+**Update only the personal tools (pike/tick/wen/grove):**
+```bash
+nix flake update pike tick wen grove
+./install.sh
+```
+
+**Prod-like hosts** (prod, pi-nomad1-3) set `allowFlakeUpdate = false` in `definitions.nix`; `install.sh -f` refuses to run there. Update the lock on a dev machine, commit, then rebuild those hosts from the committed lock.
 
 **Manual update workflow:**
 ```bash
@@ -490,7 +507,7 @@ home-manager generations           # Linux: list generations
 **Update strategy:**
 - Run `./install.sh -f` periodically (weekly/monthly) to get security updates
 - Always review the diff before confirming
-- Test on a non-critical machine first if possible
+- Test on a dev machine first — enforced for hosts with `allowFlakeUpdate = false`
 - Commit `flake.lock` changes after successful rebuild
 
 ### Home Manager Option Naming (as of 2025)
@@ -562,3 +579,23 @@ Some Home Manager options have been renamed. Use the new names:
 - Git identity configurable per-host from single source of truth
 - Simplified dependency update workflow
 - Better documentation for contributors
+
+### 2026-07-08: Fish Function Extraction, contexts/ Rename, Test/CI Hardening
+
+**Motivation**: Address principal-engineer review findings — a 1,100-line fish application living in Nix strings, CI that masked Darwin failures, tests that never ran, an installer that silently mutated flake.lock, and the overlays/ naming collision.
+
+**Changes**:
+1. **Extracted fish functions to real files**: All function bodies moved from `programs.fish.functions` Nix strings to `config/fish/functions/*.fish` (macOS-only functions in `darwin/`). `home-manager/programs/fish/functions.nix` symlinks them into fish's autoload path. Files were generated from the existing Home Manager output, so behavior is byte-identical.
+2. **Tests run everywhere**: `notes-test` executes hermetically as the `fish-functions` flake check, so `nix flake check` and CI both run the suite.
+3. **CI stopped masking Darwin failures**: Darwin configs evaluate on a macOS runner and fail loudly (they use import-from-derivation and cannot be fully evaluated on Linux). CI also enforces alejandra formatting.
+4. **install.sh no longer mutates flake.lock on plain runs**: The unconditional pike/tick/wen/grove update loop was folded into `-f`; `--help` documents the manual recipe for updating only the personal tools.
+5. **Prod-like hosts pin the lock**: New `allowFlakeUpdate` host field (false for prod and pi-nomad1-3) makes `install.sh -f` refuse there — lock bumps must be tested on a dev machine and committed first.
+6. **Renamed `overlays/` to `contexts/`**: Removed the collision with the nixpkgs-overlay meaning of "overlay" (which the flake also uses). `overlays/os/darwin.nix` merged into `system/darwin.nix` — both applied to every mac, so the split bought nothing.
+7. **Consistency fixes**: `.moxide.toml` placement derives from `dotfiles.notesDir` instead of a hardcoded path; dead `packageProfile`/`packages` fallbacks removed from the builders (validateHost guarantees them).
+
+**Impact**:
+- Fish functions are editable with highlighting, lintable (`fish -n`), formattable (`fish_indent`), and tested in CI
+- The Nix `'''` escaping trap is gone from day-to-day work
+- A broken Darwin config now fails CI instead of passing silently
+- Rebuilds without `-f` are reproducible from the committed lock
+- prod and the nomad Pis can no longer take untested dependency bumps

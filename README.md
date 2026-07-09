@@ -1,6 +1,6 @@
 # Dotfiles for Multiple Machines
 
-Automated dotfiles for macOS and Linux hosts (including Raspberry Pi), powered by Nix flakes. The repo layers system defaults, OS-specific settings, and context overlays (home/work) so each machine receives the right configuration with minimal duplication.
+Automated dotfiles for macOS and Linux hosts (including Raspberry Pi), powered by Nix flakes. The repo layers system defaults, OS-specific settings, and context modules (home/work) so each machine receives the right configuration with minimal duplication.
 
 For contributor-specific technical details, see [Repository Guidelines](./CLAUDE.md).
 
@@ -41,14 +41,13 @@ docs/                # Plans and design notes
 home-manager/        # Home Manager modules
   base.nix           # Shared user config (programs, dotfiles, env vars)
   programs/          # Per-program configs (fish, git, helix, etc.)
+config/fish/functions/ # Fish functions as real .fish files (autoloaded)
 modules/             # Infrastructure
   lib.nix            # Shared helper functions
   hosts/             # Host definitions and detection
   darwin/            # macOS configuration builder
   home-manager/      # Linux configuration builder
-overlays/            # Context-specific overrides
-  context/           # home vs work differences
-  os/                # OS-level settings (Homebrew, macOS defaults)
+contexts/            # home vs work overrides (system + home-manager)
 packages/            # Shared package profiles
 flake.nix            # Entry point
 install.sh           # Bootstrap script
@@ -103,7 +102,7 @@ home-manager switch -b backup --flake .#<hostname>
 
 - **All machines**: Add to the appropriate tier in `packages/common.nix` (`corePackages`, `devPackages`, or `heavyPackages`)
 - **One host**: Add to that host's `packages` list in `definitions.nix`
-- **macOS Homebrew**: Add to `overlays/os/darwin.nix` or context modules in `overlays/context/system/`
+- **macOS Homebrew**: Add to `system/darwin.nix` or context modules in `contexts/system/`
 
 ### Add dotfiles for a tool
 
@@ -248,7 +247,8 @@ Run `aliases` to see all abbreviations and functions in the shell.
 ## Validation
 
 ```bash
-nix flake check                                    # Syntax and evaluation
+nix flake check                                    # Schema + fish/notes test suite
+nix build .#checks.x86_64-linux.fish-functions     # Run just the fish/notes tests
 darwin-rebuild switch --dry-run --flake .#host    # Preview macOS changes
 home-manager switch --dry-run --flake .#host      # Preview Linux changes
 ```
@@ -262,6 +262,6 @@ home-manager switch --dry-run --flake .#host      # Preview Linux changes
 ## Key Design Principles
 
 1. **Single source of truth**: Host metadata only in `definitions.nix`
-2. **Layer separation**: System settings in `system/`, deltas in `overlays/`
+2. **Layer separation**: System settings in `system/`, deltas in `contexts/`
 3. **No duplication**: Shared logic in `modules/lib.nix`
 4. **Declarative config**: Prefer Home Manager options over shell scripts
