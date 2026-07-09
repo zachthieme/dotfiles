@@ -18,8 +18,16 @@ for arg in "$@"; do
       echo "Usage: $0 [OPTIONS]"
       echo ""
       echo "Options:"
-      echo "  --flake-update, -f  Update flake.lock before rebuilding"
+      echo "  --flake-update, -f  Update ALL flake.lock inputs (nixpkgs, home-manager,"
+      echo "                      and the personal tools pike/tick/wen/grove) before"
+      echo "                      rebuilding. Shows a diff and asks before continuing."
       echo "  --help, -h          Show this help message"
+      echo ""
+      echo "Without -f the committed flake.lock is used as-is (reproducible rebuild)."
+      echo ""
+      echo "To update only the personal tools without touching other inputs:"
+      echo "  nix flake update pike tick wen grove"
+      echo "  ./install.sh"
       exit 0
       ;;
   esac
@@ -75,6 +83,18 @@ get_nix_system() {
   esac
 }
 
+# Add a user to trusted-users in the given conf file (create/append/extend)
+append_trusted_user() {
+  local conf=$1 user=$2
+  if [ ! -f "$conf" ]; then
+    echo "trusted-users = root ${user}" | sudo tee "$conf" >/dev/null
+  elif grep -qE "^trusted-users\s*=" "$conf" 2>/dev/null; then
+    sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${user}/" "$conf"
+  else
+    echo "trusted-users = root ${user}" | sudo tee -a "$conf" >/dev/null
+  fi
+}
+
 configure_trusted_users() {
   local nix_conf="/etc/nix/nix.conf"
   local nix_custom_conf="/etc/nix/nix.custom.conf"
@@ -98,25 +118,10 @@ configure_trusted_users() {
 
   # Prefer nix.custom.conf if nix.conf includes it (Determinate Nix pattern)
   # This file persists across nix.conf rewrites
-  if grep -qE "^!include\s+.*nix\.custom\.conf" "$nix_conf" 2>/dev/null || \
-     grep -qE "^include\s+.*nix\.custom\.conf" "$nix_conf" 2>/dev/null; then
-    # Use nix.custom.conf (Determinate Nix)
-    if [ ! -f "$nix_custom_conf" ]; then
-      echo "trusted-users = root ${current_user}" | sudo tee "$nix_custom_conf" >/dev/null
-    elif grep -qE "^trusted-users\s*=" "$nix_custom_conf" 2>/dev/null; then
-      sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${current_user}/" "$nix_custom_conf"
-    else
-      echo "trusted-users = root ${current_user}" | sudo tee -a "$nix_custom_conf" >/dev/null
-    fi
+  if grep -qE "^!?include\s+.*nix\.custom\.conf" "$nix_conf" 2>/dev/null; then
+    append_trusted_user "$nix_custom_conf" "$current_user"
   else
-    # Use nix.conf directly (standard Nix)
-    if [ ! -f "$nix_conf" ]; then
-      echo "trusted-users = root ${current_user}" | sudo tee "$nix_conf" >/dev/null
-    elif grep -qE "^trusted-users\s*=" "$nix_conf" 2>/dev/null; then
-      sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${current_user}/" "$nix_conf"
-    else
-      echo "trusted-users = root ${current_user}" | sudo tee -a "$nix_conf" >/dev/null
-    fi
+    append_trusted_user "$nix_conf" "$current_user"
   fi
 
   # Restart nix-daemon to apply changes
@@ -194,14 +199,6 @@ if [ "$FLAKE_UPDATE" = true ]; then
     echo "Warning: flake update failed, continuing with existing lock file"
   fi
 fi
-
-# --- Update Zach Apps to latest ---
-
-log "Updating Zach Apps"
-for app in pike tick wen grove; do
-  nix $NIX_FLAGS flake update "$app" --flake "$SCRIPT_DIR" 2>/dev/null || \
-    echo "Warning: failed to update $app, continuing with existing version"
-done
 
 # --- Configure Nix trusted-users (before rebuild to avoid warnings) ---
 
