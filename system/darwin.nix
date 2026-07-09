@@ -61,11 +61,11 @@
 
     # Common system settings
     system.stateVersion = 6;
-    # Disable nix-darwin's Nix management when using Determinate Nix
+    # Determinate Nix owns Nix itself (flakes + nix-command are enabled out of
+    # the box), so nix-darwin must not manage it. With nix.enable = false,
+    # nix-darwin writes no nix.conf — nix.package / nix.settings.* would be dead,
+    # so they are intentionally not set here.
     nix.enable = false;
-    # Required even with nix.enable = false for nix.conf generation
-    nix.package = pkgs.nix;
-    nix.settings.experimental-features = ["nix-command" "flakes"];
 
     # Homebrew packages and casks shared by all macOS machines
     # (context-specific casks live in contexts/system/{home,work}.nix)

@@ -268,6 +268,11 @@ Path to A+ (0.97): the three remaining partials — idempotent `.backup` handlin
 (1.6), remove the dead darwin `nix.*` config + its misleading comment (2.3;
 needs a mac to verify), and escape the `space.T` buffer name (6.3).
 
+Update: the 2.3 dead-config removal is committed and evaluates cleanly at the
+option level; **pending a `darwin-rebuild switch` on a real Mac** to confirm.
+Once confirmed, Correctness → 1.00 and overall → ~0.98 (A+). Not recorded as
+closed until validated — no scoring on unverified changes.
+
 ### 2026-07-09 — round 9 [rubric v1.6] — Architecture + Docs to 1.00
 
 **Overall: 0.88 → B+. PROVISIONAL** — fresh-boot criteria still `unverified`
