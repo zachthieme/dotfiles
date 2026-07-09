@@ -71,6 +71,11 @@
     # (context-specific casks live in contexts/system/{home,work}.nix)
     homebrew = {
       enable = true;
+      # Uninstall anything not declared here or in contexts/system/ — without
+      # this the Homebrew layer is append-only (removing a cask from config
+      # leaves it installed forever). NOTE: this also removes manually
+      # `brew install`ed packages on the next rebuild; declare them instead.
+      onActivation.cleanup = "uninstall";
       taps = [
         "FelixKratz/formulae"
       ];

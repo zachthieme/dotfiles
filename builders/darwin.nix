@@ -5,15 +5,12 @@
   nixvim,
   helpers,
   customOverlays,
-}: hostname: {
+}: hostname: host @ {
   # All fields are guaranteed by validateHost in hosts/definitions.nix —
   # defaults live there, not here
   system,
   user,
   isWork,
-  vcs,
-  packageProfile,
-  packages,
   ...
 }: let
   systemModule = ../system/darwin.nix;
@@ -52,13 +49,10 @@ in
             catppuccin.homeModules.catppuccin
             nixvim.homeModules.nixvim
             contextHomeModule
+            # Per-host user wiring (username, homeDirectory, packages, vcs,
+            # packageProfile) — shared with builders/home-manager.nix
+            (helpers.mkUserModule host)
           ];
-          home.username = user;
-          home.homeDirectory = helpers.getHomeDirectory user system;
-          # Host-specific packages install at the user level on both platforms
-          home.packages = packages;
-          dotfiles.vcs = vcs;
-          dotfiles.packageProfile = packageProfile;
         };
       }
     ];

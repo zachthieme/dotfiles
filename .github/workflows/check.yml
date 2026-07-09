@@ -46,7 +46,7 @@ jobs:
 
       - name: Evaluate Darwin configurations
         run: |
-          for host in $(nix eval .#darwinConfigurations --apply 'x: builtins.filter (n: n != "default") (builtins.attrNames x)' --json | jq -r '.[]'); do
+          for host in $(nix eval .#darwinConfigurations --apply 'x: builtins.attrNames x' --json | jq -r '.[]'); do
             echo "Evaluating darwinConfigurations.$host..."
             nix eval ".#darwinConfigurations.$host.system.drvPath" > /dev/null
           done

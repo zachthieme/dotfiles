@@ -25,15 +25,23 @@
   # Valid package profiles
   validProfiles = ["core" "core+dev" "full"];
 
+  # Valid system identifiers. A typo here would otherwise pass validation and
+  # then match neither darwinHosts nor linuxHosts — the host silently vanishes
+  # from the flake outputs while install.sh still reports it as existing.
+  validSystems = ["aarch64-darwin" "x86_64-darwin" "aarch64-linux" "x86_64-linux"];
+
   # Validate and apply defaults to a host definition
   validateHost = name: host: let
     missingFields = builtins.filter (f: !(host ? ${f})) requiredFields;
     hasMissing = builtins.length missingFields > 0;
     profile = host.packageProfile or "full";
     validProfile = builtins.elem profile validProfiles;
+    validSystem = builtins.elem (host.system or null) validSystems;
   in
     if hasMissing
     then throw "Host '${name}' is missing required fields: ${builtins.concatStringsSep ", " missingFields}"
+    else if !validSystem
+    then throw "Host '${name}' has invalid system '${toString host.system}'. Valid values: ${builtins.concatStringsSep ", " validSystems}"
     else if !validProfile
     then throw "Host '${name}' has invalid packageProfile '${profile}'. Valid values: ${builtins.concatStringsSep ", " validProfiles}"
     else

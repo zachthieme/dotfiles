@@ -90,17 +90,29 @@ get_nix_system() {
   esac
 }
 
-# Add a user to trusted-users in the given conf file (create/append/extend)
+# Check whether a trusted-users line in the conf file names the user.
+# POSIX character classes only — \s and \b are GNU extensions that BSD
+# sed/grep on macOS silently fail to match (no error, just no match).
+user_in_trusted() {
+  local conf=$1 user=$2
+  grep -E "^trusted-users[[:space:]]*=" "$conf" 2>/dev/null |
+    grep -qE "(^|[[:space:]])${user}([[:space:]]|\$)"
+}
+
+# Add a user to trusted-users in the given conf file (create/append/extend),
+# then verify the edit actually landed — a sed that matches nothing exits 0
 append_trusted_user() {
   local conf=$1 user=$2
   if [ ! -f "$conf" ]; then
     echo "trusted-users = root ${user}" | sudo tee "$conf" >/dev/null
-  elif grep -qE "^trusted-users\s*=" "$conf" 2>/dev/null; then
-    sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${user}/" "$conf"
+  elif grep -qE "^trusted-users[[:space:]]*=" "$conf" 2>/dev/null; then
+    sudo sed -i.bak "s/^\(trusted-users[[:space:]]*=.*\)/\1 ${user}/" "$conf"
     sudo rm -f "${conf}.bak"
   else
     echo "trusted-users = root ${user}" | sudo tee -a "$conf" >/dev/null
   fi
+  user_in_trusted "$conf" "$user" ||
+    die "failed to add '${user}' to trusted-users in ${conf} — edit it manually"
 }
 
 configure_trusted_users() {
@@ -116,8 +128,8 @@ configure_trusted_users() {
   fi
 
   # Check if user is already trusted (check both files)
-  if grep -qE "^trusted-users\s*=.*\b${current_user}\b" "$nix_conf" 2>/dev/null || \
-     grep -qE "^trusted-users\s*=.*\b${current_user}\b" "$nix_custom_conf" 2>/dev/null; then
+  if user_in_trusted "$nix_conf" "$current_user" || \
+     user_in_trusted "$nix_custom_conf" "$current_user"; then
     echo "User '$current_user' already in trusted-users"
     return 0
   fi
@@ -127,7 +139,7 @@ configure_trusted_users() {
 
   # Prefer nix.custom.conf if nix.conf includes it (Determinate Nix pattern)
   # This file persists across nix.conf rewrites
-  if grep -qE "^!?include\s+.*nix\.custom\.conf" "$nix_conf" 2>/dev/null; then
+  if grep -qE "^!?include[[:space:]]+.*nix\.custom\.conf" "$nix_conf" 2>/dev/null; then
     append_trusted_user "$nix_custom_conf" "$current_user"
   else
     append_trusted_user "$nix_conf" "$current_user"
@@ -165,11 +177,20 @@ fi
 
 # --- Detection ---
 
-HOSTNAME=$(hostname 2>/dev/null || cat /etc/hostname 2>/dev/null || uname -n)
-[ -z "$HOSTNAME" ] && die "Failed to detect hostname. Set HOSTNAME environment variable."
 ARCHITECTURE=$(uname -m)
 OS=$(uname -s)
 NIX_SYSTEM=$(get_nix_system "$ARCHITECTURE" "$OS")
+
+# Bare `hostname` can return an FQDN (cortex.local, cortex.lan) depending on
+# DHCP/mDNS state — on a fresh machine, before nix-darwin has pinned the
+# hostname, that breaks host lookup on the exact run where bootstrap matters.
+# Prefer the short name; host keys in definitions.nix are short names.
+if [[ "$OS" == "Darwin" ]]; then
+  HOSTNAME=$(scutil --get LocalHostName 2>/dev/null || hostname -s 2>/dev/null || uname -n)
+else
+  HOSTNAME=$(hostname -s 2>/dev/null || cat /etc/hostname 2>/dev/null || uname -n)
+fi
+[ -z "$HOSTNAME" ] && die "Failed to detect hostname. Set HOSTNAME environment variable."
 
 log "Dotfiles Installation"
 echo "Detected:"
@@ -203,20 +224,20 @@ fi
 
 if [ "$FLAKE_UPDATE" = true ]; then
   log "Updating flake.lock"
-  if nix "${NIX_FLAGS[@]}" flake update "$SCRIPT_DIR"; then
-    echo "Flake inputs updated successfully"
-    echo ""
-    echo "Changed inputs (review before continuing):"
-    git -C "$SCRIPT_DIR" diff --stat flake.lock 2>/dev/null || true
-    echo ""
-    read -p "Continue with rebuild? [Y/n] " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
-      echo "Aborting. Run 'jj restore flake.lock' to revert."
-      exit 0
-    fi
-  else
-    echo "Warning: flake update failed, continuing with existing lock file"
+  # The user explicitly asked for an update — a failure must not silently
+  # degrade into a rebuild of the stale lock
+  nix "${NIX_FLAGS[@]}" flake update "$SCRIPT_DIR" ||
+    die "flake update failed — fix the error above or rerun without -f to use the committed lock"
+  echo "Flake inputs updated successfully"
+  echo ""
+  echo "Changed inputs (review before continuing):"
+  git -C "$SCRIPT_DIR" diff --stat flake.lock 2>/dev/null || true
+  echo ""
+  read -p "Continue with rebuild? [Y/n] " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Nn]$ ]]; then
+    echo "Aborting. Run 'jj restore flake.lock' to revert."
+    exit 0
   fi
 fi
 

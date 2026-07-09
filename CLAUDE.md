@@ -265,7 +265,7 @@ body = ''
 
 **For resource-constrained hosts**: Set `packageProfile = "core"` in `definitions.nix` to skip dev and heavy packages
 
-**Homebrew casks/formulas** (macOS only): Add to the appropriate context module in `contexts/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `system/darwin.nix` for all macOS machines
+**Homebrew casks/formulas** (macOS only): Add to the appropriate context module in `contexts/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `system/darwin.nix` for all macOS machines. Note: `homebrew.onActivation.cleanup = "uninstall"` means anything not declared (including manual `brew install`s) is uninstalled on the next rebuild — declare everything.
 
 ## Common Patterns
 
@@ -614,3 +614,26 @@ Some Home Manager options have been renamed. Use the new names:
 - Installer failures diagnose the actual problem instead of a misleading one
 - Core-profile hosts (the Pis) no longer carry openssl/cargo baggage
 - The 303-line bootstrap script finally has automated coverage
+
+### 2026-07-08: Review Round 3 — Validation Gaps, macOS Portability, Declarative Drift
+
+**Motivation**: Third review round — a typo'd `system` silently dropped a host from the flake outputs, `\s`/`\b` regexes silently no-op on BSD sed/grep, bare `hostname` breaks bootstrap when DHCP hands back an FQDN, and several layers had drifted from fully-declarative (append-only Homebrew, unmanaged GC, duplicated builder wiring).
+
+**Changes**:
+1. **`system` validated against known platforms**: `validateHost` now rejects anything outside `{aarch64,x86_64}-{darwin,linux}`. Previously a typo passed validation, matched neither `darwinHosts` nor `linuxHosts`, and the host silently vanished while `install.sh` still reported it as existing.
+2. **POSIX character classes in `install.sh`**: `\s` and `\b` are GNU extensions that BSD sed/grep on macOS silently fail to match — the trusted-users sed could no-op and still report success. All regexes now use `[[:space:]]`, and `append_trusted_user` verifies the edit landed (a sed that matches nothing exits 0).
+3. **Short-hostname detection**: `scutil --get LocalHostName` on macOS, `hostname -s` elsewhere. Bare `hostname` can return an FQDN (`cortex.local`) on a fresh machine — before nix-darwin has pinned the hostname, which is exactly when bootstrap runs.
+4. **`install.sh -f` dies on update failure**: a failed `nix flake update` no longer degrades into a warning plus a rebuild of the stale lock the user explicitly asked to replace.
+5. **Homebrew is fully declarative**: `homebrew.onActivation.cleanup = "uninstall"` — removing a cask from config now uninstalls it. Caveat: manually `brew install`ed packages are removed on the next rebuild; declare them instead.
+6. **One Nix formatter**: `nixfmt` dropped from `devPackages` in favor of `alejandra` (the formatter CI enforces); stray `zsh` dropped from `corePackages`.
+7. **Vault endpoint out of the repo**: the hardcoded `VAULT_ADDR` default is gone from fish config — `secrets.fish` owns `VAULT_ADDR`/`VAULT_CACERT` per machine. Machines using vault must set `VAULT_ADDR` there.
+8. **Automatic GC on Linux**: `nix.gc` weekly with `--delete-older-than 30d` (Determinate Nix already handles GC on macOS). Matters most on the Pis' SD cards.
+9. **Shared user-module wiring**: new `helpers.mkUserModule` replaces the duplicated inline block in both builders (username, homeDirectory, packages, vcs, packageProfile) so they can't drift.
+10. **Dead CI filter removed**: the darwin eval loop no longer filters a `"default"` host that stopped existing when `detect.nix` was deleted.
+
+**Impact**:
+- Misconfigured hosts fail at eval time with the valid values listed, instead of disappearing
+- `install.sh` behaves the same on BSD and GNU userlands, and proves its trusted-users edit worked
+- The Homebrew layer converges to the config instead of accumulating
+- Pi disk usage is bounded without manual `nix-cleanup` runs
+- No internal endpoints published in the repo

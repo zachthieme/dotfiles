@@ -33,7 +33,6 @@ in {
         wen
         wget
         which
-        zsh
       ]
       ++ pkgs.lib.optionals isLinux [
         helix # Darwin installs at system level
@@ -59,7 +58,7 @@ in {
         gotools
         lldb_20
         gnumake
-        nixfmt
+        alejandra # the Nix formatter CI enforces — don't install competing formatters
         nodejs_24
         openssl
         openssl.dev

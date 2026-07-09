@@ -51,14 +51,12 @@
 
       # NOTES is set via home.sessionVariables from dotfiles.notesDir (base.nix)
 
-      # Default only — secrets.fish (sourced above) may set its own VAULT_ADDR
-      if not set -q VAULT_ADDR
-        set -x VAULT_ADDR "https://vault.jjforge.cloud:8200"
-      end
-      # TLS verification stays ON by default. The server uses a private CA:
-      # set VAULT_CACERT in secrets.fish (or, as a last resort, explicitly
-      # export VAULT_SKIP_VERIFY there). Never skip verification implicitly —
-      # an absent secrets.fish must not silently downgrade security.
+      # Vault config (VAULT_ADDR, VAULT_CACERT) lives in secrets.fish, sourced
+      # above — no endpoint is hardcoded in this (public) repo. TLS verification
+      # stays ON by default: set VAULT_CACERT for a private CA, or as a last
+      # resort explicitly export VAULT_SKIP_VERIFY there. Never skip
+      # verification implicitly — an absent secrets.fish must not silently
+      # downgrade security.
 
       # Set LS_COLORS using vivid with catppuccin theme
       set -gx LS_COLORS (vivid generate catppuccin-mocha)

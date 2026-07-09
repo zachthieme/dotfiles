@@ -81,6 +81,13 @@ in {
     # macOS: Determinate Nix manages the daemon, so we only set user-level options
     nix = {
       package = pkgs.nix;
+      # Linux only: Determinate Nix handles GC on macOS. Matters most on the
+      # core-profile Pis, whose SD cards fill up first.
+      gc = lib.mkIf pkgs.stdenv.isLinux {
+        automatic = true;
+        dates = "weekly";
+        options = "--delete-older-than 30d";
+      };
       settings =
         {
           max-jobs = "auto";
