@@ -85,11 +85,14 @@ in {
           ret = ["goto_word"];
           A-j = ["move_line_down"];
           A-k = ["move_line_up"];
+          # Chooser file lives under the user's private ~/.cache, not shared
+          # /tmp: a fixed name in world-writable, sticky-bit /tmp can be
+          # pre-created or symlinked by another local user to redirect :open.
           C-y = [
-            ":sh rm -f /tmp/unique-file"
-            ":insert-output yazi %{buffer_name} --chooser-file=/tmp/unique-file"
+            ":sh mkdir -p $HOME/.cache; rm -f $HOME/.cache/helix-yazi-chooser"
+            ":insert-output yazi %{buffer_name} --chooser-file=$HOME/.cache/helix-yazi-chooser"
             '':insert-output echo "\\x1b[?1049h\\x1b[?2004h" > /dev/tty''
-            ":open %sh{cat /tmp/unique-file}"
+            ":open %sh{cat $HOME/.cache/helix-yazi-chooser}"
             ":redraw"
           ];
         };

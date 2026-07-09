@@ -38,6 +38,15 @@ done
 log() { echo "=== $1 ==="; }
 die() { echo "Error: $1" >&2; exit 1; }
 
+# True if we can run sudo — non-interactively (cached/passwordless/root) or by
+# validating once on a tty. Lets optional root-only steps (trusted-users, chsh)
+# be skipped with a warning instead of aborting the whole install: standalone
+# Home Manager needs no root at all.
+have_sudo() {
+  sudo -n true 2>/dev/null && return 0
+  [ -t 0 ] && sudo -v 2>/dev/null
+}
+
 source_nix_profile() {
   if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
@@ -131,6 +140,15 @@ configure_trusted_users() {
   if user_in_trusted "$nix_conf" "$current_user" || \
      user_in_trusted "$nix_custom_conf" "$current_user"; then
     echo "User '$current_user' already in trusted-users"
+    return 0
+  fi
+
+  # trusted-users is a binary-cache optimization, not a requirement. Without
+  # sudo, skip it rather than let set -e kill the whole (rootless) install.
+  if ! have_sudo; then
+    echo "Warning: no sudo access — skipping trusted-users config."
+    echo "  Caches still work but may warn. To enable later, add '$current_user'"
+    echo "  to trusted-users in /etc/nix/nix.conf and restart the nix-daemon."
     return 0
   fi
 
@@ -255,13 +273,22 @@ if [[ "$OS" == "Darwin" ]]; then
   # Install Homebrew first (needed by darwin config)
   if ! command -v brew &>/dev/null; then
     log "Installing Homebrew"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    # Download-then-run, never `bash -c "$(curl ...)"`: a failed curl there
+    # yields `bash -c ""`, which exits 0 and masks the failure — the script
+    # then dies confusingly at `brew shellenv`. NONINTERACTIVE avoids the
+    # installer's RETURN prompt hanging a headless run.
+    brew_installer=$(mktemp)
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$brew_installer" \
+      || die "Failed to download the Homebrew installer"
+    NONINTERACTIVE=1 /bin/bash "$brew_installer" || { rm -f "$brew_installer"; die "Homebrew installation failed"; }
+    rm -f "$brew_installer"
     # Add Homebrew to PATH for this session
     if [[ "$ARCHITECTURE" == "arm64" ]]; then
       eval "$(/opt/homebrew/bin/brew shellenv)"
     else
       eval "$(/usr/local/bin/brew shellenv)"
     fi
+    command -v brew &>/dev/null || die "Homebrew installed but 'brew' is not on PATH"
   fi
 
   echo "Applying nix-darwin configuration..."
@@ -277,8 +304,13 @@ if [[ "$OS" == "Darwin" ]]; then
   fi
   if ! sudo "${DARWIN_REBUILD[@]}" switch --flake "$SCRIPT_DIR#$HOSTNAME"; then
     echo ""
-    echo "To rollback to previous generation:"
-    echo "  sudo darwin-rebuild switch --rollback"
+    if command -v darwin-rebuild &>/dev/null; then
+      echo "To roll back to the previous generation:"
+      echo "  sudo darwin-rebuild switch --rollback"
+    else
+      echo "This was the first install — nix-darwin never activated, so there is"
+      echo "no generation to roll back to. Fix the error above and re-run ./install.sh."
+    fi
     die "darwin-rebuild failed"
   fi
 else
@@ -290,9 +322,10 @@ else
   echo "Applying Home Manager configuration..."
   if ! home-manager switch -b backup --flake "$SCRIPT_DIR#$HOSTNAME"; then
     echo ""
-    echo "To rollback to previous generation:"
+    echo "To roll back: list generations, then run the chosen generation's own"
+    echo "activate script (there is no 'home-manager activate' subcommand):"
     echo "  home-manager generations"
-    echo "  home-manager activate <path-to-generation>"
+    echo "  /nix/store/<hash>-home-manager-generation/activate"
     die "home-manager failed"
   fi
 
@@ -322,16 +355,23 @@ EOF
   fi
 
   if [ -f "$FISH_PATH" ] && [[ "$(basename "$CURRENT_SHELL")" != "fish" ]]; then
-    log "Changing default shell to fish"
-    # Add fish to /etc/shells if not already present
-    if ! grep -qxF "$FISH_PATH" /etc/shells 2>/dev/null; then
-      echo "Adding fish to /etc/shells..."
-      echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null
+    if have_sudo; then
+      log "Changing default shell to fish"
+      # Add fish to /etc/shells if not already present
+      if ! grep -qxF "$FISH_PATH" /etc/shells 2>/dev/null; then
+        echo "Adding fish to /etc/shells..."
+        echo "$FISH_PATH" | sudo tee -a /etc/shells >/dev/null
+      fi
+      # Change default shell
+      echo "Setting fish as default shell..."
+      sudo chsh -s "$FISH_PATH" "$TARGET_USER"
+      echo "Default shell changed to fish. Log out and back in to use it."
+    else
+      log "Skipping default-shell change (no sudo)"
+      echo "To make fish your login shell later, run:"
+      echo "  echo '$FISH_PATH' | sudo tee -a /etc/shells"
+      echo "  sudo chsh -s '$FISH_PATH' '$TARGET_USER'"
     fi
-    # Change default shell
-    echo "Setting fish as default shell..."
-    sudo chsh -s "$FISH_PATH" "$TARGET_USER"
-    echo "Default shell changed to fish. Log out and back in to use it."
   fi
 fi
 

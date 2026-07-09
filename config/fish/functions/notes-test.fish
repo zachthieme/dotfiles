@@ -63,13 +63,22 @@ function notes-test --description="Run tests for notes system functions"
         echo "  ✗ _titlecase uppercase input"
     end
 
-    # _is_gnu_date
-    if _is_gnu_date 2>/dev/null
+    # _is_gnu_date — must agree with an INDEPENDENT probe (GNU date has
+    # --version; BSD date doesn't). _is_gnu_date itself probes `date -d`, so
+    # this cross-check can actually fail if the detection is wrong.
+    set -l date_is_gnu false
+    if date --version 2>/dev/null | string match -qr GNU
+        set date_is_gnu true
+    end
+    if _is_gnu_date 2>/dev/null; and test "$date_is_gnu" = true
         set pass (math $pass + 1)
-        echo "  ✓ _is_gnu_date detects GNU date"
+        echo "  ✓ _is_gnu_date agrees with date --version (GNU)"
+    else if not _is_gnu_date 2>/dev/null; and test "$date_is_gnu" = false
+        set pass (math $pass + 1)
+        echo "  ✓ _is_gnu_date agrees with date --version (BSD)"
     else
-        set pass (math $pass + 1)
-        echo "  ✓ _is_gnu_date detects BSD date"
+        set fail (math $fail + 1)
+        echo "  ✗ _is_gnu_date disagrees with the date --version probe"
     end
 
     # _require_notes
@@ -421,7 +430,6 @@ tags: [test]
 
     _hx_ensure_note person <"$tmpdir/hx_in.txt" >"$tmpdir/hx_out.txt"
     set -l hx_status $status
-    set -l hx_created (cat /tmp/hx_note_path 2>/dev/null)
 
     # Extracts the [[Name]], creates the note, echoes the selection back verbatim
     if test $hx_status -eq 0; and test (cat "$tmpdir/hx_out.txt") = "[[Grace Hopper]]"
@@ -432,13 +440,13 @@ tags: [test]
         echo "  ✗ _hx_ensure_note passes input through unchanged (got: "(cat "$tmpdir/hx_out.txt")")"
     end
 
-    # Publishes the created note's path and the note exists on disk
-    if test "$hx_created" = "$tmpdir/people/Grace Hopper.md"; and test -e "$hx_created"
+    # Creates the note on disk at the deterministic path for the extracted name
+    if test -e "$tmpdir/people/Grace Hopper.md"
         set pass (math $pass + 1)
-        echo "  ✓ _hx_ensure_note creates note and writes its path"
+        echo "  ✓ _hx_ensure_note creates the note on disk"
     else
         set fail (math $fail + 1)
-        echo "  ✗ _hx_ensure_note creates note and writes its path (got: $hx_created)"
+        echo "  ✗ _hx_ensure_note creates the note on disk"
     end
 
     # Bare name (helix selects inside the brackets) works too
@@ -475,7 +483,6 @@ tags: [test]
         set fail (math $fail + 1)
         echo "  ✗ _hx_ensure_note fails on empty input"
     end
-    rm -f /tmp/hx_note_path
 
     # ── Teardown ──
     rm -rf "$tmpdir"

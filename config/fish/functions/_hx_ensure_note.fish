@@ -1,4 +1,4 @@
-function _hx_ensure_note --description="Create a note from template if missing, write path to /tmp/hx_note_path (used by helix :pipe)"
+function _hx_ensure_note --description="Create a note from template if it doesn't exist; echoes the selection back unchanged (used by helix :pipe)"
     set -l type $argv[1]
     # `read -z` slurps all of stdin into one string, preserving embedded
     # newlines. The earlier `set input (cat)` split stdin on newlines (mangling
@@ -25,6 +25,5 @@ function _hx_ensure_note --description="Create a note from template if missing, 
         return 1
     end
 
-    echo -n "$filepath" >/tmp/hx_note_path
     printf '%s' $input
 end
