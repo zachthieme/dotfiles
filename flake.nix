@@ -129,7 +129,7 @@
           pkgs.runCommand "install-script-check" {
             nativeBuildInputs = with pkgs; [shellcheck];
           } ''
-            shellcheck --severity=warning ${./install.sh} ${./scripts/review.sh}
+            shellcheck --severity=warning ${./install.sh} ${./scripts/review.sh} ${./scripts/check-eval.sh}
             touch $out
           '';
       }

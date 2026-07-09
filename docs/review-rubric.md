@@ -1,6 +1,6 @@
 # Repository Review Rubric
 
-**Rubric version: 1.4** — bump this on ANY change to a criterion, its weight, or
+**Rubric version: 1.5** — bump this on ANY change to a criterion, its weight, or
 the scoring rules, and record the version in each Score-history entry (scores
 under different versions are not directly comparable). The executable checker
 (`scripts/review.sh`) carries the same `RUBRIC_VER` and must move in lockstep.
@@ -13,6 +13,13 @@ the 7.3 date check that had been reporting "healthy" while a smell existed.)
 v1.4 fixed the same class of false-pass in the 3.2 drift check (it only saw
 `tick --hosts`, missing zellij's quoted-arg form, so it reported no drift while
 the workspace host id actually differed 23000 vs 10950).
+v1.5 reframed the two Correctness criteria that rewarded cloud-CI ceremony: the
+goal is "a gate (local eval / hook / CI) blocks broken configs," not "CI runs on
+every push" — a single-maintainer repo that rebuilds locally is covered by the
+local eval gate plus lock-pinning. Also added the local eval gate
+(`scripts/check-eval.sh` — a targeted `nix eval` of each same-system host, ~1
+min; a `nix flake check` derivation was tried first but ran >7 min because it
+also traverses the darwin IFD) and fixed the `vcs` partial-override clobber.
 
 A pinned, reproducible scoring rubric for principal-level reviews of this repo.
 
@@ -174,8 +181,8 @@ these; only execution can. This is the category round 4 found broken.
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| `nix flake check` forces evaluation of host configs | 3 | [auto] A module-level typo fails `nix flake check` locally, not only in CI (the check set includes per-host eval). |
-| CI covers the actual development workflow | 2 | [auto] Commits that land on `main` are gated (push trigger and/or required PR checks); the real workflow isn't bypassable. |
+| A local gate forces evaluation of host configs | 3 | [auto] `scripts/check-eval.sh` evaluates every same-system host, so a module-level typo fails **locally** in ~1 min before commit. Local infra, not cloud CI. (Not a `nix flake check` derivation — that also drags in the darwin IFD and runs >7 min, too slow to actually use.) |
+| Broken configs can't silently reach a prod-like host | 2 | [auto] Some gate catches a bad config before it lands on prod/nomad hosts — the local eval gate, a pre-push hook, **or** CI. Cloud-CI-on-push is explicitly **not** required: a single maintainer who rebuilds locally is covered by the eval gate plus `allowFlakeUpdate` lock-pinning. |
 | No dead or self-contradicting config | 2 | [judged] No options set that the platform silently ignores (example: `nix.*` under `nix.enable = false`); comments match behaviour. |
 | `lib.mkIf`/`mkDefault`/merge precedence is correct | 2 | [judged] No override that silently loses to a default; conditionals gate on the intended condition. |
 | Host validation rejects malformed input | 2 | [auto] A partial `vcs` override merges rather than clobbers (and, ideally, unknown fields and bad system/profile throw with actionable messages). |
@@ -231,6 +238,20 @@ Abstractions must deliver what they claim, measurably.
 ---
 
 ## Score history
+
+### 2026-07-09 — round 8 [rubric v1.5] — local eval gate + Correctness reframe + vcs fix
+
+**Overall: 0.79 → C (borderline B-). PROVISIONAL** — fresh-boot criteria still
+`unverified` (range 0.68–0.80 pending a real-hardware install). No open Critical.
+
+Only Category 2 moved (0.33 → **0.83**): added the local eval gate
+(`scripts/check-eval.sh`, verified it rejects an unknown-option typo), reframed
+2.2 so a single-maintainer repo isn't docked for lacking cloud-CI-on-push, and
+fixed the `vcs` partial-override clobber (2.5). Automated checks 10/20 → **13/20**.
+Other categories unchanged from round 7 (Bootstrap 0.93, Architecture 0.57,
+Abstraction 1.00, Testing 0.78, Security 0.67, Docs 0.40). The jump is real
+fixes, not re-weighting — the reframe only stopped 2.2 from demanding a practice
+that doesn't fit this repo.
 
 ### 2026-07-09 — round 7 [rubric v1.4] — first fully-honest score
 

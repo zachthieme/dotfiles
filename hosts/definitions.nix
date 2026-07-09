@@ -51,8 +51,10 @@
       hostDefaults
       // host
       // {
-        # Apply default VCS identity if not specified
-        vcs = host.vcs or defaultVcs;
+        # Merge onto the default identity so a partial override (e.g. only
+        # `vcs.email`) keeps the default name instead of clobbering it and
+        # leaving `dotfiles.vcs.name` undefined.
+        vcs = defaultVcs // (host.vcs or {});
         # Apply default package profile if not specified
         packageProfile = profile;
       };

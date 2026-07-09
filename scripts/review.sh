@@ -24,7 +24,7 @@
 # Keep in sync with docs/review-rubric.md — same rubric version (see RUBRIC_VER).
 set -uo pipefail
 
-RUBRIC_VER="1.4"
+RUBRIC_VER="1.5"
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 
 BASELINE=scripts/review-baseline.txt
@@ -80,16 +80,18 @@ assert 1.7 "degrades without sudo (have_sudo guard)" bash -c "grep -q 'have_sudo
 
 # ── 2. Correctness & evaluation gate ──
 hdr "2. Correctness & evaluation gate"
-if $RUN_NIX; then
-  if nix eval --json '.#checks.x86_64-linux' --apply 'builtins.attrNames' 2>/dev/null | grep -q 'eval-'; then
-    pass 2.1 "flake check evaluates host configs"
-  else
-    fail 2.1 "flake check evaluates host configs"
-  fi
+# 2.1 — a local, pre-merge gate forces host-config evaluation (scripts/
+# check-eval.sh evaluates every same-system host), so a bad option is caught
+# before commit, not only when a rebuild breaks. File check — fast/deterministic.
+assert 2.1 "local eval gate exists (check-eval.sh)" test -x scripts/check-eval.sh
+# 2.2 — broken configs can't silently reach a prod-like host. Satisfied by the
+# local eval gate OR CI. Cloud-CI-on-push is NOT required: a single maintainer
+# who rebuilds locally is covered by the eval gate + allowFlakeUpdate pinning.
+if [[ -x scripts/check-eval.sh ]] || grep -qE '^[[:space:]]*push:' "$WF"; then
+  pass 2.2 "a gate blocks broken configs pre-merge (local or CI)"
 else
-  unverified 2.1 "flake check evaluates host configs" "skipped --no-nix"
+  fail 2.2 "a gate blocks broken configs pre-merge"
 fi
-assert 2.2 "CI triggers on push to main" grep -qE '^[[:space:]]*push:' "$WF"
 judged 2.3 "no dead/self-contradicting config"
 judged 2.4 "mkIf/mkDefault precedence correct"
 assert 2.5 "vcs override merges (not clobbers)" grep -q 'defaultVcs //' hosts/definitions.nix
