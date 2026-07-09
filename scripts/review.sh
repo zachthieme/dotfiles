@@ -24,7 +24,7 @@
 # Keep in sync with docs/review-rubric.md — same rubric version (see RUBRIC_VER).
 set -uo pipefail
 
-RUBRIC_VER="1.2"
+RUBRIC_VER="1.3"
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 
 BASELINE=scripts/review-baseline.txt
@@ -98,11 +98,13 @@ assert 2.6 "CI eval loops fail closed (pipefail)" grep -q 'pipefail' "$WF"
 # ── 3. Architecture & DRY ──
 hdr "3. Architecture & DRY"
 judged 3.1 "single source of truth for host facts"
-# notes-workspace host id duplicated & drifted across nw.fish and zellij.nix
+# 3.2 — probe for cross-file constant drift: the same command constant copied
+# into >1 file with different values (here: the workspace host id). One probe of
+# a general class, not proof of no duplication anywhere.
 if [[ "$(grep -rhoE 'tick --hosts [0-9]+' config/fish home-manager 2>/dev/null | sort -u | wc -l)" -le 1 ]]; then
-  pass 3.2 "notes-workspace host id not duplicated/drifted"
+  pass 3.2 "no cross-file drift in workspace host id"
 else
-  fail 3.2 "notes-workspace host id duplicated/drifted (nw.fish vs zellij.nix)"
+  fail 3.2 "cross-file constant drift (workspace host id differs across files)"
 fi
 judged 3.3 "layer separation holds"
 assert 3.4 "platform list has a single source" grep -q 'supportedSystems' lib.nix
@@ -123,9 +125,20 @@ assert 4.2 "heavy GUI module (ghostty) gated on dotfiles.gui" grep -q 'config.do
 # ── 5. Testing & CI coverage ──
 hdr "5. Testing & CI coverage"
 NT=config/fish/functions/notes-test.fish
-tested=true
-for fn in notes-sync _hx_ensure_note _note_create; do grep -q "$fn" "$NT" || tested=false; done
-$tested && pass 5.1 "state-mutating fns have tests" || fail 5.1 "state-mutating fns have tests"
+# 5.1 — principle, not a fixed list: DISCOVER every function that writes file
+# content or rewrites VCS, then require each to be referenced by the suite. A
+# new untested mutator fails this automatically (no bias toward known names).
+untested=()
+for f in config/fish/functions/*.fish; do
+  b=$(basename "$f" .fish); [[ "$b" == "notes-test" ]] && continue
+  grep -qE '>[[:space:]]*"?\$|jj (commit|push|bookmark)|git (add|commit|push)' "$f" || continue
+  grep -qwF "$b" "$NT" || untested+=("$b")
+done
+if [[ "${#untested[@]}" -eq 0 ]]; then
+  pass 5.1 "state-mutating fns are exercised by tests"
+else
+  fail 5.1 "untested state-mutating fns: ${untested[*]}"
+fi
 judged 5.2 "tests are hermetic"
 judged 5.3 "no tautological tests"
 # installer runtime coverage = anything beyond the shellcheck lint check
@@ -147,23 +160,35 @@ else
   pass 6.2 "no predictable /tmp rendezvous paths"
 fi
 judged 6.3 "no unsanitized data spliced into shells/evals"
-if grep -q '@main' "$WF" 2>/dev/null; then
-  fail 6.4 "remote refs pinned (CI action on @main)"
+# 6.4 — principle: third-party actions pinned to an IMMUTABLE ref (vN tag or
+# 40-hex SHA), not any mutable branch. Catches @main/@master/@<branch>, not one.
+if grep -ohE 'uses: [^@]+@[^[:space:]]+' "$WF" 2>/dev/null | grep -qvE '@v[0-9]|@[0-9a-f]{40}$'; then
+  fail 6.4 "CI action(s) on a mutable ref (not vN/SHA)"
 else
-  pass 6.4 "remote refs pinned"
+  pass 6.4 "CI actions pinned to immutable refs"
 fi
 judged 6.5 "privilege grants (trusted-users) consented"
 
 # ── 7. Maintainability & docs ──
 hdr "7. Maintainability & docs"
-# stale references to functions/tools that no longer exist
+# 7.1 — principle: docs don't name things that no longer exist. Parse the
+# function inventory CLAUDE.md claims and verify each resolves to a file
+# (derived from actual state, not a hardcoded blocklist of removed names).
 stale=""
-for ref in fifc jrnl; do
-  grep -qw "$ref" CLAUDE.md 2>/dev/null && [[ ! -e "config/fish/functions/$ref.fish" ]] && stale="$stale $ref"
+inv=$(grep 'Migrated core functions' CLAUDE.md 2>/dev/null | grep -oE '\([^)]+\)' | tr -d '()' | tr ',' ' ')
+for fn in $inv; do
+  [[ -e "config/fish/functions/$fn.fish" || -e "config/fish/functions/darwin/$fn.fish" ]] || stale="$stale $fn"
 done
-[[ -z "$stale" ]] && pass 7.1 "CLAUDE.md has no stale refs" || fail 7.1 "CLAUDE.md stale refs:$stale"
+[[ -z "$stale" ]] && pass 7.1 "CLAUDE.md function inventory all resolve" || fail 7.1 "CLAUDE.md names removed fns:$stale"
 judged 7.2 "non-obvious decisions carry their 'why'"
-refute 7.3 "no hardcoded expiring constants" grep -rqE 'deadline "20[0-9][0-9]-' home-manager
+# 7.3 — principle: no hardcoded ISO date literals in source (they silently go
+# stale). Excludes computed dates (date/%Y) and the test suite's fixtures.
+if grep -rnE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' home-manager config/fish --include='*.nix' --include='*.fish' 2>/dev/null \
+     | grep -qvE 'date |%Y|strftime|notes-test'; then
+  fail 7.3 "hardcoded expiring date literal(s) in source"
+else
+  pass 7.3 "no hardcoded expiring date literals"
+fi
 
 # ── Summary ──
 auto_total=$((auto_pass + auto_fail))

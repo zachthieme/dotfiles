@@ -1,11 +1,15 @@
 # Repository Review Rubric
 
-**Rubric version: 1.2** — bump this on ANY change to a criterion, its weight, or
+**Rubric version: 1.3** — bump this on ANY change to a criterion, its weight, or
 the scoring rules, and record the version in each Score-history entry (scores
 under different versions are not directly comparable). The executable checker
 (`scripts/review.sh`) carries the same `RUBRIC_VER` and must move in lockstep.
 Changelog: v1.1 added the `unverified` state + provisional grades and the
-executable checker; v1.2 added the severity taxonomy and floor gates.
+executable checker; v1.2 added the severity taxonomy and floor gates; v1.3
+reworded every criterion as a general principle (specifics are examples) and
+generalized the checks to detect the class, not one hardcoded instance — a
+review of health, not a regression checklist. (v1.3 also fixed a false-pass in
+the 7.3 date check that had been reporting "healthy" while a smell existed.)
 
 A pinned, reproducible scoring rubric for principal-level reviews of this repo.
 
@@ -135,6 +139,16 @@ evaluation gate matter more than module elegance**, because that's where an
 outage actually comes from (a machine that won't rebuild) and it's the hardest
 thing to test. Categories 1–2 are 45% of the grade for that reason.
 
+Each criterion states a **general principle**, not the one bug that motivated
+it — specific findings appear only as *examples*. A criterion that hardcodes
+"no `@main`" or "no function `fifc`" is a regression checklist that stops
+discriminating the moment it's fixed; a principle ("actions pinned to an
+immutable ref") keeps measuring health as the repo evolves and catches the next
+instance of the same class. Verification-method tags: **[auto]** =
+`scripts/review.sh` checks it mechanically (and generally — it detects the class,
+not one string); **[judged]** = needs human reading; **[hw]** = needs a real
+host/VM (scored `unverified` until run there).
+
 ---
 
 ### 1. Bootstrap & lifecycle (25%)
@@ -145,33 +159,33 @@ these; only execution can. This is the category round 4 found broken.
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| `install.sh` boots a fresh Linux host end-to-end | 3 | [hw] Run in a clean container/VM on a supported Nix. No CLI-signature failures (e.g. `nix profile add`/`install`, `flake update` arg form) and no masked-failure command substitutions. |
-| `install.sh` boots a fresh macOS host end-to-end | 3 | Run on a clean mac or VM: Homebrew install verified, nix-darwin bootstrap path (no `darwin-rebuild` yet) succeeds. |
-| `-f`/`--flake-update` runs the correct current CLI signature | 2 | `nix flake update --flake .` form; not the removed positional-path form. |
-| Every external-CLI invocation is verified after the fact | 2 | Each `curl\|sh` / install step followed by `command -v … \|\| die` (no masked-failure command substitutions). |
-| Failure paths give correct, reachable recovery advice | 1 | Rollback hints valid on both platforms and possible on the branch that prints them (e.g. no `darwin-rebuild --rollback` on the pre-bootstrap branch). |
-| Re-running the installer is idempotent | 1 | Second run on a configured host is a no-op or clean rebuild (no `.backup` clobber abort, no duplicate `.bashrc`/`/etc/shells` lines). |
-| Degrades gracefully without sudo | 1 | Standalone Home Manager install completes (or skips optional steps with a warning) when `sudo -n true` fails. |
+| `install.sh` boots a fresh Linux host end-to-end | 3 | [hw] Clean container/VM on a supported Nix: no removed-CLI-signature failures, no masked-failure command substitutions. |
+| `install.sh` boots a fresh macOS host end-to-end | 3 | [hw] Clean mac/VM: Homebrew install verified, nix-darwin bootstrap path (no `darwin-rebuild` yet) succeeds. |
+| Installer uses current, non-deprecated CLI invocations | 2 | [auto] No removed-signature forms (example: `flake update --flake`, not the positional-path form). Spot-check, not exhaustive. |
+| Every external-CLI invocation is failure-checked | 2 | [auto] No masked-failure command substitutions (example anti-pattern: `bash -c "$(curl…)"`); install steps followed by a verification. |
+| Failure paths give correct, reachable recovery advice | 1 | [auto] Recovery hints name real, runnable commands valid on the branch that prints them (examples of the bug: a non-command like `home-manager activate`, or a rollback hint where no generation exists yet). |
+| Re-running the installer is idempotent | 1 | [judged] Second run is a no-op / clean rebuild — no `.backup` clobber, no duplicate `.bashrc`/`/etc/shells` lines. |
+| Degrades gracefully without sudo | 1 | [auto] Optional root-only steps skip with a warning (guarded by a sudo probe) instead of aborting the rootless install. |
 
 ### 2. Correctness & evaluation gate (20%)
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| `nix flake check` forces evaluation of every host config | 3 | A deliberate option typo in `base.nix` fails `nix flake check` locally, not only in CI. |
-| CI covers the actual development workflow | 2 | Commits that land on `main` are gated (push trigger and/or required PR checks). Direct-to-main commits don't bypass evaluation. |
-| No dead or self-contradicting config | 2 | No options set that the platform ignores (e.g. `nix.*` under `nix.enable = false`); comments match behavior. |
-| `lib.mkIf`/`mkDefault`/merge precedence is correct | 2 | No override that silently loses to a default; conditional modules actually gate on the intended condition. |
-| Host validation rejects malformed input | 2 | Unknown host fields throw; partial `vcs` override merges rather than clobbers; invalid system/profile throw with actionable messages. |
-| CI eval loops fail closed | 1 | Pipeline failures in `nix eval \| jq` loops abort the step (pipefail), not silently iterate zero hosts. |
+| `nix flake check` forces evaluation of host configs | 3 | [auto] A module-level typo fails `nix flake check` locally, not only in CI (the check set includes per-host eval). |
+| CI covers the actual development workflow | 2 | [auto] Commits that land on `main` are gated (push trigger and/or required PR checks); the real workflow isn't bypassable. |
+| No dead or self-contradicting config | 2 | [judged] No options set that the platform silently ignores (example: `nix.*` under `nix.enable = false`); comments match behaviour. |
+| `lib.mkIf`/`mkDefault`/merge precedence is correct | 2 | [judged] No override that silently loses to a default; conditionals gate on the intended condition. |
+| Host validation rejects malformed input | 2 | [auto] A partial `vcs` override merges rather than clobbers (and, ideally, unknown fields and bad system/profile throw with actionable messages). |
+| CI eval loops fail closed | 1 | [auto] `nix eval \| jq` loops abort on failure (`pipefail`), not silently iterate zero hosts. |
 
 ### 3. Architecture & DRY (15%)
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| Single source of truth for host facts | 2 | Username/system/isWork/home-dir declared once; no re-derivation in modules. |
-| No duplicated logic across modules | 2 | Same behavior (task-toggle, notes workspace, home-dir path, theme) implemented once, not N times. Grep for the known duplication set. |
-| Layer separation holds | 2 | System layer doesn't read HM config and vice versa; context modules carry deltas only, not base-layer work. |
-| Supported-platform list declared once | 1 | `validSystems`, checks systems, formatter systems derive from one source. |
+| Single source of truth for host facts | 2 | [judged] Username/system/isWork/home-dir declared once; no re-derivation in modules. |
+| No duplicated logic/constants across modules | 2 | [auto] The same behaviour or constant isn't copied where copies can drift (probe: a command constant, e.g. the workspace host id, differing across files). |
+| Layer separation holds | 2 | [judged] System layer doesn't read HM config and vice versa; context modules carry deltas only, not base-layer work. |
+| Supported-platform list has a single source | 1 | [auto] The platform list derives from one definition, not re-declared across flake checks / formatter / validation. |
 
 ### 4. Abstraction integrity (10%)
 
@@ -187,29 +201,29 @@ Abstractions must deliver what they claim, measurably.
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| State-mutating functions have tests | 3 | Functions that write files / rewrite VCS (`notes-sync`, `_hx_ensure_note`, `_note_create`) are covered; the suite fails if they break. |
-| Tests are hermetic | 2 | Own tmpdir, env save/restore, no dependence on the developer's machine. |
-| No tautological tests | 1 | Every test can fail (no `pass` in both branches). |
-| Bootstrap path has runtime coverage, not only lint | 2 | Pure installer functions (`get_nix_system`, result parsing, `user_in_trusted`) unit-tested; `--help` smoke-run in CI. |
-| CI builds (not just evals) at least one host per platform | 1 | Confirm a build step exists per platform; document what eval-only misses (aarch64 build gap). |
+| State-mutating functions are exercised by tests | 3 | [auto] Every function that writes file content or rewrites VCS — **discovered dynamically, not a fixed list** — is referenced by the suite. A new untested mutator fails this on its own. |
+| Tests are hermetic | 2 | [judged] Own tmpdir, env save/restore, no dependence on the developer's machine. |
+| No tautological tests | 1 | [judged] Every test can fail (no `pass` in both branches). |
+| Bootstrap path has runtime coverage, not only lint | 2 | [auto] Something exercises installer behaviour beyond shellcheck — unit tests of the pure functions, or a `--help` smoke-run in CI. |
+| CI builds (not just evals) a host per platform | 1 | [auto] A `nix build` step exists (eval alone misses build-time failures — dropped packages, bad hashes). |
 
 ### 6. Security & secrets (10%)
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| No secrets or private endpoints in the repo | 3 | Grep history; secrets sourced from machine-local files. |
-| No predictable shared-`/tmp` rendezvous paths | 2 | Editor/shell integrations use `$XDG_RUNTIME_DIR`/`mktemp`, not fixed `/tmp/foo` on multi-user hosts. |
-| No unsanitized user data spliced into shells/evals | 2 | Buffer names, hostnames, filenames escaped before entering `fish -c`/Nix eval strings. |
-| Remote code is pinned or TLS-forced | 1 | Installer downloads pin a ref or force `--proto =https --tlsv1.2`; CI actions pinned to SHA/tag, not `@main`. |
-| Privilege grants are consented | 1 | `trusted-users` (root-equivalent) grant is announced or gated, not silent. |
+| No secrets or private endpoints in the repo | 3 | [judged] Secrets sourced from machine-local files; nothing sensitive committed (grep history). |
+| No predictable shared-`/tmp` rendezvous paths | 2 | [auto] Editor/shell integrations use a private location (`$XDG_RUNTIME_DIR` / `~/.cache` / `mktemp`), not a fixed `/tmp/<name>` on multi-user hosts. |
+| No unsanitized user data spliced into shells/evals | 2 | [judged] Buffer names, hostnames, filenames escaped before entering `fish -c` / Nix eval strings. |
+| Remote code pinned to an immutable ref, downloads TLS-forced | 1 | [auto] Third-party actions/installers pinned to a tag/SHA, not a mutable branch (`@main`/`@master`/`@<branch>`); installer downloads force TLS. |
+| Privilege grants are consented | 1 | [judged] Root-equivalent grants (`trusted-users`) announced or gated, not silent. |
 
 ### 7. Maintainability & docs (5%)
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| CLAUDE.md matches reality | 2 | Documented symlinks/functions exist as described (no stale `fifc`/`ft`/`jrnl` references). |
-| Non-obvious decisions carry their "why" | 2 | Failure-mode comments present at the tricky spots (this repo's established strength — preserve it). |
-| No unexplained magic constants with expiry | 1 | Hardcoded IDs/deadlines (zellij `tick --hosts`, dates) are documented or hoisted to options. |
+| Docs match reality | 2 | [auto] The function inventory CLAUDE.md names all resolve to real files; no references to removed functions/tools/flags. |
+| Non-obvious decisions carry their "why" | 2 | [judged] Failure-mode comments present at the tricky spots (this repo's established strength — preserve it). |
+| No hardcoded expiring constants | 1 | [auto] No literal ISO dates / expiring IDs baked into source (they silently go stale) — hoist to options or compute at runtime. |
 
 ---
 
