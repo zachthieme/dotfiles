@@ -26,6 +26,7 @@ in {
     vcs,
     packageProfile,
     packages,
+    gui,
     ...
   }: {
     home.username = user;
@@ -34,6 +35,7 @@ in {
     home.packages = packages;
     dotfiles.vcs = vcs;
     dotfiles.packageProfile = packageProfile;
+    dotfiles.gui = gui;
   };
 
   # Check if the system is Darwin (macOS)

@@ -32,6 +32,11 @@ in {
       default = "full";
       description = "Package profile tier: core (minimal), core+dev (with dev tools), full (everything)";
     };
+    gui = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Whether this host has a graphical environment. Gates GUI apps (e.g. ghostty) off headless hosts (Pis, servers). Set per-host in hosts/definitions.nix.";
+    };
     notesDir = lib.mkOption {
       type = lib.types.str;
       default = "${config.home.homeDirectory}/CloudDocs/Notes";
