@@ -537,7 +537,7 @@ Some Home Manager options have been renamed. Use the new names:
 **Motivation**: Migrate from zsh to fish, convert shell functions properly, and use declarative Home Manager options instead of imperative shell scripts.
 
 **Changes**:
-1. **Converted zsh functions to fish**: Migrated core functions to fish syntax (gff, k, logg, mkdd, fif, fifs, fifc, nix-cleanup, ft, _fif_common)
+1. **Converted zsh functions to fish**: Migrated core functions to fish syntax (gff, k, logg, mkdd, fif, fifs, nix-cleanup, _fif_common)
 2. **Adopted `programs.fish.functions`**: Moved all function definitions from `interactiveShellInit` string blocks to structured `programs.fish.functions` attributes with descriptions
 3. **Migrated to `programs.fish.shellAbbrs`**: Converted inline `abbr -a` commands to declarative `shellAbbrs` attribute set
 4. **Standardized environment variables**: Moved `COLORTERM` from fish config to `home.sessionVariables` for global availability

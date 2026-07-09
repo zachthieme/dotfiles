@@ -2,6 +2,12 @@
   # Unfree packages allowed on all hosts (vault has a BSL license)
   unfreePackages = ["vault"];
 
+  # Single source of truth for supported platforms — consumed by host
+  # validation (validSystems), the flake's checks (linux only), and the
+  # formatter (all). Add a platform here, not in three places.
+  supportedSystems = ["aarch64-darwin" "x86_64-darwin" "aarch64-linux" "x86_64-linux"];
+  linuxSystems = builtins.filter (lib.strings.hasSuffix "-linux") supportedSystems;
+
   # Get the home directory path based on the OS
   # user: string - username
   # system: string - system identifier (e.g., "aarch64-darwin", "x86_64-linux")
@@ -11,7 +17,7 @@
     then "/Users/${user}"
     else "/home/${user}";
 in {
-  inherit unfreePackages getHomeDirectory;
+  inherit unfreePackages getHomeDirectory supportedSystems linuxSystems;
 
   # Predicate for nixpkgs.config.allowUnfreePredicate — single source of truth
   # for unfree packages across darwin and standalone Home Manager builders

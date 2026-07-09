@@ -42,7 +42,7 @@ function nw --description="Open notes workspace in tmux, commit and push on clos
     tmux send-keys -t $pike_pane "pike -w priority" Enter
     tmux send-keys -t $wen_pane "wen cal" Enter
     tmux send-keys -t $editor_pane "daily; notes-sync" Enter
-    tmux send-keys -t $tick_pane "tick --hosts 23000 --deadline 2026-09-30" Enter
+    tmux send-keys -t $tick_pane "tick --hosts $NW_TICK_HOSTS --deadline $NW_TICK_DEADLINE" Enter
 
     tmux select-pane -t $editor_pane
 

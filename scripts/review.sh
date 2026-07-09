@@ -24,7 +24,7 @@
 # Keep in sync with docs/review-rubric.md — same rubric version (see RUBRIC_VER).
 set -uo pipefail
 
-RUBRIC_VER="1.5"
+RUBRIC_VER="1.6"
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 
 BASELINE=scripts/review-baseline.txt
@@ -185,13 +185,15 @@ for fn in $inv; do
 done
 [[ -z "$stale" ]] && pass 7.1 "CLAUDE.md function inventory all resolve" || fail 7.1 "CLAUDE.md names removed fns:$stale"
 judged 7.2 "non-obvious decisions carry their 'why'"
-# 7.3 — principle: no hardcoded ISO date literals in source (they silently go
-# stale). Excludes computed dates (date/%Y) and the test suite's fixtures.
+# 7.3 — principle: no expiring date constant BURIED in logic where it silently
+# rots. A documented single-source `mkOption` default is the endorsed fix ("hoist
+# to options"), so those are allowed; inline literals (in commands/args) are not.
+# Also excludes computed dates (date/%Y) and the test fixtures.
 if grep -rnE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' home-manager config/fish --include='*.nix' --include='*.fish' 2>/dev/null \
-     | grep -qvE 'date |%Y|strftime|notes-test'; then
-  fail 7.3 "hardcoded expiring date literal(s) in source"
+     | grep -qvE 'date |%Y|strftime|notes-test|default = "20[0-9]{2}-'; then
+  fail 7.3 "expiring date literal buried in logic (not a documented option)"
 else
-  pass 7.3 "no hardcoded expiring date literals"
+  pass 7.3 "no buried expiring date literals"
 fi
 
 # ── Summary ──

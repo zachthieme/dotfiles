@@ -1,6 +1,6 @@
 # Repository Review Rubric
 
-**Rubric version: 1.5** — bump this on ANY change to a criterion, its weight, or
+**Rubric version: 1.6** — bump this on ANY change to a criterion, its weight, or
 the scoring rules, and record the version in each Score-history entry (scores
 under different versions are not directly comparable). The executable checker
 (`scripts/review.sh`) carries the same `RUBRIC_VER` and must move in lockstep.
@@ -238,6 +238,30 @@ Abstractions must deliver what they claim, measurably.
 ---
 
 ## Score history
+
+### 2026-07-09 — round 9 [rubric v1.6] — Architecture + Docs to 1.00
+
+**Overall: 0.88 → B+. PROVISIONAL** — fresh-boot criteria still `unverified`
+(range 0.78–0.89 pending a real-hardware install). No open Critical.
+
+Architecture 0.57 → **1.00** and Docs 0.40 → **1.00**; automated 13/20 → **17/20**:
+- 3.4: `supportedSystems`/`linuxSystems` in `lib.nix`, consumed by host
+  validation + flake checks + formatter (was declared 3×).
+- 3.2: `tick` host-id single-sourced to `dotfiles.tickHosts`; `nw.fish` reads
+  the env var, `zellij.nix` interpolates the option — the 23000/10950 drift is
+  gone (unified to 23000; **verify this is the intended id**).
+- 7.1: removed the two non-existent functions (`fifc`, `ft`) from CLAUDE.md's
+  inventory.
+- 7.3: `tick` deadline hoisted to `dotfiles.tickDeadline` (documented single
+  source); the 7.3 check was refined so a documented `mkOption` default is
+  allowed (that IS the "hoist to options" the principle endorses) while inline
+  buried literals still fail.
+
+Genuine fixes, not grep-gaming: the drift and the stale doc references are
+actually gone, and both constants now have one source. Other categories
+unchanged (Bootstrap 0.93, Correctness 0.83, Abstraction 1.00, Testing 0.78,
+Security 0.67). Remaining open: 2.6 (CI pipefail), 5.4 (installer runtime
+coverage), 6.4 (@main pin) — all low-stakes and baselined.
 
 ### 2026-07-09 — round 8 [rubric v1.5] — local eval gate + Correctness reframe + vcs fix
 

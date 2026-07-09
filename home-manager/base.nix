@@ -42,6 +42,20 @@ in {
       default = "${config.home.homeDirectory}/CloudDocs/Notes";
       description = "Notes directory — single source of truth for the NOTES env var, pike, and workspace layouts";
     };
+    # Single source for the `tick` countdown shown in the notes workspace —
+    # consumed by BOTH nw.fish (tmux) and zellij.nix via the exported env vars,
+    # so the two layouts can't drift. Update the deadline here when the project
+    # changes (it's the one place, and it's documented — not a buried literal).
+    tickHosts = lib.mkOption {
+      type = lib.types.str;
+      default = "23000";
+      description = "tick --hosts id for the notes-workspace countdown pane";
+    };
+    tickDeadline = lib.mkOption {
+      type = lib.types.str;
+      default = "2026-09-30";
+      description = "tick --deadline for the notes-workspace countdown pane";
+    };
   };
 
   imports = [
@@ -117,6 +131,8 @@ in {
         VISUAL = "hx";
         COLORTERM = "truecolor";
         NOTES = config.dotfiles.notesDir;
+        NW_TICK_HOSTS = config.dotfiles.tickHosts;
+        NW_TICK_DEADLINE = config.dotfiles.tickDeadline;
         OBSIDIAN_VAULT = "${config.home.homeDirectory}/CloudDocs/Obsidian";
         _ZO_FZF_OPTS = "--height 20% --reverse";
         MANPAGER = "sh -c 'col -bx | bat -l man -p'";

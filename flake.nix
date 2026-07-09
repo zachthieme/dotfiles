@@ -95,7 +95,7 @@
     # Hermetic tests, run by `nix flake check` locally and in CI.
     # Linux-only: the notes test needs uuidgen (util-linux), which nixpkgs
     # doesn't ship for darwin; darwin CI covers evaluation instead.
-    checks = lib.genAttrs ["x86_64-linux" "aarch64-linux"] (
+    checks = lib.genAttrs helpers.linuxSystems (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
       in {
@@ -138,7 +138,7 @@
     # Formatter for `nix fmt` (CLAUDE.md: run before every commit)
     # Wrapped because newer nix invokes the formatter with no arguments,
     # and bare alejandra would then read stdin instead of the tree
-    formatter = lib.genAttrs ["aarch64-darwin" "x86_64-darwin" "x86_64-linux" "aarch64-linux"] (
+    formatter = lib.genAttrs helpers.supportedSystems (
       system: let
         pkgs = nixpkgs.legacyPackages.${system};
       in

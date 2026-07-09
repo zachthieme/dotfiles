@@ -7,9 +7,5 @@
 #
 # id    reason
 2.6     CI eval loops lack `set -o pipefail` (low stakes — CI is minimal by design)
-3.2     notes-workspace --hosts id drifted across nw.fish (23000) and zellij.nix (10950)
-3.4     supported-platform list declared in 3 places, no shared source
 5.4     installer has shellcheck lint but no runtime/unit coverage
 6.4     CI action pinned to @main (mutable ref) instead of a tag/SHA
-7.1     CLAUDE.md function inventory names removed fns (fifc, ft)
-7.3     hardcoded expiring dates (zellij + nw.fish deadline 2026-09-30)

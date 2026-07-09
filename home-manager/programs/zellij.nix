@@ -131,7 +131,7 @@ in {
                             args "cal"
                         }
                         pane size=12 borderless=true command="tick" {
-                            args "--hosts" "10950" "--deadline" "2026-09-30"
+                            args "--hosts" "${config.dotfiles.tickHosts}" "--deadline" "${config.dotfiles.tickDeadline}"
                         }
                         pane borderless=true command="tail" {
                             args "-f" "/dev/null"
