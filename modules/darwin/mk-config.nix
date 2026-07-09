@@ -6,12 +6,14 @@
   helpers,
   customOverlays,
 }: hostname: {
+  # All fields are guaranteed by validateHost in modules/hosts/definitions.nix —
+  # defaults live there, not here
   system,
   user,
   isWork,
   vcs,
-  packageProfile ? "full",
-  packages ? [],
+  packageProfile,
+  packages,
   ...
 }: let
   systemModule = ../../system/darwin.nix;

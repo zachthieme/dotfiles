@@ -122,8 +122,10 @@ in {
     # These paths are relative to the root dotfiles directory
     home.file =
       {
-        # markdown-oxide config goes in the notes vault root
-        "CloudDocs/Notes/.moxide.toml".source = ../config/moxide/.moxide.toml;
+        # markdown-oxide config goes in the notes vault root, wherever
+        # dotfiles.notesDir points (home.file keys are home-relative, so
+        # notesDir must live under the home directory)
+        "${lib.removePrefix "${config.home.homeDirectory}/" config.dotfiles.notesDir}/.moxide.toml".source = ../config/moxide/.moxide.toml;
       }
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         ".config/aerospace".source = ../config/aerospace;
