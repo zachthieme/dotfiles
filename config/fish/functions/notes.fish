@@ -3,6 +3,7 @@ function notes --description="Search notes or create new note"
 
     set -l prev_dir $PWD
     cd $NOTES
+    or return 1
 
     set -l selected (fd --type f --extension md . "$NOTES" | \
   fzf --print-query \

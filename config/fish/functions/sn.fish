@@ -4,6 +4,7 @@ function sn --description="Search inside notes by content"
 
     set -l prev_dir $PWD
     cd $NOTES
+    or return 1
 
     set -l fzf_opts --ansi --delimiter : --height=100% --layout=reverse --border none --no-separator --no-info
     if not set -q _flag_no_preview

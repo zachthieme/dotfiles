@@ -12,6 +12,7 @@ function _note_edit --description="Create a note if missing and open it in EDITO
 
     set -l prev_dir $PWD
     cd $NOTES
+    or return 1
     $EDITOR "$filepath"
     cd $prev_dir
 end

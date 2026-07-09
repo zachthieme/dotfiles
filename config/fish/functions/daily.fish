@@ -6,6 +6,7 @@ function daily --description="Create or open today's daily note in daily/"
 
     set -l prev_dir $PWD
     cd $NOTES
+    or return 1
     $EDITOR "$filepath"
     cd $prev_dir
 end

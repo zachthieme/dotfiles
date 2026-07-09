@@ -26,6 +26,11 @@ jobs:
             nix eval ".#homeConfigurations.$host.activationPackage.drvPath" > /dev/null
           done
 
+      # Evaluation alone misses build-time failures (dropped packages, bad
+      # hashes, failing builders) — actually build one representative host
+      - name: Build a Linux configuration (dev)
+        run: nix build --no-link .#homeConfigurations.dev.activationPackage
+
   # Darwin configs can only be fully evaluated on macOS (catppuccin theming
   # uses import-from-derivation, which needs darwin builds). A failure here
   # is a real failure — do not mask it.
@@ -45,3 +50,7 @@ jobs:
             echo "Evaluating darwinConfigurations.$host..."
             nix eval ".#darwinConfigurations.$host.system.drvPath" > /dev/null
           done
+
+      # Same rationale as the Linux build step: catch build-time failures
+      - name: Build a Darwin configuration (cortex)
+        run: nix build --no-link .#darwinConfigurations.cortex.system

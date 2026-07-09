@@ -44,7 +44,10 @@
 
       # NOTES is set via home.sessionVariables from dotfiles.notesDir (base.nix)
 
-      set -x VAULT_ADDR "https://vault.jjforge.cloud:8200"
+      # Default only — secrets.fish (sourced above) may set its own VAULT_ADDR
+      if not set -q VAULT_ADDR
+        set -x VAULT_ADDR "https://vault.jjforge.cloud:8200"
+      end
       # Prefer proper TLS: set VAULT_CACERT to the private CA in secrets.fish.
       # Skip verification only as a fallback when no CA cert is configured.
       if not set -q VAULT_CACERT

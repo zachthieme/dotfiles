@@ -32,6 +32,7 @@ tags: []
 
     set -l prev_dir $PWD
     cd $NOTES
+    or return 1
     $EDITOR "$filepath"
     cd $prev_dir
 end

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Installation script for refactored dotfiles structure
 
-set -e  # Exit on error
+set -euo pipefail # Exit on error, unset variable, or failure anywhere in a pipeline
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$SCRIPT_DIR"
@@ -73,8 +73,9 @@ fetch_host_info() {
 
 show_available_hosts() {
   echo "Available hosts:"
+  # -oE, not -oP: macOS ships BSD grep, which has no Perl-regex support
   nix $NIX_FLAGS eval --json --impure --expr "builtins.attrNames (((builtins.getFlake \"$SCRIPT_DIR\").outputs.lib or {}).hosts or {})" \
-    2>/dev/null | grep -oP '(?<=")[\w-]+(?=")' | sed 's/^/  - /'
+    2>/dev/null | grep -oE '"[^"]+"' | tr -d '"' | sed 's/^/  - /' || echo "  (could not list hosts)"
 }
 
 get_nix_system() {
@@ -94,6 +95,7 @@ append_trusted_user() {
     echo "trusted-users = root ${user}" | sudo tee "$conf" >/dev/null
   elif grep -qE "^trusted-users\s*=" "$conf" 2>/dev/null; then
     sudo sed -i.bak "s/^\(trusted-users\s*=.*\)/\1 ${user}/" "$conf"
+    sudo rm -f "${conf}.bak"
   else
     echo "trusted-users = root ${user}" | sudo tee -a "$conf" >/dev/null
   fi
@@ -137,7 +139,8 @@ configure_trusted_users() {
   else
     if command -v systemctl &>/dev/null && systemctl is-active --quiet nix-daemon 2>/dev/null; then
       echo "Restarting nix-daemon..."
-      sudo systemctl restart nix-daemon
+      sudo systemctl restart nix-daemon ||
+        echo "Warning: nix-daemon restart failed. Restart it manually to apply trusted-users."
     fi
   fi
 
@@ -181,7 +184,7 @@ if [ "$HOST_EXISTS" = false ]; then
   echo ""
   die "Add your hostname to modules/hosts/definitions.nix"
 fi
-mkdir -p ~/Pictures/screenshots/
+mkdir -p "$HOME/Pictures/screenshots"
 
 # --- Flake Update (if requested) ---
 
@@ -275,10 +278,11 @@ EOF
 
   # Change default shell to fish (if not already)
   FISH_PATH="$HOME/.local/state/nix/profiles/home-manager/home-path/bin/fish"
+  TARGET_USER=${USER:-$(id -un)}
   if command -v getent &>/dev/null; then
-    CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
+    CURRENT_SHELL=$(getent passwd "$TARGET_USER" | cut -d: -f7 || true)
   else
-    CURRENT_SHELL="$SHELL"
+    CURRENT_SHELL=${SHELL:-}
   fi
 
   if [ -f "$FISH_PATH" ] && [[ "$(basename "$CURRENT_SHELL")" != "fish" ]]; then
@@ -290,7 +294,7 @@ EOF
     fi
     # Change default shell
     echo "Setting fish as default shell..."
-    sudo chsh -s "$FISH_PATH" "$USER"
+    sudo chsh -s "$FISH_PATH" "$TARGET_USER"
     echo "Default shell changed to fish. Log out and back in to use it."
   fi
 fi

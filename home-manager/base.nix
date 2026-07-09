@@ -57,6 +57,13 @@ in {
   ];
 
   config = {
+    assertions = [
+      {
+        assertion = lib.hasPrefix "${config.home.homeDirectory}/" config.dotfiles.notesDir;
+        message = "dotfiles.notesDir must live under the home directory (home.file keys are home-relative); got: ${config.dotfiles.notesDir}";
+      }
+    ];
+
     # Catppuccin theming (global enable applies to all supported programs)
     catppuccin = {
       enable = true;

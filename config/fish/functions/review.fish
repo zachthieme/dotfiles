@@ -113,6 +113,7 @@ function review --description="Generate a review (weekly, monthly, quarterly) pr
     if test -e "$filepath"
         set -l prev_dir $PWD
         cd $NOTES
+        or return 1
         $EDITOR "$filepath"
         cd $prev_dir
         return 0
@@ -190,6 +191,7 @@ end: $end_date
 
     set -l prev_dir $PWD
     cd $NOTES
+    or return 1
     $EDITOR "$filepath"
     cd $prev_dir
 end
