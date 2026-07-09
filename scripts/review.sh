@@ -24,7 +24,7 @@
 # Keep in sync with docs/review-rubric.md — same rubric version (see RUBRIC_VER).
 set -uo pipefail
 
-RUBRIC_VER="1.3"
+RUBRIC_VER="1.4"
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 
 BASELINE=scripts/review-baseline.txt
@@ -98,13 +98,15 @@ assert 2.6 "CI eval loops fail closed (pipefail)" grep -q 'pipefail' "$WF"
 # ── 3. Architecture & DRY ──
 hdr "3. Architecture & DRY"
 judged 3.1 "single source of truth for host facts"
-# 3.2 — probe for cross-file constant drift: the same command constant copied
-# into >1 file with different values (here: the workspace host id). One probe of
-# a general class, not proof of no duplication anywhere.
-if [[ "$(grep -rhoE 'tick --hosts [0-9]+' config/fish home-manager 2>/dev/null | sort -u | wc -l)" -le 1 ]]; then
+# 3.2 — probe for cross-file constant drift: the same constant copied into >1
+# file with different values (here: the workspace `--hosts` id). Quoting-agnostic
+# extraction — `tick --hosts 23000` and zellij's `"--hosts" "10950"` are the same
+# constant in different syntax; an earlier `tick --hosts` grep missed the latter.
+hostids=$(grep -rhoE '\-\-hosts["[:space:]]+[0-9]+' config/fish home-manager 2>/dev/null | grep -oE '[0-9]+$' | sort -u | wc -l)
+if [[ "$hostids" -le 1 ]]; then
   pass 3.2 "no cross-file drift in workspace host id"
 else
-  fail 3.2 "cross-file constant drift (workspace host id differs across files)"
+  fail 3.2 "cross-file constant drift (workspace --hosts id differs across files)"
 fi
 judged 3.3 "layer separation holds"
 assert 3.4 "platform list has a single source" grep -q 'supportedSystems' lib.nix

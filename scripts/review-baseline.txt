@@ -10,6 +10,7 @@
 2.2     CI runs on workflow_dispatch/pull_request only, not push-to-main
 2.5     per-host vcs override clobbers instead of merging (definitions.nix)
 2.6     CI eval loops lack `set -o pipefail`
+3.2     notes-workspace --hosts id drifted across nw.fish (23000) and zellij.nix (10950)
 3.4     supported-platform list declared in 3 places, no shared source
 5.4     installer has shellcheck lint but no runtime/unit coverage
 6.4     CI action pinned to @main (mutable ref) instead of a tag/SHA

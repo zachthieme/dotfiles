@@ -1,6 +1,6 @@
 # Repository Review Rubric
 
-**Rubric version: 1.3** — bump this on ANY change to a criterion, its weight, or
+**Rubric version: 1.4** — bump this on ANY change to a criterion, its weight, or
 the scoring rules, and record the version in each Score-history entry (scores
 under different versions are not directly comparable). The executable checker
 (`scripts/review.sh`) carries the same `RUBRIC_VER` and must move in lockstep.
@@ -10,6 +10,9 @@ reworded every criterion as a general principle (specifics are examples) and
 generalized the checks to detect the class, not one hardcoded instance — a
 review of health, not a regression checklist. (v1.3 also fixed a false-pass in
 the 7.3 date check that had been reporting "healthy" while a smell existed.)
+v1.4 fixed the same class of false-pass in the 3.2 drift check (it only saw
+`tick --hosts`, missing zellij's quoted-arg form, so it reported no drift while
+the workspace host id actually differed 23000 vs 10950).
 
 A pinned, reproducible scoring rubric for principal-level reviews of this repo.
 
@@ -228,6 +231,30 @@ Abstractions must deliver what they claim, measurably.
 ---
 
 ## Score history
+
+### 2026-07-09 — round 7 [rubric v1.4] — first fully-honest score
+
+**Overall: 0.69 → D (borderline C). PROVISIONAL** — the two fresh-boot criteria
+(11.5% of grade weight) are `unverified`, so the true range is **0.58–0.70**
+pending a real-hardware install; 0.69 assumes the verified portion is
+representative. No open Critical (the `notes-sync` unguarded bookmark-move is a
+**Major** — recoverable via `jj op undo`, not data loss), so no floor gate fires.
+
+| # | Category | Score | Notes (auto via review.sh unless marked) |
+|---|----------|-------|------|
+| 1 | Bootstrap (25%) | 0.93 | 1.3/1.4/1.5/1.7 auto-pass; 1.6 partial (`.backup` clobber); 1.1/1.2 **unverified** (excluded). |
+| 2 | Correctness (20%) | 0.33 | 2.1/2.2/2.6 fail (eval gate, main-push, pipefail); 2.5 partial (vcs clobber); 2.3 partial (dead darwin `nix.*`); 2.4 pass. |
+| 3 | Architecture (15%) | 0.57 | 3.2 **now honestly fails** (host-id drift 23000 vs 10950 — v1.4 unmasked it); 3.4 fail; 3.1/3.3 pass. |
+| 4 | Abstraction (10%) | 1.00 | 4.1/4.2/4.3 auto-pass. |
+| 5 | Testing (15%) | 0.78 | 5.1/5.5 auto-pass, 5.2/5.3 pass (tautology fixed); 5.4 fail (no installer runtime cov). |
+| 6 | Security (10%) | 0.67 | 6.2 auto-pass, 6.1 pass; 6.3 partial (unsanitized `space.T`/hostname); 6.4 fail (@main); 6.5 fail (silent trusted-users). |
+| 7 | Docs (5%) | 0.40 | 7.1 fail (fifc/ft), 7.3 **now honestly fails** (deadlines — v1.3 unmasked it); 7.2 pass. |
+
+**Why lower than round 6's 0.73 C:** the repo did not regress — the instrument
+got honest. Round 6's C was partly an artifact of (a) scoring the fresh-boot
+criteria as pass instead of `unverified`, (b) a false-pass in the 7.3 date
+check, and (c) a false-pass in the 3.2 drift check. v1.1–v1.4 fixed all three;
+the score fell to its true value. This is the review working as intended.
 
 > Rounds 4–6 below were scored under **rubric v1.0**, which had no `unverified`
 > state — the two fresh-boot criteria (1.1, 1.2) were scored as pass/partial on
