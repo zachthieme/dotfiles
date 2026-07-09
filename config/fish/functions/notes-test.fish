@@ -351,6 +351,132 @@ tags: [test]
         set -e TMUX
     end
 
+    # ── _note_create ──
+    echo ""
+    set_color --bold
+    echo "_note_create"
+    set_color normal
+
+    # Creates the file in the type's subdirectory and returns its path
+    set -l nc_path (_note_create person "ada lovelace" 2>/dev/null)
+    if test "$nc_path" = "$tmpdir/people/Ada Lovelace.md"; and test -e "$nc_path"
+        set pass (math $pass + 1)
+        echo "  ✓ _note_create person → people/ (titlecased, path returned)"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _note_create person → people/ (got: $nc_path)"
+    end
+
+    # Created note carries id: frontmatter (the invariant migrate-ids depends on)
+    if string match -rq '^id: [0-9a-f]{8}-[0-9a-f]{4}-' < "$tmpdir/people/Ada Lovelace.md"
+        set pass (math $pass + 1)
+        echo "  ✓ _note_create emits uuid frontmatter"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _note_create emits uuid frontmatter"
+    end
+
+    # Each type routes to its own directory
+    _note_create project "orbital mechanics" >/dev/null 2>&1
+    _note_create company "analytical engines" >/dev/null 2>&1
+    if test -e "$tmpdir/projects/Orbital Mechanics.md"; and test -e "$tmpdir/companies/Analytical Engines.md"
+        set pass (math $pass + 1)
+        echo "  ✓ _note_create routes project/company to their dirs"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _note_create routes project/company to their dirs"
+    end
+
+    # Unknown type fails and writes nothing
+    set -l nc_bad (_note_create bogustype whatever 2>/dev/null)
+    if test $status -ne 0; and test -z "$nc_bad"; and not test -e "$tmpdir/bogustype"
+        set pass (math $pass + 1)
+        echo "  ✓ _note_create rejects unknown type"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _note_create rejects unknown type"
+    end
+
+    # Idempotent: a second call must not clobber an edited note
+    echo "SENTINEL-EDIT" >> "$tmpdir/people/Ada Lovelace.md"
+    _note_create person "ada lovelace" >/dev/null 2>&1
+    if grep -q SENTINEL-EDIT "$tmpdir/people/Ada Lovelace.md"
+        set pass (math $pass + 1)
+        echo "  ✓ _note_create is idempotent (no overwrite)"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _note_create is idempotent (no overwrite)"
+    end
+
+    # ── _hx_ensure_note ──
+    echo ""
+    set_color --bold
+    echo "_hx_ensure_note"
+    set_color normal
+
+    # Call as a plain command with a redirected stdin (read -lz honors it) and
+    # capture stdout to a file — must NOT wrap in (...) command substitution,
+    # which does not propagate the stdin redirect into the read.
+    printf '%s' '[[Grace Hopper]]' >"$tmpdir/hx_in.txt"
+
+    _hx_ensure_note person <"$tmpdir/hx_in.txt" >"$tmpdir/hx_out.txt"
+    set -l hx_status $status
+    set -l hx_created (cat /tmp/hx_note_path 2>/dev/null)
+
+    # Extracts the [[Name]], creates the note, echoes the selection back verbatim
+    if test $hx_status -eq 0; and test (cat "$tmpdir/hx_out.txt") = "[[Grace Hopper]]"
+        set pass (math $pass + 1)
+        echo "  ✓ _hx_ensure_note passes input through unchanged"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _hx_ensure_note passes input through unchanged (got: "(cat "$tmpdir/hx_out.txt")")"
+    end
+
+    # Publishes the created note's path and the note exists on disk
+    if test "$hx_created" = "$tmpdir/people/Grace Hopper.md"; and test -e "$hx_created"
+        set pass (math $pass + 1)
+        echo "  ✓ _hx_ensure_note creates note and writes its path"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _hx_ensure_note creates note and writes its path (got: $hx_created)"
+    end
+
+    # Bare name (helix selects inside the brackets) works too
+    printf '%s' 'Katherine Johnson' >"$tmpdir/hx_bare.txt"
+    _hx_ensure_note person <"$tmpdir/hx_bare.txt" >/dev/null
+    if test -e "$tmpdir/people/Katherine Johnson.md"
+        set pass (math $pass + 1)
+        echo "  ✓ _hx_ensure_note handles a bare (unbracketed) name"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _hx_ensure_note handles a bare (unbracketed) name"
+    end
+
+    # NOTES unset → return 1, selection echoed back unchanged, no note written
+    set -e NOTES
+    _hx_ensure_note person <"$tmpdir/hx_in.txt" >"$tmpdir/hx_unset.txt"
+    set -l hx_unset_status $status
+    set -gx NOTES "$tmpdir"
+    if test $hx_unset_status -ne 0; and test (cat "$tmpdir/hx_unset.txt") = "[[Grace Hopper]]"
+        set pass (math $pass + 1)
+        echo "  ✓ _hx_ensure_note fails safely when NOTES unset"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _hx_ensure_note fails safely when NOTES unset"
+    end
+
+    # Empty selection → return 1 (nothing to name)
+    printf '' >"$tmpdir/hx_empty.txt"
+    _hx_ensure_note person <"$tmpdir/hx_empty.txt" >/dev/null
+    if test $status -ne 0
+        set pass (math $pass + 1)
+        echo "  ✓ _hx_ensure_note fails on empty input"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ _hx_ensure_note fails on empty input"
+    end
+    rm -f /tmp/hx_note_path
+
     # ── Teardown ──
     rm -rf "$tmpdir"
     if test "$_had_NOTES" = yes

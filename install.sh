@@ -226,7 +226,11 @@ if [ "$FLAKE_UPDATE" = true ]; then
   log "Updating flake.lock"
   # The user explicitly asked for an update — a failure must not silently
   # degrade into a rebuild of the stale lock
-  nix "${NIX_FLAGS[@]}" flake update "$SCRIPT_DIR" ||
+  # --flake is required: `nix flake update` treats positional args as INPUT
+  # names, so `flake update "$SCRIPT_DIR"` silently updates nothing (the path
+  # matches no input), exits 0, and this `|| die` never fires — the user thinks
+  # the lock updated when it didn't.
+  nix "${NIX_FLAGS[@]}" flake update --flake "$SCRIPT_DIR" ||
     die "flake update failed — fix the error above or rerun without -f to use the committed lock"
   echo "Flake inputs updated successfully"
   echo ""
