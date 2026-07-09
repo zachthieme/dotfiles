@@ -52,19 +52,23 @@ install_nix() {
   echo "Nix installed successfully."
 }
 
-# Fetch host info from definitions.nix (sets HOST_EXISTS)
+# Fetch host info from definitions.nix (sets HOST_EXISTS, HOST_ALLOWS_FLAKE_UPDATE)
 fetch_host_info() {
   local hostname=$1
-  local exists
-  exists=$(nix $NIX_FLAGS eval --raw --impure --expr "
+  local result
+  result=$(nix $NIX_FLAGS eval --raw --impure --expr "
     let
       flake = builtins.getFlake \"$SCRIPT_DIR\";
       hosts = (flake.outputs.lib or {}).hosts or {};
+      host = hosts.\"$hostname\" or null;
     in
-      if builtins.hasAttr \"$hostname\" hosts then \"true\" else \"false\"
-  " 2>/dev/null) || exists="false"
+      if host == null
+      then \"false false\"
+      else \"true \" + (if host.allowFlakeUpdate or true then \"true\" else \"false\")
+  " 2>/dev/null) || result="false false"
 
-  HOST_EXISTS=$exists
+  HOST_EXISTS=${result% *}
+  HOST_ALLOWS_FLAKE_UPDATE=${result#* }
 }
 
 show_available_hosts() {
@@ -180,6 +184,18 @@ fi
 mkdir -p ~/Pictures/screenshots/
 
 # --- Flake Update (if requested) ---
+
+if [ "$FLAKE_UPDATE" = true ] && [ "$HOST_ALLOWS_FLAKE_UPDATE" = false ]; then
+  echo "Error: host '$HOSTNAME' pins flake.lock (allowFlakeUpdate = false in definitions.nix)."
+  echo ""
+  echo "Update the lock on a dev machine first:"
+  echo "  ./install.sh -f        # on dev — updates, rebuilds, verifies"
+  echo "  jj commit && jj git push"
+  echo ""
+  echo "Then apply the committed lock here:"
+  echo "  jj git fetch && ./install.sh"
+  die "flake update refused on '$HOSTNAME'"
+fi
 
 if [ "$FLAKE_UPDATE" = true ]; then
   log "Updating flake.lock"

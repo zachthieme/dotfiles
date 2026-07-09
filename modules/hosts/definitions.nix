@@ -10,6 +10,10 @@
     user = "zach";
     isWork = false;
     packages = [];
+    # When false, install.sh refuses -f/--flake-update on this host:
+    # lock bumps must land on a dev machine first, get committed, and
+    # arrive here via a plain rebuild of the committed flake.lock.
+    allowFlakeUpdate = true;
   };
 
   # Default VCS identity for git/jj (can be overridden per-host)
@@ -57,6 +61,7 @@
     };
     "prod" = {
       system = "x86_64-linux";
+      allowFlakeUpdate = false;
     };
     "dev" = {
       system = "x86_64-linux";
@@ -77,14 +82,17 @@
     "pi-nomad1" = {
       system = "aarch64-linux";
       packageProfile = "core";
+      allowFlakeUpdate = false;
     };
     "pi-nomad2" = {
       system = "aarch64-linux";
       packageProfile = "core";
+      allowFlakeUpdate = false;
     };
     "pi-nomad3" = {
       system = "aarch64-linux";
       packageProfile = "core";
+      allowFlakeUpdate = false;
     };
   };
 
