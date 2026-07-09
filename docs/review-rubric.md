@@ -145,16 +145,29 @@ Abstractions must deliver what they claim, measurably.
 
 ## Score history
 
-<!--
-Append one block per review round. Example:
+### 2026-07-09 — commit 86269a5 (round 4, first rubric scoring)
 
-### 2026-07-09 — commit 86269a5 (round 4)
-Overall: 0.87 (B+). Gate: FAIL (2 open Criticals in Bootstrap) — capped below A-.
-- 1 Bootstrap: 0.40 — fresh-boot criteria fail (nix flake update signature, nix profile add on old Nix)
-- 2 Correctness gate: 0.55 — flake check evals no hosts; CI not on main push
-- 3 Architecture: 0.90
-- 4 Abstraction: 0.30 — core profile ships nixvim/ghostty/claude-code
-- 5 Testing: 0.70
-- 6 Security: 0.85
-- 7 Docs: 0.80
+**Overall: 0.41 → D. Hard gate: FAIL** (Bootstrap criteria fail + open Criticals) —
+capped below A- independent of the number.
+
+| # | Category | Score | Evidence (V = verified this session, R = round-4 finding) |
+|---|----------|-------|-----------|
+| 1 | Bootstrap & lifecycle (25%) | 0.35 | V: `nix flake update "$SCRIPT_DIR"` is a **silent no-op** — path treated as an input name, exit 0, lock untouched, `\|\| die` never fires. `nix profile add` risks old-Nix (Pi 2.25.3) break (R). Rollback advice wrong both platforms (R). Unconditional sudo (R). Fresh mac/linux boot on old Nix **unverified** (no host) — scored partial. |
+| 2 | Correctness & eval gate (20%) | 0.33 | V: `nix flake check` runs only `fish-functions` + `install-script` — **zero host eval**. V: CI triggers only `workflow_dispatch`/`pull_request`, not `push`. Dead `nix.*` under `nix.enable=false` (R). Partial-`vcs` clobber + unknown-field acceptance (V, `definitions.nix:52`). |
+| 3 | Architecture & DRY (15%) | 0.64 | Thin symmetric builders (strength). Task-toggle logic ×3, notes workspace ×2 (drifted), catppuccin theme ×2 (R); platform list declared 3× (V). |
+| 4 | Abstraction integrity (10%) | 0.08 | V: `neovim.nix`/`ghostty.nix` enable unconditionally, `contexts/home-manager/home.nix:19-20` adds claude-code+herdr to every non-work host → **all core-profile Pis get the heavy closure**. Profile gates only `home.packages`. |
+| 5 | Testing & CI coverage (15%) | 0.50 | V: `notes-sync` tested; `_hx_ensure_note`/`_note_create` have **0 test refs**. Hermetic (strength). Tautological `_is_gnu_date` test (R). Installer has lint only, no runtime coverage (V). |
+| 6 | Security & secrets (10%) | 0.50 | No secrets/endpoints in repo (strength). Predictable `/tmp` rendezvous paths (R); trusted-users granted silently (R); homebrew HEAD + CI `@main` unpinned (R). |
+| 7 | Maintainability & docs (5%) | 0.60 | Failure-mode comments (strength). Stale CLAUDE.md refs (fifc/ft/jrnl); expiring zellij `tick` deadline (R). |
+
+Takeaway: the repo scores **well on the low-weight categories (architecture,
+docs) and poorly on the high-weight ones (bootstrap, correctness gate,
+abstraction)**. Because the rubric weights the outage-causing categories highest
+— and round 4 found the breakage there — the "A-" from earlier rounds collapses
+once the axes are pinned and actually executed. This is the rubric working as
+intended, not the repo regressing.
+
+<!--
+Append one block per review round going forward. Re-score every criterion;
+never reverse-engineer criteria to hit a target letter.
 -->
