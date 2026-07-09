@@ -132,6 +132,16 @@
             shellcheck --severity=warning ${./install.sh} ${./scripts/review.sh} ${./scripts/check-eval.sh}
             touch $out
           '';
+
+        # Runtime coverage beyond lint: actually execute install.sh's arg-parsing
+        # path (--help exits before any nix/curl/sudo work) so a regression in the
+        # early script structure fails `nix flake check`, not a fresh machine.
+        install-smoke = pkgs.runCommand "install-smoke-check" {} ''
+          help=$(${pkgs.bash}/bin/bash ${./install.sh} --help)
+          echo "$help" | grep -q "Usage:" || { echo "install.sh --help printed no Usage line"; exit 1; }
+          echo "$help" | grep -q "flake-update" || { echo "install.sh --help missing -f docs"; exit 1; }
+          touch $out
+        '';
       }
     );
 

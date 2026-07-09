@@ -153,7 +153,9 @@ configure_trusted_users() {
   fi
 
   log "Configuring Nix trusted-users"
-  echo "Adding '$current_user' to trusted-users for binary cache access..."
+  echo "Adding '$current_user' to trusted-users for binary cache access."
+  echo "NOTE: a Nix trusted user can set arbitrary substituters/keys — this is"
+  echo "      effectively root-equivalent on this machine. Granting it now."
 
   # Prefer nix.custom.conf if nix.conf includes it (Determinate Nix pattern)
   # This file persists across nix.conf rewrites
@@ -209,6 +211,10 @@ else
   HOSTNAME=$(hostname -s 2>/dev/null || cat /etc/hostname 2>/dev/null || uname -n)
 fi
 [ -z "$HOSTNAME" ] && die "Failed to detect hostname. Set HOSTNAME environment variable."
+# Reject anything that isn't a plain hostname before it's spliced into the Nix
+# expression in fetch_host_info — a value with a quote/backslash/${ could break
+# the eval or inject Nix code.
+[[ "$HOSTNAME" =~ ^[A-Za-z0-9._-]+$ ]] || die "Refusing to use unsafe hostname: '$HOSTNAME'"
 
 log "Dotfiles Installation"
 echo "Detected:"

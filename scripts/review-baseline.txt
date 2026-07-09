@@ -6,6 +6,4 @@
 # id here WITH a reason. To close one, fix it and delete the line.
 #
 # id    reason
-2.6     CI eval loops lack `set -o pipefail` (low stakes — CI is minimal by design)
-5.4     installer has shellcheck lint but no runtime/unit coverage
-6.4     CI action pinned to @main (mutable ref) instead of a tag/SHA
+# (none — all mechanical criteria currently pass)

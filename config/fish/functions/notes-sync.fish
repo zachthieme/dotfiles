@@ -15,7 +15,13 @@ function notes-sync --description="Commit and push notes via jj"
         set -l changes (jj diff --summary 2>/dev/null)
         if test -n "$changes"
             set -l today (date "+%Y-%m-%d %H:%M")
-            jj commit -m "notes: auto-save $today"
+            # Guard the commit: if it fails, do NOT move main to @- (that would
+            # point the bookmark at an unrelated/parent commit).
+            if not jj commit -m "notes: auto-save $today"
+                echo -e "\033[31mCommit FAILED — leaving main where it is.\033[0m" >&2
+                cd $prev_dir
+                return 1
+            end
             echo -e "\033[32mCommitted notes changes.\033[0m"
             jj bookmark move main --to @-
             set -l remotes (jj git remote list 2>/dev/null)

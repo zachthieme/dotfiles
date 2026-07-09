@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/nix-installer-action@v22
 
       - name: Check formatting
         run: nix run .#formatter.x86_64-linux -- --check .
@@ -28,6 +28,7 @@ jobs:
 
       - name: Evaluate Linux configurations
         run: |
+          set -euo pipefail  # a failed `nix eval` must abort, not iterate zero hosts
           for host in $(nix eval .#homeConfigurations --apply 'x: builtins.attrNames x' --json | jq -r '.[]'); do
             echo "Evaluating homeConfigurations.$host..."
             nix eval ".#homeConfigurations.$host.activationPackage.drvPath" > /dev/null
@@ -45,13 +46,14 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/nix-installer-action@v22
         with:
           # x86_64-darwin hosts (malv2) evaluate on the arm64 runner via Rosetta
           extra-conf: extra-platforms = x86_64-darwin
 
       - name: Evaluate Darwin configurations
         run: |
+          set -euo pipefail  # a failed `nix eval` must abort, not iterate zero hosts
           for host in $(nix eval .#darwinConfigurations --apply 'x: builtins.attrNames x' --json | jq -r '.[]'); do
             echo "Evaluating darwinConfigurations.$host..."
             nix eval ".#darwinConfigurations.$host.system.drvPath" > /dev/null

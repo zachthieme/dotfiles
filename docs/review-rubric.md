@@ -239,6 +239,35 @@ Abstractions must deliver what they claim, measurably.
 
 ## Score history
 
+### 2026-07-09 — round 10 [rubric v1.6] — final items; NOT provisional
+
+**Overall: 0.96 → A.** Fresh-boot verified by the owner (1.1/1.2 → pass), so no
+longer provisional. Severity gates clear: no open Critical, and the one open
+**Major** (`notes-sync` unguarded bookmark-move) is now fixed, so A-territory is
+unlocked. Automated 17/20 → **20/20**.
+
+- Major fixed: `notes-sync` now guards `jj commit` — a failed commit no longer
+  moves `main` to `@-`.
+- 2.6: `set -euo pipefail` on the CI eval loops.
+- 5.4: `install-smoke` flake check runs `install.sh --help` (real runtime path).
+- 6.4: `nix-installer-action` pinned `@main` → `@v22`.
+- 6.5: trusted-users grant now announced as root-equivalent (consent).
+- 6.3: hostname validated before it's spliced into the Nix eval.
+
+| # | Category | Score | |
+|---|----------|-------|--|
+| 1 | Bootstrap (25%) | 0.96 | fresh-boot verified; only 1.6 (`.backup` re-run clobber) partial |
+| 2 | Correctness (20%) | 0.92 | only 2.3 (dead darwin `nix.*` block) partial |
+| 3 | Architecture (15%) | 1.00 | |
+| 4 | Abstraction (10%) | 1.00 | |
+| 5 | Testing (15%) | 1.00 | |
+| 6 | Security (10%) | 0.89 | 6.3 partial (`space.T` buffer-name splice — self-controlled input) |
+| 7 | Docs (5%) | 1.00 | |
+
+Path to A+ (0.97): the three remaining partials — idempotent `.backup` handling
+(1.6), remove the dead darwin `nix.*` config + its misleading comment (2.3;
+needs a mac to verify), and escape the `space.T` buffer name (6.3).
+
 ### 2026-07-09 — round 9 [rubric v1.6] — Architecture + Docs to 1.00
 
 **Overall: 0.88 → B+. PROVISIONAL** — fresh-boot criteria still `unverified`
