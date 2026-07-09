@@ -2,7 +2,6 @@
   home-manager,
   nixpkgs,
   catppuccin,
-  nixvim,
   helpers,
   customOverlays,
 }: hostname: host @ {
@@ -26,7 +25,6 @@ in
     };
     modules = [
       catppuccin.homeModules.catppuccin
-      nixvim.homeModules.nixvim
       contextModule
       # Per-host user wiring (username, homeDirectory, packages, vcs,
       # packageProfile) — shared with builders/darwin.nix

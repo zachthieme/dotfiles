@@ -48,7 +48,6 @@ in {
     ./programs/helix.nix
     ./programs/jujutsu.nix
     ./programs/lazygit.nix
-    ./programs/neovim.nix
     ./programs/pike.nix
     ./programs/ssh.nix
     ./programs/tmux.nix

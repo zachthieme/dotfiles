@@ -19,11 +19,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     pike = {
       url = "github:zachthieme/pike";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -61,7 +56,6 @@
     nix-darwin,
     home-manager,
     catppuccin,
-    nixvim,
     claude-code,
     pike,
     tick,
@@ -85,10 +79,10 @@
     ];
     hostData = import ./hosts/definitions.nix {inherit lib helpers;};
     mkDarwinConfig = import ./builders/darwin.nix {
-      inherit nix-darwin home-manager catppuccin nixvim helpers customOverlays;
+      inherit nix-darwin home-manager catppuccin helpers customOverlays;
     };
     mkHomeConfig = import ./builders/home-manager.nix {
-      inherit home-manager nixpkgs catppuccin nixvim helpers customOverlays;
+      inherit home-manager nixpkgs catppuccin helpers customOverlays;
     };
     inherit (hostData) hosts darwinHosts linuxHosts;
     darwinConfigs = builtins.mapAttrs mkDarwinConfig darwinHosts;

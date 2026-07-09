@@ -1,11 +1,17 @@
 # Ghostty terminal configuration
 # - macOS: installed via Homebrew (package = null)
 # - Linux: installed via Nix (package = pkgs.ghostty)
+#
+# Skipped on the "core" profile (the headless Raspberry Pis): ghostty is a
+# GPU-accelerated GUI terminal with no use on those hosts and a large closure
+# on their SD cards. All darwin/full-profile hosts still get it.
 {
+  config,
   pkgs,
   lib,
   ...
-}: {
+}:
+lib.mkIf (config.dotfiles.packageProfile != "core") {
   # Disable catppuccin's ghostty integration — its theme file uses # in hex
   # colors (palette = 0=#45475a) which ghostty treats as comments
   catppuccin.ghostty.enable = false;
