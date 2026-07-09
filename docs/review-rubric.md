@@ -1,5 +1,10 @@
 # Repository Review Rubric
 
+**Rubric version: 1.1** — bump this on ANY change to a criterion, its weight, or
+the scoring rules, and record the version in each Score-history entry (a score
+under v1.0 is not comparable to one under v1.1). The executable checker
+(`scripts/review.sh`) carries the same `RUBRIC_VER` and must move in lockstep.
+
 A pinned, reproducible scoring rubric for principal-level reviews of this repo.
 
 ## Why this exists
@@ -18,15 +23,54 @@ silently deflate an unrelated score.
 
 ## How to score
 
-- Each **category** has weighted **criteria**. A criterion is `pass` (full
-  points), `partial` (half), or `fail` (zero). Prefer objective, runnable
-  checks over judgement calls — every criterion names how to verify it.
-- Category score = `sum(earned) / sum(possible)`. Overall = weighted mean of
-  category scores.
-- Map overall to a letter only at the end, using the fixed band below. Do not
-  reverse-engineer criteria to hit a target letter.
+- Each **category** has weighted **criteria**. A criterion is one of four
+  states:
+  - `pass` — full points; verified true.
+  - `partial` — half points. Use ONLY when the criterion decomposes into
+    concrete pass/fail parts and some pass; never as a hedge for "seems okay."
+    If you're tempted to use partial as a judgement fudge, split the criterion
+    into sub-criteria instead.
+  - `fail` — zero points; verified false.
+  - `unverified` — **excluded from the denominator entirely.** Use when the
+    criterion could not be checked this round (needs real hardware, a network
+    the reviewer lacks, etc.). Do NOT score an unchecked criterion as `pass`
+    "because no known defect" — that is the exact reviewer-diligence drift this
+    rubric exists to kill. Absence of evidence is `unverified`, not `pass`.
+- Category score = `sum(earned) / sum(possible over pass+partial+fail only)`.
+  Overall = weighted mean of category scores.
+- **Provisional grades:** sum the weight of all `unverified` criteria. If it
+  exceeds **10% of total weight**, the grade is `PROVISIONAL` — report it as a
+  range and say what's unverified. A grade resting on unchecked criteria is a
+  different object from a fully-verified one and must be labelled so.
+- Map overall to a letter only at the end, using the fixed band below. Because
+  the instrument's noise floor is ≈±0.03 (one criterion's interpretation can
+  swing the total that far), **report the score to two decimals and name the
+  letter band it falls in — do not imply finer resolution.** When a score sits
+  within ±0.02 of a band edge, report both the number and "borderline X/Y".
+- Do not reverse-engineer criteria to hit a target letter.
 - Record each round's scorecard in `## Score history` with the date, commit,
-  and per-criterion verdicts, so drift is visible.
+  rubric version, and per-criterion verdicts (including which were run by
+  `scripts/review.sh` vs judged by hand), so drift is visible.
+
+## Running the automated checks
+
+`scripts/review.sh` is the executable half of this rubric: it runs every
+criterion that can be checked mechanically (grep/`nix eval`) and prints
+`pass`/`fail`, plus `judged` (needs a human) and `unverified` (needs hardware)
+for the rest. Mechanical criteria grade themselves identically every round, so
+they can't drift by reviewer — that's the point. A reviewer runs the script,
+then adjudicates only the `judged` rows by hand.
+
+Automated criterion ids (kept in sync with the script): **1.3, 1.4, 1.5, 1.7,
+2.1, 2.2, 2.5, 2.6, 3.2, 3.4, 4.1, 4.2, 4.3, 5.1, 5.4, 5.5, 6.2, 6.4, 7.1,
+7.3.** Everything else is `judged` (1.6, 2.3, 2.4, 3.1, 3.3, 5.2, 5.3, 6.1,
+6.3, 6.5, 7.2) or `unverified` on this machine (1.1, 1.2 — need a clean host).
+
+**Maintenance rule:** when a code change makes a criterion's verification text
+wrong (a named module/flag/version it references stops existing), update the
+criterion *in the same commit*, bump the rubric version, and adjust
+`scripts/review.sh`. A rubric that describes a moving repo rots otherwise — and
+a rotted criterion silently mis-scores.
 
 ### Letter bands (fixed)
 
@@ -75,7 +119,7 @@ these; only execution can. This is the category round 4 found broken.
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| `install.sh` boots a fresh Linux host end-to-end on the oldest supported Nix | 3 | Run in a clean container/VM on the Nix version the Pis ship (see CLAUDE.md — 2.25.3). No CLI-signature failures (`nix profile add` vs `install`, `flake update` arg form). |
+| `install.sh` boots a fresh Linux host end-to-end | 3 | [hw] Run in a clean container/VM on a supported Nix. No CLI-signature failures (e.g. `nix profile add`/`install`, `flake update` arg form) and no masked-failure command substitutions. |
 | `install.sh` boots a fresh macOS host end-to-end | 3 | Run on a clean mac or VM: Homebrew install verified, nix-darwin bootstrap path (no `darwin-rebuild` yet) succeeds. |
 | `-f`/`--flake-update` runs the correct current CLI signature | 2 | `nix flake update --flake .` form; not the removed positional-path form. |
 | Every external-CLI invocation is verified after the fact | 2 | Each `curl\|sh` / install step followed by `command -v … \|\| die` (no masked-failure command substitutions). |
@@ -109,9 +153,9 @@ Abstractions must deliver what they claim, measurably.
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| `packageProfile = "core"` actually produces a minimal closure | 3 | `nix path-info -Sh` on a core-profile host (pi5) excludes GUI/dev closures (nixvim LSP set, ghostty, claude-code). Measure, don't assume. |
-| Profile tiers gate all heavy modules, not just `home.packages` | 2 | Heavy program modules (`neovim`, `ghostty`) guard their `config` on profile. |
-| Overlaid inputs provide packages for every target system | 1 | Each `input.packages.${system}.default` referenced actually exists for aarch64-linux (Pi) and both darwins. |
+| A `core`/headless host's closure excludes UNINTENDED heavy modules | 3 | [auto] Principle: a core-profile / `gui = false` host carries only what it's meant to. Verify a headless host (pi5) has `programs.ghostty.enable = false` and no `programs.nixvim` option. Intended tools (claude-code, herdr) are in scope by design and are NOT a violation. |
+| Heavy/GUI modules gate their `config`, not just `home.packages` | 2 | [auto] Heavy or graphical program modules (e.g. ghostty) guard their `config` on the relevant flag (`dotfiles.gui`), so removing a host from that flag drops the closure. |
+| Overlaid inputs provide packages for every target system | 1 | [auto] Each `input.packages.${system}.default` referenced resolves for aarch64-linux (Pi) and both darwins — verify by evaluating a Pi host's package list. |
 
 ### 5. Testing & CI coverage (15%)
 
@@ -145,7 +189,13 @@ Abstractions must deliver what they claim, measurably.
 
 ## Score history
 
-### 2026-07-09 — commit 86269a5 (round 4, first rubric scoring)
+> Rounds 4–6 below were scored under **rubric v1.0**, which had no `unverified`
+> state — the two fresh-boot criteria (1.1, 1.2) were scored as pass/partial on
+> "no known defect." Under v1.1 they are `unverified` (need real hardware), so
+> those rounds' bootstrap scores would be reported as PROVISIONAL ranges rather
+> than point values. Left as-is for historical continuity; new rounds use v1.1.
+
+### 2026-07-09 — commit 86269a5 (round 4, first rubric scoring) [rubric v1.0]
 
 **Overall: 0.41 → D. Hard gate: FAIL** (Bootstrap criteria fail + open Criticals) —
 capped below A- independent of the number.
@@ -167,7 +217,7 @@ abstraction)**. Because the rubric weights the outage-causing categories highest
 once the axes are pinned and actually executed. This is the rubric working as
 intended, not the repo regressing.
 
-### 2026-07-09 — round 5 (after -f fix, nixvim removal, ghostty gating, tests)
+### 2026-07-09 — round 5 (after -f fix, nixvim removal, ghostty gating, tests) [rubric v1.0]
 
 **Overall: 0.60 → D** (up from 0.41). Hard gate still FAIL (Bootstrap criteria
 open). Δ from round 4 in **bold**.
@@ -197,7 +247,7 @@ criteria — reaching C (0.70) means closing the cheap bootstrap items (rollback
 strings, `sudo -n` guard, Homebrew verify) and the security `/tmp` + tautology
 nits.
 
-### 2026-07-09 — round 6 (installer hardening, secure /tmp, falsifiable test)
+### 2026-07-09 — round 6 (installer hardening, secure /tmp, falsifiable test) [rubric v1.0]
 
 **Overall: 0.73 → C** (up from 0.60). First crossing out of D. Hard gate no
 longer relevant at this tier (nowhere near A-). Δ from round 5 in **bold**.

@@ -122,13 +122,14 @@
             touch $out
           '';
 
-        # install.sh is the bootstrap path for every machine and has no other
-        # automated coverage — lint it so regressions fail `nix flake check`
+        # Shell scripts have no other automated coverage — lint install.sh (the
+        # bootstrap path) and scripts/review.sh (the rubric checker) so shell
+        # regressions fail `nix flake check`
         install-script =
           pkgs.runCommand "install-script-check" {
             nativeBuildInputs = with pkgs; [shellcheck];
           } ''
-            shellcheck --severity=warning ${./install.sh}
+            shellcheck --severity=warning ${./install.sh} ${./scripts/review.sh}
             touch $out
           '';
       }
