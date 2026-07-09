@@ -13,7 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
-      - uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Check formatting
         run: nix run .#formatter.x86_64-linux -- --check .
@@ -44,7 +43,6 @@ jobs:
         with:
           # x86_64-darwin hosts (malv2) evaluate on the arm64 runner via Rosetta
           extra-conf: extra-platforms = x86_64-darwin
-      - uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Evaluate Darwin configurations
         run: |
