@@ -9,7 +9,11 @@
   sharedBinds = {
     space.t = ["extend_to_line_bounds" ":pipe sed -e '/^[[:space:]]*- \\[ \\] /{s/^\\([[:space:]]*\\)- \\[ \\] /\\1- /;b' -e '}' -e '/^[[:space:]]*- \\[x\\] /{s/^\\([[:space:]]*\\)- \\[x\\] /\\1- /;b' -e '}' -e 's/^\\([[:space:]]*\\)- /\\1- [ ] /'" "collapse_selection"];
     space.x = ["extend_to_line_bounds" ":pipe _hx_toggle_task" "collapse_selection"];
-    space.T = [":insert-output pike --scope '%{buffer_name}'"];
+    # Double-quote the buffer name, not single: editor.shell is fish, and fish
+    # double-quotes keep ' ` ; | () literal (only $ and \ stay special), so a
+    # note titled "Ada's Analysis" can't break out and inject. Single quotes
+    # would be escaped by that apostrophe.
+    space.T = [":insert-output pike --scope \"%{buffer_name}\""];
     space.o = {
       p = noteBind "person";
       j = noteBind "project";
@@ -90,7 +94,7 @@ in {
           # pre-created or symlinked by another local user to redirect :open.
           C-y = [
             ":sh mkdir -p $HOME/.cache; rm -f $HOME/.cache/helix-yazi-chooser"
-            ":insert-output yazi %{buffer_name} --chooser-file=$HOME/.cache/helix-yazi-chooser"
+            ":insert-output yazi \"%{buffer_name}\" --chooser-file=$HOME/.cache/helix-yazi-chooser"
             '':insert-output echo "\\x1b[?1049h\\x1b[?2004h" > /dev/tty''
             ":open %sh{cat $HOME/.cache/helix-yazi-chooser}"
             ":redraw"

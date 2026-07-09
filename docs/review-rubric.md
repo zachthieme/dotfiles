@@ -239,6 +239,24 @@ Abstractions must deliver what they claim, measurably.
 
 ## Score history
 
+### 2026-07-09 — round 12 [rubric v1.6] — 6.3 buffer-name quoting
+
+**Overall: 0.99 → A+.** The helix `space.T` (and the yazi `C-y`) binding now
+double-quotes `%{buffer_name}` instead of single-quoting (or leaving it bare).
+Under fish, double-quotes keep `'` ` ` ` ; | () ` literal, so a note titled
+"Ada's Analysis" can't break out — closing the realistic injection vector.
+Security → 1.00.
+
+Residual (honest): fish double-quotes still expand `$`, so a note filename
+literally containing `$` or `"` isn't fully neutralised — but that's inherent to
+helix's textual `%{}` substitution into a shell string (`:insert-output` gives no
+way to pass an argument un-parsed), and such filenames are self-created and never
+produced by the notes system. Scored pass for the realistic threat model.
+
+Only remaining partial: **1.6** — installer re-run isn't idempotent (the
+`home-manager switch -b backup` clobber when a `.backup` already exists), keeping
+Bootstrap at 0.96. Fixing that is the last step to a flat 1.00.
+
 ### 2026-07-09 — round 11 [rubric v1.6] — 2.3 confirmed on a Mac
 
 **Overall: 0.98 → A+.** The 2.3 dead-darwin-`nix.*` removal was validated by a
