@@ -23,7 +23,15 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 sys=$(nix eval --impure --raw --expr 'builtins.currentSystem' 2>/dev/null)
 [[ -z "$sys" ]] && { echo "check-eval: could not determine current system" >&2; exit 1; }
 
-# Linux hosts (homeConfigurations) whose system matches this machine.
+# Which flake output holds this machine's configs: darwin hosts are
+# darwinConfigurations.<h>.system, Linux hosts are homeConfigurations.<h>.
+# activationPackage. (Same-system only — see the header note on cross-arch IFD.)
+case "$sys" in
+  *-darwin) out="darwinConfigurations"; drv="system.drvPath" ;;
+  *) out="homeConfigurations"; drv="activationPackage.drvPath" ;;
+esac
+
+# Hosts whose system matches this machine.
 mapfile -t hosts < <(
   nix eval --json '.#lib.hosts' \
     --apply "hs: builtins.filter (n: (hs.\${n}).system == \"$sys\") (builtins.attrNames hs)" 2>/dev/null \
@@ -31,14 +39,14 @@ mapfile -t hosts < <(
 )
 
 if [[ "${#hosts[@]}" -eq 0 ]]; then
-  echo "check-eval: no Home Manager hosts for $sys (nothing to gate here)"
+  echo "check-eval: no hosts for $sys (nothing to gate here)"
   exit 0
 fi
 
 echo "check-eval: evaluating ${#hosts[@]} host(s) for $sys — ${hosts[*]}"
 rc=0
 for h in "${hosts[@]}"; do
-  if nix eval --raw ".#homeConfigurations.$h.activationPackage.drvPath" >/dev/null 2>eval-err.txt; then
+  if nix eval --raw ".#$out.$h.$drv" >/dev/null 2>eval-err.txt; then
     echo "  ✓ $h"
   else
     echo "  ✗ $h — eval failed:"
