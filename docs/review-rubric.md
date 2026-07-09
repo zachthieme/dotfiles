@@ -167,6 +167,28 @@ abstraction)**. Because the rubric weights the outage-causing categories highest
 once the axes are pinned and actually executed. This is the rubric working as
 intended, not the repo regressing.
 
+### 2026-07-09 — round 5 (after -f fix, nixvim removal, ghostty gating, tests)
+
+**Overall: 0.54 → D** (up from 0.41). Hard gate still FAIL (Bootstrap criteria
+open). Δ from round 4 in **bold**.
+
+| # | Category | Score | Change / evidence (V = verified this round) |
+|---|----------|-------|-----------|
+| 1 | Bootstrap & lifecycle (25%) | **0.50** ↑ | V: `-f` now uses `flake update --flake` (criterion PASS). Still open: `nix profile add` old-Nix risk, rollback advice wrong both platforms, unconditional sudo, Homebrew masked-failure, fresh-boot unverified. |
+| 2 | Correctness & eval gate (20%) | 0.33 = | Unchanged — not in scope this round. Host-eval gate + main-push CI + pipefail + vcs-clobber all still open. (User has explicitly deprioritized the host-eval criterion; see note.) |
+| 3 | Architecture & DRY (15%) | **0.68** ↑ | V: deleting `neovim.nix` removed the Lua task-toggle copy → task-toggle down to ×2 (helix sed + fish fn, distinct ops). Notes-workspace ×2 and platform-list ×3 still open. |
+| 4 | Abstraction integrity (10%) | **0.67** ↑↑ | V: nixvim removed entirely (LSP closure gone); ghostty gated on `dotfiles.gui` (Pis=false). Heavy modules now gated. **Remaining**: `contexts/home-manager/home.nix` still adds claude-code+herdr to every non-work host (incl. Pis) — closure not yet fully minimal; herdr aarch64 packages unverified. |
+| 5 | Testing & CI coverage (15%) | **0.67** ↑ | V: `_note_create` + `_hx_ensure_note` now covered (41 tests, hermetic check green). Still open: tautological `_is_gnu_date` test, no installer runtime/unit coverage. |
+| 6 | Security & secrets (10%) | 0.50 = | Unchanged — `/tmp/hx_note_path` + `/tmp/unique-file` predictable paths, silent trusted-users grant, unpinned homebrew/CI still open. |
+| 7 | Maintainability & docs (5%) | 0.60 = | Unchanged — stale CLAUDE.md refs, expiring zellij `tick` deadline still open. |
+
+Note: the user has stated they don't care about the host-evaluation criterion
+(2.1, weight 3). Scored as-is here for continuity; if that criterion is dropped
+as accepted-risk, category 2 → 0.44 and overall → ~0.56 (still D). The three
+categories that moved (1, 4, 5) are exactly the ones the round-5 changes
+targeted; the grade is still D because the two heaviest categories (bootstrap,
+correctness) retain multiple open criteria that were out of scope this round.
+
 <!--
 Append one block per review round going forward. Re-score every criterion;
 never reverse-engineer criteria to hit a target letter.
