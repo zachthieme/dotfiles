@@ -6,7 +6,7 @@
   helpers,
   customOverlays,
 }: hostname: {
-  # All fields are guaranteed by validateHost in modules/hosts/definitions.nix —
+  # All fields are guaranteed by validateHost in hosts/definitions.nix —
   # defaults live there, not here
   system,
   user,
@@ -16,17 +16,17 @@
   packages,
   ...
 }: let
-  systemModule = ../../system/darwin.nix;
+  systemModule = ../system/darwin.nix;
   contextSystemModule =
     helpers.selectContextModule
     isWork
-    ../../contexts/system/home.nix
-    ../../contexts/system/work.nix;
+    ../contexts/system/home.nix
+    ../contexts/system/work.nix;
   contextHomeModule =
     helpers.selectContextModule
     isWork
-    ../../contexts/home-manager/home.nix
-    ../../contexts/home-manager/work.nix;
+    ../contexts/home-manager/home.nix
+    ../contexts/home-manager/work.nix;
 in
   nix-darwin.lib.darwinSystem {
     modules = [

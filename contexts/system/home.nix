@@ -1,24 +1,10 @@
 # Home-specific system configuration
 # This module is loaded for non-work machines (isWork = false in definitions.nix)
-{
-  pkgs,
-  lib,
-  ...
-}: {
-  # Home-specific packages
-  environment.systemPackages = with pkgs; [
-  ];
-
-  homebrew.brews = [
-  ];
-
+# Add home-specific system packages, brews, or macOS defaults here as needed.
+{...}: {
   homebrew.casks = [
     "brave-browser"
     "codex"
     "docker-desktop"
   ];
-
-  system.defaults = {
-    # Any home-specific macOS settings
-  };
 }

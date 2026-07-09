@@ -1,22 +1,8 @@
 # Work-specific system configuration
 # This module is loaded for work machines (isWork = true in definitions.nix)
-{
-  pkgs,
-  lib,
-  ...
-}: {
-  # Work-specific packages
-  environment.systemPackages = with pkgs; [
-  ];
-
-  homebrew.brews = [
-  ];
-
+# Add work-specific system packages, brews, or macOS defaults here as needed.
+{...}: {
   homebrew.casks = [
     "google-chrome"
   ];
-
-  system.defaults = {
-    # Any work-specific macOS settings
-  };
 }

@@ -71,7 +71,7 @@
     ...
   }: let
     lib = nixpkgs.lib;
-    helpers = import ./modules/lib.nix {inherit lib;};
+    helpers = import ./lib.nix {inherit lib;};
     mkOverlay = name: input: final: _prev: {
       ${name} = input.packages.${final.stdenv.hostPlatform.system}.default;
     };
@@ -83,16 +83,14 @@
       (mkOverlay "tick" tick)
       (mkOverlay "wen" wen)
     ];
-    hostData = import ./modules/hosts/definitions.nix {inherit lib helpers;};
-    detectHostData = import ./modules/hosts/detect.nix {inherit (hostData) hosts;};
-    mkDarwinConfig = import ./modules/darwin/mk-config.nix {
+    hostData = import ./hosts/definitions.nix {inherit lib helpers;};
+    mkDarwinConfig = import ./builders/darwin.nix {
       inherit nix-darwin home-manager catppuccin nixvim helpers customOverlays;
     };
-    mkHomeConfig = import ./modules/home-manager/mk-config.nix {
+    mkHomeConfig = import ./builders/home-manager.nix {
       inherit home-manager nixpkgs catppuccin nixvim helpers customOverlays;
     };
     inherit (hostData) hosts darwinHosts linuxHosts;
-    defaultHost = detectHostData.defaultHost;
     darwinConfigs = builtins.mapAttrs mkDarwinConfig darwinHosts;
     linuxConfigs = builtins.mapAttrs mkHomeConfig linuxHosts;
   in {
@@ -129,6 +127,16 @@
             fish -C "set -p fish_function_path ${./config/fish/functions}" -c notes-test
             touch $out
           '';
+
+        # install.sh is the bootstrap path for every machine and has no other
+        # automated coverage — lint it so regressions fail `nix flake check`
+        install-script =
+          pkgs.runCommand "install-script-check" {
+            nativeBuildInputs = with pkgs; [shellcheck];
+          } ''
+            shellcheck --severity=warning ${./install.sh}
+            touch $out
+          '';
       }
     );
 
@@ -142,13 +150,7 @@
         pkgs.writeShellScriptBin "alejandra-tree" ''exec ${pkgs.alejandra}/bin/alejandra "''${@:-.}"''
     );
 
-    darwinConfigurations =
-      darwinConfigs
-      // (
-        if builtins.hasAttr defaultHost darwinConfigs
-        then {default = darwinConfigs.${defaultHost};}
-        else {}
-      );
+    darwinConfigurations = darwinConfigs;
     homeConfigurations = linuxConfigs;
   };
 }

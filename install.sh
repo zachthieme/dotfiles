@@ -6,7 +6,7 @@ set -euo pipefail # Exit on error, unset variable, or failure anywhere in a pipe
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 cd "$SCRIPT_DIR"
 
-NIX_FLAGS="--extra-experimental-features nix-command --extra-experimental-features flakes"
+NIX_FLAGS=(--extra-experimental-features nix-command --extra-experimental-features flakes)
 
 # --- Parse Arguments ---
 
@@ -53,19 +53,21 @@ install_nix() {
 }
 
 # Fetch host info from definitions.nix (sets HOST_EXISTS, HOST_ALLOWS_FLAKE_UPDATE)
+# A failed flake evaluation is fatal and reported as such — it must NOT be
+# conflated with "hostname not found" (that misdiagnosis sends you debugging
+# definitions.nix when the real problem is a syntax error or bad input).
 fetch_host_info() {
   local hostname=$1
   local result
-  result=$(nix $NIX_FLAGS eval --raw --impure --expr "
-    let
-      flake = builtins.getFlake \"$SCRIPT_DIR\";
-      hosts = (flake.outputs.lib or {}).hosts or {};
-      host = hosts.\"$hostname\" or null;
+  if ! result=$(nix "${NIX_FLAGS[@]}" eval --raw "$SCRIPT_DIR#lib.hosts" --apply "
+    hosts: let host = hosts.\"$hostname\" or null;
     in
       if host == null
       then \"false false\"
-      else \"true \" + (if host.allowFlakeUpdate or true then \"true\" else \"false\")
-  " 2>/dev/null) || result="false false"
+      else \"true \" + (if host.allowFlakeUpdate then \"true\" else \"false\")
+  "); then
+    die "flake evaluation failed (see error above) — this is not a missing-host problem"
+  fi
 
   HOST_EXISTS=${result% *}
   HOST_ALLOWS_FLAKE_UPDATE=${result#* }
@@ -74,7 +76,7 @@ fetch_host_info() {
 show_available_hosts() {
   echo "Available hosts:"
   # -oE, not -oP: macOS ships BSD grep, which has no Perl-regex support
-  nix $NIX_FLAGS eval --json --impure --expr "builtins.attrNames (((builtins.getFlake \"$SCRIPT_DIR\").outputs.lib or {}).hosts or {})" \
+  nix "${NIX_FLAGS[@]}" eval --json "$SCRIPT_DIR#lib.hosts" --apply builtins.attrNames \
     2>/dev/null | grep -oE '"[^"]+"' | tr -d '"' | sed 's/^/  - /' || echo "  (could not list hosts)"
 }
 
@@ -104,7 +106,8 @@ append_trusted_user() {
 configure_trusted_users() {
   local nix_conf="/etc/nix/nix.conf"
   local nix_custom_conf="/etc/nix/nix.custom.conf"
-  local current_user=$(whoami)
+  local current_user
+  current_user=$(whoami)
 
   # Ensure /etc/nix exists (should exist after Nix install, but be safe)
   if [ ! -d "/etc/nix" ]; then
@@ -168,8 +171,6 @@ ARCHITECTURE=$(uname -m)
 OS=$(uname -s)
 NIX_SYSTEM=$(get_nix_system "$ARCHITECTURE" "$OS")
 
-export HOSTNAME NIX_SYSTEM
-
 log "Dotfiles Installation"
 echo "Detected:"
 echo "  Host: $HOSTNAME"
@@ -178,11 +179,11 @@ echo "  System: $NIX_SYSTEM"
 
 fetch_host_info "$HOSTNAME"
 if [ "$HOST_EXISTS" = false ]; then
-  echo "Error: Hostname '$HOSTNAME' not found in modules/hosts/definitions.nix"
+  echo "Error: Hostname '$HOSTNAME' not found in hosts/definitions.nix"
   echo ""
   show_available_hosts
   echo ""
-  die "Add your hostname to modules/hosts/definitions.nix"
+  die "Add your hostname to hosts/definitions.nix"
 fi
 mkdir -p "$HOME/Pictures/screenshots"
 
@@ -202,7 +203,7 @@ fi
 
 if [ "$FLAKE_UPDATE" = true ]; then
   log "Updating flake.lock"
-  if nix $NIX_FLAGS flake update "$SCRIPT_DIR"; then
+  if nix "${NIX_FLAGS[@]}" flake update "$SCRIPT_DIR"; then
     echo "Flake inputs updated successfully"
     echo ""
     echo "Changed inputs (review before continuing):"
@@ -239,7 +240,17 @@ if [[ "$OS" == "Darwin" ]]; then
   fi
 
   echo "Applying nix-darwin configuration..."
-  if ! sudo darwin-rebuild switch --flake "$SCRIPT_DIR#$HOSTNAME"; then
+  # On a fresh machine darwin-rebuild doesn't exist until nix-darwin has
+  # activated once — bootstrap it from the nix-darwin flake in that case
+  if command -v darwin-rebuild &>/dev/null; then
+    DARWIN_REBUILD=(darwin-rebuild)
+  else
+    log "Bootstrapping nix-darwin (first install)"
+    # Explicit github ref — the bare "nix-darwin" registry alias isn't
+    # guaranteed to exist on a fresh install
+    DARWIN_REBUILD=(nix "${NIX_FLAGS[@]}" run github:nix-darwin/nix-darwin#darwin-rebuild --)
+  fi
+  if ! sudo "${DARWIN_REBUILD[@]}" switch --flake "$SCRIPT_DIR#$HOSTNAME"; then
     echo ""
     echo "To rollback to previous generation:"
     echo "  sudo darwin-rebuild switch --rollback"
@@ -248,7 +259,7 @@ if [[ "$OS" == "Darwin" ]]; then
 else
   if ! command -v home-manager &>/dev/null; then
     echo "Installing home-manager..."
-    nix $NIX_FLAGS profile add nixpkgs#home-manager || die "Failed to install home-manager"
+    nix "${NIX_FLAGS[@]}" profile add nixpkgs#home-manager || die "Failed to install home-manager"
   fi
 
   echo "Applying Home Manager configuration..."

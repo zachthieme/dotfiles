@@ -100,19 +100,25 @@ in {
         };
     };
 
-    home.sessionVariables = {
-      EDITOR = "hx";
-      VISUAL = "hx";
-      CARGO_TARGET_DIR = "${config.home.homeDirectory}/.cache/cargo-target";
-      COLORTERM = "truecolor";
-      NOTES = config.dotfiles.notesDir;
-      OBSIDIAN_VAULT = "${config.home.homeDirectory}/CloudDocs/Obsidian";
-      _ZO_FZF_OPTS = "--height 20% --reverse";
-      MANPAGER = "sh -c 'col -bx | bat -l man -p'";
-      MANROFFOPT = "-c";
-      OPENSSL_DIR = "${pkgs.openssl.dev}";
-      OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
-    };
+    home.sessionVariables =
+      {
+        EDITOR = "hx";
+        VISUAL = "hx";
+        COLORTERM = "truecolor";
+        NOTES = config.dotfiles.notesDir;
+        OBSIDIAN_VAULT = "${config.home.homeDirectory}/CloudDocs/Obsidian";
+        _ZO_FZF_OPTS = "--height 20% --reverse";
+        MANPAGER = "sh -c 'col -bx | bat -l man -p'";
+        MANROFFOPT = "-c";
+      }
+      # Dev-only vars: the openssl store-path references would otherwise pull
+      # openssl into the closure of every generation, including core-profile
+      # hosts (the Pis) that don't install the dev toolchain at all
+      // lib.optionalAttrs (config.dotfiles.packageProfile != "core") {
+        CARGO_TARGET_DIR = "${config.home.homeDirectory}/.cache/cargo-target";
+        OPENSSL_DIR = "${pkgs.openssl.dev}";
+        OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
+      };
 
     # PATH additions
     # - macOS: Homebrew is at /opt/homebrew/bin on Apple Silicon

@@ -76,6 +76,8 @@ in {
       ]
       ++ pkgs.lib.optionals isLinux [
         pkgs.libgcc # Linux only
+        # CLI clients only — the docker daemon comes from the distro
+        # (apt/systemd), not Home Manager, which can't manage services as root
         docker
         docker-compose
       ];

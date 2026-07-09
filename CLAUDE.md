@@ -63,25 +63,18 @@ alejandra .  # Alternative formatter
 ### Flake Structure
 
 The `flake.nix` orchestrates everything:
-1. Imports shared helper functions from `modules/lib.nix`
-2. Imports host metadata from `modules/hosts/definitions.nix`
-3. Imports hostname detection from `modules/hosts/detect.nix`
-4. Splits hosts into `darwinHosts` and `linuxHosts` based on system attribute
-5. Applies appropriate builder: `mkDarwinConfig` (macOS) or `mkHomeConfig` (Linux)
-6. Passes `helpers` to both builders for shared utilities
-7. Exports `darwinConfigurations` (with `default` alias for detected host) and `homeConfigurations`
+1. Imports shared helper functions from `lib.nix`
+2. Imports host metadata from `hosts/definitions.nix`
+3. Splits hosts into `darwinHosts` and `linuxHosts` based on system attribute
+4. Applies appropriate builder: `builders/darwin.nix` (macOS) or `builders/home-manager.nix` (Linux)
+5. Passes `helpers` to both builders for shared utilities
+6. Exports `darwinConfigurations` and `homeConfigurations`
 
-### Hostname Detection
-
-`modules/hosts/detect.nix` provides automatic hostname detection:
-- Reads `HOSTNAME` (Linux) or `HOST` (macOS) environment variables
-- If hostname exists in `definitions.nix`, sets it as `defaultHost`
-- Enables `darwin-rebuild switch --flake .` without specifying hostname
-- Falls back gracefully if hostname not found or not set
+Hostname resolution is handled by the tools themselves: `darwin-rebuild switch --flake .` resolves the local hostname to a `darwinConfigurations` attribute, and `install.sh` always passes the detected hostname explicitly.
 
 ### Shared Helper Functions
 
-`modules/lib.nix` provides utilities used across the configuration:
+`lib.nix` provides utilities used across the configuration:
 - **`getHomeDirectory user system`**: Returns the appropriate home directory path (`/Users/` for Darwin, `/home/` for Linux)
 - **`selectContextModule isWork homeModule workModule`**: Selects the appropriate context module based on the `isWork` flag
 - **`isDarwin system`**: Boolean check if system is Darwin/macOS
@@ -91,13 +84,13 @@ These helpers eliminate code duplication and provide a single source of truth fo
 
 ### Layer Composition
 
-**macOS hosts** (`modules/darwin/mk-config.nix`) stack these modules:
+**macOS hosts** (`builders/darwin.nix`) stack these modules:
 1. `system/darwin.nix` - System settings shared by all macs (packages, users, hostname, Homebrew, macOS defaults, keyboard)
 2. `contexts/system/{home,work}.nix` - Context system overrides
 3. Inline module with host-specific `local.hostname`, `local.username`, packages
 4. Home Manager as Darwin module, importing `contexts/home-manager/{home,work}.nix`
 
-**Linux hosts** (`modules/home-manager/mk-config.nix`) load:
+**Linux hosts** (`builders/home-manager.nix`) load:
 1. `contexts/home-manager/{home,work}.nix` (which imports `home-manager/base.nix`)
 2. Inline module setting `home.username`, `home.homeDirectory`, `home.packages`
 
@@ -112,7 +105,7 @@ Both home-manager context modules import `home-manager/base.nix`, which contains
 
 ### Host Definitions
 
-All host metadata lives in `modules/hosts/definitions.nix`:
+All host metadata lives in `hosts/definitions.nix`:
 ```nix
 {
   "cortex" = {
@@ -225,16 +218,16 @@ body = ''
 
 - **Indentation**: Two spaces in Nix files
 - **Attribute ordering**: Alphabetize attribute sets where practical
-- **Module naming**: Follow existing patterns (`modules/<domain>/*.nix`, `contexts/<layer>/<context>.nix`)
+- **Module naming**: Follow existing patterns (`builders/<platform>.nix`, `contexts/<layer>/<context>.nix`)
 - **Host keys**: Use short lowercase names in `definitions.nix`
 - **Formatting**: Run `nix fmt` or `alejandra .` before committing
 - **Commit messages**: Concise, lowercase subject lines describing the change (e.g., `adding uv`, `fix fish path on linux`)
 
 ## Key Principles
 
-1. **Single Source of Truth**: Host facts (username, system, isWork) are declared only in `modules/hosts/definitions.nix`. Downstream modules consume them via `config.local.username` or `config.home.username`. Never re-declare these values in overlay modules.
+1. **Single Source of Truth**: Host facts (username, system, isWork) are declared only in `hosts/definitions.nix`. Downstream modules consume them via `config.local.username` or `config.home.username`. Never re-declare these values in overlay modules.
 
-2. **No Duplication**: Use shared helper functions from `modules/lib.nix` for any logic that appears in multiple places. OS detection, path resolution, and module selection should use helpers rather than inline logic.
+2. **No Duplication**: Use shared helper functions from `lib.nix` for any logic that appears in multiple places. OS detection, path resolution, and module selection should use helpers rather than inline logic.
 
 3. **Layer Separation**: Keep system-level logic in `system/`, shared user config in `home-manager/base.nix`, and deltas in `contexts/`. Avoid repeating base settings in context modules.
 
@@ -248,7 +241,7 @@ body = ''
 
 ## Adding New Hosts
 
-1. Add entry to `modules/hosts/definitions.nix`:
+1. Add entry to `hosts/definitions.nix`:
    ```nix
    "newhostname" = {
      system = "aarch64-darwin";  # or x86_64-darwin, x86_64-linux, aarch64-linux
@@ -372,7 +365,7 @@ When Home Manager encounters existing files that would be clobbered, the backup 
 
 **macOS (nix-darwin module)**: Use `home-manager.backupFileExtension` in the darwin module config:
 ```nix
-# In modules/darwin/mk-config.nix
+# In builders/darwin.nix
 home-manager.backupFileExtension = "backup";
 ```
 
@@ -457,10 +450,10 @@ The `install.sh` script uses explicit `--extra-experimental-features` flags rath
 - The `NIX_CONFIG` env var isn't reliably respected across all Nix versions (discovered on Raspberry Pi with Nix 2.25.3)
 - Explicit flags work consistently across Nix 2.4+ and Determinate Nix
 
-The script defines `NIX_FLAGS` and uses it for all `nix` commands:
+The script defines a `NIX_FLAGS` array and uses it for all `nix` commands:
 ```bash
-NIX_FLAGS="--extra-experimental-features nix-command --extra-experimental-features flakes"
-nix $NIX_FLAGS profile add nixpkgs#home-manager
+NIX_FLAGS=(--extra-experimental-features nix-command --extra-experimental-features flakes)
+nix "${NIX_FLAGS[@]}" profile add nixpkgs#home-manager
 ```
 
 ### Updating Dependencies (flake.lock)
@@ -599,3 +592,25 @@ Some Home Manager options have been renamed. Use the new names:
 - A broken Darwin config now fails CI instead of passing silently
 - Rebuilds without `-f` are reproducible from the committed lock
 - prod and the nomad Pis can no longer take untested dependency bumps
+
+### 2026-07-08: Bootstrap Fix, Security Defaults, Layout Flattening
+
+**Motivation**: Second review round — a broken first-install path on macOS, an insecure-by-default TLS fallback, misleading installer diagnostics, dev dependencies leaking into the core profile, and the `modules/` layout inconsistency.
+
+**Changes**:
+1. **Fixed macOS first-install bootstrap**: `install.sh` now falls back to `nix run github:nix-darwin/nix-darwin#darwin-rebuild` when `darwin-rebuild` isn't on PATH yet (it doesn't exist until nix-darwin has activated once).
+2. **Removed the `VAULT_SKIP_VERIFY` fallback**: TLS verification is on unless `secrets.fish` explicitly opts out. An absent secrets file no longer silently downgrades security.
+3. **Installer surfaces eval errors**: `fetch_host_info` no longer swallows flake evaluation failures as "hostname not found" — a broken `definitions.nix` dies with the real error. Host lookup also switched from `--impure --expr getFlake` to pure `nix eval .#lib.hosts --apply`.
+4. **Dev vars gated on profile**: `CARGO_TARGET_DIR`, `OPENSSL_DIR`, `OPENSSL_LIB_DIR`, and the `~/.cargo/bin` PATH entry only apply when `packageProfile != "core"` — the openssl store-path references were pulling openssl into the closure of core-profile Pis.
+5. **Flattened `modules/`**: `modules/lib.nix` → `lib.nix`, `modules/hosts/definitions.nix` → `hosts/definitions.nix`, `modules/{darwin,home-manager}/mk-config.nix` → `builders/{darwin,home-manager}.nix`. Every top-level directory now names its role directly.
+6. **Deleted `detect.nix`**: `builtins.getEnv` returns `""` under pure evaluation, so the `darwinConfigurations.default` alias never materialized in any real workflow — `darwin-rebuild` resolves the hostname itself and `install.sh` passes it explicitly.
+7. **`NIX_FLAGS` is a bash array**: proper quoting throughout `install.sh` instead of relying on word splitting.
+8. **`install.sh` linted in CI**: new `install-script` flake check runs shellcheck at warning severity via `nix flake check`.
+9. **Context modules trimmed**: empty placeholder blocks (`shellAbbrs = {}`, empty package lists) removed; header comments document the extension points instead.
+
+**Impact**:
+- A fresh Mac can bootstrap from a bare `./install.sh` run
+- No machine skips TLS verification unless told to, explicitly and per-machine
+- Installer failures diagnose the actual problem instead of a misleading one
+- Core-profile hosts (the Pis) no longer carry openssl/cargo baggage
+- The 303-line bootstrap script finally has automated coverage

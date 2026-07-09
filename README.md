@@ -42,11 +42,9 @@ home-manager/        # Home Manager modules
   base.nix           # Shared user config (programs, dotfiles, env vars)
   programs/          # Per-program configs (fish, git, helix, etc.)
 config/fish/functions/ # Fish functions as real .fish files (autoloaded)
-modules/             # Infrastructure
-  lib.nix            # Shared helper functions
-  hosts/             # Host definitions and detection
-  darwin/            # macOS configuration builder
-  home-manager/      # Linux configuration builder
+lib.nix              # Shared helper functions
+hosts/               # Host definitions (definitions.nix)
+builders/            # Configuration builders (darwin.nix, home-manager.nix)
 contexts/            # home vs work overrides (system + home-manager)
 packages/            # Shared package profiles
 flake.nix            # Entry point
@@ -55,7 +53,7 @@ install.sh           # Bootstrap script
 
 ## Supported Hosts
 
-Hosts are defined in `modules/hosts/definitions.nix`. Current hosts include:
+Hosts are defined in `hosts/definitions.nix`. Current hosts include:
 
 | Host                 | System         | Context | Profile |
 | -------------------- | -------------- | ------- | ------- |
@@ -86,7 +84,7 @@ home-manager switch -b backup --flake .#<hostname>
 
 ### Add a new host
 
-1. Add entry to `modules/hosts/definitions.nix`:
+1. Add entry to `hosts/definitions.nix`:
    ```nix
    "myhostname" = {
      system = "aarch64-darwin";  # or x86_64-darwin, aarch64-linux, x86_64-linux
@@ -263,5 +261,5 @@ home-manager switch --dry-run --flake .#host      # Preview Linux changes
 
 1. **Single source of truth**: Host metadata only in `definitions.nix`
 2. **Layer separation**: System settings in `system/`, deltas in `contexts/`
-3. **No duplication**: Shared logic in `modules/lib.nix`
+3. **No duplication**: Shared logic in `lib.nix`
 4. **Declarative config**: Prefer Home Manager options over shell scripts

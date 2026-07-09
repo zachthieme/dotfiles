@@ -1,13 +1,10 @@
 # Home-specific Home Manager configuration
+# (work counterpart: work.nix — add context overrides only when they diverge
+# from the shared base: shellAbbrs, home.file, packages, etc.)
 {pkgs, ...}: {
   imports = [
     ../../home-manager/base.nix
   ];
-
-  # Home-specific shell abbreviations
-  programs.fish.shellAbbrs = {
-    # Override abbreviations for home machines here
-  };
 
   home.file = {
     # herdr spawns panes with $SHELL (zsh) unless told otherwise; point it at fish.

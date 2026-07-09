@@ -1,6 +1,6 @@
 # Jujutsu (jj) VCS configuration
 #
-# User identity is configured in modules/hosts/definitions.nix per host.
+# User identity is configured in hosts/definitions.nix per host.
 # Most hosts use the default identity; override per-host if needed.
 {config, ...}: {
   programs.jujutsu = {

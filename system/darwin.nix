@@ -10,7 +10,7 @@
   # Accept arguments for user-specific settings with defaults
   options = {
     local = {
-      # No defaults: the builder (modules/darwin/mk-config.nix) always sets these
+      # No defaults: the builder (builders/darwin.nix) always sets these
       # from definitions.nix, and a missing value should fail loudly at eval time
       username = lib.mkOption {
         type = lib.types.str;
@@ -118,7 +118,7 @@
     security.pam.services.sudo_local.touchIdAuth = true;
 
     # Unfree packages are allowed via helpers.allowUnfreePredicate,
-    # set by the builder in modules/darwin/mk-config.nix
+    # set by the builder in builders/darwin.nix
 
     # Block todesk — unapproved remote-access software (security policy)
     nixpkgs.overlays = [

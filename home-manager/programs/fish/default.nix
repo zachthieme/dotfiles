@@ -1,6 +1,10 @@
 # Fish shell configuration — settings, abbreviations, and plugins
 # Functions live as real .fish files in config/fish/functions/ (see functions.nix)
-{pkgs, ...}: {
+{
+  config,
+  pkgs,
+  ...
+}: {
   imports = [
     ./functions.nix
   ];
@@ -14,10 +18,13 @@
 
       # Add Home Manager and Nix paths early (Linux only - must happen before interactiveShellInit)
       ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
-        fish_add_path --prepend $HOME/.cargo/bin
         fish_add_path --prepend ~/.local/state/nix/profiles/home-manager/home-path/bin
         fish_add_path --prepend ~/.nix-profile/bin
         fish_add_path --prepend /nix/var/nix/profiles/default/bin
+      ''}
+      ${pkgs.lib.optionalString (config.dotfiles.packageProfile != "core") ''
+        # rustup-managed binaries — dev profiles only (core hosts have no rust toolchain)
+        fish_add_path --prepend $HOME/.cargo/bin
       ''}
     '';
 
@@ -48,11 +55,10 @@
       if not set -q VAULT_ADDR
         set -x VAULT_ADDR "https://vault.jjforge.cloud:8200"
       end
-      # Prefer proper TLS: set VAULT_CACERT to the private CA in secrets.fish.
-      # Skip verification only as a fallback when no CA cert is configured.
-      if not set -q VAULT_CACERT
-        set -x VAULT_SKIP_VERIFY true
-      end
+      # TLS verification stays ON by default. The server uses a private CA:
+      # set VAULT_CACERT in secrets.fish (or, as a last resort, explicitly
+      # export VAULT_SKIP_VERIFY there). Never skip verification implicitly —
+      # an absent secrets.fish must not silently downgrade security.
 
       # Set LS_COLORS using vivid with catppuccin theme
       set -gx LS_COLORS (vivid generate catppuccin-mocha)
