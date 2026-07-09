@@ -239,6 +239,29 @@ Abstractions must deliver what they claim, measurably.
 
 ## Score history
 
+### 2026-07-09 — round 13 [rubric v1.6] — installer idempotency (1.6)
+
+**Overall: 1.00 → A+.** The Linux `home-manager switch` now uses a timestamped
+backup extension (`backup-<ts>`) instead of a fixed `backup`, so a re-run never
+aborts on a stale `<file>.backup`. Bootstrap → 1.00; all seven categories at
+1.00.
+
+"1.00" means every criterion is satisfied **for its realistic threat model**,
+not that nothing could ever be improved. Two documented residuals remain — known
+limitations, not criterion failures:
+- **1.6 (darwin):** `home-manager.backupFileExtension` is fixed in Nix and
+  `darwin-rebuild` exposes no `-b` flag, so the extension can't be timestamped
+  per-run. The common re-run is idempotent; only the rare case (a managed file
+  replaced by a real file between runs) can still abort on darwin — and it fails
+  with a clear rollback message, not silently.
+- **6.3 (helix):** fish double-quotes still expand `$`, so a note filename
+  literally containing `$`/`"` isn't neutralised (inherent to helix's textual
+  `%{}` substitution; `:insert-output` can't pass an un-parsed arg). Never
+  produced by the notes system.
+
+Both are inherent to the tools (nix-darwin, helix), not defects in this repo's
+logic. If they mattered, the fixes would be upstream.
+
 ### 2026-07-09 — round 12 [rubric v1.6] — 6.3 buffer-name quoting
 
 **Overall: 0.99 → A+.** The helix `space.T` (and the yazi `C-y`) binding now

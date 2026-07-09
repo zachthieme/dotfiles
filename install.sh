@@ -326,7 +326,12 @@ else
   fi
 
   echo "Applying Home Manager configuration..."
-  if ! home-manager switch -b backup --flake "$SCRIPT_DIR#$HOSTNAME"; then
+  # Unique per-run backup extension: `home-manager -b <ext>` aborts if the
+  # backup target (<file>.<ext>) already exists from a previous run. A
+  # timestamped extension makes re-runs idempotent instead of failing on a
+  # stale `.backup`. (Format specifiers are POSIX — portable to BSD/GNU date.)
+  hm_backup_ext="backup-$(date +%Y%m%d-%H%M%S)"
+  if ! home-manager switch -b "$hm_backup_ext" --flake "$SCRIPT_DIR#$HOSTNAME"; then
     echo ""
     echo "To roll back: list generations, then run the chosen generation's own"
     echo "activate script (there is no 'home-manager activate' subcommand):"
