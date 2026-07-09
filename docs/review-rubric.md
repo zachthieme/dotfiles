@@ -197,6 +197,30 @@ criteria — reaching C (0.70) means closing the cheap bootstrap items (rollback
 strings, `sudo -n` guard, Homebrew verify) and the security `/tmp` + tautology
 nits.
 
+### 2026-07-09 — round 6 (installer hardening, secure /tmp, falsifiable test)
+
+**Overall: 0.73 → C** (up from 0.60). First crossing out of D. Hard gate no
+longer relevant at this tier (nowhere near A-). Δ from round 5 in **bold**.
+
+| # | Category | Score | Change / evidence (V = verified this round) |
+|---|----------|-------|-----------|
+| 1 | Bootstrap & lifecycle (25%) | **0.96** ↑↑ | V: Homebrew now download-then-run + verify (masked-failure closed); rollback advice corrected both platforms; `have_sudo` lets trusted-users + chsh skip instead of abort. Both fresh-boot criteria scored pass on *no known defect* — but **not executed on real hardware this round** (verification gap, not a defect). Only idempotency (`.backup` clobber on re-run) partial. |
+| 2 | Correctness & eval gate (20%) | 0.33 = | Unchanged — out of scope (user deprioritized the host-eval criterion). |
+| 3 | Architecture & DRY (15%) | 0.68 = | Unchanged — notes-workspace ×2, platform-list ×3 still open. |
+| 4 | Abstraction integrity (10%) | 1.00 = | Maxed last round. |
+| 5 | Testing & CI coverage (15%) | **0.78** ↑ | V: `_is_gnu_date` test now cross-checks an independent `date --version` probe (falsifiability demonstrated by injecting broken detection → fail branch). Still open: no installer runtime/unit coverage. |
+| 6 | Security & secrets (10%) | **0.72** ↑ | V: `/tmp/hx_note_path` write deleted (was dead); helix yazi chooser moved to `$HOME/.cache`. Still open: unpinned homebrew/CI refs, unsanitized `space.T`/hostname, unannounced trusted-users grant. |
+| 7 | Maintainability & docs (5%) | 0.60 = | Unchanged — stale CLAUDE.md refs, expiring zellij `tick` deadline. |
+
+Note: score sits at **0.73**, clear of the 0.70 C-line. The swing factor is
+criterion 1.2 (fresh macOS boot): scored pass for consistency with 1.1 (both
+"no known defect, standard path"), but neither was executed on real hardware —
+a strict "must run on metal" reading drops both to partial and lands the
+overall at ~0.70 (right on the D/C boundary). Honest range this round: **0.70–0.73,
+C**. To push into B territory: close the Correctness category (host-eval gate is
+the user's call), the remaining Architecture dedup (notes-workspace, platform
+list), and add installer runtime coverage (5.4).
+
 <!--
 Append one block per review round going forward. Re-score every criterion;
 never reverse-engineer criteria to hit a target letter.
