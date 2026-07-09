@@ -1,9 +1,11 @@
 # Repository Review Rubric
 
-**Rubric version: 1.1** — bump this on ANY change to a criterion, its weight, or
-the scoring rules, and record the version in each Score-history entry (a score
-under v1.0 is not comparable to one under v1.1). The executable checker
+**Rubric version: 1.2** — bump this on ANY change to a criterion, its weight, or
+the scoring rules, and record the version in each Score-history entry (scores
+under different versions are not directly comparable). The executable checker
 (`scripts/review.sh`) carries the same `RUBRIC_VER` and must move in lockstep.
+Changelog: v1.1 added the `unverified` state + provisional grades and the
+executable checker; v1.2 added the severity taxonomy and floor gates.
 
 A pinned, reproducible scoring rubric for principal-level reviews of this repo.
 
@@ -85,10 +87,34 @@ a rotted criterion silently mis-scores.
 | ≥ 0.70  | C      |
 | < 0.70  | D / F  |
 
-A grade above A- **requires zero open Critical findings and no failing
-`Bootstrap & lifecycle` criterion** — a repo whose installer can't boot a fresh
-machine is not an A-repo regardless of how elegant its modules are. This gate
-overrides the numeric band.
+The letter is the *starting point*. The **severity gates** below can override it
+in both directions.
+
+### Severity & gates
+
+The weighted score measures breadth. Some findings are stop-ship regardless of
+how good the average is — a leaked secret doesn't get laundered by an elegant
+module tree. Severity captures that; gates apply it.
+
+- **Critical** — stop-ship irrespective of the numeric score: an exposed/committed
+  secret or private endpoint; remote code execution reachable from the install
+  path; data loss (e.g. `notes-sync` destructively rewriting VCS state); or a
+  bootstrap path that cannot complete on a supported host.
+- **Major** — a failing criterion in a ≥15%-weight category that breaks a real
+  workflow but isn't stop-ship.
+- **Minor / nit** — everything else (cosmetic, docs, low-value cleanup).
+
+**Gates (override the numeric band):**
+
+| Condition | Effect |
+|-----------|--------|
+| Any open **Critical** | grade capped at **C** |
+| Open Critical in **Security**, or any **data-loss** Critical | capped at **D** until fixed (stop-ship) |
+| Grade would be **above A-** | additionally requires: no failing `Bootstrap & lifecycle` criterion **and** no open Major |
+
+A repo whose installer can't boot a fresh machine is not an A-repo regardless of
+how elegant its modules are; a repo leaking a secret is not a C-repo regardless
+of its average. Gates express both.
 
 ---
 

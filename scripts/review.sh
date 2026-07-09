@@ -11,28 +11,44 @@
 # records in the Score history is: these automated results + the judged
 # criteria they adjudicate by hand.
 #
-# Usage: scripts/review.sh            # full report
+# Usage: scripts/review.sh            # full report; ratchet exit code
 #        scripts/review.sh --no-nix   # skip the (slower) nix eval checks
+#        scripts/review.sh --strict   # exit non-zero on ANY fail (ignore baseline)
+#
+# Exit code (ratchet): 0 when the set of failing criteria matches
+# scripts/review-baseline.txt exactly. Non-zero on a REGRESSION (a new fail not
+# in the baseline) or a STALE baseline entry (a baselined criterion that now
+# passes — tighten it). This lets CI gate on "don't backslide" without requiring
+# the whole accepted backlog fixed first. --strict ignores the baseline.
 #
 # Keep in sync with docs/review-rubric.md — same rubric version (see RUBRIC_VER).
 set -uo pipefail
 
-RUBRIC_VER="1.1"
+RUBRIC_VER="1.2"
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 
+BASELINE=scripts/review-baseline.txt
 RUN_NIX=true
-[[ "${1:-}" == "--no-nix" ]] && RUN_NIX=false
+STRICT=false
+for arg in "$@"; do
+  case $arg in
+    --no-nix) RUN_NIX=false ;;
+    --strict) STRICT=true ;;
+  esac
+done
 
 auto_pass=0
 auto_fail=0
 judged_n=0
 unver_n=0
+pass_ids=()
+fail_ids=()
 
 c_green=$'\033[32m'; c_red=$'\033[31m'; c_yel=$'\033[33m'; c_dim=$'\033[2m'; c_bold=$'\033[1m'; c_off=$'\033[0m'
 
 hdr()  { printf '\n%s%s%s\n' "$c_bold" "$1" "$c_off"; }
-pass() { printf '  %s✓%s %-5s %s\n' "$c_green" "$c_off" "$1" "$2"; auto_pass=$((auto_pass + 1)); }
-fail() { printf '  %s✗%s %-5s %s\n' "$c_red" "$c_off" "$1" "$2"; auto_fail=$((auto_fail + 1)); }
+pass() { printf '  %s✓%s %-5s %s\n' "$c_green" "$c_off" "$1" "$2"; auto_pass=$((auto_pass + 1)); pass_ids+=("$1"); }
+fail() { printf '  %s✗%s %-5s %s\n' "$c_red" "$c_off" "$1" "$2"; auto_fail=$((auto_fail + 1)); fail_ids+=("$1"); }
 judged()   { printf '  %s?%s %-5s %s %s(judged — needs a human)%s\n' "$c_yel" "$c_off" "$1" "$2" "$c_dim" "$c_off"; judged_n=$((judged_n + 1)); }
 unverified() { printf '  %s~%s %-5s %s %s(%s)%s\n' "$c_yel" "$c_off" "$1" "$2" "$c_dim" "$3" "$c_off"; unver_n=$((unver_n + 1)); }
 
@@ -158,6 +174,39 @@ printf '  unverified: %d criteria need hardware/VM (excluded from denominator)\n
 printf '\n%sThis is the mechanical subset only. Combine with the judged criteria to\n' "$c_dim"
 printf 'produce the Score-history entry; mark any unverified criteria PROVISIONAL.%s\n' "$c_off"
 
-# Exit non-zero if any automated criterion failed — lets CI gate on the
-# mechanical bar without blocking on the judged ones.
-[[ "$auto_fail" -eq 0 ]]
+# ── Exit code ──
+if $STRICT; then
+  [[ "$auto_fail" -eq 0 ]]
+  exit $?
+fi
+
+# Ratchet against the accepted-failures baseline.
+in_list() { local needle=$1; shift; local x; for x in "$@"; do [[ "$x" == "$needle" ]] && return 0; done; return 1; }
+
+baseline=()
+if [[ -f "$BASELINE" ]]; then
+  while read -r id _; do [[ -n "$id" && "$id" != \#* ]] && baseline+=("$id"); done <"$BASELINE"
+fi
+
+regressions=()
+for id in ${fail_ids[@]+"${fail_ids[@]}"}; do
+  in_list "$id" ${baseline[@]+"${baseline[@]}"} || regressions+=("$id")
+done
+stale=()
+for id in ${baseline[@]+"${baseline[@]}"}; do
+  in_list "$id" ${pass_ids[@]+"${pass_ids[@]}"} && stale+=("$id")
+done
+
+rc=0
+if [[ "${#regressions[@]}" -gt 0 ]]; then
+  printf '\n%s✗ REGRESSION%s — newly failing criteria not in %s: %s\n' "$c_red" "$c_off" "$BASELINE" "${regressions[*]}"
+  printf '  Fix them, or (if accepted) add them to the baseline with a reason.\n'
+  rc=1
+fi
+if [[ "${#stale[@]}" -gt 0 ]]; then
+  printf '\n%s✗ STALE BASELINE%s — these now PASS; remove from %s: %s\n' "$c_yel" "$c_off" "$BASELINE" "${stale[*]}"
+  printf '  Tightening the ratchet keeps fixed criteria from silently regressing later.\n'
+  rc=1
+fi
+[[ "$rc" -eq 0 ]] && printf '\n%s✓ ratchet: failing set matches baseline (no regressions)%s\n' "$c_green" "$c_off"
+exit "$rc"

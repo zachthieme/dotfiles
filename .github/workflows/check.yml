@@ -20,6 +20,12 @@ jobs:
       - name: Flake check (schema + hermetic tests)
         run: nix flake check
 
+      # Rubric ratchet: fails only on a NEW broken criterion (regression) or a
+      # baselined one that started passing (stale) — see scripts/review.sh and
+      # scripts/review-baseline.txt. The accepted backlog does not fail CI.
+      - name: Rubric review (ratchet)
+        run: ./scripts/review.sh
+
       - name: Evaluate Linux configurations
         run: |
           for host in $(nix eval .#homeConfigurations --apply 'x: builtins.attrNames x' --json | jq -r '.[]'); do
