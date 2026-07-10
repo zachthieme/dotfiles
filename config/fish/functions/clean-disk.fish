@@ -23,10 +23,18 @@ function clean-disk --description="Reclaim root-disk space: Nix GC + regenerable
     # 1. Nix store — remove old generations and unreferenced paths (usually the biggest win)
     echo
     echo "==> Nix store: collecting garbage…"
+    # nix-collect-garbage lives in the Nix profile — on the user's PATH but not
+    # in root's sudo PATH, so bare `sudo nix-collect-garbage` fails with
+    # "command not found". Resolve the absolute path and hand that to sudo.
+    set -l ngc (command -v nix-collect-garbage)
+    if test -z "$ngc"
+        echo "clean-disk: nix-collect-garbage not found on PATH" >&2
+        return 1
+    end
     if set -q _flag_dry_run
-        sudo nix-collect-garbage -d --dry-run
+        sudo $ngc -d --dry-run
     else
-        sudo nix-collect-garbage -d
+        sudo $ngc -d
     end
 
     # 2. Go build cache — fully regenerates on the next build
