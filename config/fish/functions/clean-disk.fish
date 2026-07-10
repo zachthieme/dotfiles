@@ -7,7 +7,7 @@ function clean-disk --description="Reclaim root-disk space: Nix GC + regenerable
         echo
         echo "Usage: clean-disk [--deep] [--dry-run]"
         echo
-        echo "  Default   Nix garbage collection (old generations) + Go build cache."
+        echo "  Default   Nix GC (user + system old generations) + Go build cache."
         echo "            Both regenerate automatically on next build — nothing you lose."
         echo "  -d/--deep Also clear caches that must re-download: Go module cache and"
         echo "            Playwright browsers."
@@ -31,11 +31,17 @@ function clean-disk --description="Reclaim root-disk space: Nix GC + regenerable
         echo "clean-disk: nix-collect-garbage not found on PATH" >&2
         return 1
     end
-    if set -q _flag_dry_run
-        sudo $ngc -d --dry-run
-    else
-        sudo $ngc -d
-    end
+    # Two passes. The user pass (no sudo) expires THIS user's profile
+    # generations — including standalone Home Manager under
+    # ~/.local/state/nix/profiles, which the root pass does not reap. The system
+    # pass (sudo) expires root/system generations and does the privileged store
+    # sweep. User first so its now-unreferenced paths get swept by the root pass.
+    set -l gc_flags -d
+    set -q _flag_dry_run; and set -a gc_flags --dry-run
+    echo "-- user generations --"
+    $ngc $gc_flags
+    echo "-- system generations --"
+    sudo $ngc $gc_flags
 
     # 2. Go build cache — fully regenerates on the next build
     if type -q go
