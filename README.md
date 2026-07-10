@@ -93,6 +93,7 @@ home-manager switch -b backup --flake .#<hostname>
      user = "myuser";
      isWork = false;
      packages = [ ];
+     # gui = false;  # headless hosts: skip GUI apps (e.g. ghostty)
    };
    ```
 2. Ensure hostname matches the machine's actual hostname
@@ -256,8 +257,8 @@ home-manager switch --dry-run --flake .#host      # Preview Linux changes
 ## Troubleshooting
 
 - **Rebuild fails**: Re-run with `--show-trace` for detailed errors
-- **Fresh Linux install silent exit**: Ensure install.sh has the `set -e` fix (use explicit `if` in `source_nix_profile`)
 - **Shell not fish after install**: Run the commands printed by install.sh to change default shell
+- **`notes-sync` reports a conflict**: The remote and your local edits changed the same lines. `cd $NOTES`, run `jj resolve --list`, fix the file, `jj squash --into @-`, then re-run `notes-sync`
 
 ## Key Design Principles
 
