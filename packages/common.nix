@@ -83,14 +83,12 @@ in {
 
     # Heavy/specialized - resource-intensive packages
     heavyPackages = with pkgs; [
+      asciinema # terminal-session recorder (.cast)
       exiftool
-      ffmpeg
       imagemagick
       pngcheck
       pngcrush
       pngquant
-      ttyd
-      vhs # terminal-session recorder; drives ttyd + ffmpeg
     ];
 
     # Convenience: full = everything (default behavior for workstations)
