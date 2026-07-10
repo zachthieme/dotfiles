@@ -238,7 +238,7 @@ Other fish functions beyond the notes system:
 | `fif`, `fifs`        | Find-in-files with fzf             |
 | `k`                   | Interactive process killer         |
 | `mkdd`                | Create directory with today's date |
-| `nix-cleanup`         | Clean up Nix store                 |
+| `clean-disk`          | Reclaim root-disk space (Nix GC + caches) |
 
 Run `aliases` to see all abbreviations and functions in the shell.
 

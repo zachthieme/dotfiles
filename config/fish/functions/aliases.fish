@@ -58,7 +58,7 @@ function aliases --description="Show all custom abbreviations and functions"
     printf "  %-12s %s\n" logg "Interactive git log explorer"
     printf "  %-12s %s\n" k "Interactive process killer"
     printf "  %-12s %s\n" mkdd "Create directory with today's date"
-    printf "  %-12s %s\n" nix-cleanup "Clean up Nix store"
+    printf "  %-12s %s\n" clean-disk "Reclaim root-disk space (Nix GC + build caches)"
     printf "  %-12s %s\n" migrate-ids "Replace non-UUID note ids with UUIDs"
     echo ""
 end
