@@ -84,10 +84,13 @@ in {
     # Heavy/specialized - resource-intensive packages
     heavyPackages = with pkgs; [
       exiftool
+      ffmpeg
       imagemagick
       pngcheck
       pngcrush
       pngquant
+      ttyd
+      vhs # terminal-session recorder; drives ttyd + ffmpeg
     ];
 
     # Convenience: full = everything (default behavior for workstations)
