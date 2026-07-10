@@ -1,6 +1,6 @@
 # Repository Review Rubric
 
-**Rubric version: 1.6** — bump this on ANY change to a criterion, its weight, or
+**Rubric version: 1.7** — bump this on ANY change to a criterion, its weight, or
 the scoring rules, and record the version in each Score-history entry (scores
 under different versions are not directly comparable). The executable checker
 (`scripts/review.sh`) carries the same `RUBRIC_VER` and must move in lockstep.
@@ -20,6 +20,9 @@ local eval gate plus lock-pinning. Also added the local eval gate
 (`scripts/check-eval.sh` — a targeted `nix eval` of each same-system host, ~1
 min; a `nix flake check` derivation was tried first but ran >7 min because it
 also traverses the darwin IFD) and fixed the `vcs` partial-override clobber.
+v1.7 extended the docs criteria to cover README as well as CLAUDE.md: 7.1 now
+verifies function names in *both* files resolve, and a new judged 7.4 covers
+behavioural doc freshness (a stale *description*, which a grep can't catch).
 
 A pinned, reproducible scoring rubric for principal-level reviews of this repo.
 
@@ -80,7 +83,7 @@ then adjudicates only the `judged` rows by hand.
 Automated criterion ids (kept in sync with the script): **1.3, 1.4, 1.5, 1.7,
 2.1, 2.2, 2.5, 2.6, 3.2, 3.4, 4.1, 4.2, 4.3, 5.1, 5.4, 5.5, 6.2, 6.4, 7.1,
 7.3.** Everything else is `judged` (1.6, 2.3, 2.4, 3.1, 3.3, 5.2, 5.3, 6.1,
-6.3, 6.5, 7.2) or `unverified` on this machine (1.1, 1.2 — need a clean host).
+6.3, 6.5, 7.2, 7.4) or `unverified` on this machine (1.1, 1.2 — need a clean host).
 
 **Maintenance rule:** when a code change makes a criterion's verification text
 wrong (a named module/flag/version it references stops existing), update the
@@ -229,15 +232,33 @@ Abstractions must deliver what they claim, measurably.
 
 ### 7. Maintainability & docs (5%)
 
+**Docs are updated in the same commit as the behaviour they describe** — the
+same discipline the rubric applies to itself. `README.md` and `CLAUDE.md` are
+user- and contributor-facing sources of truth; a stale one is a silent defect
+(this repo has drifted twice — `nix-cleanup` lingering in CLAUDE.md, `notes-sync`
+described as one-way in README). 7.1 catches removed *names* mechanically; 7.4 is
+the human backstop for a stale *description*.
+
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| Docs match reality | 2 | [auto] The function inventory CLAUDE.md names all resolve to real files; no references to removed functions/tools/flags. |
+| Docs name no removed functions/tools/files | 2 | [auto] Every function CLAUDE.md's inventory line and README's "Fish Shell Functions" table name resolves to a real `.fish` file (derived from actual state, both files). |
 | Non-obvious decisions carry their "why" | 2 | [judged] Failure-mode comments present at the tricky spots (this repo's established strength — preserve it). |
 | No hardcoded expiring constants | 1 | [auto] No literal ISO dates / expiring IDs baked into source (they silently go stale) — hoist to options or compute at runtime. |
+| README + CLAUDE.md describe current behaviour | 2 | [judged] Behaviour-describing sections match the code and were updated with it (e.g. README's notes-sync/workspace sections, CLAUDE.md's architecture notes). The part a grep can't judge. |
 
 ---
 
 ## Score history
+
+### 2026-07-09 — round 14 [rubric v1.7] — docs coverage widened
+
+**Overall: 1.00 → A+ (unchanged).** Strengthened the instrument, not the score:
+7.1 now checks README's function table in addition to CLAUDE.md's inventory, and
+a new judged **7.4** covers behavioural doc freshness (a stale *description*,
+which reference-integrity can't catch). Both pass — README and CLAUDE.md were
+brought current this round (two-way notes-sync, `scripts/`, the `gui` field). The
+grade held at 1.00 because the docs are actually up to date; the point of the
+change is that a *future* drift now fails a criterion instead of sliding by.
 
 ### 2026-07-09 — round 13 [rubric v1.6] — installer idempotency (1.6)
 

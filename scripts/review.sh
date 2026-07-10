@@ -24,7 +24,7 @@
 # Keep in sync with docs/review-rubric.md — same rubric version (see RUBRIC_VER).
 set -uo pipefail
 
-RUBRIC_VER="1.6"
+RUBRIC_VER="1.7"
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 
 BASELINE=scripts/review-baseline.txt
@@ -175,15 +175,20 @@ judged 6.5 "privilege grants (trusted-users) consented"
 
 # ── 7. Maintainability & docs ──
 hdr "7. Maintainability & docs"
-# 7.1 — principle: docs don't name things that no longer exist. Parse the
-# function inventory CLAUDE.md claims and verify each resolves to a file
-# (derived from actual state, not a hardcoded blocklist of removed names).
+# 7.1 — principle: BOTH CLAUDE.md and README name only functions that still
+# exist. Derived from actual state (not a blocklist): parse CLAUDE.md's
+# migrated-functions inventory and README's "Fish Shell Functions" table, and
+# verify every name resolves to a real .fish file. This is the class that has
+# drifted twice (nix-cleanup in CLAUDE.md, notes fns in README).
+fn_exists() { [[ -e "config/fish/functions/$1.fish" || -e "config/fish/functions/darwin/$1.fish" ]]; }
 stale=""
-inv=$(grep 'Migrated core functions' CLAUDE.md 2>/dev/null | grep -oE '\([^)]+\)' | tr -d '()' | tr ',' ' ')
-for fn in $inv; do
-  [[ -e "config/fish/functions/$fn.fish" || -e "config/fish/functions/darwin/$fn.fish" ]] || stale="$stale $fn"
+for fn in $(grep 'Migrated core functions' CLAUDE.md 2>/dev/null | grep -oE '\([^)]+\)' | tr -d '()' | tr ',' ' '); do
+  fn_exists "$fn" || stale="$stale CLAUDE:$fn"
 done
-[[ -z "$stale" ]] && pass 7.1 "CLAUDE.md function inventory all resolve" || fail 7.1 "CLAUDE.md names removed fns:$stale"
+for fn in $(awk '/^## Fish Shell Functions/{f=1;next} /^## /{f=0} f' README.md 2>/dev/null | grep -oE '`[a-z][a-z0-9_-]*' | tr -d '`' | sort -u); do
+  fn_exists "$fn" || stale="$stale README:$fn"
+done
+[[ -z "$stale" ]] && pass 7.1 "CLAUDE.md + README name no removed functions" || fail 7.1 "docs name removed fns:$stale"
 judged 7.2 "non-obvious decisions carry their 'why'"
 # 7.3 — principle: no expiring date constant BURIED in logic where it silently
 # rots. A documented single-source `mkOption` default is the endorsed fix ("hoist
@@ -195,6 +200,12 @@ if grep -rnE '20[0-9]{2}-[0-9]{2}-[0-9]{2}' home-manager config/fish --include='
 else
   pass 7.3 "no buried expiring date literals"
 fi
+# 7.4 — behavioural freshness (the part a grep can't judge): README + CLAUDE.md
+# describe how the code CURRENTLY behaves, and are updated in the same commit as
+# a behaviour change. Reference-integrity (7.1) catches removed names; this
+# catches a stale *description* (e.g. README calling notes-sync "commit + push"
+# after it learned to fetch/merge).
+judged 7.4 "README + CLAUDE.md describe current behaviour"
 
 # ── Summary ──
 auto_total=$((auto_pass + auto_fail))
