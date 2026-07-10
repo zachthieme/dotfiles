@@ -322,7 +322,9 @@ tags: [test]
     end
 
     set -l remote_dir "$tmpdir/remote.git"
-    git init --bare -q "$remote_dir"
+    # -b main: don't depend on the runner's init.defaultBranch (a bare repo
+    # otherwise defaults to master, which breaks jj's main tracking)
+    git init --bare -q -b main "$remote_dir"
     set -l pushfail_dir "$tmpdir/pushfail"
     jj git init "$pushfail_dir" >/dev/null 2>&1
     jj -R "$pushfail_dir" git remote add origin "$remote_dir"
@@ -348,7 +350,7 @@ tags: [test]
     set -l mroot "$tmpdir/merge-test"
     mkdir -p "$mroot"
     set -l mremote "$mroot/remote.git"
-    git init --bare -q "$mremote"
+    git init --bare -q -b main "$mremote"
     jj git clone "$mremote" "$mroot/A" >/dev/null 2>&1
     printf 'l1\nl2\nl3\n' >"$mroot/A/note.md"
     jj -R "$mroot/A" describe -m seed >/dev/null 2>&1
