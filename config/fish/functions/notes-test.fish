@@ -342,6 +342,59 @@ tags: [test]
     end
     set -gx NOTES "$tmpdir"
 
+    # notes-sync fetch + merge (rebase). Two clones of a bare remote diverge;
+    # notes-sync must 3-way-merge non-overlapping edits and refuse to push a
+    # true conflict.
+    set -l mroot "$tmpdir/merge-test"
+    mkdir -p "$mroot"
+    set -l mremote "$mroot/remote.git"
+    git init --bare -q "$mremote"
+    jj git clone "$mremote" "$mroot/A" >/dev/null 2>&1
+    printf 'l1\nl2\nl3\n' >"$mroot/A/note.md"
+    jj -R "$mroot/A" describe -m seed >/dev/null 2>&1
+    jj -R "$mroot/A" bookmark create main -r @ >/dev/null 2>&1
+    jj -R "$mroot/A" git push --allow-new >/dev/null 2>&1
+    jj git clone "$mremote" "$mroot/B" >/dev/null 2>&1
+
+    # Clean merge: B edits l3 and pushes; A edits l1, then syncs → both survive.
+    printf 'l1\nl2\nB3\n' >"$mroot/B/note.md"
+    jj -R "$mroot/B" describe -m b >/dev/null 2>&1
+    jj -R "$mroot/B" bookmark move main --to @ >/dev/null 2>&1
+    jj -R "$mroot/B" git push >/dev/null 2>&1
+    printf 'A1\nl2\nl3\n' >"$mroot/A/note.md"
+    set -gx NOTES "$mroot/A"
+    notes-sync >/dev/null 2>&1
+    set -l merge_rc $status
+    set -l merged (cat "$mroot/A/note.md")
+    if test $merge_rc -eq 0; and string match -q '*A1*' -- $merged; and string match -q '*B3*' -- $merged
+        set pass (math $pass + 1)
+        echo "  ✓ notes-sync merges non-overlapping remote+local edits"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ notes-sync merges non-overlapping remote+local edits (rc=$merge_rc: $merged)"
+    end
+
+    # True conflict: both sides edit the same line differently → must NOT push.
+    jj -R "$mroot/B" git fetch >/dev/null 2>&1
+    jj -R "$mroot/B" rebase -d 'main@origin' >/dev/null 2>&1
+    printf 'A1\nB-l2\nB3\n' >"$mroot/B/note.md"
+    jj -R "$mroot/B" describe -m bc >/dev/null 2>&1
+    jj -R "$mroot/B" bookmark move main --to @ >/dev/null 2>&1
+    jj -R "$mroot/B" git push >/dev/null 2>&1
+    set -l remote_before (git --git-dir="$mremote" rev-parse refs/heads/main)
+    printf 'A1\nA-l2\nB3\n' >"$mroot/A/note.md"
+    notes-sync >/dev/null 2>&1
+    set -l conf_rc $status
+    set -l remote_after (git --git-dir="$mremote" rev-parse refs/heads/main)
+    if test $conf_rc -ne 0; and test "$remote_before" = "$remote_after"
+        set pass (math $pass + 1)
+        echo "  ✓ notes-sync refuses to push a true conflict"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ notes-sync refuses to push a true conflict (rc=$conf_rc)"
+    end
+    set -gx NOTES "$tmpdir"
+
     set -l _saved_tmux (set -q TMUX; and echo "$TMUX"; or echo "")
     set -gx TMUX test-guard
     set -gx NOTES "$tmpdir/missing-notes-dir"

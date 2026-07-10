@@ -115,8 +115,14 @@
             ];
           } ''
             export HOME=$TMPDIR
-            # jj identity for the notes-sync tests (no user config in the sandbox)
+            # jj + git identity for the notes-sync tests (no user config in the
+            # sandbox). The fetch/merge tests clone/push a local bare remote via
+            # jj's git backend, which needs a git identity and a main default
+            # branch (bare init would otherwise default to master).
             export JJ_USER=nix-check JJ_EMAIL=check@example.invalid
+            git config --global user.email check@example.invalid
+            git config --global user.name nix-check
+            git config --global init.defaultBranch main
             fish -n ${./config/fish/functions}/*.fish ${./config/fish/functions}/darwin/*.fish
             fish -C "set -p fish_function_path ${./config/fish/functions}" -c notes-test
             touch $out
