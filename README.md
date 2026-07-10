@@ -47,6 +47,8 @@ hosts/               # Host definitions (definitions.nix)
 builders/            # Configuration builders (darwin.nix, home-manager.nix)
 contexts/            # home vs work overrides (system + home-manager)
 packages/            # Shared package profiles
+scripts/             # check-eval.sh (local eval gate), review.sh (rubric checker)
+docs/                # Design notes + review-rubric.md
 flake.nix            # Entry point
 install.sh           # Bootstrap script
 ```
@@ -225,7 +227,7 @@ Fish functions create markdown files with YAML frontmatter (UUID id, aliases, ta
 
 ### Syncing
 
-`notes-sync` uses jujutsu to commit with a timestamp message and push to a remote. It checks for changes first to avoid empty commits. The `nw` workspace calls this automatically every hour and on exit.
+`notes-sync` keeps the vault in sync both ways with jujutsu: it fetches the remote, rebases your local edits onto `main@origin` (a 3-way merge — non-overlapping changes, even within one file, combine automatically), commits your changes with a timestamp, and pushes. A true line-level conflict stops the sync **without pushing** and leaves the working copy with markers for `jj resolve`; the unattended hourly run also refuses to commit over an unresolved conflict. The `nw` workspace calls it automatically every hour and on exit.
 
 ## Fish Shell Functions
 
@@ -245,8 +247,8 @@ Run `aliases` to see all abbreviations and functions in the shell.
 ## Validation
 
 ```bash
-nix flake check                                    # Schema + fish/notes test suite
-nix build .#checks.x86_64-linux.fish-functions     # Run just the fish/notes tests
+nix flake check                                    # Schema + fish/notes test suite + shellcheck
+./scripts/check-eval.sh                            # Local eval gate: evaluate this host's config before committing
 darwin-rebuild switch --dry-run --flake .#host    # Preview macOS changes
 home-manager switch --dry-run --flake .#host      # Preview Linux changes
 ```
