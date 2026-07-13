@@ -1,0 +1,6 @@
+# JJForge remote configuration
+name = "origin"
+url = "https://dev.jjforge.io/repos/zachthieme/dotfiles"
+
+[remotes]
+origin = "https://dev.jjforge.io/repos/zachthieme/dotfiles"

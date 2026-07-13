@@ -85,6 +85,9 @@ in {
     # Catppuccin theming (global enable applies to all supported programs)
     catppuccin = {
       enable = true;
+      # Explicit to match current `enable` behavior before the upcoming
+      # autoEnable/enable split (autoEnable will become the auto-enroll toggle).
+      autoEnable = true;
       flavor = "mocha";
       accent = "sky";
     };
@@ -202,14 +205,16 @@ in {
         "--height 40%"
         "--border"
       ];
-      fileWidgetOptions = ["--height 20%"];
-      historyWidgetOptions = ["--height 20%" "--reverse"];
+      fileWidget.options = ["--height 20%"];
+      historyWidget.options = ["--height 20%" "--reverse"];
       enableFishIntegration = true;
     };
 
     programs.yazi = {
       enable = true;
       enableFishIntegration = true;
+      # Pin legacy wrapper name; HM default flipped "yy" -> "y" at stateVersion 26.05.
+      shellWrapperName = "yy";
     };
 
     programs.zoxide = {

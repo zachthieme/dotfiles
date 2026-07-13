@@ -8,30 +8,44 @@ cd "$SCRIPT_DIR"
 
 NIX_FLAGS=(--extra-experimental-features nix-command --extra-experimental-features flakes)
 
+# Personal tool inputs (flake.nix): source-built flakes that follow the pinned
+# nixpkgs. Updating only these picks up new tool releases without moving nixpkgs,
+# so nothing but the changed tools rebuilds — the fast path for `-t`.
+TOOL_INPUTS=(pike tick wen grove claude-code herdr)
+
 # --- Parse Arguments ---
 
 FLAKE_UPDATE=false
+TOOLS_UPDATE=false
 for arg in "$@"; do
   case $arg in
     --flake-update|-f) FLAKE_UPDATE=true ;;
+    --tools|-t) TOOLS_UPDATE=true ;;
     --help|-h)
       echo "Usage: $0 [OPTIONS]"
       echo ""
       echo "Options:"
+      echo "  --tools, -t         Update only the personal tools (${TOOL_INPUTS[*]})"
+      echo "                      before rebuilding. Leaves nixpkgs pinned, so nothing"
+      echo "                      but the changed tools rebuilds. Use this to pick up a"
+      echo "                      new claude/wen/pike. Shows a diff and asks first."
       echo "  --flake-update, -f  Update ALL flake.lock inputs (nixpkgs, home-manager,"
-      echo "                      and the personal tools pike/tick/wen/grove) before"
-      echo "                      rebuilding. Shows a diff and asks before continuing."
+      echo "                      and the personal tools) before rebuilding. Expect a"
+      echo "                      large rebuild from the nixpkgs bump. Shows a diff and"
+      echo "                      asks before continuing. Use for periodic full updates."
       echo "  --help, -h          Show this help message"
       echo ""
-      echo "Without -f the committed flake.lock is used as-is (reproducible rebuild)."
-      echo ""
-      echo "To update only the personal tools without touching other inputs:"
-      echo "  nix flake update pike tick wen grove"
-      echo "  ./install.sh"
+      echo "Without -t or -f the committed flake.lock is used as-is (reproducible rebuild)."
       exit 0
       ;;
   esac
 done
+
+# -f is a superset of -t (it updates the tools too); don't run the narrow update
+# on top of the full one.
+if [ "$FLAKE_UPDATE" = true ]; then
+  TOOLS_UPDATE=false
+fi
 
 # --- Helper Functions ---
 
@@ -234,7 +248,10 @@ mkdir -p "$HOME/Pictures/screenshots"
 
 # --- Flake Update (if requested) ---
 
-if [ "$FLAKE_UPDATE" = true ] && [ "$HOST_ALLOWS_FLAKE_UPDATE" = false ]; then
+# Both -f and -t mutate flake.lock; prod-like hosts (allowFlakeUpdate = false)
+# must take lock bumps from a committed lock tested on a dev machine, so refuse
+# either local update there.
+if { [ "$FLAKE_UPDATE" = true ] || [ "$TOOLS_UPDATE" = true ]; } && [ "$HOST_ALLOWS_FLAKE_UPDATE" = false ]; then
   echo "Error: host '$HOSTNAME' pins flake.lock (allowFlakeUpdate = false in definitions.nix)."
   echo ""
   echo "Update the lock on a dev machine first:"
@@ -246,16 +263,22 @@ if [ "$FLAKE_UPDATE" = true ] && [ "$HOST_ALLOWS_FLAKE_UPDATE" = false ]; then
   die "flake update refused on '$HOSTNAME'"
 fi
 
-if [ "$FLAKE_UPDATE" = true ]; then
-  log "Updating flake.lock"
+if [ "$FLAKE_UPDATE" = true ] || [ "$TOOLS_UPDATE" = true ]; then
   # The user explicitly asked for an update — a failure must not silently
   # degrade into a rebuild of the stale lock
   # --flake is required: `nix flake update` treats positional args as INPUT
   # names, so `flake update "$SCRIPT_DIR"` silently updates nothing (the path
   # matches no input), exits 0, and this `|| die` never fires — the user thinks
   # the lock updated when it didn't.
-  nix "${NIX_FLAGS[@]}" flake update --flake "$SCRIPT_DIR" ||
-    die "flake update failed — fix the error above or rerun without -f to use the committed lock"
+  if [ "$TOOLS_UPDATE" = true ]; then
+    log "Updating personal tools (${TOOL_INPUTS[*]})"
+    nix "${NIX_FLAGS[@]}" flake update "${TOOL_INPUTS[@]}" --flake "$SCRIPT_DIR" ||
+      die "tools update failed — fix the error above or rerun without -t to use the committed lock"
+  else
+    log "Updating flake.lock"
+    nix "${NIX_FLAGS[@]}" flake update --flake "$SCRIPT_DIR" ||
+      die "flake update failed — fix the error above or rerun without -f to use the committed lock"
+  fi
   echo "Flake inputs updated successfully"
   echo ""
   echo "Changed inputs (review before continuing):"

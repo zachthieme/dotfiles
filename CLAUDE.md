@@ -127,7 +127,7 @@ All host metadata lives in `hosts/definitions.nix`:
 - `user`: Username (default: `"zach"`)
 - `isWork`: Work context flag (default: `false`)
 - `packageProfile`: Controls which package tier to install (default: `"full"`)
-- `allowFlakeUpdate`: Whether `install.sh -f` may update `flake.lock` on this host (default: `true`). Set to `false` on prod-like hosts (prod, the nomad Pis) so lock bumps are tested on a dev machine and arrive via a committed `flake.lock`.
+- `allowFlakeUpdate`: Whether `install.sh -f`/`-t` may update `flake.lock` on this host (default: `true`). Set to `false` on prod-like hosts (prod, the nomad Pis) so lock bumps are tested on a dev machine and arrive via a committed `flake.lock`.
 - `vcs`: Override default VCS identity for git/jj
 - `packages`: Host-specific additional packages (default: `[ ]`)
 
@@ -458,26 +458,33 @@ nix "${NIX_FLAGS[@]}" profile add nixpkgs#home-manager
 
 ### Updating Dependencies (flake.lock)
 
-**Update all inputs and rebuild:**
+**Update only the personal tools and rebuild (the common case):**
+```bash
+./install.sh --tools  # or -t
+```
+
+This runs `nix flake update pike tick wen grove claude-code herdr`, which leaves
+`nixpkgs` pinned. Because those tools `follows` the pinned nixpkgs, nothing but
+the changed tools rebuilds — no full-world recompile. Use this to pick up a new
+`claude`/`wen`/`pike`. It shows a diff and prompts before rebuilding, just like `-f`.
+
+**Update all inputs and rebuild (periodic full update):**
 ```bash
 ./install.sh --flake-update  # or -f
 ```
 
 This will:
-1. Run `nix flake update` to update all inputs in `flake.lock` (including the personal tools pike/tick/wen/grove)
+1. Run `nix flake update` to update all inputs in `flake.lock` (including nixpkgs and the personal tools)
 2. Show a diff of changes for review
 3. Prompt for confirmation before rebuilding
 4. If you decline, the lock file changes remain (use `jj restore flake.lock` to revert)
 
-Without `-f`, `./install.sh` never touches `flake.lock` — rebuilds are reproducible from the committed lock.
+Because `-f` bumps `nixpkgs` (unstable), expect a large rebuild. Prefer `-t` unless
+you specifically want nixpkgs/home-manager security updates.
 
-**Update only the personal tools (pike/tick/wen/grove):**
-```bash
-nix flake update pike tick wen grove
-./install.sh
-```
+Without `-t` or `-f`, `./install.sh` never touches `flake.lock` — rebuilds are reproducible from the committed lock.
 
-**Prod-like hosts** (prod, pi-nomad1-3) set `allowFlakeUpdate = false` in `definitions.nix`; `install.sh -f` refuses to run there. Update the lock on a dev machine, commit, then rebuild those hosts from the committed lock.
+**Prod-like hosts** (prod, pi-nomad1-3) set `allowFlakeUpdate = false` in `definitions.nix`; both `install.sh -f` and `-t` refuse to run there. Update the lock on a dev machine, commit, then rebuild those hosts from the committed lock.
 
 **Manual update workflow:**
 ```bash
