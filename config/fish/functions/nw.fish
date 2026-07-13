@@ -33,7 +33,7 @@ function nw --description="Open notes workspace in tmux, commit and push on clos
     set -l wen_pane (tmux split-window -h -l 28 -t $pike_pane -c $notes_dir -P -F '#{pane_id}')
     # Bottom row: editor | tick (right column becomes tick+sync)
     set -l tick_pane (tmux split-window -h -l 28 -t $editor_pane -c $notes_dir -P -F '#{pane_id}')
-    tmux split-window -v -t $tick_pane -c $notes_dir "fish -c 'while true; notes-sync >/dev/null 2>&1; and echo synced (date +%H:%M); or echo sync FAILED (date +%H:%M); sleep 3600; end'"
+    tmux split-window -v -t $tick_pane -c $notes_dir "fish -c notes-sync-loop"
     tmux resize-pane -t $tick_pane -y 12
 
     # Pin right column to 28 wide on terminal resize
