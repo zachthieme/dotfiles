@@ -400,6 +400,29 @@ tags: [test]
     end
     set -gx NOTES "$tmpdir"
 
+    # A remote is configured but `main` isn't tracking it (no main@origin):
+    # notes-sync must WARN rather than silently skip the merge and push over the
+    # remote. Guards the reconcile path against the untracked-bookmark state.
+    set -l untracked_dir "$tmpdir/untracked"
+    set -l untracked_remote "$tmpdir/untracked-remote.git"
+    git init --bare -q -b main "$untracked_remote"
+    jj git init "$untracked_dir" >/dev/null 2>&1
+    jj -R "$untracked_dir" git remote add origin "$untracked_remote"
+    echo seed >"$untracked_dir/note.md"
+    jj -R "$untracked_dir" describe -m seed >/dev/null 2>&1
+    jj -R "$untracked_dir" bookmark create main -r @ >/dev/null 2>&1
+    echo edit >>"$untracked_dir/note.md"
+    set -gx NOTES "$untracked_dir"
+    set -l untracked_out (notes-sync 2>&1)
+    if string match -q '*tracking the remote*' -- $untracked_out
+        set pass (math $pass + 1)
+        echo "  ✓ notes-sync warns when main@origin is missing (untracked)"
+    else
+        set fail (math $fail + 1)
+        echo "  ✗ notes-sync warns when main@origin is missing (got: $untracked_out)"
+    end
+    set -gx NOTES "$tmpdir"
+
     set -l _saved_tmux (set -q TMUX; and echo "$TMUX"; or echo "")
     set -gx TMUX test-guard
     set -gx NOTES "$tmpdir/missing-notes-dir"

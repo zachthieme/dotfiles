@@ -53,20 +53,29 @@ function notes-sync --description="Sync notes via jj: fetch, merge (rebase) remo
     # 3. Reconcile: if the remote has commits we don't, rebase our work onto it.
     #    jj 3-way merges — non-overlapping edits (even within one file) combine
     #    automatically; only truly overlapping edits produce a conflict.
-    if test $has_remote -eq 1; and jj log -r 'main@origin' &>/dev/null
-        set -l remote_ahead (jj log -r 'main@origin ~ ::@' --no-graph -T '"x"' 2>/dev/null)
-        if test -n "$remote_ahead"
-            jj rebase -d 'main@origin' 2>/dev/null
-            set -l post_conflict (jj log -r '@ | @-' --no-graph -T 'if(conflict, "x", "")' 2>/dev/null)
-            if test -n "$post_conflict"
-                echo -e "\033[31mnotes-sync: merge conflict with remote — NOT pushing.\033[0m" >&2
-                echo "  Your change was rebased onto the remote and left with conflict markers." >&2
-                echo "  Resolve:  cd \$NOTES; jj resolve --list; <edit the file>; jj squash --into @-" >&2
-                echo "  Then re-run notes-sync." >&2
-                cd $prev_dir
-                return 1
+    if test $has_remote -eq 1
+        if jj log -r 'main@origin' &>/dev/null
+            set -l remote_ahead (jj log -r 'main@origin ~ ::@' --no-graph -T '"x"' 2>/dev/null)
+            if test -n "$remote_ahead"
+                jj rebase -d 'main@origin' 2>/dev/null
+                set -l post_conflict (jj log -r '@ | @-' --no-graph -T 'if(conflict, "x", "")' 2>/dev/null)
+                if test -n "$post_conflict"
+                    echo -e "\033[31mnotes-sync: merge conflict with remote — NOT pushing.\033[0m" >&2
+                    echo "  Your change was rebased onto the remote and left with conflict markers." >&2
+                    echo "  Resolve:  cd \$NOTES; jj resolve --list; <edit the file>; jj squash --into @-" >&2
+                    echo "  Then re-run notes-sync." >&2
+                    cd $prev_dir
+                    return 1
+                end
+                echo -e "\033[32mMerged remote changes.\033[0m"
             end
-            echo -e "\033[32mMerged remote changes.\033[0m"
+        else
+            # A remote is configured but `main` isn't tracking it (no main@origin),
+            # so we can't reconcile before pushing. Skipping silently would let the
+            # push clobber whatever the remote holds — warn instead. This is not a
+            # normal state for a clone; usually it means main was never tracked.
+            echo -e "\033[33mnotes-sync: 'main@origin' not found — main isn't tracking the remote; skipping merge.\033[0m" >&2
+            echo "  Fix:  cd \$NOTES; jj bookmark track main@origin" >&2
         end
     end
 
