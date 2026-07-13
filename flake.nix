@@ -43,11 +43,6 @@
       url = "github:zachthieme/grove";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    herdr = {
-      url = "github:ogulcancelik/herdr";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = {
@@ -61,7 +56,6 @@
     tick,
     wen,
     grove,
-    herdr,
     ...
   }: let
     lib = nixpkgs.lib;
@@ -69,10 +63,46 @@
     mkOverlay = name: input: final: _prev: {
       ${name} = input.packages.${final.stdenv.hostPlatform.system}.default;
     };
+    # herdr is third-party (not our flake), so we can't set a binary-passthrough
+    # default upstream. It ships statically linked release binaries, so fetch the
+    # one for the target platform instead of building the Rust source (no binary
+    # cache → recompiles on every bump). Bump version + hashes on new releases.
+    herdrOverlay = final: _prev: let
+      version = "0.7.3";
+      asset = {
+        aarch64-darwin = "macos-aarch64";
+        aarch64-linux = "linux-aarch64";
+        x86_64-darwin = "macos-x86_64";
+        x86_64-linux = "linux-x86_64";
+      };
+      hash = {
+        aarch64-darwin = "sha256-sxNFOS0ATsHxssgh4a1gEBn6g4X+HkxpMTIetYqSB3M=";
+        aarch64-linux = "sha256-6kkAlPLHw5CZhwhX0Axkxijve166GWffQlgDNFXuLLE=";
+        x86_64-darwin = "sha256-m1810oOwh37toM9muh7x2VrkDzLoWKBNoAQfOiDfAnw=";
+        x86_64-linux = "sha256-BD70Psur2ihGXc/x7sMYRRgVDVZ7i48gzanGyIdwZB0=";
+      };
+      inherit (final.stdenv.hostPlatform) system;
+    in {
+      herdr = final.stdenvNoCC.mkDerivation {
+        pname = "herdr";
+        inherit version;
+        src = final.fetchurl {
+          url = "https://github.com/ogulcancelik/herdr/releases/download/v${version}/herdr-${asset.${system}}";
+          hash = hash.${system};
+        };
+        dontUnpack = true;
+        installPhase = ''
+          runHook preInstall
+          install -Dm755 $src $out/bin/herdr
+          runHook postInstall
+        '';
+        meta.mainProgram = "herdr";
+      };
+    };
     customOverlays = [
       (mkOverlay "claude-code" claude-code)
       (mkOverlay "grove" grove)
-      (mkOverlay "herdr" herdr)
+      herdrOverlay
       (mkOverlay "pike" pike)
       (mkOverlay "tick" tick)
       (mkOverlay "wen" wen)

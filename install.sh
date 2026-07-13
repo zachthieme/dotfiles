@@ -11,7 +11,7 @@ NIX_FLAGS=(--extra-experimental-features nix-command --extra-experimental-featur
 # Personal tool inputs (flake.nix): source-built flakes that follow the pinned
 # nixpkgs. Updating only these picks up new tool releases without moving nixpkgs,
 # so nothing but the changed tools rebuilds — the fast path for `-t`.
-TOOL_INPUTS=(pike tick wen grove claude-code herdr)
+TOOL_INPUTS=(pike tick wen grove claude-code)
 
 # --- Parse Arguments ---
 
