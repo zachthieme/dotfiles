@@ -331,7 +331,7 @@ tags: [test]
     echo seed >"$pushfail_dir/f.md"
     jj -R "$pushfail_dir" commit -m seed >/dev/null 2>&1
     jj -R "$pushfail_dir" bookmark create main -r @- >/dev/null 2>&1
-    jj -R "$pushfail_dir" git push --allow-new >/dev/null 2>&1
+    jj -R "$pushfail_dir" git push -b main >/dev/null 2>&1
     rm -rf "$remote_dir"
     echo more >>"$pushfail_dir/f.md"
     set -gx NOTES "$pushfail_dir"
@@ -355,7 +355,7 @@ tags: [test]
     printf 'l1\nl2\nl3\n' >"$mroot/A/note.md"
     jj -R "$mroot/A" describe -m seed >/dev/null 2>&1
     jj -R "$mroot/A" bookmark create main -r @ >/dev/null 2>&1
-    jj -R "$mroot/A" git push --allow-new >/dev/null 2>&1
+    jj -R "$mroot/A" git push -b main >/dev/null 2>&1
     jj git clone "$mremote" "$mroot/B" >/dev/null 2>&1
 
     # Clean merge: B edits l3 and pushes; A edits l1, then syncs → both survive.
@@ -377,8 +377,11 @@ tags: [test]
     end
 
     # True conflict: both sides edit the same line differently → must NOT push.
+    # Build B's next commit fresh on top of the current remote tip. (A `jj rebase`
+    # of B's now-immutable, already-merged working copy is a no-op under jj's
+    # fast-forward-only bookmark + immutability rules, so `jj new main@origin`.)
     jj -R "$mroot/B" git fetch >/dev/null 2>&1
-    jj -R "$mroot/B" rebase -d 'main@origin' >/dev/null 2>&1
+    jj -R "$mroot/B" new 'main@origin' >/dev/null 2>&1
     printf 'A1\nB-l2\nB3\n' >"$mroot/B/note.md"
     jj -R "$mroot/B" describe -m bc >/dev/null 2>&1
     jj -R "$mroot/B" bookmark move main --to @ >/dev/null 2>&1
