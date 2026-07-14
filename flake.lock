@@ -325,11 +325,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775859245,
-        "narHash": "sha256-tbMaJc2KiP2LX0W0vzduZvPa2lSyCD3SvfzefsIx7sk=",
+        "lastModified": 1783984601,
+        "narHash": "sha256-5m/4gzTUjUOHeVyQf4doJx+yYQTFBxcLq1V3QlwCrcU=",
         "owner": "zachthieme",
         "repo": "tick",
-        "rev": "3d9466cc38527365df15c2bcef9a2a92576c0a24",
+        "rev": "b44760ac63064e3b3a61dd573ac50fb993c4c069",
         "type": "github"
       },
       "original": {
