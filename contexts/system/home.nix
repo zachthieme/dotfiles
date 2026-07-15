@@ -6,5 +6,6 @@
     "brave-browser"
     "codex"
     "docker-desktop"
+    "raycast"
   ];
 }
