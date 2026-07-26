@@ -24,7 +24,6 @@
   ];
   homebrew.casks = [
     "brave-browser"
-    "codex"
     "docker-desktop"
     "raycast"
   ];
