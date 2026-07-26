@@ -51,7 +51,24 @@
     networking.hostName = config.local.hostname;
 
     # System activation script
+    #
+    # The Homebrew cleanup step runs here rather than via
+    # `homebrew.onActivation.cleanup = "uninstall"`: nix-darwin still builds that
+    # into `brew bundle --force-cleanup`, a flag Homebrew dropped in 5.x (cleanup
+    # is now the `brew bundle cleanup --force` subcommand). Passing it makes brew
+    # exit with "invalid option: --force-cleanup" and aborts the rebuild. This
+    # reimplements nix-darwin's invocation with the current CLI; drop it once
+    # nix-darwin emits the subcommand form. postActivation runs immediately after
+    # nix-darwin's own homebrew script, so packages are installed before cleanup.
     system.activationScripts.postActivation.text = ''
+      if [ -f "${config.homebrew.prefix}/bin/brew" ]; then
+        echo >&2 "Homebrew cleanup..."
+        PATH="${config.homebrew.prefix}/bin:${lib.makeBinPath [pkgs.mas]}:$PATH" \
+          sudo --preserve-env=PATH --user=${lib.escapeShellArg config.homebrew.user} --set-home \
+          env HOMEBREW_NO_AUTO_UPDATE=1 \
+          brew bundle cleanup --force --file='${pkgs.writeText "Brewfile" config.homebrew.brewfile}'
+      fi
+
       echo "${
         if config.local.isWork
         then "Work"
@@ -71,13 +88,18 @@
     # (context-specific casks live in contexts/system/{home,work}.nix)
     homebrew = {
       enable = true;
-      # Uninstall anything not declared here or in contexts/system/ — without
-      # this the Homebrew layer is append-only (removing a cask from config
-      # leaves it installed forever). NOTE: this also removes manually
+      # Anything not declared here or in contexts/system/ is uninstalled —
+      # without that the Homebrew layer is append-only (removing a cask from
+      # config leaves it installed forever). NOTE: this also removes manually
       # `brew install`ed packages on the next rebuild; declare them instead.
-      onActivation.cleanup = "uninstall";
+      # The cleanup itself runs from postActivation above, not from
+      # `onActivation.cleanup` — see the comment there for why.
+      onActivation.cleanup = "none";
       taps = [
         "FelixKratz/formulae"
+        # Home of the aerospace cask below — declare it or cleanup untaps it
+        # while the cask that came from it is still installed.
+        "nikitabobko/tap"
       ];
       brews = [
         "FelixKratz/formulae/borders"
