@@ -78,6 +78,16 @@
       # This requires Homebrew >= 6.0.0: nix-darwin builds it into
       # `brew bundle --force-cleanup`, a flag brew only gained in 6.x.
       onActivation.cleanup = "uninstall";
+      # Upgrade declared packages on every rebuild, rather than only installing
+      # missing ones — otherwise the Homebrew layer drifts silently the way
+      # brew itself did (pinned at 5.1.7 from April until 2026-07-26).
+      onActivation.upgrade = true;
+      # Refresh the formula index (and brew itself) on every rebuild. Off by
+      # default in nix-darwin, which is how brew sat at 5.1.7 from April until
+      # 2026-07-26 and broke activation once nix-darwin started emitting
+      # 6.x-only flags. Note the tradeoff: brew is not pinned by flake.lock, so
+      # a rebuild's Homebrew result now depends on when it ran.
+      onActivation.autoUpdate = true;
       # Homebrew 6.0.0 turned on HOMEBREW_REQUIRE_TAP_TRUST, which skips
       # non-official taps unless trusted — silently for casks, fatally for
       # formulae. Every third-party tap needs `trusted = true`; official taps

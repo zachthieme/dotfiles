@@ -267,7 +267,9 @@ body = ''
 
 **Homebrew casks/formulas** (macOS only): Add to the appropriate context module in `contexts/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `system/darwin.nix` for all macOS machines. Note: `homebrew.onActivation.cleanup = "uninstall"` means anything not declared (including manual `brew install`s) is uninstalled on the next rebuild — declare everything.
 
-**Requires Homebrew >= 6.0.0.** nix-darwin builds `onActivation.cleanup = "uninstall"` into `brew bundle --force-cleanup`, a flag brew only gained in 6.x; an older brew aborts activation with `Error: invalid option: --force-cleanup`. Since activation sets `HOMEBREW_NO_AUTO_UPDATE=1` (`onActivation.autoUpdate = false`), brew never self-updates during a rebuild — run `brew update` manually if it falls behind.
+**Requires Homebrew >= 6.0.0.** nix-darwin builds `onActivation.cleanup = "uninstall"` into `brew bundle --force-cleanup`, a flag brew only gained in 6.x; an older brew aborts activation with `Error: invalid option: --force-cleanup`.
+
+`onActivation.autoUpdate = true` and `onActivation.upgrade = true` (both off by default in nix-darwin) keep that from happening again: every rebuild refreshes brew and its formula index, then upgrades declared packages rather than only installing missing ones. Without them the Homebrew layer drifts silently — brew itself sat at 5.1.7 from April until 2026-07-26, which is what broke activation. Tradeoff: brew is not pinned by `flake.lock`, so a rebuild's Homebrew result depends on when it ran. `brew outdated` can still list transitive dependencies of declared packages; upgrades target Brewfile entries, not their deps.
 
 **Third-party taps need `trusted = true`.** Homebrew 6.0.0 enabled `HOMEBREW_REQUIRE_TAP_TRUST`, which skips non-official taps unless trusted — silently for casks, fatally for formulae. Declare them in submodule form:
 ```nix
