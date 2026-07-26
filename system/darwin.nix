@@ -51,24 +51,7 @@
     networking.hostName = config.local.hostname;
 
     # System activation script
-    #
-    # The Homebrew cleanup step runs here rather than via
-    # `homebrew.onActivation.cleanup = "uninstall"`: nix-darwin still builds that
-    # into `brew bundle --force-cleanup`, a flag Homebrew dropped in 5.x (cleanup
-    # is now the `brew bundle cleanup --force` subcommand). Passing it makes brew
-    # exit with "invalid option: --force-cleanup" and aborts the rebuild. This
-    # reimplements nix-darwin's invocation with the current CLI; drop it once
-    # nix-darwin emits the subcommand form. postActivation runs immediately after
-    # nix-darwin's own homebrew script, so packages are installed before cleanup.
     system.activationScripts.postActivation.text = ''
-      if [ -f "${config.homebrew.prefix}/bin/brew" ]; then
-        echo >&2 "Homebrew cleanup..."
-        PATH="${config.homebrew.prefix}/bin:${lib.makeBinPath [pkgs.mas]}:$PATH" \
-          sudo --preserve-env=PATH --user=${lib.escapeShellArg config.homebrew.user} --set-home \
-          env HOMEBREW_NO_AUTO_UPDATE=1 \
-          brew bundle cleanup --force --file='${pkgs.writeText "Brewfile" config.homebrew.brewfile}'
-      fi
-
       echo "${
         if config.local.isWork
         then "Work"
@@ -92,14 +75,25 @@
       # without that the Homebrew layer is append-only (removing a cask from
       # config leaves it installed forever). NOTE: this also removes manually
       # `brew install`ed packages on the next rebuild; declare them instead.
-      # The cleanup itself runs from postActivation above, not from
-      # `onActivation.cleanup` — see the comment there for why.
-      onActivation.cleanup = "none";
+      # This requires Homebrew >= 6.0.0: nix-darwin builds it into
+      # `brew bundle --force-cleanup`, a flag brew only gained in 6.x.
+      onActivation.cleanup = "uninstall";
+      # Homebrew 6.0.0 turned on HOMEBREW_REQUIRE_TAP_TRUST, which skips
+      # non-official taps unless trusted — silently for casks, fatally for
+      # formulae. Every third-party tap needs `trusted = true`; official taps
+      # are always trusted. (Fully-qualified brews/casks default to trusted,
+      # so only the taps themselves need declaring here.)
       taps = [
-        "FelixKratz/formulae"
+        {
+          name = "FelixKratz/formulae";
+          trusted = true;
+        }
         # Home of the aerospace cask below — declare it or cleanup untaps it
         # while the cask that came from it is still installed.
-        "nikitabobko/tap"
+        {
+          name = "nikitabobko/tap";
+          trusted = true;
+        }
       ];
       brews = [
         "FelixKratz/formulae/borders"

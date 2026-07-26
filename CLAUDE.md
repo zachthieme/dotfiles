@@ -267,6 +267,19 @@ body = ''
 
 **Homebrew casks/formulas** (macOS only): Add to the appropriate context module in `contexts/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `system/darwin.nix` for all macOS machines. Note: `homebrew.onActivation.cleanup = "uninstall"` means anything not declared (including manual `brew install`s) is uninstalled on the next rebuild — declare everything.
 
+**Requires Homebrew >= 6.0.0.** nix-darwin builds `onActivation.cleanup = "uninstall"` into `brew bundle --force-cleanup`, a flag brew only gained in 6.x; an older brew aborts activation with `Error: invalid option: --force-cleanup`. Since activation sets `HOMEBREW_NO_AUTO_UPDATE=1` (`onActivation.autoUpdate = false`), brew never self-updates during a rebuild — run `brew update` manually if it falls behind.
+
+**Third-party taps need `trusted = true`.** Homebrew 6.0.0 enabled `HOMEBREW_REQUIRE_TAP_TRUST`, which skips non-official taps unless trusted — silently for casks, fatally for formulae. Declare them in submodule form:
+```nix
+homebrew.taps = [
+  {
+    name = "siderolabs/tap";
+    trusted = true;
+  }
+];
+```
+Official taps are always trusted, and fully-qualified brews/casks (`user/repo/name`) default to `trusted = true`, so only the taps themselves need this.
+
 ## Common Patterns
 
 **Access host username in system module**:
