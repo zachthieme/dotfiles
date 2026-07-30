@@ -5,7 +5,12 @@
   # Single source of truth for supported platforms — consumed by host
   # validation (validSystems), the flake's checks (linux only), and the
   # formatter (all). Add a platform here, not in three places.
-  supportedSystems = ["aarch64-darwin" "x86_64-darwin" "aarch64-linux" "x86_64-linux"];
+  #
+  # x86_64-darwin is intentionally absent: nixpkgs 26.11 dropped support for it
+  # (the whole package set throws, so nothing evaluates), and 26.05 is the last
+  # release that carries it. Listing it would let a host be declared that cannot
+  # possibly build; validateHost now rejects it with the valid values instead.
+  supportedSystems = ["aarch64-darwin" "aarch64-linux" "x86_64-linux"];
   linuxSystems = builtins.filter (lib.strings.hasSuffix "-linux") supportedSystems;
 
   # Get the home directory path based on the OS

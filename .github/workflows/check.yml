@@ -47,9 +47,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@v22
-        with:
-          # x86_64-darwin hosts (malv2) evaluate on the arm64 runner via Rosetta
-          extra-conf: extra-platforms = x86_64-darwin
 
       - name: Evaluate Darwin configurations
         run: |

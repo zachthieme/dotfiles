@@ -60,7 +60,6 @@ Hosts are defined in `hosts/definitions.nix`. Current hosts include:
 | Host                 | System         | Context | Profile |
 | -------------------- | -------------- | ------- | ------- |
 | cortex               | aarch64-darwin | home    | full    |
-| malv2                | x86_64-darwin  | home    | full    |
 | zthieme34911         | aarch64-darwin | work    | full    |
 | prod, dev, util      | x86_64-linux   | home    | full    |
 | claude               | x86_64-linux   | home    | full    |
@@ -89,7 +88,7 @@ home-manager switch -b backup --flake .#<hostname>
 1. Add entry to `hosts/definitions.nix`:
    ```nix
    "myhostname" = {
-     system = "aarch64-darwin";  # or x86_64-darwin, aarch64-linux, x86_64-linux
+     system = "aarch64-darwin";  # or aarch64-linux, x86_64-linux
      user = "myuser";
      isWork = false;
      packages = [ ];

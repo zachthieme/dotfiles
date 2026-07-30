@@ -244,7 +244,7 @@ body = ''
 1. Add entry to `hosts/definitions.nix`:
    ```nix
    "newhostname" = {
-     system = "aarch64-darwin";  # or x86_64-darwin, x86_64-linux, aarch64-linux
+     system = "aarch64-darwin";  # or x86_64-linux, aarch64-linux
      # Only override the defaults you need:
      # user = "username";        # default: "zach"
      # isWork = true;            # default: false

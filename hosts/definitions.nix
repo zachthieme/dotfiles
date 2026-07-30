@@ -64,9 +64,6 @@
     "cortex" = {
       system = "aarch64-darwin";
     };
-    "malv2" = {
-      system = "x86_64-darwin";
-    };
     "zthieme34911" = {
       system = "aarch64-darwin";
       user = "zthieme";
