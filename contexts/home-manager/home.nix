@@ -18,5 +18,9 @@
   home.packages = with pkgs; [
     claude-code
     herdr
+    # Pi coding agent (binary: `pi`). From nixpkgs rather than
+    # `npm install -g @earendil-works/pi-coding-agent`, so it stays pinned by
+    # flake.lock like the rest of the toolchain.
+    pi-coding-agent
   ];
 }
