@@ -15,8 +15,11 @@
     # would be escaped by that apostrophe.
     space.T = [":insert-output pike --scope \"%{buffer_name}\""];
     space.o = {
+      # Every note type is its own first letter. person and project both want p,
+      # so project takes the shifted one — "p is the person, shift-p is the other
+      # p-word" beats an arbitrary free letter.
       p = noteBind "person";
-      j = noteBind "project";
+      P = noteBind "project";
       a = noteBind "adr";
       c = noteBind "company";
       d = noteBind "decision";
@@ -87,8 +90,6 @@ in {
           H = [":buffer-previous"];
           L = [":buffer-next"];
           ret = ["goto_word"];
-          A-j = ["move_line_down"];
-          A-k = ["move_line_up"];
           # Chooser file lives under the user's private ~/.cache, not shared
           # /tmp: a fixed name in world-writable, sticky-bit /tmp can be
           # pre-created or symlinked by another local user to redirect :open.

@@ -34,32 +34,41 @@ outer.top = [{ monitor."built-in" = 16 }, 15]
 outer.right = 10
 
 [mode.main.binding]
+# Two rules cover this whole file:
+#   1. More modifiers = further out. Bare hjkl moves the cursor (helix),
+#      alt-hjkl moves between tmux panes, ctrl-alt-hjkl moves between windows.
+#   2. Adding shift moves the thing instead of moving you.
+#
+# ctrl-alt is the window layer because macOS barely uses it, and neither tmux
+# (alt-space prefix, alt-hjkl) nor herdr (ctrl-b prefix) binds it.
+
 # Layout — ctrl-alt + the first letter of what you want.
-# ctrl-alt is deliberate: macOS barely uses it, and tmux (alt-space prefix,
-# alt-hjkl), zellij (ctrl mode switches, alt-hjkl), and herdr (ctrl-b prefix)
-# all stay clear of it. Press T or A twice to flip that layout's orientation.
+# Press T or A twice to flip that layout's orientation.
 ctrl-alt-t = 'layout tiles horizontal vertical' # Tiles
 ctrl-alt-a = 'layout accordion horizontal vertical' # Accordion
 ctrl-alt-b = 'balance-sizes' # Balance
-ctrl-alt-j = 'join-with right' # Join
 ctrl-alt-space = 'layout floating tiling' # float <-> tile
 
+# Reshelve every window onto its assigned workspace (config/fish/functions/darwin/).
+# Absolute fish path: the app is launched by launchd, which has no nix profile
+# on PATH. /run/current-system/sw/bin is the nix-darwin system profile, so this
+# resolves identically on every darwin host regardless of user.
+ctrl-alt-0 = 'exec-and-forget /run/current-system/sw/bin/fish -c aero-tidy'
 
-alt-tab = 'focus right --boundaries-action wrap-around-the-workspace'
-alt-shift-tab = 'focus left --boundaries-action wrap-around-the-workspace'
 
-
+# Focus — ctrl-alt-hjkl. Was cmd-arrows, which shadowed the universal macOS
+# start-of-line / end-of-line / top / bottom of document keys in every text field.
 # See: https://nikitabobko.github.io/AeroSpace/commands#focus
-# same as pop_os
-cmd-left = 'focus left --boundaries-action wrap-around-the-workspace'
-cmd-down = 'focus down --boundaries-action wrap-around-the-workspace'
-cmd-up = 'focus up --boundaries-action wrap-around-the-workspace'
-cmd-right = 'focus right --boundaries-action wrap-around-the-workspace'
+ctrl-alt-h = 'focus left --boundaries-action wrap-around-the-workspace'
+ctrl-alt-j = 'focus down --boundaries-action wrap-around-the-workspace'
+ctrl-alt-k = 'focus up --boundaries-action wrap-around-the-workspace'
+ctrl-alt-l = 'focus right --boundaries-action wrap-around-the-workspace'
 
-cmd-shift-left = 'move left'
-cmd-shift-down = 'move down'
-cmd-shift-up = 'move up'
-cmd-shift-right = 'move right'
+# Move the window — same keys, plus shift.
+ctrl-alt-shift-h = 'move left'
+ctrl-alt-shift-j = 'move down'
+ctrl-alt-shift-k = 'move up'
+ctrl-alt-shift-l = 'move right'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 # Move to a particular workspace
