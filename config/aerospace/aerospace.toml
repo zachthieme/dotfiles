@@ -34,11 +34,15 @@ outer.top = [{ monitor."built-in" = 16 }, 15]
 outer.right = 10
 
 [mode.main.binding]
-cmd-g = 'layout tiles horizontal vertical'
-cmd-h = 'layout floating tiling'
-cmd-j = 'join-with right'
-cmd-y = 'layout v_accordion tiles'
-cmd-e = 'balance-sizes'
+# Layout — ctrl-alt + the first letter of what you want.
+# ctrl-alt is deliberate: macOS barely uses it, and tmux (alt-space prefix,
+# alt-hjkl), zellij (ctrl mode switches, alt-hjkl), and herdr (ctrl-b prefix)
+# all stay clear of it. Press T or A twice to flip that layout's orientation.
+ctrl-alt-t = 'layout tiles horizontal vertical' # Tiles
+ctrl-alt-a = 'layout accordion horizontal vertical' # Accordion
+ctrl-alt-b = 'balance-sizes' # Balance
+ctrl-alt-j = 'join-with right' # Join
+ctrl-alt-space = 'layout floating tiling' # float <-> tile
 
 
 alt-tab = 'focus right --boundaries-action wrap-around-the-workspace'
