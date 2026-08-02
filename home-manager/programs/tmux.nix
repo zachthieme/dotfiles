@@ -1,5 +1,5 @@
 # Tmux terminal multiplexer configuration
-# Navigation mirrors zellij: Alt+h/j/k/l for panes, Alt+1-9 for windows
+# Navigation: Alt+h/j/k/l for panes, Alt+1-9 for windows
 {pkgs, ...}: {
   catppuccin.tmux = {
     enable = true;
@@ -50,14 +50,14 @@
       bind | split-window -h -c "#{pane_current_path}"
       bind - split-window -v -c "#{pane_current_path}"
 
-      # Pane navigation — Alt+h/j/k/l (no prefix needed, matches zellij)
+      # Pane navigation — Alt+h/j/k/l (no prefix needed)
       # Wraps to previous/next window at pane boundaries
       bind -n M-h if -F '#{pane_at_left}'   'previous-window' 'select-pane -L'
       bind -n M-j if -F '#{pane_at_bottom}' '''               'select-pane -D'
       bind -n M-k if -F '#{pane_at_top}'    '''               'select-pane -U'
       bind -n M-l if -F '#{pane_at_right}'  'next-window'     'select-pane -R'
 
-      # Window (tab) switching — Alt+1-9 (no prefix needed, matches zellij)
+      # Window (tab) switching — Alt+1-9 (no prefix needed)
       bind -n M-1 select-window -t 1
       bind -n M-2 select-window -t 2
       bind -n M-3 select-window -t 3
@@ -99,7 +99,7 @@
       bind -T copy-mode-vi v send -X begin-selection
       bind -T copy-mode-vi y send -X copy-selection-and-cancel
 
-      # Status bar at top (matches zellij compact-top layout)
+      # Status bar at top
       set -g status-position top
       set -g status-justify centre
     '';

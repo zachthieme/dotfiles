@@ -43,9 +43,9 @@ in {
       description = "Notes directory — single source of truth for the NOTES env var, pike, and workspace layouts";
     };
     # Single source for the `tick` countdown shown in the notes workspace —
-    # consumed by BOTH nw.fish (tmux) and zellij.nix via the exported env vars,
-    # so the two layouts can't drift. Update the deadline here when the project
-    # changes (it's the one place, and it's documented — not a buried literal).
+    # consumed by nw.fish via the exported env vars. Update the deadline here
+    # when the project changes (it's the one place, and it's documented — not a
+    # buried literal).
     tickHosts = lib.mkOption {
       type = lib.types.str;
       default = "23000";
@@ -71,7 +71,6 @@ in {
     ./programs/ssh.nix
     ./programs/tmux.nix
     ./programs/wen.nix
-    ./programs/zellij.nix
   ];
 
   config = {

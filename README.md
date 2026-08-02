@@ -121,7 +121,7 @@ For tools with Home Manager options:
 
 ## Notes System
 
-A plain-markdown notes system built around [pike](https://github.com/zachthieme/pike), [wen](https://github.com/zachthieme/wen), helix, fish functions, and zellij. Notes live in `~/CloudDocs/Notes` (set via `$NOTES`) and are synced with jujutsu.
+A plain-markdown notes system built around [pike](https://github.com/zachthieme/pike), [wen](https://github.com/zachthieme/wen), helix, fish functions, and tmux. Notes live in `~/CloudDocs/Notes` (set via `$NOTES`) and are synced with jujutsu.
 
 The tools each handle a different part of the workflow:
 
@@ -129,7 +129,7 @@ The tools each handle a different part of the workflow:
 - **Wen** shows a terminal calendar with due dates from pike highlighted inline
 - **Helix** provides keybindings for toggling task checkboxes and creating linked notes from selected text
 - **Fish functions** create templated notes and handle search, sync, and workspace management
-- **Tmux** ties everything into a multi-pane workspace via `nw` (a zellij variant is available as `nw-zellij`)
+- **Tmux** ties everything into a multi-pane workspace via `nw`
 
 ### Workspace
 
