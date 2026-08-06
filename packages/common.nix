@@ -50,7 +50,6 @@ in {
         delve
         devbox
         devenv
-        gcc
         go
         golangci-lint
         golangci-lint-langserver
@@ -74,6 +73,10 @@ in {
         zls
       ]
       ++ pkgs.lib.optionals isLinux [
+        # Linux needs a C compiler in the profile — rustup/cargo, pkg-config,
+        # and gnumake all need a `cc` to link against. macOS gets one from the
+        # Xcode Command Line Tools instead, so gcc there was pure duplication.
+        gcc
         pkgs.libgcc # Linux only
         # CLI clients only — the docker daemon comes from the distro
         # (apt/systemd), not Home Manager, which can't manage services as root
