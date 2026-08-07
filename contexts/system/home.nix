@@ -27,4 +27,15 @@
     "docker-desktop"
     "raycast"
   ];
+
+  # Remote Login (System Settings > General > Sharing). This hands nix-darwin
+  # the enable/disable of Apple's built-in sshd — same daemon the GUI toggle
+  # drives, just declared here so a rebuilt machine comes up with it on instead
+  # of needing a manual flip.
+  #
+  # Two things it does NOT cover, because nix-darwin has no option for either:
+  #   - Who may log in. macOS defaults Remote Login to ALL users; narrowing it
+  #     to an access_ssh group is a GUI/dseditgroup step.
+  #   - Disabling password auth. That means editing sshd_config by hand.
+  services.openssh.enable = true;
 }
