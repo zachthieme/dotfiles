@@ -42,7 +42,6 @@ in {
     # Development tools - compilers, LSPs, formatters
     devPackages = with pkgs;
       [
-        bazelisk
         bash-language-server
         mosh
         nixd

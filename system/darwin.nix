@@ -108,7 +108,6 @@
       brews = [
         "FelixKratz/formulae/borders"
         "spotify_player"
-        "bazelisk"
       ];
       casks = [
         "balenaetcher"
