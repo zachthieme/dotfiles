@@ -3,6 +3,6 @@
 # Add work-specific system packages, brews, or macOS defaults here as needed.
 {...}: {
   homebrew.casks = [
-    "google-chrome"
+    # "google-chrome"
   ];
 }
