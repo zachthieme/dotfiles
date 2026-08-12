@@ -79,6 +79,8 @@ cmd-4 = 'workspace 4_Teams' # Teams
 cmd-5 = 'workspace 5_Web'   # Web
 cmd-6 = 'workspace 6'       # Docs
 cmd-7 = 'workspace 7'       # misc
+cmd-8 = 'workspace 8'       # misc
+cmd-9 = 'workspace 9'       # misc
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 # Move window to a particlar workspace and follow to the workspace
@@ -89,6 +91,8 @@ cmd-shift-ctrl-4 = ['move-node-to-workspace 4_Teams', 'workspace 4_Teams']
 cmd-shift-ctrl-5 = ['move-node-to-workspace 5_Web', 'workspace 5_Web']
 cmd-shift-ctrl-6 = ['move-node-to-workspace 6', 'workspace 6']
 cmd-shift-ctrl-7 = ['move-node-to-workspace 7', 'workspace 7']
+cmd-shift-ctrl-8 = ['move-node-to-workspace 8', 'workspace 8']
+cmd-shift-ctrl-9 = ['move-node-to-workspace 9', 'workspace 9']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 # Move window to a particlar workspace
@@ -99,6 +103,8 @@ cmd-shift-4 = ['move-node-to-workspace 4_Teams']
 cmd-shift-5 = ['move-node-to-workspace 5_Web']
 cmd-shift-6 = ['move-node-to-workspace 6']
 cmd-shift-7 = ['move-node-to-workspace 7']
+cmd-shift-8 = ['move-node-to-workspace 8']
+cmd-shift-9 = ['move-node-to-workspace 9']
 
 [[on-window-detected]]
 if.app-id = 'com.apple.finder'
