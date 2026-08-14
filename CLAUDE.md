@@ -477,7 +477,7 @@ nix "${NIX_FLAGS[@]}" profile add nixpkgs#home-manager
 ./install.sh --tools  # or -t
 ```
 
-This runs `nix flake update pike tick wen grove claude-code herdr`, which leaves
+This runs `nix flake update pike tick wen grove claude-code`, which leaves
 `nixpkgs` pinned. Because those tools `follows` the pinned nixpkgs, nothing but
 the changed tools rebuilds — no full-world recompile. Use this to pick up a new
 `claude`/`wen`/`pike`. It shows a diff and prompts before rebuilding, just like `-f`.
