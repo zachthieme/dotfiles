@@ -66,6 +66,7 @@ in {
         python3
         python312Packages.pdf2docx
         rustup
+        sccache # shared rustc cache; see RUSTC_WRAPPER in home-manager/base.nix
         typst
         uv
         zig

@@ -179,6 +179,33 @@ home.file = {
 };
 ```
 
+### Shared Rust Build Cache (sccache)
+
+Non-core hosts set `RUSTC_WRAPPER` to sccache, with `SCCACHE_DIR` (`dotfiles.sccacheDir`, default `~/.cache/sccache`) and `SCCACHE_CACHE_SIZE` (`dotfiles.sccacheSize`, default 20G). Compiled dependencies are reused across projects, and because sccache LRU-evicts at the size cap the cache is bounded — the shared `CARGO_TARGET_DIR` it replaced was not, which is how that reached 51 GiB.
+
+**Do not reintroduce a shared `CARGO_TARGET_DIR`.** Cargo takes an exclusive lock on the build directory, so builds sharing one serialize (`Blocking waiting for file lock on build directory`) even across unrelated crates. sccache shares a *cache*, not a *lock*: builds stay parallel.
+
+**Containers on this host share the cache by bind-mounting `SCCACHE_DIR`.** Verified end-to-end: a second container reached a 100% hit rate on a warm cache, and three concurrent containers all hit 100% with zero read/write errors.
+
+```bash
+docker run --user "$(id -u):$(id -g)" \
+  -v "$HOME/.cache/sccache:/sccache" \
+  -e SCCACHE_DIR=/sccache \
+  -e RUSTC_WRAPPER=/usr/bin/sccache \
+  -e CARGO_INCREMENTAL=0 \
+  <image> cargo build
+```
+
+Three requirements, each of which silently costs you the cache if missed:
+
+1. **`--user $(id -u):$(id -g)`** — without it the container writes root-owned files into the mount and the host's own sccache can no longer manage its cache. `home.activation.sccacheDir` pre-creates the directory so a `-v` against a missing path can't create it as `root:root` first.
+2. **Identical build paths across containers.** The cache key includes the build paths, so a container building at `/w` will not reuse entries produced at `/build`. Containers from one image agree automatically; this is also why host builds from different worktree paths do not share with each other.
+3. **`CARGO_INCREMENTAL=0`.** sccache does not cache incremental compilations. Dependencies are unaffected (cargo builds those non-incrementally regardless), but your own crates only get cached with it off.
+
+Known limit: sccache does not coalesce *concurrent* identical compiles. N containers cold-starting together each compile the same crate once; prime the cache with a single build first if that matters.
+
+`clean-disk --deep` drops the cache (stopping the server first, since it holds its LRU index in memory). It is deliberately not in the default tier — it is already bounded, and clearing it costs a cold recompile for everything sharing it.
+
 ## Nix Multiline String Escaping (`''...''`)
 
 > **Note**: Fish functions no longer live in Nix strings (see "Fish Functions" above), which eliminated the main source of this pitfall. These rules still apply to the shell fragments that remain in Nix (`shellInit`, `interactiveShellInit`, activation scripts).
@@ -669,10 +696,9 @@ Some Home Manager options have been renamed. Use the new names:
 3. **`clean-disk` reaps abandoned `/tmp` build scratch**: `CACHEDIR.TAG`-stamped cargo dirs and `go-build*`/`go-link*`, guarded by ownership, shape, and a `--tmp-age` staleness probe that looks *inside* each dir (a directory's own mtime does not move while files within it are rewritten, so an active build can look stale from outside).
 4. **`--deep` drops unbuilt Helix grammar sources**, skipping them when compiled `.so` files exist.
 5. **Closing report** lists remaining consumers over 1 GiB, so drift is visible instead of silent.
+6. **Replaced it with sccache**: `RUSTC_WRAPPER` + `SCCACHE_DIR`/`SCCACHE_CACHE_SIZE` on non-core hosts, with `sccache` added to `devPackages` and the cache dir pre-created at activation. Containers on this host share it by bind-mounting `SCCACHE_DIR` — see "Shared Rust Build Cache (sccache)" above for the mount recipe and its three requirements.
 
 **Portability note**: GNU's relative `-newermt "-N days"` is not portable — `bfs` (the `find` on the Linux host) rejects it and BSD find parses it differently. With stderr silenced the failure reads as "no recent files", i.e. delete a live build dir. Use POSIX `-mtime -N`. Same class of trap as the `\s`/`\b` BSD-sed issue in `install.sh`.
-
-**If you want cross-project reuse back**, use `sccache` (`RUSTC_WRAPPER`), which shares a cache without sharing a lock. Verified: dependencies compiled in one project hit the cache from a different project with a different target dir, and parallel builds show zero build-directory blocking. Two caveats — sccache does not coalesce *concurrent* identical compiles, so N containers cold-starting together each compile the same crate once; and containers do not share a local `SCCACHE_DIR` unless you mount a shared volume or point them at a remote backend (S3/GCS/Redis/memcached/WebDAV).
 
 **Impact**:
 - Reclaimed 51 GiB on the machine that prompted this (137 GiB used → 69 GiB)

@@ -56,6 +56,19 @@ in {
       default = "2026-09-30";
       description = "tick --deadline for the notes-workspace countdown pane";
     };
+    # sccache backs cross-project rustc caching. It is an option rather than a
+    # literal because containers bind-mount this exact path, so the host and
+    # every container must agree on it — see the mount recipe in CLAUDE.md.
+    sccacheDir = lib.mkOption {
+      type = lib.types.str;
+      default = "${config.home.homeDirectory}/.cache/sccache";
+      description = "Shared sccache cache directory. Bind-mounted into build containers so they reuse the host's compiled dependencies.";
+    };
+    sccacheSize = lib.mkOption {
+      type = lib.types.str;
+      default = "20G";
+      description = "SCCACHE_CACHE_SIZE ceiling. sccache LRU-evicts past this, so the cache is bounded — unlike the unbounded shared CARGO_TARGET_DIR it replaced.";
+    };
   };
 
   imports = [
@@ -156,6 +169,17 @@ in {
       // lib.optionalAttrs (config.dotfiles.packageProfile != "core") {
         OPENSSL_DIR = "${pkgs.openssl.dev}";
         OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
+
+        # sccache is what replaces the shared CARGO_TARGET_DIR: it reuses
+        # compiled dependencies across projects without the exclusive build
+        # lock that serialized parallel builds. Absolute store path rather than
+        # bare "sccache" so cargo still resolves it outside a login shell,
+        # where PATH may not include the Home Manager profile.
+        RUSTC_WRAPPER = "${pkgs.sccache}/bin/sccache";
+        SCCACHE_DIR = config.dotfiles.sccacheDir;
+        # LRU-evicted at this ceiling. The old shared target dir had no bound,
+        # which is how it reached 51 GiB; this one cannot exceed the cap.
+        SCCACHE_CACHE_SIZE = config.dotfiles.sccacheSize;
       };
 
     # PATH additions
@@ -183,6 +207,17 @@ in {
         ".config/borders".source = ../config/borders;
         ".terminfo".source = ../config/terminfo;
       };
+
+    # Create the sccache dir up front so it exists before anything mounts it.
+    # A `docker run -v` against a missing host path creates it as root:root,
+    # after which the host's own sccache (running as the user) cannot write to
+    # its own cache. Making it here means the mount always lands on a
+    # user-owned directory.
+    home.activation.sccacheDir =
+      lib.mkIf (config.dotfiles.packageProfile != "core")
+      (lib.hm.dag.entryAfter ["writeBoundary"] ''
+        run mkdir -p ${lib.escapeShellArg config.dotfiles.sccacheDir}
+      '');
 
     # Copy jrnl config only if it doesn't exist (jrnl needs to write to its config)
     home.activation.jrnlConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''

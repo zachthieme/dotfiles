@@ -17,8 +17,8 @@ function clean-disk --description="Reclaim root-disk space: Nix GC + regenerable
         echo "            whole Rust target dirs, the Go module cache, ALL unused"
         echo "            Docker images (docker system prune -a), npm/pip download"
         echo "            caches, the cargo registry, Nix fetcher caches, unbuilt"
-        echo "            Helix grammar sources, and Playwright browsers. Docker"
-        echo "            volumes are never touched."
+        echo "            Helix grammar sources, the shared sccache, and"
+        echo "            Playwright browsers. Docker volumes are never touched."
         echo "  -n/--dry-run  Show what would be removed without deleting anything."
         echo "  -r/--root DIR Where to scan for Rust target dirs (default: ~/code)."
         echo "                \$CARGO_TARGET_DIR is always included when set."
@@ -323,7 +323,26 @@ function clean-disk --description="Reclaim root-disk space: Nix GC + regenerable
             end
         end
 
-        # 11. Playwright browsers — re-download on the next `playwright install`
+        # 11. sccache. Only in --deep: it is LRU-bounded by SCCACHE_CACHE_SIZE,
+        # so unlike the unbounded target dir it replaced it cannot run away —
+        # and dropping it costs a cold recompile for every project sharing it.
+        set -l scc_dir "$SCCACHE_DIR"
+        test -n "$scc_dir"; or set scc_dir "$HOME/.cache/sccache"
+        if test -d "$scc_dir"
+            echo
+            echo "==> sccache (shared rustc cache, will recompile)…"
+            if set -q _flag_dry_run
+                echo "would remove: $scc_dir ("(du -sh "$scc_dir" | cut -f1)")"
+            else
+                # Stop the server first: it holds the LRU index in memory and
+                # would rewrite entries into a directory we just emptied.
+                type -q sccache; and sccache --stop-server >/dev/null 2>&1
+                rm -rf "$scc_dir"
+                mkdir -p "$scc_dir"
+            end
+        end
+
+        # 12. Playwright browsers — re-download on the next `playwright install`
         set -l pw "$HOME/.cache/ms-playwright"
         if test -d "$pw"
             echo
