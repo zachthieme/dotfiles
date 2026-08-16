@@ -143,8 +143,17 @@ in {
       # Dev-only vars: the openssl store-path references would otherwise pull
       # openssl into the closure of every generation, including core-profile
       # hosts (the Pis) that don't install the dev toolchain at all
+      # Deliberately NOT setting CARGO_TARGET_DIR. A shared target dir looks
+      # like a disk win (compile each dependency once) but cargo takes an
+      # exclusive lock on the build directory, so two builds pointed at the
+      # same one serialize — "Blocking waiting for file lock on build
+      # directory" — even for unrelated crates. That silently halved throughput
+      # for parallel agents and jj worktrees. It also made the cache
+      # unreclaimable: no project owned it, so no project-level cleanup ever
+      # touched it and it reached 51 GiB of entirely stale artifacts. Use
+      # sccache (RUSTC_WRAPPER) if you want cross-project reuse — it shares a
+      # cache without sharing a lock.
       // lib.optionalAttrs (config.dotfiles.packageProfile != "core") {
-        CARGO_TARGET_DIR = "${config.home.homeDirectory}/.cache/cargo-target";
         OPENSSL_DIR = "${pkgs.openssl.dev}";
         OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
       };

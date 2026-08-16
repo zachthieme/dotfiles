@@ -658,3 +658,23 @@ Some Home Manager options have been renamed. Use the new names:
 - The Homebrew layer converges to the config instead of accumulating
 - Pi disk usage is bounded without manual `nix-cleanup` runs
 - No internal endpoints published in the repo
+
+### 2026-08-16: Dropped the Shared Cargo Target Dir; clean-disk Blind Spot
+
+**Motivation**: `clean-disk` reclaimed almost nothing while the disk filled. Root cause was an interaction between two features that had never been reconciled: `base.nix` set `CARGO_TARGET_DIR` to a shared `~/.cache/cargo-target`, while `clean-disk` looked for per-project `target/` dirs under `~/code`. With the env var set, cargo never creates a project-local `target/`, so the scan matched nothing — and the shared dir grew to 51 GiB of artifacts, none touched in 14 days.
+
+**Changes**:
+1. **Removed `CARGO_TARGET_DIR` from `home-manager/base.nix`**: cargo takes an *exclusive lock on the build directory*, so two builds pointed at one shared dir serialize — `Blocking waiting for file lock on build directory` — even for entirely unrelated crates. Measured: two independent crates took 3.89s shared vs 1.70s/1.60s concurrent with separate dirs. This silently halved throughput for parallel agents and jj worktrees. It also made the cache unreclaimable, since no project owned it. `OPENSSL_DIR`/`OPENSSL_LIB_DIR` stay profile-gated as before.
+2. **`clean-disk` honors `$CARGO_TARGET_DIR`** in addition to scanning `--root`, so a shared dir is still reclaimable on any host that sets one.
+3. **`clean-disk` reaps abandoned `/tmp` build scratch**: `CACHEDIR.TAG`-stamped cargo dirs and `go-build*`/`go-link*`, guarded by ownership, shape, and a `--tmp-age` staleness probe that looks *inside* each dir (a directory's own mtime does not move while files within it are rewritten, so an active build can look stale from outside).
+4. **`--deep` drops unbuilt Helix grammar sources**, skipping them when compiled `.so` files exist.
+5. **Closing report** lists remaining consumers over 1 GiB, so drift is visible instead of silent.
+
+**Portability note**: GNU's relative `-newermt "-N days"` is not portable — `bfs` (the `find` on the Linux host) rejects it and BSD find parses it differently. With stderr silenced the failure reads as "no recent files", i.e. delete a live build dir. Use POSIX `-mtime -N`. Same class of trap as the `\s`/`\b` BSD-sed issue in `install.sh`.
+
+**If you want cross-project reuse back**, use `sccache` (`RUSTC_WRAPPER`), which shares a cache without sharing a lock. Verified: dependencies compiled in one project hit the cache from a different project with a different target dir, and parallel builds show zero build-directory blocking. Two caveats — sccache does not coalesce *concurrent* identical compiles, so N containers cold-starting together each compile the same crate once; and containers do not share a local `SCCACHE_DIR` unless you mount a shared volume or point them at a remote backend (S3/GCS/Redis/memcached/WebDAV).
+
+**Impact**:
+- Reclaimed 51 GiB on the machine that prompted this (137 GiB used → 69 GiB)
+- Parallel Rust builds across agents/worktrees no longer serialize on one lock
+- Build-cache growth is attributable to a project again, so it can be cleaned
