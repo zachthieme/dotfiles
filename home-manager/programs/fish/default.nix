@@ -21,6 +21,9 @@
         fish_add_path --prepend ~/.local/state/nix/profiles/home-manager/home-path/bin
         fish_add_path --prepend ~/.nix-profile/bin
         fish_add_path --prepend /nix/var/nix/profiles/default/bin
+
+        # Omarchy ships its PATH setup for bash only; add its bin dir for fish
+        test -d ~/.local/share/omarchy/bin && fish_add_path ~/.local/share/omarchy/bin
       ''}
       ${pkgs.lib.optionalString (config.dotfiles.packageProfile != "core") ''
         # rustup-managed binaries — dev profiles only (core hosts have no rust toolchain)
