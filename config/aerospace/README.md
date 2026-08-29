@@ -42,6 +42,11 @@ vertical one.
 
 Workspaces: 1 Code · 2 Mail · 3 IM · 4 Teams · 5 Web · 6 Docs · 7 misc.
 
+The config declares `config-version = 2`, which means the workspace list is no
+longer inferred from the bindings — add any new workspace to
+`persistent-workspaces` at the top of `aerospace.toml` as well as to its
+`cmd-<n>` bindings, or it disappears when its last window closes.
+
 Known collision, accepted on purpose: `cmd-shift-3/4/5` shadow the macOS
 screenshot shortcuts.
 

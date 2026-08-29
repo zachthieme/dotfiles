@@ -1,3 +1,21 @@
+# Config schema version. See: https://nikitabobko.github.io/AeroSpace/guide#config-version
+config-version = 2
+
+# Required under config-version 2: version 1 inferred this list from the right
+# hand side of the workspace bindings below, which is now an empty default.
+# Keep it in sync with the cmd-<n> bindings in [mode.main.binding].
+persistent-workspaces = [
+  '1_Code',
+  '2_Mail',
+  '3_IM',
+  '4_Teams',
+  '5_Web',
+  '6',
+  '7',
+  '8',
+  '9',
+]
+
 after-login-command = []
 after-startup-command = []
 
