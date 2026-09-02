@@ -12,6 +12,11 @@
     ".config/herdr/config.toml".text = ''
       [terminal]
       default_shell = "${pkgs.fish}/bin/fish"
+
+      [keys]
+      # Direct chords (no ctrl+b prefix): alt+h = previous tab, alt+l = next tab.
+      previous_tab = "alt+h"
+      next_tab = "alt+l"
     '';
   };
 

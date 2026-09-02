@@ -74,6 +74,7 @@
       fo = "pike -w Overdue";
       fu = "pike -w 'Next 3 Days'";
       td = "pike --summary";
+      vet = "npx vetinari";
       vi = "hx";
       ls = "eza";
       ll = "eza -la --git";
