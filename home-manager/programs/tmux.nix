@@ -1,4 +1,5 @@
 # Tmux terminal multiplexer configuration
+# Prefix: Alt+Space on macOS, Ctrl+b everywhere else (see `prefix` below)
 # Navigation: Alt+h/j/k/l for panes, Alt+1-9 for windows
 {
   config,
@@ -57,6 +58,37 @@
     | ensure("Notification"; "permission_prompt"; $p + " attention")
     | ensure("SessionEnd"; null; $p + " clear")
   '';
+  # Every host binds the Alt keys below with no prefix, which is what breaks
+  # when tmux nests: the macOS server holding an ssh pane grabs the keystroke
+  # and the tmux on the far end never sees it. The prefix split above doesn't
+  # help here — these have no prefix to disambiguate.
+  #
+  # So on the outer (macOS) server, forward the key instead whenever the pane
+  # is running ssh/mosh *and* has switched to the alternate screen. That pair
+  # is the closest an outer tmux can get to "there is a full-screen program
+  # over there": a remote tmux always trips both, a bare remote shell trips
+  # neither, and a local helix or pager trips only the second. So remote panes
+  # forward and everything else keeps local navigation, decided per keystroke
+  # rather than by a mode you have to remember you're in.
+  remotePane = "#{&&:#{m/r:^(ssh|mosh)$,#{pane_current_command}},#{alternate_on}}";
+  # Linux hosts are always the inner tmux, so they bind these unconditionally.
+  altBind = key: action:
+    if pkgs.stdenv.isDarwin
+    then "bind -n ${key} if -F '${remotePane}' 'send-keys ${key}' { ${action} }"
+    else "bind -n ${key} ${action}";
+  altBinds = binds: lib.concatStringsSep "\n" (lib.mapAttrsToList altBind binds);
+
+  paneNavBinds = altBinds {
+    "M-h" = "if -F '#{pane_at_left}'   'previous-window' 'select-pane -L'";
+    "M-j" = "if -F '#{pane_at_bottom}' ''               'select-pane -D'";
+    "M-k" = "if -F '#{pane_at_top}'    ''               'select-pane -U'";
+    "M-l" = "if -F '#{pane_at_right}'  'next-window'     'select-pane -R'";
+  };
+  windowBinds = altBinds (lib.listToAttrs (map (n: {
+    name = "M-${toString n}";
+    value = "select-window -t ${toString n}";
+  }) (lib.range 1 9)));
+  paneTableBind = altBinds {"M-p" = "switch-client -T panes";};
 in {
   catppuccin.tmux = {
     enable = true;
@@ -128,7 +160,16 @@ in {
     escapeTime = 0;
     baseIndex = 1;
     keyMode = "vi";
-    prefix = "C-b";
+    # Prefix differs by platform so nesting works: the Mac laptops are always
+    # the outer tmux (or no tmux at all), the Linux boxes are always the inner
+    # one reached over ssh. Alt+Space never collides with the C-b that the
+    # remote session is listening for, so an inner keystroke is never eaten by
+    # the outer server. Ghostty sets macos-option-as-alt, which turns Option
+    # into the ESC prefix that makes M-Space reach tmux at all.
+    prefix =
+      if pkgs.stdenv.isDarwin
+      then "M-Space"
+      else "C-b";
 
     plugins = [
       {
@@ -174,25 +215,14 @@ in {
 
       # Pane navigation — Alt+h/j/k/l (no prefix needed)
       # Wraps to previous/next window at pane boundaries
-      bind -n M-h if -F '#{pane_at_left}'   'previous-window' 'select-pane -L'
-      bind -n M-j if -F '#{pane_at_bottom}' '''               'select-pane -D'
-      bind -n M-k if -F '#{pane_at_top}'    '''               'select-pane -U'
-      bind -n M-l if -F '#{pane_at_right}'  'next-window'     'select-pane -R'
+      ${paneNavBinds}
 
       # Window (tab) switching — Alt+1-9 (no prefix needed)
-      bind -n M-1 select-window -t 1
-      bind -n M-2 select-window -t 2
-      bind -n M-3 select-window -t 3
-      bind -n M-4 select-window -t 4
-      bind -n M-5 select-window -t 5
-      bind -n M-6 select-window -t 6
-      bind -n M-7 select-window -t 7
-      bind -n M-8 select-window -t 8
-      bind -n M-9 select-window -t 9
+      ${windowBinds}
 
       # Pane switching — Alt+P enters "panes" key table, then 1-9 selects pane
       # Tmux owns the second keystroke so apps (helix) never see it
-      bind -n M-p switch-client -T panes
+      ${paneTableBind}
       bind -T panes 1 select-pane -t :.1
       bind -T panes 2 select-pane -t :.2
       bind -T panes 3 select-pane -t :.3
