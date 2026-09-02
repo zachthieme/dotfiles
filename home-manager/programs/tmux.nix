@@ -1,17 +1,51 @@
 # Tmux terminal multiplexer configuration
 # Navigation: Alt+h/j/k/l for panes, Alt+1-9 for windows
-{pkgs, ...}: {
+{pkgs, ...}: let
+  # Busy/idle marker in each window tab: spinner while Claude Code works,
+  # red ⚠ when it's blocked on you, ● for any other running process.
+  # Not in nixpkgs — pinned by commit.
+  tab-pulse = pkgs.tmuxPlugins.mkTmuxPlugin {
+    pluginName = "tab-pulse";
+    # Default rtpFilePath would be tab_pulse.tmux (mkTmuxPlugin swaps - for _)
+    # and mkTmuxPlugin does not check that the file exists.
+    rtpFilePath = "tab-pulse.tmux";
+    version = "0-unstable-2026-07-23";
+    src = pkgs.fetchFromGitHub {
+      owner = "rafaelsales";
+      repo = "tmux-tab-pulse";
+      rev = "8fce73606752d520a9869bb146201f1067316352";
+      hash = "sha256-vhQWu4uck7evlzvhgRNMkj7RRFazkgjKUgfn9DZ7nm8=";
+    };
+    # Scripts keep their `#!/usr/bin/env bash` shebangs: patchShebangs can't
+    # rewrite them (cp from the store leaves $target read-only), and the
+    # daemon shells out to awk/sed/grep unqualified anyway — bash and awk are
+    # ambient requirements either way.
+    meta.homepage = "https://github.com/rafaelsales/tmux-tab-pulse";
+  };
+in {
   catppuccin.tmux = {
     enable = true;
     extraConfig = ''
       set -g @catppuccin_window_status_style "rounded"
-      set -g @catppuccin_window_text "#W"
-      set -g @catppuccin_window_current_text "#W"
+      # Reserve one cell for tmux-tab-pulse's busy/idle glyph inside the tab
+      # chip. The glyph ends in a hardcoded #[default], which drops the chip's
+      # background, so restore catppuccin's own text style right after it.
+      # E: on the colour options because their values are themselves format
+      # references (#{@thm_surface_0}) and need the second expansion pass.
+      # The style sits outside the #{?...} — tmux splits conditional branches
+      # on commas, so a #[fg=...,bg=...] inside one tears the format in half.
+      set -g @catppuccin_window_text "#W#{?@tab_pulse,#{@tab_pulse}, }#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_text_color}]"
+      set -g @catppuccin_window_current_text "#W#{?@tab_pulse,#{@tab_pulse}, }#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_current_text_color}]"
       set -g status-left "#{E:@catppuccin_status_session}"
       set -g @catppuccin_date_time_text "%H:%M"
       set -g status-right "#{E:@catppuccin_status_date_time}"
     '';
   };
+
+  # Stable path for Claude Code's hooks to call — ~/.claude/settings.json is
+  # not managed here, so it must not reference a store path that changes on
+  # every plugin bump.
+  home.file.".local/share/tmux-tab-pulse".source = "${tab-pulse}/share/tmux-plugins/tab-pulse";
 
   programs.tmux = {
     enable = true;
@@ -22,6 +56,21 @@
     baseIndex = 1;
     keyMode = "vi";
     prefix = "C-b";
+
+    plugins = [
+      {
+        plugin = tab-pulse;
+        # Manual mode: catppuccin rewrites window-status-format when it loads,
+        # so let it own the format and carry #{@tab_pulse} inside
+        # @catppuccin_window_text instead (see catppuccin.tmux above).
+        # Both options are read once, at plugin load — they must be set before
+        # the run-shell that follows this block.
+        extraConfig = ''
+          set -g @tab-pulse-manual on
+          set -g @tab-pulse-ignore-commands "hx nvim vim vi less more man htop btop top fzf tig lazygit bat delta"
+        '';
+      }
+    ];
 
     extraConfig = ''
       # True color support
