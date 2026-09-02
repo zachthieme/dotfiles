@@ -21,7 +21,7 @@
     escapeTime = 0;
     baseIndex = 1;
     keyMode = "vi";
-    prefix = "M-Space";
+    prefix = "C-b";
 
     extraConfig = ''
       # True color support
@@ -90,6 +90,10 @@
 
       # New window in current path
       bind c new-window -c "#{pane_current_path}"
+
+      # Window (tab) rename/close — mirrors herdr's prefix+T / prefix+X
+      bind T command-prompt -I "#W" "rename-window -- '%%'"
+      bind X confirm-before -p "kill-window #W? (y/n)" kill-window
 
       # Clipboard — OSC 52 lets tmux set the terminal clipboard directly
       # Works on macOS + Linux without platform-specific tools (Ghostty, iTerm2, etc.)
