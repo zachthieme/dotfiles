@@ -1,6 +1,11 @@
 # Tmux terminal multiplexer configuration
 # Navigation: Alt+h/j/k/l for panes, Alt+1-9 for windows
-{pkgs, ...}: let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   # Busy/idle marker in each window tab: spinner while Claude Code works,
   # red ⚠ when it's blocked on you, ● for any other running process.
   # Not in nixpkgs — pinned by commit.
@@ -22,6 +27,36 @@
     # ambient requirements either way.
     meta.homepage = "https://github.com/rafaelsales/tmux-tab-pulse";
   };
+  # Idempotently merges tmux-tab-pulse's hook entries into Claude Code's user
+  # settings. Keyed on (event, matcher, command), so removing one by hand
+  # restores just that one, and herdr's own SessionStart hook is left alone —
+  # Claude Code merges hook entries across settings levels rather than
+  # replacing them.
+  hooksJq = pkgs.writeText "tab-pulse-claude-hooks.jq" ''
+    def ensure($event; $matcher; $cmd):
+      (.hooks //= {})
+      | (.hooks[$event] //= [])
+      | if any(.hooks[$event][];
+               (if $matcher == null
+                then (.matcher // null) == null
+                else (.matcher // null) == $matcher
+                end)
+               and any(.hooks[]?; (.command // null) == $cmd))
+        then .
+        else .hooks[$event] += [
+          (if $matcher == null
+           then {hooks: [{type: "command", command: $cmd}]}
+           else {matcher: $matcher, hooks: [{type: "command", command: $cmd}]}
+           end)
+        ]
+        end;
+    ensure("SessionStart"; null; $p + " idle")
+    | ensure("UserPromptSubmit"; null; $p + " working")
+    | ensure("Stop"; null; $p + " idle")
+    | ensure("Notification"; "agent_needs_input"; $p + " attention")
+    | ensure("Notification"; "permission_prompt"; $p + " attention")
+    | ensure("SessionEnd"; null; $p + " clear")
+  '';
 in {
   catppuccin.tmux = {
     enable = true;
@@ -34,13 +69,51 @@ in {
       # references (#{@thm_surface_0}) and need the second expansion pass.
       # The style sits outside the #{?...} — tmux splits conditional branches
       # on commas, so a #[fg=...,bg=...] inside one tears the format in half.
-      set -g @catppuccin_window_text "#W#{?@tab_pulse,#{@tab_pulse}, }#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_text_color}]"
-      set -g @catppuccin_window_current_text "#W#{?@tab_pulse,#{@tab_pulse}, }#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_current_text_color}]"
+      set -g @catppuccin_window_text "#W #{?@tab_pulse,#{@tab_pulse}, }#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_text_color}]"
+      set -g @catppuccin_window_current_text "#W #{?@tab_pulse,#{@tab_pulse}, }#[fg=#{@thm_fg},bg=#{E:@catppuccin_window_current_text_color}]"
       set -g status-left "#{E:@catppuccin_status_session}"
       set -g @catppuccin_date_time_text "%H:%M"
       set -g status-right "#{E:@catppuccin_status_date_time}"
     '';
   };
+
+  # tmux-tab-pulse only shows Claude's working/blocked states if Claude Code
+  # fires its hooks. settings.json can't be a home.file symlink (Claude Code
+  # writes to it), so merge the entries in on every switch instead — that way a
+  # new machine needs no manual step.
+  home.activation.tabPulseClaudeHooks = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    settings="${config.home.homeDirectory}/.claude/settings.json"
+    # $HOME, not the store path: the symlink below survives plugin bumps, and
+    # the same entry works on macOS (/Users) and Linux (/home).
+    state='bash "$HOME/.local/share/tmux-tab-pulse/scripts/claude-state.sh"'
+
+    if [ -e "$settings" ] && ! ${pkgs.jq}/bin/jq -e . "$settings" >/dev/null 2>&1; then
+      warnEcho "tmux-tab-pulse: $settings is not valid JSON, leaving Claude Code hooks alone"
+    else
+      existing='{}'
+      if [ -e "$settings" ]; then
+        existing="$(cat "$settings")"
+      fi
+      updated="$(printf '%s' "$existing" | ${pkgs.jq}/bin/jq --arg p "$state" -f ${hooksJq} || true)"
+
+      # Never write what jq didn't successfully produce — an empty or partial
+      # result here would truncate a live settings file.
+      if ! printf '%s' "$updated" | ${pkgs.jq}/bin/jq -e 'type == "object" and has("hooks")' >/dev/null 2>&1; then
+        warnEcho "tmux-tab-pulse: could not merge Claude Code hooks, leaving $settings alone"
+      else
+        before="$(printf '%s' "$existing" | ${pkgs.jq}/bin/jq -S .)"
+        after="$(printf '%s' "$updated" | ${pkgs.jq}/bin/jq -S .)"
+        if [ "$before" != "$after" ]; then
+          tmp="$(mktemp)"
+          printf '%s\n' "$updated" >"$tmp"
+          run mkdir -p "${config.home.homeDirectory}/.claude"
+          run cp "$tmp" "$settings"
+          rm -f "$tmp"
+          noteEcho "tmux-tab-pulse: merged Claude Code hooks into $settings"
+        fi
+      fi
+    fi
+  '';
 
   # Stable path for Claude Code's hooks to call — ~/.claude/settings.json is
   # not managed here, so it must not reference a store path that changes on
