@@ -8,7 +8,7 @@ function aero-tidy --description="Move all windows to their assigned workspaces"
 
         set -l target
         switch $bid
-            case com.mitchellh.ghostty com.github.wez.wezterm
+            case com.mitchellh.ghostty com.github.wez.wezterm pro.writer.mac
                 set target 1_Code
             case 'com.google.Chrome.app.faolnafnngnfdaknnbpnkhgohbobgegn'
                 set target 2_Mail
@@ -16,8 +16,10 @@ function aero-tidy --description="Move all windows to their assigned workspaces"
                 set target 3_IM
             case com.microsoft.teams2
                 set target 4_Teams
-            case com.brave.Browser com.google.Chrome
+            case com.brave.Browser com.google.Chrome com.apple.Safari
                 set target 5_Web
+            case com.microsoft.Excel
+                set target 6
         end
 
         if set -q target[1]
