@@ -51,8 +51,7 @@ function nw --description="Open notes workspace in tmux, commit and push on clos
     tmux send-keys pike Enter
 
     # Tab 3: herdr — AI agent workspace
-    tmux new-window -t $session -n herdr -c $notes_dir
-    tmux send-keys herdr Enter
+    tmux new-window -t $session -n ssh -c $notes_dir
 
     # Tab 4: shell
     tmux new-window -t $session -n shell -c $notes_dir
