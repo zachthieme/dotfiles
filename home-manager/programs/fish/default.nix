@@ -73,6 +73,7 @@
       fw = "pike -w Priority";
       fo = "pike -w Overdue";
       fu = "pike -w 'Next 3 Days'";
+      ta = "tmux attach";
       td = "pike --summary";
       vet = "npx vetinari";
       vi = "hx";
