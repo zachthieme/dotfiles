@@ -73,11 +73,16 @@ ctrl-alt-space = 'layout floating tiling' # float <-> tile
 # resolves identically on every darwin host regardless of user.
 ctrl-alt-0 = 'exec-and-forget /run/current-system/sw/bin/fish -c aero-tidy'
 
-# Summon a chat app's window to the focused workspace (aero-summon wrappers,
-# same dir as aero-tidy). M for Microsoft Teams, S for Slack, O for Outlook.
-ctrl-alt-m = 'exec-and-forget /run/current-system/sw/bin/fish -c teams-here'
+# Summon a window to the focused workspace (aero-summon wrappers, same dir as
+# aero-tidy). M for Messages, S for Slack, O for Outlook, N for the notes
+# terminal (the ghostty window running nw). Teams is V for video calls — the
+# thing it's actually for, and what separates it from Slack; T belongs to the
+# tiles layout above.
+ctrl-alt-m = 'exec-and-forget /run/current-system/sw/bin/fish -c messages-here'
 ctrl-alt-s = 'exec-and-forget /run/current-system/sw/bin/fish -c slack-here'
 ctrl-alt-o = 'exec-and-forget /run/current-system/sw/bin/fish -c outlook-here'
+ctrl-alt-n = 'exec-and-forget /run/current-system/sw/bin/fish -c notes-here'
+ctrl-alt-v = 'exec-and-forget /run/current-system/sw/bin/fish -c teams-here'
 
 
 # Focus — ctrl-alt-hjkl. Was cmd-arrows, which shadowed the universal macOS
