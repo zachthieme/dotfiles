@@ -23,6 +23,9 @@
     pink = "#f5c2e7";
   };
 
+  # Shared by the Overdue view and the HEY sync so the two can't drift.
+  overdueQuery = "open and @due < today";
+
   commonSettings = {
     notes_dir = config.dotfiles.notesDir;
     include = ["**/*.md"];
@@ -36,6 +39,11 @@
     refresh_interval = "5s";
     editor = "hx";
     due_dates_path = "~/.local/share/pike/due.json";
+    hey = {
+      command = "hey";
+      query = overdueQuery;
+      state_path = "~/.local/share/pike/hey-state.json";
+    };
     link_color = colors.sapphire;
     tag_colors = {
       risk = colors.red;
@@ -80,7 +88,7 @@ in {
         }
         {
           title = "Overdue";
-          query = "open and @due < today";
+          query = overdueQuery;
           sort = "due_asc";
           color = colors.red;
           order = 2;
