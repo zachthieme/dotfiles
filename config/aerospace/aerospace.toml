@@ -99,6 +99,20 @@ ctrl-alt-shift-j = 'move down'
 ctrl-alt-shift-k = 'move up'
 ctrl-alt-shift-l = 'move right'
 
+# Join — put the focused window into the neighbouring container, stacking
+# it with that window instead of splitting the row. Arrows rather than hjkl
+# because both letter layers are taken.
+# See: https://nikitabobko.github.io/AeroSpace/commands#join-with
+ctrl-alt-left = 'join-with left'
+ctrl-alt-right = 'join-with right'
+
+# Resize — ctrl-alt plus the +/- keys. `smart` grows or shrinks along
+# whichever axis the parent container splits on, so one pair covers both.
+# ctrl-alt-b above rebalances if things get lopsided.
+# See: https://nikitabobko.github.io/AeroSpace/commands#resize
+ctrl-alt-minus = 'resize smart -50'
+ctrl-alt-equal = 'resize smart +50'
+
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace
 # Move to a particular workspace
 cmd-1 = 'workspace 1_Code'  # terminal
