@@ -89,6 +89,9 @@ in {
       asciinema # terminal-session recorder (.cast)
       exiftool
       imagemagick
+      # notebook server + python kernel; lowPrio because its bundled python
+      # env collides with python3 in devPackages (plain python3 wins on PATH)
+      (lib.lowPrio jupyter)
       pngcheck
       pngcrush
       pngquant
