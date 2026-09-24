@@ -37,6 +37,11 @@ in
         local.hostname = hostname;
         local.username = user;
         local.isWork = isWork;
+        # Host-specific formulae from definitions.nix. Merges with the shared
+        # list in system/darwin.nix and the context list in contexts/system/;
+        # onActivation.cleanup = "uninstall" means anything absent from the
+        # union is removed, so this is the only place to declare a one-host brew.
+        homebrew.brews = host.brews;
       }
       home-manager.darwinModules.home-manager
       {

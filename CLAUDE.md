@@ -113,6 +113,7 @@ All host metadata lives in `hosts/definitions.nix`:
     # user = "zach";  # Optional: defaults to "zach"
     # isWork = false;  # Optional: defaults to false
     # packages = [ ];  # Optional: host-specific packages (defaults to [ ])
+    # brews = [ ];  # Optional: host-specific Homebrew formulae, macOS only (defaults to [ ])
     # packageProfile = "full";  # Optional: "core", "core+dev", or "full" (default)
     # allowFlakeUpdate = true;  # Optional: false blocks install.sh -f (prod-like hosts)
     # vcs = { name = "..."; email = "..."; };  # Optional: override default identity
@@ -130,6 +131,7 @@ All host metadata lives in `hosts/definitions.nix`:
 - `allowFlakeUpdate`: Whether `install.sh -f`/`-t` may update `flake.lock` on this host (default: `true`). Set to `false` on prod-like hosts (prod, the nomad Pis) so lock bumps are tested on a dev machine and arrive via a committed `flake.lock`.
 - `vcs`: Override default VCS identity for git/jj
 - `packages`: Host-specific additional packages (default: `[ ]`)
+- `brews`: Host-specific Homebrew formulae, macOS only (default: `[ ]`). Merged by the Darwin builder with the shared list in `system/darwin.nix` and the context list in `contexts/system/`
 
 The `isWork` flag selects which context modules to load. Add packages here rather than scattering conditionals throughout modules.
 
@@ -291,7 +293,7 @@ body = ''
 
 **For resource-constrained hosts**: Set `packageProfile = "core"` in `definitions.nix` to skip dev and heavy packages
 
-**Homebrew casks/formulas** (macOS only): Add to the appropriate context module in `contexts/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `system/darwin.nix` for all macOS machines. Note: `homebrew.onActivation.cleanup = "uninstall"` means anything not declared (including manual `brew install`s) is uninstalled on the next rebuild — declare everything.
+**Homebrew casks/formulas** (macOS only): For a single host, add the formula to that host's `brews` list in `definitions.nix`. Otherwise add to the appropriate context module in `contexts/system/` for context-specific apps (e.g., different browsers for home vs work), or add directly to `system/darwin.nix` for all macOS machines. Note: `homebrew.onActivation.cleanup = "uninstall"` means anything not declared (including manual `brew install`s) is uninstalled on the next rebuild — declare everything.
 
 **Requires Homebrew >= 6.0.0.** nix-darwin builds `onActivation.cleanup = "uninstall"` into `brew bundle --force-cleanup`, a flag brew only gained in 6.x; an older brew aborts activation with `Error: invalid option: --force-cleanup`.
 

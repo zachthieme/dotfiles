@@ -10,6 +10,9 @@
     user = "zach";
     isWork = false;
     packages = [];
+    # Host-specific Homebrew formulae (macOS only). Formulae shared by every mac
+    # live in system/darwin.nix, context-specific ones in contexts/system/.
+    brews = [];
     # Whether the host has a graphical environment. Gates GUI apps (ghostty)
     # off headless hosts. Default true; set false on Pis/servers.
     gui = true;
@@ -63,6 +66,13 @@
   rawHosts = {
     "cortex" = {
       system = "aarch64-darwin";
+    };
+    "MacMini" = {
+      system = "aarch64-darwin";
+      # Homebrew rather than nixpkgs: the formula ships the same signed binaries
+      # and launch daemon Tailscale distributes, so the CLI stays in step with
+      # the tailscaled it talks to.
+      brews = ["tailscale"];
     };
     "zthieme34911" = {
       system = "aarch64-darwin";
