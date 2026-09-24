@@ -17,7 +17,11 @@ persistent-workspaces = [
 ]
 
 after-login-command = []
-after-startup-command = []
+# Start the window-border highlighter with the WM rather than as a separate
+# `brew services` unit, so it shares AeroSpace's lifecycle (and can't be running
+# while AeroSpace isn't). Absolute path: the GUI app's PATH has no /opt/homebrew.
+# Options come from ~/.config/borders/bordersrc, which borders reads on launch.
+after-startup-command = ['exec-and-forget /opt/homebrew/bin/borders']
 
 
 # Start AeroSpace at login
