@@ -59,6 +59,18 @@
       } system configuration for ${config.local.hostname} activated"
     '';
 
+    # `sudo brew services start tailscale` chowns the keg's bin/ and tailscaled
+    # to root (sticky bit set). The next upgrade then leaves a keg the
+    # user-run `brew cleanup` cannot delete, and its exit 1 aborts activation.
+    # Hand every tailscale keg back to the user first — extraActivation runs as
+    # root, before the homebrew step. The running daemon is unaffected; the
+    # next `sudo brew services restart` re-chowns only the current keg.
+    system.activationScripts.extraActivation.text = lib.mkIf (lib.any (b: b.name == "tailscale") config.homebrew.brews) ''
+      if [ -d "${config.homebrew.prefix}/Cellar/tailscale" ]; then
+        chown -R ${config.local.username}:admin "${config.homebrew.prefix}/Cellar/tailscale"
+      fi
+    '';
+
     # Common system settings
     system.stateVersion = 6;
     # Determinate Nix owns Nix itself (flakes + nix-command are enabled out of
