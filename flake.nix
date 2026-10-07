@@ -4,6 +4,21 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
+    # Shared plumbing. Every tool input below pins its own copy of flake-utils
+    # (and flake-utils its own nix-systems), which meant five identical
+    # `systems` nodes in flake.lock and five churn lines on every update.
+    # Pointing them all here collapses that to one node each.
+    flake-utils = {
+      url = "github:numtide/flake-utils";
+      inputs.systems.follows = "systems";
+    };
+
+    # Current nix-systems/default drops x86_64-darwin, so the four tool flakes
+    # that used to pin a 2023 copy no longer expose `packages.x86_64-darwin`.
+    # Inert today (no Intel Mac in hosts/definitions.nix); if one is ever added,
+    # pin this back to da67096 or the tool overlays will fail on a missing attr.
+    systems.url = "github:nix-systems/default";
+
     nix-darwin = {
       url = "github:nix-darwin/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -21,26 +36,31 @@
 
     pike = {
       url = "github:zachthieme/pike";
+      inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     tick = {
       url = "github:zachthieme/tick";
+      inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     wen = {
       url = "github:zachthieme/wen";
+      inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     claude-code = {
       url = "github:sadjow/claude-code-nix";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.systems.follows = "systems";
     };
 
     grove = {
       url = "github:zachthieme/grove";
+      inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
