@@ -1,0 +1,14 @@
+{
+  "name": "dotfiles",
+  "owner": {
+    "name": "Zach Thieme"
+  },
+  "description": "Personal Claude Code mods, installed by home-manager/programs/claude.nix",
+  "plugins": [
+    {
+      "name": "next-steps",
+      "source": "./plugins/next-steps",
+      "description": "Per-project next steps that persist across /clear and sessions, shown above the prompt"
+    }
+  ]
+}

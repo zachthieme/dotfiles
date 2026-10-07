@@ -168,6 +168,16 @@ Fish functions live as real `.fish` files in `config/fish/functions/` (macOS-onl
 - **Tests**: `config/fish/functions/notes-test.fish` is the notes-system test suite. It runs hermetically as the `fish-functions` flake check (`nix flake check`) and in CI. Run it directly with `notes-test` in a shell, or `nix build .#checks.x86_64-linux.fish-functions`.
 - Functions that need Nix-interpolated values (store paths, config options) are the exception — keep those in Nix, but prefer reading environment variables (like `$NOTES`, set from `dotfiles.notesDir`) so the function can stay a plain file.
 
+### Claude Code Plugins (Mods)
+
+`claude/` is a local Claude Code plugin marketplace (`claude/.claude-plugin/marketplace.json`, named `dotfiles`), one folder per mod under `claude/plugins/`. `home-manager/programs/claude.nix` links it to `~/.local/share/claude-marketplace` (a stable path — Claude Code records it in `~/.claude/settings.json`, so it must not be a store path) and an activation step installs each listed plugin at user scope.
+
+- **Only where `claude` exists**: the step looks for a `claude` binary (Nix profile, `~/.local/bin`, Homebrew) and is a no-op on hosts without one.
+- **Add a mod**: copy its folder into `claude/plugins/`, list it in `marketplace.json` and in `plugins` in `claude.nix`. Don't copy the engine-generated `tsconfig.json` or `.claude-plugin/types/`.
+- **Edits land on the next switch** (the link points into the store), then `/reload-plugins`. Iterate on a mod in a dev-mods folder or with `claude --plugin-dir claude/plugins/<mod>` first.
+- Already-installed plugins are left alone, so `claude plugin disable` sticks across switches.
+- `$.store` data (e.g. next-steps' lists) is per machine; it does not sync.
+
 ### Application Configs
 
 Static dotfiles are organized under `config/<tool>/` and symlinked via `home.file` in `home-manager/base.nix`:

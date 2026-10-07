@@ -74,6 +74,7 @@ in {
   imports = [
     ./programs/bat.nix
     ./programs/btop.nix
+    ./programs/claude.nix
     ./programs/fish
     ./programs/ghostty.nix
     ./programs/git.nix
