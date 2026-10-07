@@ -11,6 +11,7 @@ const BAND = {
 const world = (on: any) => {
   mock.store(on)
   on('session.root', () => ({ value: '/proj' }))
+  on('session.repo', () => ({ value: null }))
   on('ui.log', (_: any, e: any) => {
     logged = e.text
     return { value: undefined }
@@ -32,14 +33,14 @@ const next = async ($: any, args: string) => {
 test('/next adds, lists, completes and clears', async ($, on) => {
   world(on)
 
-  expect(await next($, '')).toBe('No next steps for this project.')
+  expect(await next($, '')).toBe('No next steps for this repo.')
   await next($, 'push main')
   expect(await next($, 'delete stale branches')).toBe(
     '2 next steps:\n1. push main\n2. delete stale branches',
   )
   expect(await next($, 'done 1')).toBe('1 next step:\n1. delete stale branches')
   await next($, 'clear')
-  expect(await next($, '')).toBe('No next steps for this project.')
+  expect(await next($, '')).toBe('No next steps for this repo.')
 })
 
 test('steps saved earlier for this root are read back (survive /clear)', async ($, on) => {
@@ -48,6 +49,7 @@ test('steps saved earlier for this root are read back (survive /clear)', async (
     'steps:/elsewhere': ['other project'],
   })
   on('session.root', () => ({ value: '/proj' }))
+  on('session.repo', () => ({ value: null }))
   on('ui.log', (_: any, e: any) => {
     logged = e.text
     return { value: undefined }
@@ -106,4 +108,39 @@ test('/next from the Remote Control app answers with text, not a log line', asyn
   } as any)
   expect(r.text).toBe('1 next step:\n1. from phone')
   expect(logged).toBeUndefined()
+})
+
+test('steps are shared by every directory and worktree of one repo', async ($, on) => {
+  mock.store(on, { 'steps:/repo': ['ship it'], 'steps:/repo/sub': ['stale'] })
+  on('session.root', () => ({ value: '/repo-worktree/sub' }))
+  on('session.repo', () => ({
+    value: { root: '/repo', remote: null, internal: false, name: null },
+  }))
+  on('ui.log', (_: any, e: any) => {
+    logged = e.text
+    return { value: undefined }
+  })
+
+  expect(await next($, '')).toBe('1 next step:\n1. ship it')
+  await next($, 'and tag it')
+
+  const other = await $.tool.call({ tool: 'mcp__next-steps__list' } as any)
+  expect((other as any).result).toBe('1. ship it\n2. and tag it')
+})
+
+test('different repos keep separate lists', async ($, on) => {
+  mock.store(on, { 'steps:/a': ['for a'], 'steps:/b': ['for b'] })
+  let root = '/a'
+  on('session.root', () => ({ value: root }))
+  on('session.repo', () => ({
+    value: { root, remote: null, internal: false, name: null },
+  }))
+  on('ui.log', (_: any, e: any) => {
+    logged = e.text
+    return { value: undefined }
+  })
+
+  expect(await next($, '')).toBe('1 next step:\n1. for a')
+  root = '/b'
+  expect(await next($, '')).toBe('1 next step:\n1. for b')
 })

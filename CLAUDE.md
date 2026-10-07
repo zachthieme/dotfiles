@@ -174,8 +174,8 @@ Fish functions live as real `.fish` files in `config/fish/functions/` (macOS-onl
 
 - **Only where `claude` exists**: the step looks for a `claude` binary (Nix profile, `~/.local/bin`, Homebrew) and is a no-op on hosts without one.
 - **Add a mod**: copy its folder into `claude/plugins/`, list it in `marketplace.json` and in `plugins` in `claude.nix`. Don't copy the engine-generated `tsconfig.json` or `.claude-plugin/types/`.
-- **Edits land on the next switch** (the link points into the store), then `/reload-plugins`. Iterate on a mod in a dev-mods folder or with `claude --plugin-dir claude/plugins/<mod>` first.
-- Already-installed plugins are left alone, so `claude plugin disable` sticks across switches.
+- **Bump `version` in the mod's `plugin.json` for edits to land.** Claude Code runs installed mods from a per-version cache, so the next switch runs `claude plugin update` only when the folder's version differs from the installed one; then restart claude. Iterate on a mod in a dev-mods folder or with `claude --plugin-dir claude/plugins/<mod>` first.
+- Already-installed plugins are only updated, never re-enabled, so `claude plugin disable` sticks across switches.
 - `$.store` data (e.g. next-steps' lists) is per machine; it does not sync.
 
 ### Application Configs

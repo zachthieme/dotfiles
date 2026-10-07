@@ -4,12 +4,18 @@ import type { EngineInterface, Register } from 'claude-code'
 import type { Steps } from '../types'
 
 // The band draws from session state; $.store is the durable copy that
-// survives /clear and new sessions. Steps are kept per project root.
+// survives /clear and new sessions. Steps are kept per repository.
 const steps = atom({ plugin: 'next-steps', key: 'steps' } as const, [])
 
 type Host = EngineInterface
 
-const storeKey = async ($: Host) => `steps:${await $.session.root()}`
+// Keyed by the git repository's root (the main working tree's, for a
+// worktree), so subdirectories and worktrees of one repo share a list.
+// Outside a repository, fall back to the session's project root.
+const storeKey = async ($: Host) => {
+  const repo = await $.session.repo()
+  return `steps:${repo?.root ?? (await $.session.root())}`
+}
 
 const load = async ($: Host): Promise<Steps> => {
   const saved = await $.store.get(await storeKey($))
@@ -35,7 +41,7 @@ const change = async ($: Host, fn: (list: Steps) => Steps) => {
 
 const format = (list: Steps) =>
   list.length === 0
-    ? 'No next steps for this project.'
+    ? 'No next steps for this repo.'
     : list.map((s, i) => `${i + 1}. ${s}`).join('\n')
 
 // /next output goes out through $.ui.log rather than the command's `text`,
@@ -64,12 +70,12 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     await $.command.register({
       name: 'next',
-      description: 'Next steps for this project: list, add <text>, done <n>, clear',
+      description: 'Next steps for this repo: list, add <text>, done <n>, clear',
     })
     await $.tool.register({
       name: 'add',
       description:
-        "Save next steps for this project so the user remembers them after the session ends. They persist across /clear and new sessions and show above the prompt. Use when the user asks to note, remember or save a next step / todo for later.",
+        "Save next steps for this repo so the user remembers them after the session ends. They persist across /clear and new sessions and show above the prompt. Use when the user asks to note, remember or save a next step / todo for later.",
       inputSchema: {
         type: 'object',
         properties: {
@@ -84,7 +90,7 @@ export const register: Register = on => {
     })
     await $.tool.register({
       name: 'list',
-      description: "List this project's saved next steps, numbered.",
+      description: "List this repo's saved next steps, numbered.",
     })
     await $.tool.register({
       name: 'done',

@@ -1,6 +1,6 @@
 {
   "name": "next-steps",
-  "version": "0.1.0",
-  "description": "Per-project next steps that persist across /clear and sessions, shown above the prompt",
+  "version": "0.2.0",
+  "description": "Per-repo next steps that persist across /clear and sessions, shown above the prompt",
   "types": "./types/index.d.ts"
 }
