@@ -152,6 +152,13 @@
             touch $out
           '';
 
+        # The Voice Memos transcriber (home-manager/programs/voice-memos.nix) only
+        # runs on a mac, but writeShellApplication shellchecks it at build time on
+        # any platform. A dummy model path keeps the 1.6 GB download out of CI.
+        transcribe-memos = pkgs.callPackage ./packages/transcribe-memos.nix {
+          model = "/nonexistent/ggml-large-v3-turbo.bin";
+        };
+
         # Runtime coverage beyond lint: actually execute install.sh's arg-parsing
         # path (--help exits before any nix/curl/sudo work) so a regression in the
         # early script structure fails `nix flake check`, not a fresh machine.

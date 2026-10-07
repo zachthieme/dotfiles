@@ -38,6 +38,7 @@ in {
     packageProfile,
     packages,
     gui,
+    transcribeVoiceMemos,
     ...
   }: {
     home.username = user;
@@ -47,6 +48,7 @@ in {
     dotfiles.vcs = vcs;
     dotfiles.packageProfile = packageProfile;
     dotfiles.gui = gui;
+    dotfiles.voiceMemos.enable = transcribeVoiceMemos;
   };
 
   # Check if the system is Darwin (macOS)

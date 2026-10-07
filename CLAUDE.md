@@ -116,6 +116,7 @@ All host metadata lives in `hosts/definitions.nix`:
     # brews = [ ];  # Optional: host-specific Homebrew formulae, macOS only (defaults to [ ])
     # packageProfile = "full";  # Optional: "core", "core+dev", or "full" (default)
     # allowFlakeUpdate = true;  # Optional: false blocks install.sh -f (prod-like hosts)
+    # transcribeVoiceMemos = false;  # Optional: Voice Memos transcription agent, macOS only
     # vcs = { name = "..."; email = "..."; };  # Optional: override default identity
   };
   # ... more hosts
@@ -132,6 +133,7 @@ All host metadata lives in `hosts/definitions.nix`:
 - `vcs`: Override default VCS identity for git/jj
 - `packages`: Host-specific additional packages (default: `[ ]`)
 - `brews`: Host-specific Homebrew formulae, macOS only (default: `[ ]`). Merged by the Darwin builder with the shared list in `system/darwin.nix` and the context list in `contexts/system/`
+- `transcribeVoiceMemos`: Run the local Voice Memos transcription agent (default: `false`; macOS only, enabled on MacMini). See "Voice Memo Transcription" below.
 
 The `isWork` flag selects which context modules to load. Add packages here rather than scattering conditionals throughout modules.
 
@@ -177,6 +179,19 @@ Fish functions live as real `.fish` files in `config/fish/functions/` (macOS-onl
 - **Bump `version` in the mod's `plugin.json` for edits to land.** Claude Code runs installed mods from a per-version cache, so the next switch runs `claude plugin update` only when the folder's version differs from the installed one; then restart claude. Iterate on a mod in a dev-mods folder or with `claude --plugin-dir claude/plugins/<mod>` first.
 - Already-installed plugins are only updated, never re-enabled, so `claude plugin disable` sticks across switches.
 - `$.store` data (e.g. next-steps' lists) is per machine; it does not sync.
+
+### Voice Memo Transcription
+
+On hosts with `transcribeVoiceMemos = true` (MacMini only), a launchd agent turns each new Apple Voice Memo into Markdown in `~/Documents/Voice Memo Transcripts/`. It runs fully locally: whisper.cpp (built with Metal on Apple Silicon) and the `large-v3-turbo` model. No cloud and no Homebrew.
+
+- **Where things live**: the logic is `config/transcribe-memos/transcribe-memos.sh`, a real file. `packages/transcribe-memos.nix` wraps it with `writeShellApplication`, so its dependencies are store paths and shellcheck runs at build time. `home-manager/programs/voice-memos.nix` holds the option, the model, and the agent. The `transcribe-memos` flake check shellchecks the script on Linux.
+- **Model**: a `fetchurl` of `ggml-large-v3-turbo.bin` (1.6 GB), pinned to a commit of `ggerganov/whisper.cpp` on Hugging Face and verified against the file's Git LFS sha256. To change models, update the URL and the hash together.
+- **Agent**: `org.nix-community.home.transcribe-memos` (Home Manager `launchd.agents`). It runs at load, whenever the Recordings folder changes (`WatchPaths`), and every 15 minutes as a fallback.
+- **Idempotent**: a memo counts as done when some transcript's front matter has `source: "<file>.m4a"`. Deleting a transcript re-queues its memo. Renaming a memo afterwards does not create a duplicate.
+- **Read-only on the container**: audio is read in place. `CloudRecordings.db` is copied to a temp dir before the title query, because even a `mode=ro` connection to a WAL database opens its `-shm` file.
+- **Full Disk Access goes to `/bin/bash`, not the script.** TCC keys grants on the binary path, and the script's store path changes on every rebuild. The agent runs `/bin/bash -c <store path>` without `exec`, so the script is a child that inherits bash's grant. Tradeoff: any launchd job that runs as you and starts `/bin/bash` also gets Full Disk Access.
+- **Log**: `~/Library/Logs/transcribe-memos.log`. Run by hand with `transcribe-memos`, or trigger the agent with `launchctl kickstart gui/$(id -u)/org.nix-community.home.transcribe-memos`.
+- **Disable**: set `transcribeVoiceMemos = false` (or remove the line) and rebuild. Home Manager unloads the agent and removes its plist. Transcripts, the log, and `~/.local/state/transcribe-memos/` stay; delete them by hand if you want. Also remove `/bin/bash` from Full Disk Access if nothing else needs it. The model stays in the store until the next GC.
 
 ### Application Configs
 

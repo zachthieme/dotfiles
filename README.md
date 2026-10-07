@@ -60,6 +60,7 @@ Hosts are defined in `hosts/definitions.nix`. Current hosts include:
 | Host                 | System         | Context | Profile |
 | -------------------- | -------------- | ------- | ------- |
 | cortex               | aarch64-darwin | home    | full    |
+| MacMini              | aarch64-darwin | home    | full    |
 | zthieme34911         | aarch64-darwin | work    | full    |
 | prod, dev, util      | x86_64-linux   | home    | full    |
 | claude               | x86_64-linux   | home    | full    |

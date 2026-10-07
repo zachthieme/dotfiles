@@ -16,6 +16,9 @@
     # Whether the host has a graphical environment. Gates GUI apps (ghostty)
     # off headless hosts. Default true; set false on Pis/servers.
     gui = true;
+    # Transcribe new Apple Voice Memos to Markdown with a local whisper.cpp
+    # launchd agent (home-manager/programs/voice-memos.nix). macOS only.
+    transcribeVoiceMemos = false;
     # When false, install.sh refuses -f/--flake-update on this host:
     # lock bumps must land on a dev machine first, get committed, and
     # arrive here via a plain rebuild of the committed flake.lock.
@@ -73,6 +76,7 @@
       # and launch daemon Tailscale distributes, so the CLI stays in step with
       # the tailscaled it talks to.
       brews = ["tailscale"];
+      transcribeVoiceMemos = true;
     };
     "zthieme34911" = {
       system = "aarch64-darwin";

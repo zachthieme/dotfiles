@@ -84,6 +84,7 @@ in {
     ./programs/pike.nix
     ./programs/ssh.nix
     ./programs/tmux.nix
+    ./programs/voice-memos.nix
     ./programs/wen.nix
   ];
 
