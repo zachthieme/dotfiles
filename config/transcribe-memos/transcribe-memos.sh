@@ -4,10 +4,17 @@
 # Built by packages/transcribe-memos.nix with writeShellApplication, which adds
 # the shebang, `set -o errexit -o nounset -o pipefail`, a PATH of store paths
 # (whisper-cpp, ffmpeg, coreutils, sqlite, ...) and DEFAULT_WHISPER_MODEL.
-# Run by the launchd agent in home-manager/programs/voice-memos.nix.
+# Run by the launchd agent in system/voice-memos.nix as `/bin/bash <this file>`,
+# so it must stay bash 3.2 compatible (no mapfile, `declare -A`, ${var,,} etc.).
 #
-# Strictly read-only on the Voice Memos container: audio is read in place, and
-# CloudRecordings.db is copied out before it is queried (see "Memo metadata").
+# Full Disk Access belongs to /bin/bash alone, and TCC judges whichever binary
+# opens a file: a Nix tool opening anything in the container is denied. So
+# bash itself does every open there — globs, and `<` redirects (the fork that
+# applies a redirect is still /bin/bash) — and the tools only see copies in the
+# scratch dir. Metadata (stat, date -r) is not gated and needs no care.
+#
+# Strictly read-only on the Voice Memos container: memos and CloudRecordings.db
+# are copied out before anything reads them.
 #
 # Every path can be overridden from the environment, which is how it is
 # tested off-mac: VOICE_MEMOS_DIR, TRANSCRIPTS_DIR, WHISPER_MODEL,
@@ -63,7 +70,9 @@ trap 'rm -rf "$work" "$lock_dir"' EXIT
 if [[ ! -e "$recordings" ]]; then
   die "Voice Memos folder not found: $recordings — check that Voice Memos syncs with iCloud on this Mac (System Settings > Apple Account > iCloud), and that /bin/bash has Full Disk Access (TCC can hide the folder entirely)"
 fi
-if ! ls "$recordings" >/dev/null 2>&1; then
+# Opened by bash, not ls (see top). A denied open of a directory fails, while
+# a denied glob would silently look like an empty folder.
+if ! { :; } <"$recordings" 2>/dev/null; then
   die "cannot read $recordings — grant Full Disk Access to /bin/bash in System Settings > Privacy & Security > Full Disk Access"
 fi
 [[ -r "$model" ]] || die "whisper model not readable: $model"
@@ -73,20 +82,19 @@ mkdir -p "$out_dir"
 # Keyed on the `source:` line in each transcript, not on the transcript's file
 # name: the name comes from the memo title, which can change after the fact.
 # Deleting a transcript re-queues its memo.
-declare -A have=()
+# A list file, since bash 3.2 has no associative arrays.
+have="$work/have"
+: >"$have"
 shopt -s nullglob
 existing=("$out_dir"/*.md)
 if ((${#existing[@]})); then
-  while IFS= read -r line; do
-    src=${line#source: \"}
-    have["${src%\"}"]=1
-  done < <(grep -h -m1 '^source: "' "${existing[@]}" || true)
+  grep -h -m1 '^source: "' "${existing[@]}" | sed 's/^source: "//; s/"$//' >"$have" || true
 fi
 
 pending=()
 for f in "$recordings"/*.m4a; do
   [[ -f "$f" ]] || continue
-  [[ -n "${have[$(basename "$f")]+x}" ]] && continue
+  grep -Fxq -- "$(basename "$f")" "$have" && continue
   pending+=("$f")
 done
 shopt -u nullglob
@@ -101,14 +109,14 @@ log "${#pending[@]} memo(s) to transcribe"
 # CloudRecordings.db holds each memo's real title and date. It is a WAL
 # database, and even a `mode=ro` connection to a WAL database opens (and can
 # write) its -shm file — so it is copied to the scratch dir and queried there,
-# leaving the container untouched. A copy torn by a concurrent write only loses
+# leaving the container untouched. (Copied with redirects, not cp; see top.) A copy torn by a concurrent write only loses
 # the newest WAL frames (SQLite checksums them), and a missing row falls back to
 # the file name below.
 db="$recordings/CloudRecordings.db"
 dbcopy=""
 title_expr=""
-if [[ -r "$db" ]] && cp "$db" "$work/db.sqlite" 2>/dev/null; then
-  if [[ -r "$db-wal" ]]; then cp "$db-wal" "$work/db.sqlite-wal" 2>/dev/null || true; fi
+if cat 2>/dev/null <"$db" >"$work/db.sqlite"; then
+  if [[ -e "$db-wal" ]]; then cat 2>/dev/null <"$db-wal" >"$work/db.sqlite-wal" || true; fi
   dbcopy="$work/db.sqlite"
   # The title column has moved across macOS releases; use whichever exist.
   cols=$(sqlite3 "$dbcopy" "SELECT name FROM pragma_table_info('ZCLOUDRECORDING');" 2>/dev/null || true)
@@ -188,26 +196,34 @@ transcribe() {
   name=$(safe_name "$title")
   stamp=$(date -d "@$epoch" '+%Y-%m-%d_%H%M') || return 1
 
-  secs=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f") || secs=0
+  # Copied out by a bash redirect so ffprobe/ffmpeg never open the container
+  # (see top). A copy, not a pipe: an m4a's index can sit at the end of the
+  # file, which ffmpeg can only reach by seeking.
+  cat <"$f" >"$work/memo.m4a" || {
+    log "could not read memo: $base"
+    return 1
+  }
+  secs=$(ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$work/memo.m4a") || secs=0
   secs=${secs%.*}
   secs=${secs:-0}
   duration=$(printf '%02d:%02d:%02d' $((secs / 3600)) $((secs % 3600 / 60)) $((secs % 60)))
 
   log "transcribing: $base -> ${stamp}_$name.md ($duration)"
-  ffmpeg -nostdin -hide_banner -loglevel error -y -i "$f" -ar 16000 -ac 1 -c:a pcm_s16le "$work/audio.wav" ||
+  ffmpeg -nostdin -hide_banner -loglevel error -y -i "$work/memo.m4a" -ar 16000 -ac 1 -c:a pcm_s16le "$work/audio.wav" ||
     {
       log "ffmpeg failed: $base"
+      rm -f "$work/memo.m4a"
       return 1
     }
   # -np: no progress/info prints; the transcript itself goes to out.txt.
   whisper-cli -np -l auto -m "$model" -f "$work/audio.wav" -otxt -of "$work/out" >/dev/null ||
     {
       log "whisper-cli failed: $base"
-      rm -f "$work/audio.wav"
+      rm -f "$work/memo.m4a" "$work/audio.wav"
       return 1
     }
   text=$(sed 's/^[[:space:]]*//' "$work/out.txt")
-  rm -f "$work/audio.wav" "$work/out.txt"
+  rm -f "$work/memo.m4a" "$work/audio.wav" "$work/out.txt"
   [[ -n "$text" ]] || text="_(no speech detected)_"
 
   target="$out_dir/${stamp}_$name.md"

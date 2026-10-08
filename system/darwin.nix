@@ -7,6 +7,8 @@
   config,
   ...
 }: {
+  imports = [./voice-memos.nix];
+
   # Accept arguments for user-specific settings with defaults
   options = {
     local = {
@@ -126,6 +128,7 @@
         "bartender"
         "dropbox"
         "ghostty"
+        "hey-desktop"
         "homerow"
         "keycastr"
         "logi-options+"

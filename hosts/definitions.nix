@@ -17,7 +17,7 @@
     # off headless hosts. Default true; set false on Pis/servers.
     gui = true;
     # Transcribe new Apple Voice Memos to Markdown with a local whisper.cpp
-    # launchd agent (home-manager/programs/voice-memos.nix). macOS only.
+    # launchd agent (system/voice-memos.nix). macOS only.
     transcribeVoiceMemos = false;
     # When false, install.sh refuses -f/--flake-update on this host:
     # lock bumps must land on a dev machine first, get committed, and
