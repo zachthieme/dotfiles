@@ -128,7 +128,6 @@
         "bartender"
         "dropbox"
         "ghostty"
-        "hey-desktop"
         "homerow"
         "keycastr"
         "logi-options+"

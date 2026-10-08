@@ -63,6 +63,12 @@
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # HEY email CLI. Deliberately NOT following our nixpkgs: it builds with
+    # go_1_27 and go.mod requires >= 1.27.0, but our pin only has 1.27rc2, which
+    # the Go toolchain rejects. Its own lock costs a second nixpkgs eval; add
+    # `inputs.nixpkgs.follows = "nixpkgs";` once `install.sh -f` brings a final 1.27.
+    hey-cli.url = "github:basecamp/hey-cli";
   };
 
   outputs = {
@@ -76,6 +82,7 @@
     tick,
     wen,
     grove,
+    hey-cli,
     ...
   }: let
     lib = nixpkgs.lib;
@@ -89,6 +96,8 @@
     customOverlays = [
       (mkOverlay "claude-code" claude-code)
       (mkOverlay "grove" grove)
+      # Not "hey": nixpkgs already has a `hey` (an HTTP load generator)
+      (mkOverlay "hey-cli" hey-cli)
       (mkOverlay "pike" pike)
       (mkOverlay "tick" tick)
       (mkOverlay "wen" wen)

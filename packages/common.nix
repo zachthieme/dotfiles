@@ -88,6 +88,7 @@ in {
     heavyPackages = with pkgs; [
       asciinema # terminal-session recorder (.cast)
       exiftool
+      hey-cli # HEY email CLI (`hey`); workstation-only, keeps it off the Pis/prod
       imagemagick
       # notebook server + python kernel; lowPrio because its bundled python
       # env collides with python3 in devPackages (plain python3 wins on PATH)

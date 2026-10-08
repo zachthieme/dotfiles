@@ -86,6 +86,24 @@
         "type": "github"
       }
     },
+    "hey-cli": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1791282884,
+        "narHash": "sha256-albhAi7fBssYEJ9Xnxx/A1bDTNEhnj1yq1CUbgV3xmQ=",
+        "owner": "basecamp",
+        "repo": "hey-cli",
+        "rev": "9dfe00fb6594a4da5272b8ed0692f494229f14d2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "basecamp",
+        "repo": "hey-cli",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -127,6 +145,22 @@
       }
     },
     "nixpkgs": {
+      "locked": {
+        "lastModified": 1787394516,
+        "narHash": "sha256-pRGOQSClnXNI2iLUG6DYpsGvYcuw0drOutVZFTJNw90=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c8f90650c15282fa8656a041bfbbd2403997a9a7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
       "locked": {
         "lastModified": 1785975029,
         "narHash": "sha256-X44cn5rzytELc3NNoQsh0aLkjWA/QzPfc6HPQmsG3sU=",
@@ -171,9 +205,10 @@
         "claude-code": "claude-code",
         "flake-utils": "flake-utils",
         "grove": "grove",
+        "hey-cli": "hey-cli",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": "nixpkgs_2",
         "pike": "pike",
         "systems": "systems",
         "tick": "tick",
