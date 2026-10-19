@@ -21,10 +21,13 @@ in {
   # or Homebrew — or not at all, in which case this is a no-op. Installs are
   # idempotent; an already-installed plugin is only updated (never
   # re-enabled), so disabling one with `claude plugin disable` sticks across
-  # switches.
+  # switches. The new generation's claude comes first: this runs before
+  # installPackages, so the profile still holds the previous generation's
+  # claude, which may lack flags this script uses.
   home.activation.claudePlugins = lib.hm.dag.entryAfter ["writeBoundary" "linkGeneration"] ''
     claude=""
     for c in \
+      "$newGenPath/home-path/bin/claude" \
       "${config.home.profileDirectory}/bin/claude" \
       "${config.home.homeDirectory}/.local/bin/claude" \
       /opt/homebrew/bin/claude \
