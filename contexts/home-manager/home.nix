@@ -4,6 +4,7 @@
 {pkgs, ...}: {
   imports = [
     ../../home-manager/base.nix
+    ../../home-manager/programs/claude.nix
   ];
 
   home.file = {

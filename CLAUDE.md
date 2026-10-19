@@ -174,6 +174,7 @@ Fish functions live as real `.fish` files in `config/fish/functions/` (macOS-onl
 
 `claude/` is a local Claude Code plugin marketplace (`claude/.claude-plugin/marketplace.json`, named `dotfiles`), one folder per mod under `claude/plugins/`. `home-manager/programs/claude.nix` links it to `~/.local/share/claude-marketplace` (a stable path — Claude Code records it in `~/.claude/settings.json`, so it must not be a store path) and an activation step installs each listed plugin at user scope.
 
+- **Home context only**: `claude.nix` is imported by `contexts/home-manager/home.nix` (alongside the `claude-code` package), so work machines get neither claude nor the mods.
 - **Only where `claude` exists**: the step looks for a `claude` binary (Nix profile, `~/.local/bin`, Homebrew) and is a no-op on hosts without one.
 - **Add a mod**: copy its folder into `claude/plugins/`, list it in `marketplace.json` and in `plugins` in `claude.nix`. Don't copy the engine-generated `tsconfig.json` or `.claude-plugin/types/`.
 - **Bump `version` in the mod's `plugin.json` for edits to land.** Claude Code runs installed mods from a per-version cache, so the next switch runs `claude plugin update` only when the folder's version differs from the installed one; then restart claude. Iterate on a mod in a dev-mods folder or with `claude --plugin-dir claude/plugins/<mod>` first.

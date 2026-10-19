@@ -1,6 +1,8 @@
 # Claude Code plugins (mods) from claude/ — a local marketplace.
 # Add a mod: drop its folder in claude/plugins/, list it in
 # claude/.claude-plugin/marketplace.json and in `plugins` below.
+# Home context only (imported by contexts/home-manager/home.nix): work
+# machines get neither claude-code nor these mods.
 {
   config,
   lib,
