@@ -76,6 +76,11 @@
       ta = "tmux attach";
       td = "pike --summary";
       vet = "npx vetinari";
+      # GitHub issue queues (expand in place, so extra filters can be appended)
+      ghnr = "gh issue list -S '-label:ready-for-agent' -L 50";
+      ghpv = "gh issue list -S 'label:pending-verify' -L 50";
+      ghr = "gh issue list -S 'label:ready-for-agent' -L 50";
+      ghtr = "gh issue list -S 'label:needs-triage' -L 50";
       vi = "hx";
       ls = "eza";
       ll = "eza -la --git";
