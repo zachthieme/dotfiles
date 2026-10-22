@@ -168,6 +168,7 @@ Fish functions live as real `.fish` files in `config/fish/functions/` (macOS-onl
 - **Add/edit a function**: Edit the `.fish` file directly — no Nix changes needed. Use `fish -n <file>` to syntax-check and `fish_indent` to format.
 - **Do not** add function bodies to `programs.fish.functions` in Nix — that reintroduces the `''` escaping trap and makes functions untestable.
 - **Tests**: `config/fish/functions/notes-test.fish` is the notes-system test suite. It runs hermetically as the `fish-functions` flake check (`nix flake check`) and in CI. Run it directly with `notes-test` in a shell, or `nix build .#checks.x86_64-linux.fish-functions`.
+- **Keep `aliases` current**: `config/fish/functions/aliases.fish` is the user's cheat sheet for every abbreviation and user-facing function. Whenever you add, rename, or remove an abbreviation (`shellAbbrs` in `home-manager/programs/fish/default.nix`) or a public function (any `.fish` file not prefixed with `_`, including `darwin/`), update `aliases.fish` in the same change. macOS-only functions go in its `Darwin`-guarded section.
 - Functions that need Nix-interpolated values (store paths, config options) are the exception — keep those in Nix, but prefer reading environment variables (like `$NOTES`, set from `dotfiles.notesDir`) so the function can stay a plain file.
 
 ### Claude Code Plugins (Mods)

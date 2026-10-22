@@ -65,6 +65,7 @@
       set -gx LS_COLORS (vivid generate catppuccin-mocha)
     '';
 
+    # Keep config/fish/functions/aliases.fish in sync when adding or removing abbreviations.
     shellAbbrs = {
       j = "jrnl";
       jl = "jrnl --format short";
