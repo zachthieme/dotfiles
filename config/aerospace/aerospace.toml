@@ -62,7 +62,7 @@ outer.right = 10
 #   2. Adding shift moves the thing instead of moving you.
 #
 # ctrl-alt is the window layer because macOS barely uses it, and neither tmux
-# (alt-space prefix, alt-hjkl) nor herdr (ctrl-b prefix) binds it.
+# (ctrl-b / ctrl-space prefix, alt-hjkl) nor herdr (ctrl-b prefix) binds it.
 
 # Layout — ctrl-alt + the first letter of what you want.
 # Press T or A twice to flip that layout's orientation.

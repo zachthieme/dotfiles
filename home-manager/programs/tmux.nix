@@ -1,5 +1,5 @@
 # Tmux terminal multiplexer configuration
-# Prefix: Alt+Space on macOS, Ctrl+b everywhere else (see `prefix` below)
+# Prefix: Ctrl+b locally, Ctrl+Space when the server was started over ssh
 # Navigation: Alt+h/j/k/l for panes, Alt+1-9 for windows
 {
   config,
@@ -59,11 +59,11 @@
     | ensure("SessionEnd"; null; $p + " clear")
   '';
   # Every host binds the Alt keys below with no prefix, which is what breaks
-  # when tmux nests: the macOS server holding an ssh pane grabs the keystroke
-  # and the tmux on the far end never sees it. The prefix split above doesn't
-  # help here — these have no prefix to disambiguate.
+  # when tmux nests: the local server holding an ssh pane grabs the keystroke
+  # and the tmux on the far end never sees it. The prefix split doesn't help
+  # here — these have no prefix to disambiguate.
   #
-  # So on the outer (macOS) server, forward the key instead whenever the pane
+  # So forward the key instead whenever the pane
   # is running ssh/mosh *and* has switched to the alternate screen. That pair
   # is the closest an outer tmux can get to "there is a full-screen program
   # over there": a remote tmux always trips both, a bare remote shell trips
@@ -71,11 +71,9 @@
   # forward and everything else keeps local navigation, decided per keystroke
   # rather than by a mode you have to remember you're in.
   remotePane = "#{&&:#{m/r:^(ssh|mosh)$,#{pane_current_command}},#{alternate_on}}";
-  # Linux hosts are always the inner tmux, so they bind these unconditionally.
-  altBind = key: action:
-    if pkgs.stdenv.isDarwin
-    then "bind -n ${key} if -F '${remotePane}' 'send-keys ${key}' { ${action} }"
-    else "bind -n ${key} ${action}";
+  # Any host can be the outer tmux, so every host binds them this way; on an
+  # inner server the panes run a shell, not ssh, so the check never fires.
+  altBind = key: action: "bind -n ${key} if -F '${remotePane}' 'send-keys ${key}' { ${action} }";
   altBinds = binds: lib.concatStringsSep "\n" (lib.mapAttrsToList altBind binds);
 
   paneNavBinds = altBinds {
@@ -160,16 +158,6 @@ in {
     escapeTime = 0;
     baseIndex = 1;
     keyMode = "vi";
-    # Prefix differs by platform so nesting works: the Mac laptops are always
-    # the outer tmux (or no tmux at all), the Linux boxes are always the inner
-    # one reached over ssh. Alt+Space never collides with the C-b that the
-    # remote session is listening for, so an inner keystroke is never eaten by
-    # the outer server. Ghostty sets macos-option-as-alt, which turns Option
-    # into the ESC prefix that makes M-Space reach tmux at all.
-    prefix =
-      if pkgs.stdenv.isDarwin
-      then "M-Space"
-      else "C-b";
 
     plugins = [
       {
@@ -187,6 +175,17 @@ in {
     ];
 
     extraConfig = ''
+      # Prefix — C-b on the machine you're sitting at, C-Space on a server
+      # started from an ssh session, so a nested inner tmux never has its
+      # prefix eaten by the outer one. Decided once, from the environment the
+      # server started in: a server started on the console (or by systemd)
+      # and attached to later over ssh keeps C-b.
+      if-shell '[ -n "$SSH_CONNECTION" ]' {
+        unbind C-b
+        set -g prefix C-Space
+        bind C-Space send-prefix
+      }
+
       # True color support
       set -as terminal-features ",xterm-256color:RGB"
       set -as terminal-features ",ghostty:RGB"
