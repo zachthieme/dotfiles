@@ -53,9 +53,8 @@ screenshot shortcuts.
 ## Why `ctrl-alt`
 
 It's the one modifier macOS barely touches that is also clear of everything
-running inside the terminal — tmux takes `ctrl-b` (`ctrl-space` over ssh) as its prefix plus
-`alt-hjkl` and `alt-1..9`, and herdr prefixes on `ctrl-b`. Neither binds
-`ctrl-alt`, so the window layer never fights the pane layer.
+running inside the terminal — tmux takes `ctrl-b` (`ctrl-space` over ssh) as
+its prefix plus `alt-hjkl` and `alt-1..9`, and never binds `ctrl-alt`, so the window layer never fights the pane layer.
 
 ## Applying changes
 

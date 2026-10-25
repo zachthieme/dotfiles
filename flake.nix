@@ -90,9 +90,6 @@
     mkOverlay = name: input: final: _prev: {
       ${name} = input.packages.${final.stdenv.hostPlatform.system}.default;
     };
-    # herdr comes from nixpkgs (cached on every platform we build for), so it
-    # tracks `install.sh -f` instead of needing a hand-maintained version + hash
-    # per platform. It lags upstream releases by however long nixpkgs takes.
     customOverlays = [
       (mkOverlay "claude-code" claude-code)
       (mkOverlay "grove" grove)

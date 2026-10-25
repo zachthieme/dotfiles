@@ -140,7 +140,7 @@ Run `nw` to open a tmux workspace with four windows:
 | --- | --- |
 | **daily** | Pike priority view + wen calendar (top), daily note in editor + tick countdown (bottom) |
 | **tasks** | Full pike dashboard with all configured views |
-| **herdr** | Herdr workspace for AI coding agents |
+| **ssh** | Shell for ssh sessions |
 | **shell** | General-purpose shell |
 
 A small pane in the daily window runs `notes-sync` hourly while the session is open, and `nw` runs a final sync on exit (`nwk` kills the session).

@@ -30,7 +30,7 @@
   };
   # Idempotently merges tmux-tab-pulse's hook entries into Claude Code's user
   # settings. Keyed on (event, matcher, command), so removing one by hand
-  # restores just that one, and herdr's own SessionStart hook is left alone —
+  # restores just that one, and other tools' hook entries are left alone —
   # Claude Code merges hook entries across settings levels rather than
   # replacing them.
   hooksJq = pkgs.writeText "tab-pulse-claude-hooks.jq" ''
@@ -242,7 +242,7 @@ in {
       # New window in current path
       bind c new-window -c "#{pane_current_path}"
 
-      # Window (tab) rename/close — mirrors herdr's prefix+T / prefix+X
+      # Window (tab) rename/close
       bind T command-prompt -I "#W" "rename-window -- '%%'"
       bind X confirm-before -p "kill-window #W? (y/n)" kill-window
 

@@ -206,7 +206,7 @@ Abstractions must deliver what they claim, measurably.
 
 | Criterion | Weight | How to verify |
 |-----------|--------|---------------|
-| A `core`/headless host's closure excludes UNINTENDED heavy modules | 3 | [auto] Principle: a core-profile / `gui = false` host carries only what it's meant to. Verify a headless host (pi5) has `programs.ghostty.enable = false` and no `programs.nixvim` option. Intended tools (claude-code, herdr) are in scope by design and are NOT a violation. |
+| A `core`/headless host's closure excludes UNINTENDED heavy modules | 3 | [auto] Principle: a core-profile / `gui = false` host carries only what it's meant to. Verify a headless host (pi5) has `programs.ghostty.enable = false` and no `programs.nixvim` option. Intended tools (claude-code) are in scope by design and are NOT a violation. |
 | Heavy/GUI modules gate their `config`, not just `home.packages` | 2 | [auto] Heavy or graphical program modules (e.g. ghostty) guard their `config` on the relevant flag (`dotfiles.gui`), so removing a host from that flag drops the closure. |
 | Overlaid inputs provide packages for every target system | 1 | [auto] Each `input.packages.${system}.default` referenced resolves for aarch64-linux (Pi) and both darwins — verify by evaluating a Pi host's package list. |
 

@@ -61,8 +61,8 @@ outer.right = 10
 #      alt-hjkl moves between tmux panes, ctrl-alt-hjkl moves between windows.
 #   2. Adding shift moves the thing instead of moving you.
 #
-# ctrl-alt is the window layer because macOS barely uses it, and neither tmux
-# (ctrl-b / ctrl-space prefix, alt-hjkl) nor herdr (ctrl-b prefix) binds it.
+# ctrl-alt is the window layer because macOS barely uses it, and tmux
+# (ctrl-b / ctrl-space prefix, alt-hjkl) doesn't bind it.
 
 # Layout — ctrl-alt + the first letter of what you want.
 # Press T or A twice to flip that layout's orientation.
