@@ -37,6 +37,11 @@ in {
       default = true;
       description = "Whether this host has a graphical environment. Gates GUI apps (e.g. ghostty) off headless hosts (Pis, servers). Set per-host in hosts/definitions.nix.";
     };
+    hey = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Install the HEY email CLI (`hey`) and enable pike's HEY sync. Turned on by the home context only — hey's build fails behind the work proxy's TLS interception.";
+    };
     notesDir = lib.mkOption {
       type = lib.types.str;
       default = "${config.home.homeDirectory}/CloudDocs/Notes";

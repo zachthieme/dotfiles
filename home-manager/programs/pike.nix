@@ -26,39 +26,42 @@
   # Shared by the Overdue view and the HEY sync so the two can't drift.
   overdueQuery = "open and @due < today";
 
-  commonSettings = {
-    notes_dir = config.dotfiles.notesDir;
-    include = ["**/*.md"];
-    exclude = [
-      "templates/**"
-      "archive/**"
-      "CLAUDE.md"
-      "reviews/**"
-    ];
-    recently_completed_days = 1;
-    refresh_interval = "5s";
-    editor = "hx";
-    due_dates_path = "~/.local/share/pike/due.json";
-    hey = {
-      command = "hey";
-      query = overdueQuery;
-      state_path = "~/.local/share/pike/hey-state.json";
+  commonSettings =
+    {
+      notes_dir = config.dotfiles.notesDir;
+      include = ["**/*.md"];
+      exclude = [
+        "templates/**"
+        "archive/**"
+        "CLAUDE.md"
+        "reviews/**"
+      ];
+      recently_completed_days = 1;
+      refresh_interval = "5s";
+      editor = "hx";
+      due_dates_path = "~/.local/share/pike/due.json";
+      link_color = colors.sapphire;
+      tag_colors = {
+        risk = colors.red;
+        due = colors.maroon;
+        today = colors.green;
+        completed = colors.teal;
+        weekly = colors.blue;
+        monthly = colors.lavender;
+        quarterly = colors.mauve;
+        horizon = colors.yellow;
+        talk = colors.pink;
+        delegated = colors.peach;
+        _default = colors.sky;
+      };
+    }
+    // lib.optionalAttrs config.dotfiles.hey {
+      hey = {
+        command = "hey";
+        query = overdueQuery;
+        state_path = "~/.local/share/pike/hey-state.json";
+      };
     };
-    link_color = colors.sapphire;
-    tag_colors = {
-      risk = colors.red;
-      due = colors.maroon;
-      today = colors.green;
-      completed = colors.teal;
-      weekly = colors.blue;
-      monthly = colors.lavender;
-      quarterly = colors.mauve;
-      horizon = colors.yellow;
-      talk = colors.pink;
-      delegated = colors.peach;
-      _default = colors.sky;
-    };
-  };
 in {
   xdg.configFile."pike/config.yaml".source = yaml.generate "pike-config.yaml" (commonSettings
     // {
