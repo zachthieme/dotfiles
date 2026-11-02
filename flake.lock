@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792623721,
-        "narHash": "sha256-cEaLq5RodELwQvz3mFqR0Y+xeXZPvFBErijuBOdK1tM=",
+        "lastModified": 1793325708,
+        "narHash": "sha256-ZRcT5b1ZeYyvldoamBTDlfnpDdtNVmNfUde24E43WzM=",
         "owner": "sadjow",
         "repo": "claude-code-nix",
-        "rev": "6ac2a62b78db1d94f5b6b5668a628a2fcb180155",
+        "rev": "4ce701aac994817823a05576fa3eb0ab06406e2f",
         "type": "github"
       },
       "original": {
@@ -91,11 +91,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1792598556,
-        "narHash": "sha256-23hNW+6jLq969GFzE+MsnabKea1rJL5fWXEPnQJFqaQ=",
+        "lastModified": 1793155895,
+        "narHash": "sha256-EJzrZLE/tBVuaV5i/qo6aH3q0/H3dwxE97UD8AmMo3g=",
         "owner": "basecamp",
         "repo": "hey-cli",
-        "rev": "2f061c618c173b73d613cd22a540fdf2bce4db42",
+        "rev": "9ddf3e67a82af9fc9c07b6beea15fb6b0368582f",
         "type": "github"
       },
       "original": {
