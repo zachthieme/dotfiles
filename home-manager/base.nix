@@ -211,6 +211,9 @@ in {
       // lib.optionalAttrs pkgs.stdenv.isDarwin {
         ".config/aerospace".source = ../config/aerospace;
         ".config/borders".source = ../config/borders;
+        # xterm-ghostty for SSH sessions into this mac (Ghostty only sets
+        # TERMINFO locally). macOS ncurses looks up hex dirs (78/ for x/);
+        # config/terminfo/78 is a symlink to x/ so both layouts resolve.
         ".terminfo".source = ../config/terminfo;
       };
 
